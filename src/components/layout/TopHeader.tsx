@@ -1,35 +1,51 @@
-import useGameStore from '@/stores/useGameStore'
-import { Bell, Trophy } from 'lucide-react'
-import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { SidebarTrigger } from '@/components/ui/sidebar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import useAuthStore from '@/stores/useAuthStore'
+import { Badge } from '@/components/ui/badge'
 
 export function TopHeader() {
-  const { points } = useGameStore()
-  const { isMobile } = useSidebar()
+  const { user } = useAuthStore()
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between border-b bg-background/80 backdrop-blur-md px-4 md:px-6">
-      <div className="flex items-center gap-2">
-        {isMobile && <SidebarTrigger />}
-        <h2 className="text-lg font-semibold tracking-tight hidden sm:block">Portal Estratégico</h2>
-      </div>
-
+    <header className="h-16 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 shadow-sm">
       <div className="flex items-center gap-4">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="flex items-center gap-2 bg-accent/10 px-4 py-1.5 rounded-full border border-accent/20 cursor-default transition-transform hover:scale-105">
-              <Trophy className="w-4 h-4 text-accent" />
-              <span className="text-sm font-bold text-accent-foreground">{points} pts</span>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>Pontuação Total Acumulada</TooltipContent>
-        </Tooltip>
-
-        <button className="relative p-2 rounded-full hover:bg-secondary/10 transition-colors text-muted-foreground hover:text-foreground">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-primary border-2 border-background rounded-full animate-pulse"></span>
-        </button>
+        <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" />
+        <div className="hidden md:flex flex-col">
+          <h2 className="text-sm font-bold text-foreground tracking-tight leading-tight">
+            Portal Estratégico ONSV
+          </h2>
+          <span className="text-xs text-muted-foreground">Jornada de Evolução</span>
+        </div>
       </div>
+
+      {user && (
+        <div className="flex items-center gap-5">
+          <Badge
+            variant="outline"
+            className={`hidden sm:inline-flex border-opacity-50 font-semibold ${
+              user.role === 'admin'
+                ? 'bg-amber-500/10 text-amber-700 border-amber-500/30 dark:text-amber-400'
+                : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30 dark:text-emerald-400'
+            }`}
+          >
+            {user.role === 'admin' ? 'Administrador' : 'Observador Certificado'}
+          </Badge>
+          <div className="flex items-center gap-3 pl-2 sm:pl-5 sm:border-l border-border/50">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-bold leading-none text-foreground">{user.name}</p>
+              <p className="text-xs text-muted-foreground mt-1 truncate max-w-[150px]">
+                {user.email}
+              </p>
+            </div>
+            <Avatar className="h-9 w-9 border-2 border-primary/20 shadow-sm">
+              <AvatarImage src={`https://img.usecurling.com/ppl/thumbnail?seed=${user.email}`} />
+              <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                {user.name.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+        </div>
+      )}
     </header>
   )
 }
