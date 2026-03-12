@@ -27488,219 +27488,433 @@ var TableCaption = import_react.forwardRef(({ className, ...props }, ref) => /* 
 TableCaption.displayName = "TableCaption";
 //#endregion
 //#region src/pages/Submissions.tsx
+var eixo1Sections = [
+	{
+		title: "Titulação Acadêmica",
+		desc: "(Envio de Diploma, Pontuação Única):",
+		items: [
+			{
+				points: 80,
+				text: "Graduação (Reconhecida MEC)"
+			},
+			{
+				points: 100,
+				text: "Pós-graduação Lato Sensu"
+			},
+			{
+				points: 150,
+				text: "Mestrado"
+			},
+			{
+				points: 200,
+				text: "Doutorado"
+			},
+			{
+				points: 250,
+				text: "Pós-Doutorado (Estágio concluído)"
+			}
+		]
+	},
+	{
+		title: "Capacitação Contínua",
+		desc: "(Até 5x cada):",
+		items: [{
+			points: 30,
+			text: "Curso geral na área de trânsito/mobilidade (Mínimo 8h)"
+		}, {
+			points: 50,
+			text: "Curso oficial promovido pelo ONSV"
+		}]
+	},
+	{
+		title: "Produção Acadêmica",
+		desc: "(Até 5x, Análise Técnica):",
+		items: [
+			{
+				points: 50,
+				text: "Artigos publicados"
+			},
+			{
+				points: 50,
+				text: "Estudos publicados"
+			},
+			{
+				points: 50,
+				text: "Papers publicados em revistas/anais"
+			}
+		]
+	}
+];
 function Submissions() {
+	const [selectedItem, setSelectedItem] = (0, import_react.useState)(null);
 	const getStatusBadge = (status) => {
 		switch (status) {
 			case "Aprovado": return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
-				"data-uid": "src/pages/Submissions.tsx:19:11",
+				"data-uid": "src/pages/Submissions.tsx:60:11",
 				"data-prohibitions": "[]",
 				className: "bg-primary hover:bg-primary/90 font-medium px-2.5 py-0.5",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleCheck, {
-					"data-uid": "src/pages/Submissions.tsx:20:13",
+					"data-uid": "src/pages/Submissions.tsx:61:13",
 					"data-prohibitions": "[editContent]",
 					className: "w-3.5 h-3.5 mr-1.5"
 				}), " Aprovado"]
 			});
 			case "Em Análise": return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
-				"data-uid": "src/pages/Submissions.tsx:25:11",
+				"data-uid": "src/pages/Submissions.tsx:66:11",
 				"data-prohibitions": "[]",
 				variant: "secondary",
 				className: "bg-yellow-500/15 text-yellow-700 hover:bg-yellow-500/25 font-medium px-2.5 py-0.5",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, {
-					"data-uid": "src/pages/Submissions.tsx:29:13",
+					"data-uid": "src/pages/Submissions.tsx:70:13",
 					"data-prohibitions": "[editContent]",
 					className: "w-3.5 h-3.5 mr-1.5"
 				}), " Em Análise"]
 			});
 			case "Ajuste Necessário": return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
-				"data-uid": "src/pages/Submissions.tsx:34:11",
+				"data-uid": "src/pages/Submissions.tsx:75:11",
 				"data-prohibitions": "[]",
 				variant: "destructive",
 				className: "font-medium px-2.5 py-0.5",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleAlert, {
-					"data-uid": "src/pages/Submissions.tsx:35:13",
+					"data-uid": "src/pages/Submissions.tsx:76:13",
 					"data-prohibitions": "[editContent]",
 					className: "w-3.5 h-3.5 mr-1.5"
 				}), " Ajuste Necessário"]
 			});
 			default: return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
-				"data-uid": "src/pages/Submissions.tsx:39:16",
+				"data-uid": "src/pages/Submissions.tsx:80:16",
 				"data-prohibitions": "[editContent]",
 				children: status
 			});
 		}
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		"data-uid": "src/pages/Submissions.tsx:44:5",
+		"data-uid": "src/pages/Submissions.tsx:85:5",
 		"data-prohibitions": "[editContent]",
 		className: "max-w-5xl mx-auto space-y-8 animate-fade-in-up",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/pages/Submissions.tsx:45:7",
-			"data-prohibitions": "[]",
-			className: "flex flex-col md:flex-row md:items-center justify-between gap-4",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/pages/Submissions.tsx:46:9",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				"data-uid": "src/pages/Submissions.tsx:86:7",
 				"data-prohibitions": "[]",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-					"data-uid": "src/pages/Submissions.tsx:47:11",
+				className: "flex flex-col md:flex-row md:items-center justify-between gap-4",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					"data-uid": "src/pages/Submissions.tsx:87:9",
 					"data-prohibitions": "[]",
-					className: "text-3xl font-bold tracking-tight",
-					children: "Cofre de Evidências"
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					"data-uid": "src/pages/Submissions.tsx:48:11",
-					"data-prohibitions": "[]",
-					className: "text-muted-foreground mt-2 text-lg",
-					children: "Acompanhe o status das suas submissões garantindo a rastreabilidade."
-				})]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/pages/Submissions.tsx:52:9",
-				"data-prohibitions": "[]",
-				className: "p-3 bg-primary/10 text-primary rounded-xl flex items-center gap-3 shadow-sm border border-primary/20",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FileSearch, {
-					"data-uid": "src/pages/Submissions.tsx:53:11",
-					"data-prohibitions": "[editContent]",
-					className: "w-6 h-6"
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
+						"data-uid": "src/pages/Submissions.tsx:88:11",
+						"data-prohibitions": "[]",
+						className: "text-3xl font-bold tracking-tight",
+						children: "Cofre de Evidências"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						"data-uid": "src/pages/Submissions.tsx:89:11",
+						"data-prohibitions": "[]",
+						className: "text-muted-foreground mt-2 text-lg",
+						children: "Acompanhe o status das suas submissões garantindo a rastreabilidade."
+					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/pages/Submissions.tsx:54:11",
+					"data-uid": "src/pages/Submissions.tsx:93:9",
 					"data-prohibitions": "[]",
-					className: "flex flex-col",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						"data-uid": "src/pages/Submissions.tsx:55:13",
-						"data-prohibitions": "[]",
-						className: "text-xs font-semibold uppercase tracking-wider",
-						children: "Transparência"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						"data-uid": "src/pages/Submissions.tsx:56:13",
-						"data-prohibitions": "[]",
-						className: "text-sm font-bold",
-						children: "100% Auditável"
-					})]
-				})]
-			})]
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-			"data-uid": "src/pages/Submissions.tsx:61:7",
-			"data-prohibitions": "[editContent]",
-			className: "shadow-subtle border-border/60",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
-				"data-uid": "src/pages/Submissions.tsx:62:9",
-				"data-prohibitions": "[]",
-				className: "bg-muted/30 border-b border-border/50",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
-					"data-uid": "src/pages/Submissions.tsx:63:11",
-					"data-prohibitions": "[]",
-					children: "Histórico de Submissões"
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, {
-					"data-uid": "src/pages/Submissions.tsx:64:11",
-					"data-prohibitions": "[]",
-					children: "Todas as evidências enviadas e seus respectivos status na curadoria."
-				})]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-				"data-uid": "src/pages/Submissions.tsx:68:9",
-				"data-prohibitions": "[editContent]",
-				className: "p-0",
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Table, {
-					"data-uid": "src/pages/Submissions.tsx:69:11",
-					"data-prohibitions": "[editContent]",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHeader, {
-						"data-uid": "src/pages/Submissions.tsx:70:13",
-						"data-prohibitions": "[]",
-						className: "bg-muted/10",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
-							"data-uid": "src/pages/Submissions.tsx:71:15",
-							"data-prohibitions": "[]",
-							children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-									"data-uid": "src/pages/Submissions.tsx:72:17",
-									"data-prohibitions": "[]",
-									className: "pl-6",
-									children: "Data"
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-									"data-uid": "src/pages/Submissions.tsx:73:17",
-									"data-prohibitions": "[]",
-									children: "Identificador"
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-									"data-uid": "src/pages/Submissions.tsx:74:17",
-									"data-prohibitions": "[]",
-									children: "Título da Evidência"
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-									"data-uid": "src/pages/Submissions.tsx:75:17",
-									"data-prohibitions": "[]",
-									children: "Eixo Referência"
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-									"data-uid": "src/pages/Submissions.tsx:76:17",
-									"data-prohibitions": "[]",
-									children: "Status"
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-									"data-uid": "src/pages/Submissions.tsx:77:17",
-									"data-prohibitions": "[]",
-									className: "text-right pr-6",
-									children: "Pontos Obtidos"
-								})
-							]
-						})
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableBody, {
-						"data-uid": "src/pages/Submissions.tsx:80:13",
+					className: "p-3 bg-primary/10 text-primary rounded-xl flex items-center gap-3 shadow-sm border border-primary/20",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FileSearch, {
+						"data-uid": "src/pages/Submissions.tsx:94:11",
 						"data-prohibitions": "[editContent]",
-						children: submissionsData.map((sub) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
-							"data-uid": "src/pages/Submissions.tsx:82:17",
-							"data-prohibitions": "[editContent]",
-							className: "hover:bg-muted/30 transition-colors",
-							children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-									"data-uid": "src/pages/Submissions.tsx:83:19",
-									"data-prohibitions": "[editContent]",
-									className: "font-medium text-muted-foreground pl-6",
-									children: sub.date
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-									"data-uid": "src/pages/Submissions.tsx:86:19",
-									"data-prohibitions": "[editContent]",
-									className: "font-mono text-xs",
-									children: sub.id
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-									"data-uid": "src/pages/Submissions.tsx:87:19",
-									"data-prohibitions": "[editContent]",
-									className: "font-semibold",
-									children: sub.title
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-									"data-uid": "src/pages/Submissions.tsx:88:19",
-									"data-prohibitions": "[editContent]",
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/pages/Submissions.tsx:89:21",
-										"data-prohibitions": "[editContent]",
-										className: "text-xs font-bold uppercase tracking-wider text-muted-foreground",
-										children: sub.axis
-									})
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-									"data-uid": "src/pages/Submissions.tsx:93:19",
-									"data-prohibitions": "[editContent]",
-									children: getStatusBadge(sub.status)
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-									"data-uid": "src/pages/Submissions.tsx:94:19",
-									"data-prohibitions": "[editContent]",
-									className: "text-right pr-6 font-bold text-lg text-accent",
-									children: sub.points !== "-" ? `+${sub.points}` : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/pages/Submissions.tsx:98:23",
-										"data-prohibitions": "[]",
-										className: "text-muted-foreground/50",
-										children: "-"
-									})
-								})
-							]
-						}, sub.id))
+						className: "w-6 h-6"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						"data-uid": "src/pages/Submissions.tsx:95:11",
+						"data-prohibitions": "[]",
+						className: "flex flex-col",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							"data-uid": "src/pages/Submissions.tsx:96:13",
+							"data-prohibitions": "[]",
+							className: "text-xs font-semibold uppercase tracking-wider",
+							children: "Transparência"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							"data-uid": "src/pages/Submissions.tsx:97:13",
+							"data-prohibitions": "[]",
+							className: "text-sm font-bold",
+							children: "100% Auditável"
+						})]
 					})]
-				})
-			})]
-		})]
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Tabs, {
+				"data-uid": "src/pages/Submissions.tsx:102:7",
+				"data-prohibitions": "[editContent]",
+				defaultValue: "playbook",
+				className: "w-full",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TabsList, {
+						"data-uid": "src/pages/Submissions.tsx:103:9",
+						"data-prohibitions": "[]",
+						className: "mb-6 grid w-full grid-cols-2 max-w-md bg-muted/60 p-1.5 rounded-lg h-auto",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsTrigger, {
+							"data-uid": "src/pages/Submissions.tsx:104:11",
+							"data-prohibitions": "[]",
+							value: "playbook",
+							className: "text-sm py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all",
+							children: "Playbook Eixo I"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsTrigger, {
+							"data-uid": "src/pages/Submissions.tsx:110:11",
+							"data-prohibitions": "[]",
+							value: "history",
+							className: "text-sm py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all",
+							children: "Histórico"
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TabsContent, {
+						"data-uid": "src/pages/Submissions.tsx:118:9",
+						"data-prohibitions": "[editContent]",
+						value: "playbook",
+						className: "space-y-6 animate-slide-up outline-none",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							"data-uid": "src/pages/Submissions.tsx:119:11",
+							"data-prohibitions": "[]",
+							className: "bg-emerald-50 text-emerald-950 dark:bg-emerald-950/20 dark:text-emerald-50 p-6 md:p-8 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border border-emerald-200 dark:border-emerald-900/50",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								"data-uid": "src/pages/Submissions.tsx:120:13",
+								"data-prohibitions": "[]",
+								className: "p-4 bg-emerald-100 dark:bg-emerald-900/50 rounded-2xl shrink-0",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BookOpen, {
+									"data-uid": "src/pages/Submissions.tsx:121:15",
+									"data-prohibitions": "[editContent]",
+									className: "w-10 h-10 text-emerald-600 dark:text-emerald-400"
+								})
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/pages/Submissions.tsx:123:13",
+								"data-prohibitions": "[]",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+									"data-uid": "src/pages/Submissions.tsx:124:15",
+									"data-prohibitions": "[]",
+									className: "text-2xl font-bold tracking-tight",
+									children: "Playbook Eixo I: Formação e Conhecimento"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									"data-uid": "src/pages/Submissions.tsx:127:15",
+									"data-prohibitions": "[]",
+									className: "opacity-90 mt-2 text-lg",
+									children: "Construa sua base e autoridade técnica. Atividades estruturais (Titulação) não são cumulativas."
+								})]
+							})]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							"data-uid": "src/pages/Submissions.tsx:134:11",
+							"data-prohibitions": "[editContent]",
+							className: "space-y-6",
+							children: eixo1Sections.map((section, sIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+								"data-uid": "src/pages/Submissions.tsx:136:15",
+								"data-prohibitions": "[editContent]",
+								className: "overflow-hidden border-border/60 shadow-subtle",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
+									"data-uid": "src/pages/Submissions.tsx:137:17",
+									"data-prohibitions": "[editContent]",
+									className: "bg-muted/30 border-b border-border/50 py-4",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
+										"data-uid": "src/pages/Submissions.tsx:138:19",
+										"data-prohibitions": "[editContent]",
+										className: "text-lg flex flex-wrap items-baseline gap-2",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											"data-uid": "src/pages/Submissions.tsx:139:21",
+											"data-prohibitions": "[editContent]",
+											children: section.title
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											"data-uid": "src/pages/Submissions.tsx:140:21",
+											"data-prohibitions": "[editContent]",
+											className: "text-muted-foreground font-normal text-sm md:text-base",
+											children: section.desc
+										})]
+									})
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
+									"data-uid": "src/pages/Submissions.tsx:145:17",
+									"data-prohibitions": "[editContent]",
+									className: "p-0",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										"data-uid": "src/pages/Submissions.tsx:146:19",
+										"data-prohibitions": "[editContent]",
+										className: "divide-y divide-border/50",
+										children: section.items.map((item, iIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											"data-uid": "src/pages/Submissions.tsx:148:23",
+											"data-prohibitions": "[editContent]",
+											className: "flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-muted/20 transition-colors",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												"data-uid": "src/pages/Submissions.tsx:152:25",
+												"data-prohibitions": "[editContent]",
+												className: "flex items-center gap-3",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
+													"data-uid": "src/pages/Submissions.tsx:153:27",
+													"data-prohibitions": "[editContent]",
+													className: "bg-emerald-600 hover:bg-emerald-700 text-white font-mono px-2 py-0.5 rounded shadow-sm whitespace-nowrap",
+													children: [
+														"[",
+														item.points,
+														" pts]"
+													]
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													"data-uid": "src/pages/Submissions.tsx:156:27",
+													"data-prohibitions": "[editContent]",
+													className: "font-medium text-sm md:text-base",
+													children: item.text
+												})]
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+												"data-uid": "src/pages/Submissions.tsx:158:25",
+												"data-prohibitions": "[]",
+												variant: "outline",
+												size: "sm",
+												className: "shrink-0 sm:w-auto w-full border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 dark:border-emerald-800 dark:hover:bg-emerald-950 dark:hover:text-emerald-300",
+												onClick: () => setSelectedItem({
+													title: item.text,
+													points: item.points,
+													axis: "Eixo I: Formação e Conhecimento"
+												}),
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Upload, {
+													"data-uid": "src/pages/Submissions.tsx:170:27",
+													"data-prohibitions": "[editContent]",
+													className: "w-4 h-4 mr-2"
+												}), "Upload"]
+											})]
+										}, iIdx))
+									})
+								})]
+							}, sIdx))
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsContent, {
+						"data-uid": "src/pages/Submissions.tsx:182:9",
+						"data-prohibitions": "[editContent]",
+						value: "history",
+						className: "animate-slide-up outline-none",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+							"data-uid": "src/pages/Submissions.tsx:183:11",
+							"data-prohibitions": "[editContent]",
+							className: "shadow-subtle border-border/60",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
+								"data-uid": "src/pages/Submissions.tsx:184:13",
+								"data-prohibitions": "[]",
+								className: "bg-muted/30 border-b border-border/50",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
+									"data-uid": "src/pages/Submissions.tsx:185:15",
+									"data-prohibitions": "[]",
+									children: "Histórico de Submissões"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, {
+									"data-uid": "src/pages/Submissions.tsx:186:15",
+									"data-prohibitions": "[]",
+									children: "Todas as evidências enviadas e seus respectivos status na curadoria."
+								})]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
+								"data-uid": "src/pages/Submissions.tsx:190:13",
+								"data-prohibitions": "[editContent]",
+								className: "p-0",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Table, {
+									"data-uid": "src/pages/Submissions.tsx:191:15",
+									"data-prohibitions": "[editContent]",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHeader, {
+										"data-uid": "src/pages/Submissions.tsx:192:17",
+										"data-prohibitions": "[]",
+										className: "bg-muted/10",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
+											"data-uid": "src/pages/Submissions.tsx:193:19",
+											"data-prohibitions": "[]",
+											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+													"data-uid": "src/pages/Submissions.tsx:194:21",
+													"data-prohibitions": "[]",
+													className: "pl-6",
+													children: "Data"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+													"data-uid": "src/pages/Submissions.tsx:195:21",
+													"data-prohibitions": "[]",
+													children: "Identificador"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+													"data-uid": "src/pages/Submissions.tsx:196:21",
+													"data-prohibitions": "[]",
+													children: "Título da Evidência"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+													"data-uid": "src/pages/Submissions.tsx:197:21",
+													"data-prohibitions": "[]",
+													children: "Eixo Referência"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+													"data-uid": "src/pages/Submissions.tsx:198:21",
+													"data-prohibitions": "[]",
+													children: "Status"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+													"data-uid": "src/pages/Submissions.tsx:199:21",
+													"data-prohibitions": "[]",
+													className: "text-right pr-6",
+													children: "Pontos Obtidos"
+												})
+											]
+										})
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableBody, {
+										"data-uid": "src/pages/Submissions.tsx:202:17",
+										"data-prohibitions": "[editContent]",
+										children: submissionsData.map((sub) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
+											"data-uid": "src/pages/Submissions.tsx:204:21",
+											"data-prohibitions": "[editContent]",
+											className: "hover:bg-muted/30 transition-colors",
+											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/Submissions.tsx:205:23",
+													"data-prohibitions": "[editContent]",
+													className: "font-medium text-muted-foreground pl-6",
+													children: sub.date
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/Submissions.tsx:208:23",
+													"data-prohibitions": "[editContent]",
+													className: "font-mono text-xs",
+													children: sub.id
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/Submissions.tsx:209:23",
+													"data-prohibitions": "[editContent]",
+													className: "font-semibold",
+													children: sub.title
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/Submissions.tsx:210:23",
+													"data-prohibitions": "[editContent]",
+													children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+														"data-uid": "src/pages/Submissions.tsx:211:25",
+														"data-prohibitions": "[editContent]",
+														className: "text-xs font-bold uppercase tracking-wider text-muted-foreground",
+														children: sub.axis
+													})
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/Submissions.tsx:215:23",
+													"data-prohibitions": "[editContent]",
+													children: getStatusBadge(sub.status)
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/Submissions.tsx:216:23",
+													"data-prohibitions": "[editContent]",
+													className: "text-right pr-6 font-bold text-lg text-accent",
+													children: sub.points !== "-" ? `+${sub.points}` : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+														"data-uid": "src/pages/Submissions.tsx:220:27",
+														"data-prohibitions": "[]",
+														className: "text-muted-foreground/50",
+														children: "-"
+													})
+												})
+											]
+										}, sub.id))
+									})]
+								})
+							})]
+						})
+					})
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SubmitEvidenceDialog, {
+				"data-uid": "src/pages/Submissions.tsx:232:7",
+				"data-prohibitions": "[editContent]",
+				isOpen: !!selectedItem,
+				onClose: () => setSelectedItem(null),
+				item: selectedItem
+			})
+		]
 	});
 }
 //#endregion
@@ -29098,4 +29312,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-B8Y5oDQ1.js.map
+//# sourceMappingURL=index-DJbQiA2l.js.map
