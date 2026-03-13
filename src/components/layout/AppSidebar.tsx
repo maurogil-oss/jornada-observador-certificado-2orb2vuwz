@@ -20,7 +20,7 @@ export function AppSidebar() {
 
   const observerNav = [
     { title: 'Dashboard', url: '/', icon: Home },
-    { title: 'Eixos de Evolução', url: '/eixos', icon: Compass },
+    { title: 'Níveis de Evolução', url: '/niveis', icon: Compass },
     { title: 'Cofre de Evidências', url: '/submissoes', icon: FileCheck },
     { title: 'Ranking / Mérito', url: '/ranking', icon: Trophy },
   ]

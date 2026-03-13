@@ -47,7 +47,10 @@ export function HighlightsMural() {
                     </Avatar>
                   </div>
                   <span className="font-bold text-sm line-clamp-1 leading-tight">{user.name}</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground bg-secondary/10 px-2 py-0.5 rounded-full mt-1.5">
+                  <span
+                    className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground bg-secondary/10 px-1.5 py-0.5 rounded-full mt-1.5 line-clamp-1"
+                    title={user.level}
+                  >
                     {user.level}
                   </span>
                   <span className="text-sm font-black mt-2 text-foreground/80">

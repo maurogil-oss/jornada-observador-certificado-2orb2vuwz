@@ -17,7 +17,7 @@ export function PlaybookEixo1({ onSelect }: Props) {
         </div>
         <div>
           <h2 className="text-2xl font-bold tracking-tight">
-            Playbook Eixo I: Formação e Conhecimento
+            Playbook Nível I: Observador Certificado
           </h2>
           <p className="opacity-90 mt-2 text-lg">
             Construa sua base e autoridade técnica. Atividades estruturais (Titulação) não são
@@ -60,7 +60,7 @@ export function PlaybookEixo1({ onSelect }: Props) {
                         onSelect({
                           title: item.text,
                           points: item.points,
-                          axis: 'Eixo I: Formação e Conhecimento',
+                          axis: 'Nível I: Observador Certificado',
                         })
                       }
                     >

@@ -32,25 +32,25 @@ export default function Submissions() {
         </div>
       </div>
 
-      <Tabs defaultValue="eixo1" className="w-full">
+      <Tabs defaultValue="nivel1" className="w-full">
         <TabsList className="mb-6 grid w-full grid-cols-2 md:grid-cols-4 bg-muted/60 p-1.5 rounded-lg h-auto">
           <TabsTrigger
-            value="eixo1"
-            className="text-sm py-2.5 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all"
+            value="nivel1"
+            className="text-sm py-2.5 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-nowrap overflow-hidden text-ellipsis"
           >
-            Playbook Eixo I
+            Playbook Nível I
           </TabsTrigger>
           <TabsTrigger
-            value="eixo2"
-            className="text-sm py-2.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all"
+            value="nivel2"
+            className="text-sm py-2.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-nowrap overflow-hidden text-ellipsis"
           >
-            Playbook Eixo II
+            Playbook Nível II
           </TabsTrigger>
           <TabsTrigger
-            value="eixo3"
-            className="text-sm py-2.5 data-[state=active]:bg-amber-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all"
+            value="nivel3"
+            className="text-sm py-2.5 data-[state=active]:bg-amber-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-nowrap overflow-hidden text-ellipsis"
           >
-            Playbook Eixo III
+            Playbook Nível III
           </TabsTrigger>
           <TabsTrigger
             value="history"
@@ -60,15 +60,15 @@ export default function Submissions() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="eixo1" className="animate-slide-up outline-none">
+        <TabsContent value="nivel1" className="animate-slide-up outline-none">
           <PlaybookEixo1 onSelect={setSelectedItem} />
         </TabsContent>
 
-        <TabsContent value="eixo2" className="animate-slide-up outline-none">
+        <TabsContent value="nivel2" className="animate-slide-up outline-none">
           <PlaybookEixo2 onSelect={setSelectedItem} />
         </TabsContent>
 
-        <TabsContent value="eixo3" className="animate-slide-up outline-none">
+        <TabsContent value="nivel3" className="animate-slide-up outline-none">
           <PlaybookEixo3 onSelect={setSelectedItem} />
         </TabsContent>
 

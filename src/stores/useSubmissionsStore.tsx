@@ -18,7 +18,7 @@ const mockAdminSubmissions: Submission[] = [
     title: 'Titulação (Doutorado)',
     date: '12/03/2026',
     status: 'Em Análise',
-    axis: 'Eixo I',
+    axis: 'Nível I',
     points: '-',
   },
   {
@@ -27,7 +27,7 @@ const mockAdminSubmissions: Submission[] = [
     title: 'Artigo Científico',
     date: '11/03/2026',
     status: 'Em Análise',
-    axis: 'Eixo I',
+    axis: 'Nível I',
     points: '-',
   },
   {
@@ -36,7 +36,7 @@ const mockAdminSubmissions: Submission[] = [
     title: 'Mentoria: Atuação formal',
     date: '09/03/2026',
     status: 'Em Análise',
-    axis: 'Eixo III',
+    axis: 'Nível III',
     points: '-',
   },
 ]

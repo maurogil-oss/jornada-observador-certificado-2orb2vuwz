@@ -23,12 +23,12 @@ export function CompetencyMatrix() {
         <Table className="min-w-[700px]">
           <TableHeader className="bg-muted/20">
             <TableRow>
-              <TableHead className="w-1/4 font-black text-foreground pl-6">Eixos</TableHead>
+              <TableHead className="w-1/4 font-black text-foreground pl-6">Pilares</TableHead>
               <TableHead className="w-1/4">
                 <div className="flex flex-col items-start gap-1 py-2">
                   <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                     <Sprout className="w-4 h-4" />
-                    <span className="font-bold text-foreground">Iniciante</span>
+                    <span className="font-bold text-foreground">Nível I</span>
                   </div>
                 </div>
               </TableHead>
@@ -40,7 +40,7 @@ export function CompetencyMatrix() {
                       alt="Badge Pleno"
                       className="w-5 h-5 opacity-80 mix-blend-luminosity filter grayscale"
                     />
-                    <span className="font-bold text-foreground">Pleno</span>
+                    <span className="font-bold text-foreground">Nível II</span>
                   </div>
                 </div>
               </TableHead>
@@ -52,7 +52,7 @@ export function CompetencyMatrix() {
                       alt="Badge Mobilizador"
                       className="w-6 h-6 drop-shadow-sm"
                     />
-                    <span className="font-bold text-foreground">Mobilizador</span>
+                    <span className="font-bold text-foreground">Nível III</span>
                   </div>
                 </div>
               </TableHead>
@@ -62,16 +62,16 @@ export function CompetencyMatrix() {
             {competencyMatrixData.map((row, idx) => (
               <TableRow key={idx} className="hover:bg-muted/30">
                 <TableCell className="font-bold text-muted-foreground pl-6 align-top">
-                  {row.eixo}
+                  {row.pilar}
                 </TableCell>
                 <TableCell className="text-sm align-top leading-relaxed text-muted-foreground">
-                  {row.iniciante}
+                  {row.nivel1}
                 </TableCell>
                 <TableCell className="text-sm align-top leading-relaxed text-muted-foreground">
-                  {row.pleno}
+                  {row.nivel2}
                 </TableCell>
                 <TableCell className="text-sm align-top leading-relaxed pr-6 text-foreground font-medium">
-                  {row.mobilizador}
+                  {row.nivel3}
                 </TableCell>
               </TableRow>
             ))}

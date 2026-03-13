@@ -5,40 +5,32 @@ import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 
 export function EvolutionSimulator() {
-  const { eixosProgress } = useGameStore()
+  const { niveisProgress } = useGameStore()
 
-  const getRecommendation = (eixoId: string, currentLevel: string, points: number) => {
-    if (currentLevel === 'Mobilizador') {
+  const getRecommendation = (id: string, status: string, points: number) => {
+    if (id === 'III') {
       return {
-        msg: 'Nível Máximo Atingido!',
-        target: 'Manter engajamento contínuo na rede',
-        percent: 100,
+        msg: 'Foco em Representatividade',
+        target: 'Manter engajamento contínuo na rede e atuar como mentor',
+        percent: Math.min(100, Math.round((points / 1000) * 100)),
       }
     }
-    if (currentLevel === 'Pleno') {
+    if (id === 'II') {
       const needed = 500 - points
-      let action =
-        needed > 100
-          ? `Faltam ${Math.ceil(needed / 150)} projetos de impacto para o Nível Mobilizador`
-          : `Faltam ${Math.ceil(needed / 50)} publicações para o Nível Mobilizador`
-      if (eixoId === 'III') {
-        action = `Faltam ${Math.ceil(needed / 100)} representações em comitês para o Nível Mobilizador`
-      }
+      let action = `Faltam ${Math.ceil(needed / 150)} projetos de impacto`
       return {
-        msg: `Faltam ${needed} pts para Mobilizador`,
-        target: action,
-        percent: Math.round((points / 500) * 100),
+        msg: `Faltam ${needed > 0 ? needed : 0} pts para concluir o Nível II`,
+        target: needed > 0 ? action : 'Meta Atingida',
+        percent: Math.min(100, Math.round((points / 500) * 100)),
       }
     }
-    // Iniciante
+    // Nível I
     const needed = 200 - points
-    let action = `Faltam ${Math.ceil(needed / 50)} cursos para o Nível Pleno`
-    if (eixoId === 'III') action = `Faltam ${Math.ceil(needed / 200)} mentorias para o Nível Pleno`
-
+    let action = `Faltam ${Math.ceil(needed / 50)} cursos ou publicações`
     return {
-      msg: `Faltam ${needed} pts para Pleno`,
-      target: action,
-      percent: Math.round((points / 200) * 100),
+      msg: `Faltam ${needed > 0 ? needed : 0} pts para concluir o Nível I`,
+      target: needed > 0 ? action : 'Meta Atingida',
+      percent: Math.min(100, Math.round((points / 200) * 100)),
     }
   }
 
@@ -51,19 +43,22 @@ export function EvolutionSimulator() {
       </CardHeader>
       <CardContent className="pt-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {eixosProgress.map((eixo) => {
-            const rec = getRecommendation(eixo.id, eixo.level, eixo.points)
+          {niveisProgress.map((nivel) => {
+            const rec = getRecommendation(nivel.id, nivel.status, nivel.points)
             return (
               <div
-                key={eixo.id}
+                key={nivel.id}
                 className="flex flex-col space-y-3 p-4 bg-muted/30 rounded-xl border border-border/50 shadow-sm hover:border-primary/30 transition-colors"
               >
-                <div className="flex justify-between items-start">
-                  <h4 className="font-bold text-sm text-foreground">
-                    Eixo {eixo.id} - {eixo.name}
+                <div className="flex justify-between items-start gap-2">
+                  <h4
+                    className="font-bold text-sm text-foreground line-clamp-2"
+                    title={`Nível ${nivel.id} - ${nivel.name}`}
+                  >
+                    Nível {nivel.id} - {nivel.name}
                   </h4>
-                  <Badge variant="outline" className="text-[10px] font-bold uppercase shrink-0">
-                    {eixo.level}
+                  <Badge variant="outline" className="text-[9px] font-bold uppercase shrink-0">
+                    {nivel.status}
                   </Badge>
                 </div>
                 <Progress value={rec.percent} className="h-2 bg-muted-foreground/20" />

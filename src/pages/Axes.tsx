@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { axesData } from '@/lib/data'
+import { niveisData } from '@/lib/data'
 import { CheckCircle, PlusCircle } from 'lucide-react'
 import { SubmitEvidenceDialog } from '@/components/submissions/SubmitEvidenceDialog'
 import { CompetencyMatrix } from '@/components/axes/CompetencyMatrix'
@@ -19,33 +19,36 @@ export default function Axes() {
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in pb-10">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Eixos de Evolução</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Níveis de Evolução</h1>
         <p className="text-muted-foreground mt-2 text-lg">
           Explore as atividades e submeta suas comprovações para avançar na sua jornada.
         </p>
       </div>
 
       <Tabs defaultValue="I" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-8 bg-muted/60 p-1.5 rounded-lg h-auto">
-          {axesData.map((eixo) => (
+        <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 mb-8 bg-muted/60 p-1.5 rounded-lg h-auto gap-2 md:gap-0">
+          {niveisData.map((nivel) => (
             <TabsTrigger
-              key={eixo.id}
-              value={eixo.id}
-              className="text-sm md:text-base py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all"
+              key={nivel.id}
+              value={nivel.id}
+              className="text-sm md:text-base py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all flex-col xl:flex-row"
             >
-              Eixo {eixo.id} <span className="hidden md:inline ml-2">- {eixo.title}</span>
+              <span className="whitespace-nowrap">Nível {nivel.id}</span>
+              <span className="hidden md:inline ml-1 opacity-90 font-normal truncate max-w-full text-xs xl:text-sm">
+                - {nivel.title}
+              </span>
             </TabsTrigger>
           ))}
         </TabsList>
 
-        {axesData.map((eixo) => {
-          const isAmber = eixo.id === 'III'
-          const isBlue = eixo.id === 'II'
+        {niveisData.map((nivel) => {
+          const isAmber = nivel.id === 'III'
+          const isBlue = nivel.id === 'II'
 
           return (
             <TabsContent
-              key={eixo.id}
-              value={eixo.id}
+              key={nivel.id}
+              value={nivel.id}
               className="space-y-6 outline-none animate-slide-up"
             >
               <div
@@ -68,16 +71,18 @@ export default function Axes() {
                         : 'bg-emerald-200 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400',
                   )}
                 >
-                  <eixo.icon className="w-10 h-10" />
+                  <nivel.icon className="w-10 h-10" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold tracking-tight">{eixo.title}</h2>
-                  <p className="opacity-80 mt-2 text-lg">{eixo.purpose}</p>
+                  <h2 className="text-2xl font-bold tracking-tight">
+                    Nível {nivel.id} - {nivel.title}
+                  </h2>
+                  <p className="opacity-80 mt-2 text-lg">{nivel.purpose}</p>
                 </div>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {eixo.items.map((item, idx) => (
+                {nivel.items.map((item, idx) => (
                   <Card
                     key={idx}
                     className={cn(
@@ -137,7 +142,7 @@ export default function Axes() {
                           setSelectedItem({
                             title: item.title,
                             points: item.points,
-                            axis: `Eixo ${eixo.id}`,
+                            axis: `Nível ${nivel.id}`,
                           })
                         }
                       >

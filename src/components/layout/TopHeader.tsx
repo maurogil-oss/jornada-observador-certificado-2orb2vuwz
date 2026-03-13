@@ -6,13 +6,14 @@ import { Badge } from '@/components/ui/badge'
 
 export function TopHeader() {
   const { user } = useAuthStore()
-  const { eixosProgress } = useGameStore()
+  const { levelName } = useGameStore()
 
-  const highestAxisLevel = eixosProgress.some((e) => e.level === 'Mobilizador')
-    ? 'Mobilizador'
-    : eixosProgress.some((e) => e.level === 'Pleno')
-      ? 'Pleno'
-      : null
+  const shortLevelName = levelName.split(' - ')[0]
+  const badgeColor = levelName.includes('Mobilizador')
+    ? 'bg-amber-500 text-amber-950 hover:bg-amber-600'
+    : levelName.includes('Pleno')
+      ? 'bg-blue-500 text-white hover:bg-blue-600'
+      : 'bg-emerald-500 text-white hover:bg-emerald-600'
 
   return (
     <header className="h-16 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 shadow-sm">
@@ -44,15 +45,12 @@ export function TopHeader() {
               {user.role === 'admin' ? 'Administrador' : 'Observador'}
             </Badge>
 
-            {user.role !== 'admin' && highestAxisLevel && (
+            {user.role !== 'admin' && (
               <Badge
-                className={`hidden sm:inline-flex font-bold shadow-sm ${
-                  highestAxisLevel === 'Mobilizador'
-                    ? 'bg-amber-500 text-amber-950 hover:bg-amber-600'
-                    : 'bg-blue-500 text-white hover:bg-blue-600'
-                }`}
+                className={`hidden sm:inline-flex font-bold shadow-sm ${badgeColor}`}
+                title={levelName}
               >
-                {highestAxisLevel}
+                {shortLevelName}
               </Badge>
             )}
           </div>

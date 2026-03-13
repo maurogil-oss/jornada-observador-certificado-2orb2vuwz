@@ -24539,42 +24539,40 @@ var GameProvider = ({ children }) => {
 	const [points, setPoints] = (0, import_react.useState)(1250);
 	const level = Math.floor(points / 1e3) + 1;
 	const levelNames = [
-		"Iniciante",
-		"Engajado",
-		"Estrategista",
-		"Líder",
-		"Mestre"
+		"Nível I - Observador Certificado",
+		"Nível II - Observador Certificado Pleno",
+		"Nível III - Observador Certificado Mobilizador"
 	];
 	const levelName = levelNames[Math.min(level - 1, levelNames.length - 1)];
 	const addPoints = (pts) => setPoints((p) => p + pts);
-	const eixosProgress = [
+	const niveisProgress = [
 		{
 			id: "I",
-			name: "Formação",
+			name: "Observador Certificado",
 			points: 350,
-			level: "Pleno"
+			status: "Concluído"
 		},
 		{
 			id: "II",
-			name: "Atuação",
+			name: "Observador Certificado Pleno",
 			points: 150,
-			level: "Iniciante"
+			status: "Em Andamento"
 		},
 		{
 			id: "III",
-			name: "Liderança",
+			name: "Observador Certificado Mobilizador",
 			points: 750,
-			level: "Mobilizador"
+			status: "Pendente"
 		}
 	];
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(GameContext.Provider, {
-		"data-uid": "src/stores/useGameStore.tsx:38:5",
+		"data-uid": "src/stores/useGameStore.tsx:42:5",
 		"data-prohibitions": "[editContent]",
 		value: {
 			points,
 			level,
 			levelName,
-			eixosProgress,
+			niveisProgress,
 			addPoints
 		},
 		children
@@ -24629,10 +24627,10 @@ function useAuthStore() {
 }
 //#endregion
 //#region src/lib/data.ts
-var axesData = [
+var niveisData = [
 	{
 		id: "I",
-		title: "Formação e Produção",
+		title: "Observador Certificado",
 		purpose: "Construir autoridade técnica.",
 		progress: 75,
 		icon: BookOpen,
@@ -24656,7 +24654,7 @@ var axesData = [
 	},
 	{
 		id: "II",
-		title: "Atuação e Impacto",
+		title: "Observador Certificado Pleno",
 		purpose: "Gerar transformação prática.",
 		progress: 40,
 		icon: Activity,
@@ -24680,7 +24678,7 @@ var axesData = [
 	},
 	{
 		id: "III",
-		title: "Representatividade e Liderança",
+		title: "Observador Certificado Mobilizador",
 		purpose: "Ocupação de espaços estratégicos e formação de novas lideranças.",
 		progress: 15,
 		icon: Users,
@@ -24707,49 +24705,49 @@ var rankingData = [
 	{
 		rank: 1,
 		name: "Carlos Silva",
-		level: "Mobilizador",
+		level: "Nível III - Observador Certificado Mobilizador",
 		points: 4500,
 		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=1"
 	},
 	{
 		rank: 2,
 		name: "Ana Souza",
-		level: "Mobilizador",
+		level: "Nível III - Observador Certificado Mobilizador",
 		points: 4320,
 		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=female&seed=2"
 	},
 	{
 		rank: 3,
 		name: "Roberto Almeida",
-		level: "Pleno",
+		level: "Nível II - Observador Certificado Pleno",
 		points: 3900,
 		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=3"
 	},
 	{
 		rank: 4,
 		name: "Mariana Costa",
-		level: "Pleno",
+		level: "Nível II - Observador Certificado Pleno",
 		points: 3750,
 		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=female&seed=4"
 	},
 	{
 		rank: 5,
 		name: "Fernando Lima",
-		level: "Pleno",
+		level: "Nível II - Observador Certificado Pleno",
 		points: 2800,
 		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=5"
 	},
 	{
 		rank: 6,
 		name: "Camila Barros",
-		level: "Pleno",
+		level: "Nível II - Observador Certificado Pleno",
 		points: 2650,
 		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=female&seed=6"
 	},
 	{
 		rank: 7,
 		name: "José Mendes",
-		level: "Iniciante",
+		level: "Nível I - Observador Certificado",
 		points: 1900,
 		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=7"
 	}
@@ -24759,7 +24757,7 @@ var submissionsData = [
 		id: "SUB-001",
 		date: "12/03/2026",
 		title: "Certificado Curso ABNT",
-		axis: "Eixo I",
+		axis: "Nível I",
 		status: "Aprovado",
 		points: 50
 	},
@@ -24767,7 +24765,7 @@ var submissionsData = [
 		id: "SUB-002",
 		date: "10/03/2026",
 		title: "Relatório de Palestra na Escola",
-		axis: "Eixo II",
+		axis: "Nível II",
 		status: "Em Análise",
 		points: "-"
 	},
@@ -24775,7 +24773,7 @@ var submissionsData = [
 		id: "SUB-003",
 		date: "05/03/2026",
 		title: "Artigo Revista Trânsito Seguro",
-		axis: "Eixo I",
+		axis: "Nível I",
 		status: "Aprovado",
 		points: 100
 	},
@@ -24783,7 +24781,7 @@ var submissionsData = [
 		id: "SUB-004",
 		date: "01/03/2026",
 		title: "Representação JARI",
-		axis: "Eixo III",
+		axis: "Nível III",
 		status: "Ajuste Necessário",
 		points: "-"
 	}
@@ -24797,7 +24795,7 @@ var mockAdminSubmissions = [
 		title: "Titulação (Doutorado)",
 		date: "12/03/2026",
 		status: "Em Análise",
-		axis: "Eixo I",
+		axis: "Nível I",
 		points: "-"
 	},
 	{
@@ -24806,7 +24804,7 @@ var mockAdminSubmissions = [
 		title: "Artigo Científico",
 		date: "11/03/2026",
 		status: "Em Análise",
-		axis: "Eixo I",
+		axis: "Nível I",
 		points: "-"
 	},
 	{
@@ -24815,7 +24813,7 @@ var mockAdminSubmissions = [
 		title: "Mentoria: Atuação formal",
 		date: "09/03/2026",
 		status: "Em Análise",
-		axis: "Eixo III",
+		axis: "Nível III",
 		points: "-"
 	}
 ];
@@ -25196,7 +25194,7 @@ Progress.displayName = Root$6.displayName;
 //#endregion
 //#region src/components/dashboard/AxesBadges.tsx
 function AxesBadges() {
-	const { eixosProgress } = useGameStore();
+	const { niveisProgress } = useGameStore();
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		"data-uid": "src/components/dashboard/AxesBadges.tsx:12:5",
 		"data-prohibitions": "[editContent]",
@@ -25214,10 +25212,10 @@ function AxesBadges() {
 				"data-uid": "src/components/dashboard/AxesBadges.tsx:16:9",
 				"data-prohibitions": "[editContent]",
 				className: "grid grid-cols-1 sm:grid-cols-3 gap-4",
-				children: eixosProgress.map((ep) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
+				children: niveisProgress.map((ep) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
 					"data-uid": "src/components/dashboard/AxesBadges.tsx:18:13",
 					"data-prohibitions": "[editContent]",
-					className: cn$1("border-l-4 shadow-sm transition-all hover:shadow-md", ep.level === "Mobilizador" ? "border-l-amber-500 bg-amber-50/40 dark:bg-amber-950/20" : ep.level === "Pleno" ? "border-l-blue-500 bg-blue-50/40 dark:bg-blue-950/20" : "border-l-muted bg-muted/20"),
+					className: cn$1("border-l-4 shadow-sm transition-all hover:shadow-md", ep.id === "III" ? "border-l-amber-500 bg-amber-50/40 dark:bg-amber-950/20" : ep.id === "II" ? "border-l-blue-500 bg-blue-50/40 dark:bg-blue-950/20" : "border-l-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20"),
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
 						"data-uid": "src/components/dashboard/AxesBadges.tsx:29:15",
 						"data-prohibitions": "[editContent]",
@@ -25225,12 +25223,12 @@ function AxesBadges() {
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 							"data-uid": "src/components/dashboard/AxesBadges.tsx:30:17",
 							"data-prohibitions": "[editContent]",
-							className: cn$1("p-3.5 rounded-full shadow-sm", ep.level === "Mobilizador" ? "bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400" : ep.level === "Pleno" ? "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400" : "bg-muted text-muted-foreground"),
-							children: ep.level === "Mobilizador" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Award, {
+							className: cn$1("p-3.5 rounded-full shadow-sm", ep.id === "III" ? "bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400" : ep.id === "II" ? "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400" : "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400"),
+							children: ep.status === "Concluído" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Award, {
 								"data-uid": "src/components/dashboard/AxesBadges.tsx:41:21",
 								"data-prohibitions": "[editContent]",
 								className: "w-7 h-7"
-							}) : ep.level === "Pleno" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShieldCheck, {
+							}) : ep.status === "Em Andamento" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShieldCheck, {
 								"data-uid": "src/components/dashboard/AxesBadges.tsx:43:21",
 								"data-prohibitions": "[editContent]",
 								className: "w-7 h-7"
@@ -25242,98 +25240,101 @@ function AxesBadges() {
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							"data-uid": "src/components/dashboard/AxesBadges.tsx:48:17",
 							"data-prohibitions": "[editContent]",
+							className: "min-w-0 flex-1",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 								"data-uid": "src/components/dashboard/AxesBadges.tsx:49:19",
 								"data-prohibitions": "[editContent]",
-								className: "text-xs font-bold text-muted-foreground uppercase tracking-wider",
+								className: "text-[10px] font-bold text-muted-foreground uppercase tracking-wider line-clamp-1",
+								title: `Nível ${ep.id} - ${ep.name}`,
 								children: [
-									"Eixo ",
+									"Nível ",
 									ep.id,
 									" - ",
 									ep.name
 								]
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								"data-uid": "src/components/dashboard/AxesBadges.tsx:52:19",
+								"data-uid": "src/components/dashboard/AxesBadges.tsx:55:19",
 								"data-prohibitions": "[editContent]",
-								className: "text-xl font-black text-foreground mt-0.5",
-								children: ep.level
+								className: "text-lg font-black text-foreground mt-0.5",
+								children: ep.status
 							})]
 						})]
 					})
 				}, ep.id))
 			})]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/dashboard/AxesBadges.tsx:61:7",
+			"data-uid": "src/components/dashboard/AxesBadges.tsx:64:7",
 			"data-prohibitions": "[editContent]",
 			className: "space-y-4",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-				"data-uid": "src/components/dashboard/AxesBadges.tsx:62:9",
+				"data-uid": "src/components/dashboard/AxesBadges.tsx:65:9",
 				"data-prohibitions": "[]",
 				className: "text-xl font-bold",
 				children: "Progresso das Missões"
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/dashboard/AxesBadges.tsx:63:9",
+				"data-uid": "src/components/dashboard/AxesBadges.tsx:66:9",
 				"data-prohibitions": "[editContent]",
 				className: "grid grid-cols-1 md:grid-cols-3 gap-6",
-				children: axesData.map((eixo) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-					"data-uid": "src/components/dashboard/AxesBadges.tsx:65:13",
+				children: niveisData.map((nivel) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+					"data-uid": "src/components/dashboard/AxesBadges.tsx:68:13",
 					"data-prohibitions": "[editContent]",
 					className: "hover:shadow-elevation transition-all border-border/60",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
-						"data-uid": "src/components/dashboard/AxesBadges.tsx:66:15",
+						"data-uid": "src/components/dashboard/AxesBadges.tsx:69:15",
 						"data-prohibitions": "[editContent]",
 						className: "pb-3",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/components/dashboard/AxesBadges.tsx:67:17",
+							"data-uid": "src/components/dashboard/AxesBadges.tsx:70:17",
 							"data-prohibitions": "[editContent]",
 							className: "flex items-center gap-3 mb-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/components/dashboard/AxesBadges.tsx:68:19",
+								"data-uid": "src/components/dashboard/AxesBadges.tsx:71:19",
 								"data-prohibitions": "[]",
 								className: "p-2 bg-primary/10 rounded-md text-primary shrink-0",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(eixo.icon, {
-									"data-uid": "src/components/dashboard/AxesBadges.tsx:69:21",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(nivel.icon, {
+									"data-uid": "src/components/dashboard/AxesBadges.tsx:72:21",
 									"data-prohibitions": "[editContent]",
 									className: "w-5 h-5"
 								})
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-								"data-uid": "src/components/dashboard/AxesBadges.tsx:71:19",
+								"data-uid": "src/components/dashboard/AxesBadges.tsx:74:19",
 								"data-prohibitions": "[editContent]",
 								className: "text-sm font-bold text-muted-foreground uppercase tracking-wider",
-								children: ["Eixo ", eixo.id]
+								children: ["Nível ", nivel.id]
 							})]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
-							"data-uid": "src/components/dashboard/AxesBadges.tsx:75:17",
+							"data-uid": "src/components/dashboard/AxesBadges.tsx:78:17",
 							"data-prohibitions": "[editContent]",
-							className: "text-base leading-tight",
-							children: eixo.title
+							className: "text-base leading-tight truncate",
+							title: nivel.title,
+							children: nivel.title
 						})]
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-						"data-uid": "src/components/dashboard/AxesBadges.tsx:77:15",
+						"data-uid": "src/components/dashboard/AxesBadges.tsx:82:15",
 						"data-prohibitions": "[editContent]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/components/dashboard/AxesBadges.tsx:78:17",
+							"data-uid": "src/components/dashboard/AxesBadges.tsx:83:17",
 							"data-prohibitions": "[editContent]",
 							className: "flex justify-between text-sm mb-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								"data-uid": "src/components/dashboard/AxesBadges.tsx:79:19",
+								"data-uid": "src/components/dashboard/AxesBadges.tsx:84:19",
 								"data-prohibitions": "[]",
 								className: "text-muted-foreground",
 								children: "Progresso"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-								"data-uid": "src/components/dashboard/AxesBadges.tsx:80:19",
+								"data-uid": "src/components/dashboard/AxesBadges.tsx:85:19",
 								"data-prohibitions": "[editContent]",
 								className: "font-bold text-primary",
-								children: [eixo.progress, "%"]
+								children: [nivel.progress, "%"]
 							})]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Progress, {
-							"data-uid": "src/components/dashboard/AxesBadges.tsx:82:17",
+							"data-uid": "src/components/dashboard/AxesBadges.tsx:87:17",
 							"data-prohibitions": "[editContent]",
-							value: eixo.progress,
+							value: nivel.progress,
 							className: "h-2.5 bg-muted/50"
 						})]
 					})]
-				}, eixo.id))
+				}, nivel.id))
 			})]
 		})]
 	});
@@ -25360,112 +25361,111 @@ function Badge({ className, variant, ...props }) {
 //#endregion
 //#region src/components/dashboard/EvolutionSimulator.tsx
 function EvolutionSimulator() {
-	const { eixosProgress } = useGameStore();
-	const getRecommendation = (eixoId, currentLevel, points) => {
-		if (currentLevel === "Mobilizador") return {
-			msg: "Nível Máximo Atingido!",
-			target: "Manter engajamento contínuo na rede",
-			percent: 100
+	const { niveisProgress } = useGameStore();
+	const getRecommendation = (id, status, points) => {
+		if (id === "III") return {
+			msg: "Foco em Representatividade",
+			target: "Manter engajamento contínuo na rede e atuar como mentor",
+			percent: Math.min(100, Math.round(points / 1e3 * 100))
 		};
-		if (currentLevel === "Pleno") {
+		if (id === "II") {
 			const needed = 500 - points;
-			let action = needed > 100 ? `Faltam ${Math.ceil(needed / 150)} projetos de impacto para o Nível Mobilizador` : `Faltam ${Math.ceil(needed / 50)} publicações para o Nível Mobilizador`;
-			if (eixoId === "III") action = `Faltam ${Math.ceil(needed / 100)} representações em comitês para o Nível Mobilizador`;
+			let action = `Faltam ${Math.ceil(needed / 150)} projetos de impacto`;
 			return {
-				msg: `Faltam ${needed} pts para Mobilizador`,
-				target: action,
-				percent: Math.round(points / 500 * 100)
+				msg: `Faltam ${needed > 0 ? needed : 0} pts para concluir o Nível II`,
+				target: needed > 0 ? action : "Meta Atingida",
+				percent: Math.min(100, Math.round(points / 500 * 100))
 			};
 		}
 		const needed = 200 - points;
-		let action = `Faltam ${Math.ceil(needed / 50)} cursos para o Nível Pleno`;
-		if (eixoId === "III") action = `Faltam ${Math.ceil(needed / 200)} mentorias para o Nível Pleno`;
+		let action = `Faltam ${Math.ceil(needed / 50)} cursos ou publicações`;
 		return {
-			msg: `Faltam ${needed} pts para Pleno`,
-			target: action,
-			percent: Math.round(points / 200 * 100)
+			msg: `Faltam ${needed > 0 ? needed : 0} pts para concluir o Nível I`,
+			target: needed > 0 ? action : "Meta Atingida",
+			percent: Math.min(100, Math.round(points / 200 * 100))
 		};
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-		"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:46:5",
+		"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:38:5",
 		"data-prohibitions": "[editContent]",
 		className: "shadow-subtle border-border/60",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-			"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:47:7",
+			"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:39:7",
 			"data-prohibitions": "[]",
 			className: "bg-primary/5 border-b border-border/30",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-				"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:48:9",
+				"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:40:9",
 				"data-prohibitions": "[]",
 				className: "text-lg flex items-center gap-2 text-primary",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Target, {
-					"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:49:11",
+					"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:41:11",
 					"data-prohibitions": "[editContent]",
 					className: "w-5 h-5"
 				}), " Simulador de Evolução"]
 			})
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-			"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:52:7",
+			"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:44:7",
 			"data-prohibitions": "[editContent]",
 			className: "pt-6",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:53:9",
+				"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:45:9",
 				"data-prohibitions": "[editContent]",
 				className: "grid grid-cols-1 md:grid-cols-3 gap-6",
-				children: eixosProgress.map((eixo) => {
-					const rec = getRecommendation(eixo.id, eixo.level, eixo.points);
+				children: niveisProgress.map((nivel) => {
+					const rec = getRecommendation(nivel.id, nivel.status, nivel.points);
 					return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:57:15",
+						"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:49:15",
 						"data-prohibitions": "[editContent]",
 						className: "flex flex-col space-y-3 p-4 bg-muted/30 rounded-xl border border-border/50 shadow-sm hover:border-primary/30 transition-colors",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:61:17",
+								"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:53:17",
 								"data-prohibitions": "[editContent]",
-								className: "flex justify-between items-start",
+								className: "flex justify-between items-start gap-2",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h4", {
-									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:62:19",
+									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:54:19",
 									"data-prohibitions": "[editContent]",
-									className: "font-bold text-sm text-foreground",
+									className: "font-bold text-sm text-foreground line-clamp-2",
+									title: `Nível ${nivel.id} - ${nivel.name}`,
 									children: [
-										"Eixo ",
-										eixo.id,
+										"Nível ",
+										nivel.id,
 										" - ",
-										eixo.name
+										nivel.name
 									]
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
-									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:65:19",
+									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:60:19",
 									"data-prohibitions": "[editContent]",
 									variant: "outline",
-									className: "text-[10px] font-bold uppercase shrink-0",
-									children: eixo.level
+									className: "text-[9px] font-bold uppercase shrink-0",
+									children: nivel.status
 								})]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Progress, {
-								"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:69:17",
+								"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:64:17",
 								"data-prohibitions": "[editContent]",
 								value: rec.percent,
 								className: "h-2 bg-muted-foreground/20"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:70:17",
+								"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:65:17",
 								"data-prohibitions": "[editContent]",
 								className: "text-sm flex-1 flex flex-col justify-between",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:71:19",
+									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:66:19",
 									"data-prohibitions": "[editContent]",
 									className: "font-semibold text-foreground/80 mb-2",
 									children: rec.msg
 								}), rec.percent < 100 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:73:21",
+									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:68:21",
 									"data-prohibitions": "[editContent]",
 									className: "text-xs text-muted-foreground flex items-start gap-2 bg-background p-3 rounded-md border border-border/60 shadow-sm mt-2",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Zap, {
-										"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:74:23",
+										"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:69:23",
 										"data-prohibitions": "[editContent]",
 										className: "w-4 h-4 text-amber-500 shrink-0 mt-0.5"
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:75:23",
+										"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:70:23",
 										"data-prohibitions": "[editContent]",
 										className: "leading-relaxed font-medium text-foreground",
 										children: rec.target
@@ -25473,7 +25473,7 @@ function EvolutionSimulator() {
 								})]
 							})
 						]
-					}, eixo.id);
+					}, nivel.id);
 				})
 			})
 		})]
@@ -27407,11 +27407,12 @@ function HighlightsMural() {
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										"data-uid": "src/components/dashboard/HighlightsMural.tsx:50:19",
 										"data-prohibitions": "[editContent]",
-										className: "text-[10px] font-semibold uppercase tracking-wider text-muted-foreground bg-secondary/10 px-2 py-0.5 rounded-full mt-1.5",
+										className: "text-[9px] font-semibold uppercase tracking-wider text-muted-foreground bg-secondary/10 px-1.5 py-0.5 rounded-full mt-1.5 line-clamp-1",
+										title: user.level,
 										children: user.level
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-										"data-uid": "src/components/dashboard/HighlightsMural.tsx:53:19",
+										"data-uid": "src/components/dashboard/HighlightsMural.tsx:56:19",
 										"data-prohibitions": "[editContent]",
 										className: "text-sm font-black mt-2 text-foreground/80",
 										children: [user.points, " pts"]
@@ -27421,12 +27422,12 @@ function HighlightsMural() {
 						}, user.rank))
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CarouselPrevious, {
-						"data-uid": "src/components/dashboard/HighlightsMural.tsx:60:11",
+						"data-uid": "src/components/dashboard/HighlightsMural.tsx:63:11",
 						"data-prohibitions": "[editContent]",
 						className: "-left-6 md:-left-8 bg-background border-border/50"
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CarouselNext, {
-						"data-uid": "src/components/dashboard/HighlightsMural.tsx:61:11",
+						"data-uid": "src/components/dashboard/HighlightsMural.tsx:64:11",
 						"data-prohibitions": "[editContent]",
 						className: "-right-6 md:-right-8 bg-background border-border/50"
 					})
@@ -27442,11 +27443,11 @@ var newsFeedData = [
 		id: 1,
 		title: "Novas Diretrizes de Submissão 2026",
 		date: "10/03/2026",
-		content: "Atualizamos o playbook do Eixo II. Projetos locais agora contam com avaliação acelerada e bônus de pontuação."
+		content: "Atualizamos o playbook do Nível II. Projetos locais agora contam com avaliação acelerada e bônus de pontuação."
 	},
 	{
 		id: 2,
-		title: "Webinar: Como alcançar o nível Mobilizador",
+		title: "Webinar: Como alcançar o Nível III - Mobilizador",
 		date: "08/03/2026",
 		content: "Participe do nosso encontro na próxima terça-feira e descubra as melhores estratégias de impacto institucional."
 	},
@@ -29924,22 +29925,22 @@ var eixo3Playbook = [{
 }];
 var competencyMatrixData = [
 	{
-		eixo: "Formação (Eixo I)",
-		iniciante: "Cursos e especialização.",
-		pleno: "Publicações e produção validada.",
-		mobilizador: "Produção de referência (livro, e-book, inovação estrutural)."
+		pilar: "Formação",
+		nivel1: "Cursos e especialização.",
+		nivel2: "Publicações e produção validada.",
+		nivel3: "Produção de referência (livro, e-book, inovação estrutural)."
 	},
 	{
-		eixo: "Atuação (Eixo II)",
-		iniciante: "Participação em ações e engajamento básico.",
-		pleno: "Execução de projetos estruturados e impacto local mensurável.",
-		mobilizador: "Liderança de projetos em larga escala (Nacional/Internacional)."
+		pilar: "Atuação",
+		nivel1: "Participação em ações e engajamento básico.",
+		nivel2: "Execução de projetos estruturados e impacto local mensurável.",
+		nivel3: "Liderança de projetos em larga escala (Nacional/Internacional)."
 	},
 	{
-		eixo: "Liderança (Eixo III)",
-		iniciante: "Representação pontual e voluntariado.",
-		pleno: "Representação recorrente institucional.",
-		mobilizador: "Mentoria, coordenação estratégica e conselhos diretores."
+		pilar: "Representatividade",
+		nivel1: "Representação pontual e voluntariado.",
+		nivel2: "Representação recorrente institucional.",
+		nivel3: "Mentoria, coordenação estratégica e conselhos diretores."
 	}
 ];
 //#endregion
@@ -29984,7 +29985,7 @@ function CompetencyMatrix() {
 								"data-uid": "src/components/axes/CompetencyMatrix.tsx:26:15",
 								"data-prohibitions": "[]",
 								className: "w-1/4 font-black text-foreground pl-6",
-								children: "Eixos"
+								children: "Pilares"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
 								"data-uid": "src/components/axes/CompetencyMatrix.tsx:27:15",
@@ -30006,7 +30007,7 @@ function CompetencyMatrix() {
 											"data-uid": "src/components/axes/CompetencyMatrix.tsx:31:21",
 											"data-prohibitions": "[]",
 											className: "font-bold text-foreground",
-											children: "Iniciante"
+											children: "Nível I"
 										})]
 									})
 								})
@@ -30033,7 +30034,7 @@ function CompetencyMatrix() {
 											"data-uid": "src/components/axes/CompetencyMatrix.tsx:43:21",
 											"data-prohibitions": "[]",
 											className: "font-bold text-foreground",
-											children: "Pleno"
+											children: "Nível II"
 										})]
 									})
 								})
@@ -30060,7 +30061,7 @@ function CompetencyMatrix() {
 											"data-uid": "src/components/axes/CompetencyMatrix.tsx:55:21",
 											"data-prohibitions": "[]",
 											className: "font-bold text-foreground",
-											children: "Mobilizador"
+											children: "Nível III"
 										})]
 									})
 								})
@@ -30079,25 +30080,25 @@ function CompetencyMatrix() {
 								"data-uid": "src/components/axes/CompetencyMatrix.tsx:64:17",
 								"data-prohibitions": "[editContent]",
 								className: "font-bold text-muted-foreground pl-6 align-top",
-								children: row.eixo
+								children: row.pilar
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
 								"data-uid": "src/components/axes/CompetencyMatrix.tsx:67:17",
 								"data-prohibitions": "[editContent]",
 								className: "text-sm align-top leading-relaxed text-muted-foreground",
-								children: row.iniciante
+								children: row.nivel1
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
 								"data-uid": "src/components/axes/CompetencyMatrix.tsx:70:17",
 								"data-prohibitions": "[editContent]",
 								className: "text-sm align-top leading-relaxed text-muted-foreground",
-								children: row.pleno
+								children: row.nivel2
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
 								"data-uid": "src/components/axes/CompetencyMatrix.tsx:73:17",
 								"data-prohibitions": "[editContent]",
 								className: "text-sm align-top leading-relaxed pr-6 text-foreground font-medium",
-								children: row.mobilizador
+								children: row.nivel3
 							})
 						]
 					}, idx))
@@ -30122,7 +30123,7 @@ function Axes() {
 					"data-uid": "src/pages/Axes.tsx:22:9",
 					"data-prohibitions": "[]",
 					className: "text-3xl font-bold tracking-tight",
-					children: "Eixos de Evolução"
+					children: "Níveis de Evolução"
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 					"data-uid": "src/pages/Axes.tsx:23:9",
 					"data-prohibitions": "[]",
@@ -30138,79 +30139,84 @@ function Axes() {
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsList, {
 					"data-uid": "src/pages/Axes.tsx:29:9",
 					"data-prohibitions": "[editContent]",
-					className: "grid w-full grid-cols-3 mb-8 bg-muted/60 p-1.5 rounded-lg h-auto",
-					children: axesData.map((eixo) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TabsTrigger, {
+					className: "grid w-full grid-cols-1 md:grid-cols-3 mb-8 bg-muted/60 p-1.5 rounded-lg h-auto gap-2 md:gap-0",
+					children: niveisData.map((nivel) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TabsTrigger, {
 						"data-uid": "src/pages/Axes.tsx:31:13",
 						"data-prohibitions": "[editContent]",
-						value: eixo.id,
-						className: "text-sm md:text-base py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all",
-						children: [
-							"Eixo ",
-							eixo.id,
-							" ",
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-								"data-uid": "src/pages/Axes.tsx:36:30",
-								"data-prohibitions": "[editContent]",
-								className: "hidden md:inline ml-2",
-								children: ["- ", eixo.title]
-							})
-						]
-					}, eixo.id))
-				}), axesData.map((eixo) => {
-					const isAmber = eixo.id === "III";
-					const isBlue = eixo.id === "II";
+						value: nivel.id,
+						className: "text-sm md:text-base py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all flex-col xl:flex-row",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+							"data-uid": "src/pages/Axes.tsx:36:15",
+							"data-prohibitions": "[editContent]",
+							className: "whitespace-nowrap",
+							children: ["Nível ", nivel.id]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+							"data-uid": "src/pages/Axes.tsx:37:15",
+							"data-prohibitions": "[editContent]",
+							className: "hidden md:inline ml-1 opacity-90 font-normal truncate max-w-full text-xs xl:text-sm",
+							children: ["- ", nivel.title]
+						})]
+					}, nivel.id))
+				}), niveisData.map((nivel) => {
+					const isAmber = nivel.id === "III";
+					const isBlue = nivel.id === "II";
 					return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TabsContent, {
-						"data-uid": "src/pages/Axes.tsx:46:13",
+						"data-uid": "src/pages/Axes.tsx:49:13",
 						"data-prohibitions": "[editContent]",
-						value: eixo.id,
+						value: nivel.id,
 						className: "space-y-6 outline-none animate-slide-up",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/pages/Axes.tsx:51:15",
+							"data-uid": "src/pages/Axes.tsx:54:15",
 							"data-prohibitions": "[editContent]",
 							className: cn$1("p-6 md:p-8 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border", isAmber ? "bg-amber-50 text-amber-950 border-amber-200 dark:bg-amber-950/20 dark:text-amber-50 dark:border-amber-900/50" : isBlue ? "bg-blue-50 text-blue-950 border-blue-200 dark:bg-blue-950/20 dark:text-blue-50 dark:border-blue-900/50" : "bg-emerald-50 text-emerald-950 border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-50 dark:border-emerald-900/50"),
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/pages/Axes.tsx:61:17",
+								"data-uid": "src/pages/Axes.tsx:64:17",
 								"data-prohibitions": "[editContent]",
 								className: cn$1("p-4 rounded-2xl shrink-0", isAmber ? "bg-amber-200 dark:bg-amber-900/50 text-amber-700 dark:text-amber-400" : isBlue ? "bg-blue-200 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400" : "bg-emerald-200 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400"),
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(eixo.icon, {
-									"data-uid": "src/pages/Axes.tsx:71:19",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(nivel.icon, {
+									"data-uid": "src/pages/Axes.tsx:74:19",
 									"data-prohibitions": "[editContent]",
 									className: "w-10 h-10"
 								})
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/pages/Axes.tsx:73:17",
+								"data-uid": "src/pages/Axes.tsx:76:17",
 								"data-prohibitions": "[editContent]",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-									"data-uid": "src/pages/Axes.tsx:74:19",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
+									"data-uid": "src/pages/Axes.tsx:77:19",
 									"data-prohibitions": "[editContent]",
 									className: "text-2xl font-bold tracking-tight",
-									children: eixo.title
+									children: [
+										"Nível ",
+										nivel.id,
+										" - ",
+										nivel.title
+									]
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-									"data-uid": "src/pages/Axes.tsx:75:19",
+									"data-uid": "src/pages/Axes.tsx:80:19",
 									"data-prohibitions": "[editContent]",
 									className: "opacity-80 mt-2 text-lg",
-									children: eixo.purpose
+									children: nivel.purpose
 								})]
 							})]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							"data-uid": "src/pages/Axes.tsx:79:15",
+							"data-uid": "src/pages/Axes.tsx:84:15",
 							"data-prohibitions": "[editContent]",
 							className: "grid gap-6 md:grid-cols-2 lg:grid-cols-3",
-							children: eixo.items.map((item, idx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-								"data-uid": "src/pages/Axes.tsx:81:19",
+							children: nivel.items.map((item, idx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+								"data-uid": "src/pages/Axes.tsx:86:19",
 								"data-prohibitions": "[editContent]",
 								className: cn$1("flex flex-col border-border/80 hover:shadow-subtle transition-all duration-300", isAmber && "hover:border-amber-500/50", isBlue && "hover:border-blue-500/50", !isAmber && !isBlue && "hover:border-emerald-500/50"),
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
-										"data-uid": "src/pages/Axes.tsx:90:21",
+										"data-uid": "src/pages/Axes.tsx:95:21",
 										"data-prohibitions": "[editContent]",
 										className: "pb-4",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											"data-uid": "src/pages/Axes.tsx:91:23",
+											"data-uid": "src/pages/Axes.tsx:96:23",
 											"data-prohibitions": "[editContent]",
 											className: "flex justify-between items-start mb-3",
 											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
-												"data-uid": "src/pages/Axes.tsx:92:25",
+												"data-uid": "src/pages/Axes.tsx:97:25",
 												"data-prohibitions": "[editContent]",
 												variant: "secondary",
 												className: cn$1("font-bold px-3 py-1 text-sm border", isAmber ? "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400" : isBlue ? "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400" : "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400"),
@@ -30220,34 +30226,34 @@ function Axes() {
 													" pts"
 												]
 											}), idx === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleCheckBig, {
-												"data-uid": "src/pages/Axes.tsx:106:27",
+												"data-uid": "src/pages/Axes.tsx:111:27",
 												"data-prohibitions": "[editContent]",
 												className: cn$1("w-6 h-6 drop-shadow-sm", isAmber ? "text-amber-600" : isBlue ? "text-blue-600" : "text-emerald-600")
 											}) : null]
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
-											"data-uid": "src/pages/Axes.tsx:118:23",
+											"data-uid": "src/pages/Axes.tsx:123:23",
 											"data-prohibitions": "[editContent]",
 											className: "text-xl leading-tight",
 											children: item.title
 										})]
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-										"data-uid": "src/pages/Axes.tsx:120:21",
+										"data-uid": "src/pages/Axes.tsx:125:21",
 										"data-prohibitions": "[editContent]",
 										className: "flex-1",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-											"data-uid": "src/pages/Axes.tsx:121:23",
+											"data-uid": "src/pages/Axes.tsx:126:23",
 											"data-prohibitions": "[editContent]",
 											className: "text-muted-foreground text-sm leading-relaxed",
 											children: item.desc
 										})
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardFooter, {
-										"data-uid": "src/pages/Axes.tsx:123:21",
+										"data-uid": "src/pages/Axes.tsx:128:21",
 										"data-prohibitions": "[editContent]",
 										className: "pt-2",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-											"data-uid": "src/pages/Axes.tsx:124:23",
+											"data-uid": "src/pages/Axes.tsx:129:23",
 											"data-prohibitions": "[editContent]",
 											variant: idx === 0 ? "outline" : "default",
 											className: cn$1("w-full font-semibold", idx !== 0 && isAmber && "bg-amber-600 hover:bg-amber-700 text-white", idx !== 0 && isBlue && "bg-blue-600 hover:bg-blue-700 text-white", idx !== 0 && !isAmber && !isBlue && "bg-emerald-600 hover:bg-emerald-700 text-white"),
@@ -30255,10 +30261,10 @@ function Axes() {
 											onClick: () => setSelectedItem({
 												title: item.title,
 												points: item.points,
-												axis: `Eixo ${eixo.id}`
+												axis: `Nível ${nivel.id}`
 											}),
 											children: idx === 0 ? "Missão Concluída" : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CirclePlus, {
-												"data-uid": "src/pages/Axes.tsx:148:29",
+												"data-uid": "src/pages/Axes.tsx:153:29",
 												"data-prohibitions": "[editContent]",
 												className: "w-4 h-4 mr-2"
 											}), " Submeter Prova"] })
@@ -30267,15 +30273,15 @@ function Axes() {
 								]
 							}, idx))
 						})]
-					}, eixo.id);
+					}, nivel.id);
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CompetencyMatrix, {
-				"data-uid": "src/pages/Axes.tsx:161:7",
+				"data-uid": "src/pages/Axes.tsx:166:7",
 				"data-prohibitions": "[editContent]"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SubmitEvidenceDialog, {
-				"data-uid": "src/pages/Axes.tsx:163:7",
+				"data-uid": "src/pages/Axes.tsx:168:7",
 				"data-prohibitions": "[editContent]",
 				isOpen: !!selectedItem,
 				onClose: () => setSelectedItem(null),
@@ -30311,7 +30317,7 @@ function PlaybookEixo1({ onSelect }) {
 					"data-uid": "src/components/submissions/PlaybookEixo1.tsx:19:11",
 					"data-prohibitions": "[]",
 					className: "text-2xl font-bold tracking-tight",
-					children: "Playbook Eixo I: Formação e Conhecimento"
+					children: "Playbook Nível I: Observador Certificado"
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 					"data-uid": "src/components/submissions/PlaybookEixo1.tsx:22:11",
 					"data-prohibitions": "[]",
@@ -30386,7 +30392,7 @@ function PlaybookEixo1({ onSelect }) {
 								onClick: () => onSelect({
 									title: item.text,
 									points: item.points,
-									axis: "Eixo I: Formação e Conhecimento"
+									axis: "Nível I: Observador Certificado"
 								}),
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Upload, {
 									"data-uid": "src/components/submissions/PlaybookEixo1.tsx:67:23",
@@ -30404,87 +30410,101 @@ function PlaybookEixo1({ onSelect }) {
 //#endregion
 //#region src/components/submissions/PlaybookEixo2.tsx
 function PlaybookEixo2({ onSelect }) {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		"data-uid": "src/components/submissions/PlaybookEixo2.tsx:13:5",
 		"data-prohibitions": "[editContent]",
 		className: "space-y-8 animate-slide-up outline-none",
-		children: eixo2Playbook.map((category, cIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/submissions/PlaybookEixo2.tsx:15:9",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			"data-uid": "src/components/submissions/PlaybookEixo2.tsx:14:7",
+			"data-prohibitions": "[]",
+			className: "bg-blue-50 text-blue-950 dark:bg-blue-950/20 dark:text-blue-50 p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border border-blue-200 dark:border-blue-900/50",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"data-uid": "src/components/submissions/PlaybookEixo2.tsx:15:9",
+				"data-prohibitions": "[]",
+				className: "p-4 bg-blue-100 dark:bg-blue-900/50 rounded-2xl shrink-0",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Activity, {
+					"data-uid": "src/components/submissions/PlaybookEixo2.tsx:16:11",
+					"data-prohibitions": "[editContent]",
+					className: "w-10 h-10 text-blue-600 dark:text-blue-400"
+				})
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				"data-uid": "src/components/submissions/PlaybookEixo2.tsx:18:9",
+				"data-prohibitions": "[]",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+					"data-uid": "src/components/submissions/PlaybookEixo2.tsx:19:11",
+					"data-prohibitions": "[]",
+					className: "text-xl md:text-2xl font-bold tracking-tight",
+					children: "Playbook Nível II: Observador Certificado Pleno"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					"data-uid": "src/components/submissions/PlaybookEixo2.tsx:22:11",
+					"data-prohibitions": "[]",
+					className: "opacity-90 mt-2 text-base md:text-lg",
+					children: "Expanda o alcance da segurança viária através de ações estruturantes, educação e comunicação."
+				})]
+			})]
+		}), eixo2Playbook.map((category, cIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			"data-uid": "src/components/submissions/PlaybookEixo2.tsx:30:9",
 			"data-prohibitions": "[editContent]",
 			className: "space-y-6",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/submissions/PlaybookEixo2.tsx:16:11",
+				"data-uid": "src/components/submissions/PlaybookEixo2.tsx:31:11",
 				"data-prohibitions": "[editContent]",
-				className: "bg-blue-50 text-blue-950 dark:bg-blue-950/20 dark:text-blue-50 p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border border-blue-200 dark:border-blue-900/50",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					"data-uid": "src/components/submissions/PlaybookEixo2.tsx:17:13",
-					"data-prohibitions": "[]",
-					className: "p-4 bg-blue-100 dark:bg-blue-900/50 rounded-2xl shrink-0",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Activity, {
-						"data-uid": "src/components/submissions/PlaybookEixo2.tsx:18:15",
-						"data-prohibitions": "[editContent]",
-						className: "w-10 h-10 text-blue-600 dark:text-blue-400"
-					})
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/submissions/PlaybookEixo2.tsx:20:13",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+					"data-uid": "src/components/submissions/PlaybookEixo2.tsx:32:13",
 					"data-prohibitions": "[editContent]",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-						"data-uid": "src/components/submissions/PlaybookEixo2.tsx:21:15",
-						"data-prohibitions": "[editContent]",
-						className: "text-xl md:text-2xl font-bold tracking-tight",
-						children: category.mainTitle
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						"data-uid": "src/components/submissions/PlaybookEixo2.tsx:22:15",
-						"data-prohibitions": "[editContent]",
-						className: "opacity-90 mt-2 text-base md:text-lg",
-						children: category.desc
-					})]
+					className: "text-xl font-bold tracking-tight border-b pb-2 mb-4",
+					children: category.mainTitle
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					"data-uid": "src/components/submissions/PlaybookEixo2.tsx:35:13",
+					"data-prohibitions": "[editContent]",
+					className: "text-muted-foreground",
+					children: category.desc
 				})]
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/submissions/PlaybookEixo2.tsx:26:11",
+				"data-uid": "src/components/submissions/PlaybookEixo2.tsx:38:11",
 				"data-prohibitions": "[editContent]",
 				className: "grid gap-6",
 				children: category.groups.map((group, gIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-					"data-uid": "src/components/submissions/PlaybookEixo2.tsx:28:15",
+					"data-uid": "src/components/submissions/PlaybookEixo2.tsx:40:15",
 					"data-prohibitions": "[editContent]",
 					className: "overflow-hidden border-border/60 shadow-subtle",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-						"data-uid": "src/components/submissions/PlaybookEixo2.tsx:29:17",
+						"data-uid": "src/components/submissions/PlaybookEixo2.tsx:41:17",
 						"data-prohibitions": "[editContent]",
 						className: "bg-muted/30 border-b border-border/50 py-4",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-							"data-uid": "src/components/submissions/PlaybookEixo2.tsx:30:19",
+							"data-uid": "src/components/submissions/PlaybookEixo2.tsx:42:19",
 							"data-prohibitions": "[editContent]",
 							className: "text-lg flex flex-wrap items-baseline gap-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								"data-uid": "src/components/submissions/PlaybookEixo2.tsx:31:21",
+								"data-uid": "src/components/submissions/PlaybookEixo2.tsx:43:21",
 								"data-prohibitions": "[editContent]",
 								children: group.title
 							}), group.desc && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								"data-uid": "src/components/submissions/PlaybookEixo2.tsx:33:23",
+								"data-uid": "src/components/submissions/PlaybookEixo2.tsx:45:23",
 								"data-prohibitions": "[editContent]",
 								className: "text-muted-foreground font-normal text-sm md:text-base",
 								children: group.desc
 							})]
 						})
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-						"data-uid": "src/components/submissions/PlaybookEixo2.tsx:39:17",
+						"data-uid": "src/components/submissions/PlaybookEixo2.tsx:51:17",
 						"data-prohibitions": "[editContent]",
 						className: "p-0",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							"data-uid": "src/components/submissions/PlaybookEixo2.tsx:40:19",
+							"data-uid": "src/components/submissions/PlaybookEixo2.tsx:52:19",
 							"data-prohibitions": "[editContent]",
 							className: "divide-y divide-border/50",
 							children: group.items.map((item, iIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/submissions/PlaybookEixo2.tsx:42:23",
+								"data-uid": "src/components/submissions/PlaybookEixo2.tsx:54:23",
 								"data-prohibitions": "[editContent]",
 								className: "flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-muted/20 transition-colors",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									"data-uid": "src/components/submissions/PlaybookEixo2.tsx:46:25",
+									"data-uid": "src/components/submissions/PlaybookEixo2.tsx:58:25",
 									"data-prohibitions": "[editContent]",
 									className: "flex items-center gap-3",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
-										"data-uid": "src/components/submissions/PlaybookEixo2.tsx:47:27",
+										"data-uid": "src/components/submissions/PlaybookEixo2.tsx:59:27",
 										"data-prohibitions": "[editContent]",
 										className: "bg-blue-600 hover:bg-blue-700 text-white font-mono px-2 py-0.5 rounded shadow-sm whitespace-nowrap",
 										children: [
@@ -30493,13 +30513,13 @@ function PlaybookEixo2({ onSelect }) {
 											" pts]"
 										]
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/components/submissions/PlaybookEixo2.tsx:50:27",
+										"data-uid": "src/components/submissions/PlaybookEixo2.tsx:62:27",
 										"data-prohibitions": "[editContent]",
 										className: "font-medium text-sm md:text-base",
 										children: item.text
 									})]
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-									"data-uid": "src/components/submissions/PlaybookEixo2.tsx:52:25",
+									"data-uid": "src/components/submissions/PlaybookEixo2.tsx:64:25",
 									"data-prohibitions": "[]",
 									variant: "outline",
 									size: "sm",
@@ -30507,10 +30527,10 @@ function PlaybookEixo2({ onSelect }) {
 									onClick: () => onSelect({
 										title: item.text,
 										points: item.points,
-										axis: `Eixo II: ${category.mainTitle}`
+										axis: `Nível II: Observador Certificado Pleno`
 									}),
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Upload, {
-										"data-uid": "src/components/submissions/PlaybookEixo2.tsx:64:27",
+										"data-uid": "src/components/submissions/PlaybookEixo2.tsx:76:27",
 										"data-prohibitions": "[editContent]",
 										className: "w-4 h-4 mr-2"
 									}), "Upload"]
@@ -30520,93 +30540,107 @@ function PlaybookEixo2({ onSelect }) {
 					})]
 				}, gIdx))
 			})]
-		}, cIdx))
+		}, cIdx))]
 	});
 }
 //#endregion
 //#region src/components/submissions/PlaybookEixo3.tsx
 function PlaybookEixo3({ onSelect }) {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		"data-uid": "src/components/submissions/PlaybookEixo3.tsx:13:5",
 		"data-prohibitions": "[editContent]",
 		className: "space-y-8 animate-slide-up outline-none",
-		children: eixo3Playbook.map((category, cIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/submissions/PlaybookEixo3.tsx:15:9",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			"data-uid": "src/components/submissions/PlaybookEixo3.tsx:14:7",
+			"data-prohibitions": "[]",
+			className: "bg-amber-50 text-amber-950 dark:bg-amber-950/20 dark:text-amber-50 p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border border-amber-200 dark:border-amber-900/50",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"data-uid": "src/components/submissions/PlaybookEixo3.tsx:15:9",
+				"data-prohibitions": "[]",
+				className: "p-4 bg-amber-200 dark:bg-amber-900/50 rounded-2xl shrink-0",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Flag, {
+					"data-uid": "src/components/submissions/PlaybookEixo3.tsx:16:11",
+					"data-prohibitions": "[editContent]",
+					className: "w-10 h-10 text-amber-700 dark:text-amber-400"
+				})
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				"data-uid": "src/components/submissions/PlaybookEixo3.tsx:18:9",
+				"data-prohibitions": "[]",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+					"data-uid": "src/components/submissions/PlaybookEixo3.tsx:19:11",
+					"data-prohibitions": "[]",
+					className: "text-xl md:text-2xl font-bold tracking-tight",
+					children: "Playbook Nível III: Observador Certificado Mobilizador"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					"data-uid": "src/components/submissions/PlaybookEixo3.tsx:22:11",
+					"data-prohibitions": "[]",
+					className: "opacity-90 mt-2 text-base md:text-lg",
+					children: "Ocupação de espaços estratégicos e formação de novas lideranças na segurança viária."
+				})]
+			})]
+		}), eixo3Playbook.map((category, cIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			"data-uid": "src/components/submissions/PlaybookEixo3.tsx:29:9",
 			"data-prohibitions": "[editContent]",
 			className: "space-y-6",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/submissions/PlaybookEixo3.tsx:16:11",
+				"data-uid": "src/components/submissions/PlaybookEixo3.tsx:30:11",
 				"data-prohibitions": "[editContent]",
-				className: "bg-amber-50 text-amber-950 dark:bg-amber-950/20 dark:text-amber-50 p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border border-amber-200 dark:border-amber-900/50",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					"data-uid": "src/components/submissions/PlaybookEixo3.tsx:17:13",
-					"data-prohibitions": "[]",
-					className: "p-4 bg-amber-200 dark:bg-amber-900/50 rounded-2xl shrink-0",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Flag, {
-						"data-uid": "src/components/submissions/PlaybookEixo3.tsx:18:15",
-						"data-prohibitions": "[editContent]",
-						className: "w-10 h-10 text-amber-700 dark:text-amber-400"
-					})
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/submissions/PlaybookEixo3.tsx:20:13",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+					"data-uid": "src/components/submissions/PlaybookEixo3.tsx:31:13",
 					"data-prohibitions": "[editContent]",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-						"data-uid": "src/components/submissions/PlaybookEixo3.tsx:21:15",
-						"data-prohibitions": "[editContent]",
-						className: "text-xl md:text-2xl font-bold tracking-tight",
-						children: category.mainTitle
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						"data-uid": "src/components/submissions/PlaybookEixo3.tsx:22:15",
-						"data-prohibitions": "[editContent]",
-						className: "opacity-90 mt-2 text-base md:text-lg",
-						children: category.desc
-					})]
+					className: "text-xl font-bold tracking-tight border-b pb-2 mb-4",
+					children: category.mainTitle
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					"data-uid": "src/components/submissions/PlaybookEixo3.tsx:34:13",
+					"data-prohibitions": "[editContent]",
+					className: "text-muted-foreground",
+					children: category.desc
 				})]
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/submissions/PlaybookEixo3.tsx:26:11",
+				"data-uid": "src/components/submissions/PlaybookEixo3.tsx:37:11",
 				"data-prohibitions": "[editContent]",
 				className: "grid gap-6",
 				children: category.groups.map((group, gIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-					"data-uid": "src/components/submissions/PlaybookEixo3.tsx:28:15",
+					"data-uid": "src/components/submissions/PlaybookEixo3.tsx:39:15",
 					"data-prohibitions": "[editContent]",
 					className: "overflow-hidden border-border/60 shadow-subtle",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-						"data-uid": "src/components/submissions/PlaybookEixo3.tsx:29:17",
+						"data-uid": "src/components/submissions/PlaybookEixo3.tsx:40:17",
 						"data-prohibitions": "[editContent]",
 						className: "bg-muted/30 border-b border-border/50 py-4",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-							"data-uid": "src/components/submissions/PlaybookEixo3.tsx:30:19",
+							"data-uid": "src/components/submissions/PlaybookEixo3.tsx:41:19",
 							"data-prohibitions": "[editContent]",
 							className: "text-lg flex flex-wrap items-baseline gap-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								"data-uid": "src/components/submissions/PlaybookEixo3.tsx:31:21",
+								"data-uid": "src/components/submissions/PlaybookEixo3.tsx:42:21",
 								"data-prohibitions": "[editContent]",
 								children: group.title
 							}), group.desc && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								"data-uid": "src/components/submissions/PlaybookEixo3.tsx:33:23",
+								"data-uid": "src/components/submissions/PlaybookEixo3.tsx:44:23",
 								"data-prohibitions": "[editContent]",
 								className: "text-muted-foreground font-normal text-sm md:text-base",
 								children: group.desc
 							})]
 						})
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-						"data-uid": "src/components/submissions/PlaybookEixo3.tsx:39:17",
+						"data-uid": "src/components/submissions/PlaybookEixo3.tsx:50:17",
 						"data-prohibitions": "[editContent]",
 						className: "p-0",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							"data-uid": "src/components/submissions/PlaybookEixo3.tsx:40:19",
+							"data-uid": "src/components/submissions/PlaybookEixo3.tsx:51:19",
 							"data-prohibitions": "[editContent]",
 							className: "divide-y divide-border/50",
 							children: group.items.map((item, iIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/submissions/PlaybookEixo3.tsx:42:23",
+								"data-uid": "src/components/submissions/PlaybookEixo3.tsx:53:23",
 								"data-prohibitions": "[editContent]",
 								className: "flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-muted/20 transition-colors",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									"data-uid": "src/components/submissions/PlaybookEixo3.tsx:46:25",
+									"data-uid": "src/components/submissions/PlaybookEixo3.tsx:57:25",
 									"data-prohibitions": "[editContent]",
 									className: "flex items-center gap-3",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
-										"data-uid": "src/components/submissions/PlaybookEixo3.tsx:47:27",
+										"data-uid": "src/components/submissions/PlaybookEixo3.tsx:58:27",
 										"data-prohibitions": "[editContent]",
 										className: "bg-amber-600 hover:bg-amber-700 text-white font-mono px-2 py-0.5 rounded shadow-sm whitespace-nowrap",
 										children: [
@@ -30615,13 +30649,13 @@ function PlaybookEixo3({ onSelect }) {
 											" pts]"
 										]
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/components/submissions/PlaybookEixo3.tsx:50:27",
+										"data-uid": "src/components/submissions/PlaybookEixo3.tsx:61:27",
 										"data-prohibitions": "[editContent]",
 										className: "font-medium text-sm md:text-base",
 										children: item.text
 									})]
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-									"data-uid": "src/components/submissions/PlaybookEixo3.tsx:52:25",
+									"data-uid": "src/components/submissions/PlaybookEixo3.tsx:63:25",
 									"data-prohibitions": "[]",
 									variant: "outline",
 									size: "sm",
@@ -30629,10 +30663,10 @@ function PlaybookEixo3({ onSelect }) {
 									onClick: () => onSelect({
 										title: item.text,
 										points: item.points,
-										axis: `Eixo III: ${category.mainTitle}`
+										axis: `Nível III: Observador Certificado Mobilizador`
 									}),
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Upload, {
-										"data-uid": "src/components/submissions/PlaybookEixo3.tsx:64:27",
+										"data-uid": "src/components/submissions/PlaybookEixo3.tsx:75:27",
 										"data-prohibitions": "[editContent]",
 										className: "w-4 h-4 mr-2"
 									}), "Upload"]
@@ -30642,7 +30676,7 @@ function PlaybookEixo3({ onSelect }) {
 					})]
 				}, gIdx))
 			})]
-		}, cIdx))
+		}, cIdx))]
 	});
 }
 //#endregion
@@ -30742,7 +30776,7 @@ function SubmissionsHistory() {
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
 								"data-uid": "src/components/submissions/SubmissionsHistory.tsx:61:15",
 								"data-prohibitions": "[]",
-								children: "Eixo Referência"
+								children: "Nível Referência"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
 								"data-uid": "src/components/submissions/SubmissionsHistory.tsx:62:15",
@@ -30789,21 +30823,22 @@ function SubmissionsHistory() {
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 									"data-uid": "src/components/submissions/SubmissionsHistory.tsx:73:19",
 									"data-prohibitions": "[editContent]",
-									className: "text-xs font-bold uppercase tracking-wider text-muted-foreground",
+									className: "text-[10px] font-bold uppercase tracking-wider text-muted-foreground line-clamp-1",
+									title: sub.axis,
 									children: sub.axis
 								})
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-								"data-uid": "src/components/submissions/SubmissionsHistory.tsx:77:17",
+								"data-uid": "src/components/submissions/SubmissionsHistory.tsx:80:17",
 								"data-prohibitions": "[editContent]",
 								children: getStatusBadge(sub.status)
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-								"data-uid": "src/components/submissions/SubmissionsHistory.tsx:78:17",
+								"data-uid": "src/components/submissions/SubmissionsHistory.tsx:81:17",
 								"data-prohibitions": "[editContent]",
 								className: "text-right pr-6 font-bold text-lg text-accent",
 								children: sub.points !== "-" ? `+${sub.points}` : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									"data-uid": "src/components/submissions/SubmissionsHistory.tsx:82:21",
+									"data-uid": "src/components/submissions/SubmissionsHistory.tsx:85:21",
 									"data-prohibitions": "[]",
 									className: "text-muted-foreground/50",
 									children: "-"
@@ -30872,7 +30907,7 @@ function Submissions() {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Tabs, {
 				"data-uid": "src/pages/Submissions.tsx:35:7",
 				"data-prohibitions": "[]",
-				defaultValue: "eixo1",
+				defaultValue: "nivel1",
 				className: "w-full",
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TabsList, {
@@ -30883,23 +30918,23 @@ function Submissions() {
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsTrigger, {
 								"data-uid": "src/pages/Submissions.tsx:37:11",
 								"data-prohibitions": "[]",
-								value: "eixo1",
-								className: "text-sm py-2.5 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all",
-								children: "Playbook Eixo I"
+								value: "nivel1",
+								className: "text-sm py-2.5 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-nowrap overflow-hidden text-ellipsis",
+								children: "Playbook Nível I"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsTrigger, {
 								"data-uid": "src/pages/Submissions.tsx:43:11",
 								"data-prohibitions": "[]",
-								value: "eixo2",
-								className: "text-sm py-2.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all",
-								children: "Playbook Eixo II"
+								value: "nivel2",
+								className: "text-sm py-2.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-nowrap overflow-hidden text-ellipsis",
+								children: "Playbook Nível II"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsTrigger, {
 								"data-uid": "src/pages/Submissions.tsx:49:11",
 								"data-prohibitions": "[]",
-								value: "eixo3",
-								className: "text-sm py-2.5 data-[state=active]:bg-amber-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all",
-								children: "Playbook Eixo III"
+								value: "nivel3",
+								className: "text-sm py-2.5 data-[state=active]:bg-amber-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-nowrap overflow-hidden text-ellipsis",
+								children: "Playbook Nível III"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsTrigger, {
 								"data-uid": "src/pages/Submissions.tsx:55:11",
@@ -30913,7 +30948,7 @@ function Submissions() {
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsContent, {
 						"data-uid": "src/pages/Submissions.tsx:63:9",
 						"data-prohibitions": "[]",
-						value: "eixo1",
+						value: "nivel1",
 						className: "animate-slide-up outline-none",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlaybookEixo1, {
 							"data-uid": "src/pages/Submissions.tsx:64:11",
@@ -30924,7 +30959,7 @@ function Submissions() {
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsContent, {
 						"data-uid": "src/pages/Submissions.tsx:67:9",
 						"data-prohibitions": "[]",
-						value: "eixo2",
+						value: "nivel2",
 						className: "animate-slide-up outline-none",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlaybookEixo2, {
 							"data-uid": "src/pages/Submissions.tsx:68:11",
@@ -30935,7 +30970,7 @@ function Submissions() {
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsContent, {
 						"data-uid": "src/pages/Submissions.tsx:71:9",
 						"data-prohibitions": "[]",
-						value: "eixo3",
+						value: "nivel3",
 						className: "animate-slide-up outline-none",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlaybookEixo3, {
 							"data-uid": "src/pages/Submissions.tsx:72:11",
@@ -31027,29 +31062,39 @@ function Ranking() {
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								"data-uid": "src/pages/Ranking.tsx:59:15",
 								"data-prohibitions": "[editContent]",
-								className: "text-center mb-3 sm:mb-5 px-1 sm:px-2",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-									"data-uid": "src/pages/Ranking.tsx:60:17",
-									"data-prohibitions": "[editContent]",
-									className: "font-bold text-xs sm:text-base leading-tight truncate w-full max-w-[100px] sm:max-w-[140px]",
-									children: user.name
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-									"data-uid": "src/pages/Ranking.tsx:63:17",
-									"data-prohibitions": "[editContent]",
-									className: "text-[10px] sm:text-sm font-semibold text-muted-foreground",
-									children: [user.points, " pts"]
-								})]
+								className: "text-center mb-3 sm:mb-5 px-1 sm:px-2 flex flex-col items-center",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+										"data-uid": "src/pages/Ranking.tsx:60:17",
+										"data-prohibitions": "[editContent]",
+										className: "text-[9px] sm:text-[10px] uppercase font-bold text-secondary line-clamp-1 w-full",
+										title: user.level,
+										children: user.level.split(" - ")[0]
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+										"data-uid": "src/pages/Ranking.tsx:66:17",
+										"data-prohibitions": "[editContent]",
+										className: "font-bold text-xs sm:text-base leading-tight truncate w-full max-w-[100px] sm:max-w-[140px] mt-0.5",
+										children: user.name
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+										"data-uid": "src/pages/Ranking.tsx:69:17",
+										"data-prohibitions": "[editContent]",
+										className: "text-[10px] sm:text-sm font-semibold text-muted-foreground",
+										children: [user.points, " pts"]
+									})
+								]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/pages/Ranking.tsx:67:15",
+								"data-uid": "src/pages/Ranking.tsx:73:15",
 								"data-prohibitions": "[editContent]",
 								className: cn$1("w-full rounded-t-xl flex flex-col items-center justify-start pt-4 sm:pt-6 shadow-lg relative overflow-hidden", heightClass, colorClass),
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									"data-uid": "src/pages/Ranking.tsx:74:17",
+									"data-uid": "src/pages/Ranking.tsx:80:17",
 									"data-prohibitions": "[]",
 									className: "absolute inset-0 bg-gradient-to-b from-white/20 to-transparent"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									"data-uid": "src/pages/Ranking.tsx:75:17",
+									"data-uid": "src/pages/Ranking.tsx:81:17",
 									"data-prohibitions": "[editContent]",
 									className: "text-3xl sm:text-4xl font-black relative z-10 opacity-80",
 									children: position
@@ -31060,47 +31105,47 @@ function Ranking() {
 				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/pages/Ranking.tsx:85:7",
+				"data-uid": "src/pages/Ranking.tsx:91:7",
 				"data-prohibitions": "[editContent]",
 				className: "hidden md:block",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
-					"data-uid": "src/pages/Ranking.tsx:86:9",
+					"data-uid": "src/pages/Ranking.tsx:92:9",
 					"data-prohibitions": "[editContent]",
 					className: "border-border/60 shadow-elevation overflow-hidden",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-						"data-uid": "src/pages/Ranking.tsx:87:11",
+						"data-uid": "src/pages/Ranking.tsx:93:11",
 						"data-prohibitions": "[editContent]",
 						className: "p-0",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Table, {
-							"data-uid": "src/pages/Ranking.tsx:88:13",
+							"data-uid": "src/pages/Ranking.tsx:94:13",
 							"data-prohibitions": "[editContent]",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHeader, {
-								"data-uid": "src/pages/Ranking.tsx:89:15",
+								"data-uid": "src/pages/Ranking.tsx:95:15",
 								"data-prohibitions": "[]",
 								className: "bg-muted/40 border-b border-border/50",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
-									"data-uid": "src/pages/Ranking.tsx:90:17",
+									"data-uid": "src/pages/Ranking.tsx:96:17",
 									"data-prohibitions": "[]",
 									className: "hover:bg-transparent",
 									children: [
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-											"data-uid": "src/pages/Ranking.tsx:91:19",
+											"data-uid": "src/pages/Ranking.tsx:97:19",
 											"data-prohibitions": "[]",
 											className: "w-20 text-center py-4",
 											children: "Posição"
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-											"data-uid": "src/pages/Ranking.tsx:92:19",
+											"data-uid": "src/pages/Ranking.tsx:98:19",
 											"data-prohibitions": "[]",
 											children: "Observador Certificado"
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-											"data-uid": "src/pages/Ranking.tsx:93:19",
+											"data-uid": "src/pages/Ranking.tsx:99:19",
 											"data-prohibitions": "[]",
-											children: "Maturidade"
+											children: "Nível de Certificação"
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-											"data-uid": "src/pages/Ranking.tsx:94:19",
+											"data-uid": "src/pages/Ranking.tsx:100:19",
 											"data-prohibitions": "[]",
 											className: "text-right pr-6",
 											children: "Pontuação Geral"
@@ -31108,48 +31153,48 @@ function Ranking() {
 									]
 								})
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableBody, {
-								"data-uid": "src/pages/Ranking.tsx:97:15",
+								"data-uid": "src/pages/Ranking.tsx:103:15",
 								"data-prohibitions": "[editContent]",
 								children: rest.map((user) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
-									"data-uid": "src/pages/Ranking.tsx:99:19",
+									"data-uid": "src/pages/Ranking.tsx:105:19",
 									"data-prohibitions": "[editContent]",
 									className: "hover:bg-muted/30 transition-colors",
 									children: [
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-											"data-uid": "src/pages/Ranking.tsx:100:21",
+											"data-uid": "src/pages/Ranking.tsx:106:21",
 											"data-prohibitions": "[editContent]",
 											className: "text-center py-4",
 											children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-												"data-uid": "src/pages/Ranking.tsx:101:23",
+												"data-uid": "src/pages/Ranking.tsx:107:23",
 												"data-prohibitions": "[editContent]",
 												className: "font-bold text-muted-foreground text-lg",
 												children: [user.rank, "º"]
 											})
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-											"data-uid": "src/pages/Ranking.tsx:103:21",
+											"data-uid": "src/pages/Ranking.tsx:109:21",
 											"data-prohibitions": "[editContent]",
 											className: "py-4",
 											children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-												"data-uid": "src/pages/Ranking.tsx:104:23",
+												"data-uid": "src/pages/Ranking.tsx:110:23",
 												"data-prohibitions": "[editContent]",
 												className: "flex items-center gap-4",
 												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Avatar, {
-													"data-uid": "src/pages/Ranking.tsx:105:25",
+													"data-uid": "src/pages/Ranking.tsx:111:25",
 													"data-prohibitions": "[editContent]",
 													className: "w-10 h-10 border-2 border-background shadow-sm shrink-0",
 													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarImage, {
-														"data-uid": "src/pages/Ranking.tsx:106:27",
+														"data-uid": "src/pages/Ranking.tsx:112:27",
 														"data-prohibitions": "[editContent]",
 														src: user.avatar
 													}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarFallback, {
-														"data-uid": "src/pages/Ranking.tsx:107:27",
+														"data-uid": "src/pages/Ranking.tsx:113:27",
 														"data-prohibitions": "[editContent]",
 														className: "font-semibold text-muted-foreground",
 														children: user.name.charAt(0)
 													})]
 												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-													"data-uid": "src/pages/Ranking.tsx:111:25",
+													"data-uid": "src/pages/Ranking.tsx:117:25",
 													"data-prohibitions": "[editContent]",
 													className: "font-bold text-base",
 													children: user.name
@@ -31157,18 +31202,18 @@ function Ranking() {
 											})
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-											"data-uid": "src/pages/Ranking.tsx:114:21",
+											"data-uid": "src/pages/Ranking.tsx:120:21",
 											"data-prohibitions": "[editContent]",
 											className: "py-4",
 											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-												"data-uid": "src/pages/Ranking.tsx:115:23",
+												"data-uid": "src/pages/Ranking.tsx:121:23",
 												"data-prohibitions": "[editContent]",
-												className: "text-sm font-semibold px-3 py-1 rounded-full bg-secondary/10 text-secondary border border-secondary/20",
+												className: "text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary/10 text-secondary border border-secondary/20",
 												children: user.level
 											})
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-											"data-uid": "src/pages/Ranking.tsx:119:21",
+											"data-uid": "src/pages/Ranking.tsx:125:21",
 											"data-prohibitions": "[editContent]",
 											className: "text-right pr-6 font-black text-lg text-foreground/80 py-4",
 											children: user.points
@@ -31181,60 +31226,61 @@ function Ranking() {
 				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/pages/Ranking.tsx:131:7",
+				"data-uid": "src/pages/Ranking.tsx:137:7",
 				"data-prohibitions": "[editContent]",
 				className: "md:hidden space-y-3 px-2",
 				children: rest.map((user) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-					"data-uid": "src/pages/Ranking.tsx:133:11",
+					"data-uid": "src/pages/Ranking.tsx:139:11",
 					"data-prohibitions": "[editContent]",
-					className: "p-4 flex items-center justify-between border-border/60 shadow-sm bg-card hover:bg-muted/10 transition-colors",
+					className: "p-4 flex items-center justify-between border-border/60 shadow-sm bg-card hover:bg-muted/10 transition-colors gap-3",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/pages/Ranking.tsx:137:13",
+						"data-uid": "src/pages/Ranking.tsx:143:13",
 						"data-prohibitions": "[editContent]",
-						className: "flex items-center gap-3",
+						className: "flex items-center gap-3 overflow-hidden",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-								"data-uid": "src/pages/Ranking.tsx:138:15",
+								"data-uid": "src/pages/Ranking.tsx:144:15",
 								"data-prohibitions": "[editContent]",
-								className: "font-bold text-muted-foreground text-base w-6 text-center",
+								className: "font-bold text-muted-foreground text-base w-6 text-center shrink-0",
 								children: [user.rank, "º"]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Avatar, {
-								"data-uid": "src/pages/Ranking.tsx:141:15",
+								"data-uid": "src/pages/Ranking.tsx:147:15",
 								"data-prohibitions": "[editContent]",
-								className: "w-11 h-11 border-2 border-background shadow-sm",
+								className: "w-11 h-11 border-2 border-background shadow-sm shrink-0",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarImage, {
-									"data-uid": "src/pages/Ranking.tsx:142:17",
+									"data-uid": "src/pages/Ranking.tsx:148:17",
 									"data-prohibitions": "[editContent]",
 									src: user.avatar
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarFallback, {
-									"data-uid": "src/pages/Ranking.tsx:143:17",
+									"data-uid": "src/pages/Ranking.tsx:149:17",
 									"data-prohibitions": "[editContent]",
 									className: "font-semibold text-muted-foreground",
 									children: user.name.charAt(0)
 								})]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/pages/Ranking.tsx:147:15",
+								"data-uid": "src/pages/Ranking.tsx:153:15",
 								"data-prohibitions": "[editContent]",
-								className: "flex flex-col",
+								className: "flex flex-col min-w-0",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									"data-uid": "src/pages/Ranking.tsx:148:17",
+									"data-uid": "src/pages/Ranking.tsx:154:17",
 									"data-prohibitions": "[editContent]",
-									className: "font-bold text-sm leading-tight text-foreground",
+									className: "font-bold text-sm leading-tight text-foreground truncate",
 									children: user.name
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									"data-uid": "src/pages/Ranking.tsx:149:17",
+									"data-uid": "src/pages/Ranking.tsx:157:17",
 									"data-prohibitions": "[editContent]",
-									className: "text-[11px] font-semibold text-secondary mt-0.5 uppercase tracking-wider",
+									className: "text-[10px] font-semibold text-secondary mt-0.5 uppercase tracking-wider line-clamp-1",
+									title: user.level,
 									children: user.level
 								})]
 							})
 						]
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						"data-uid": "src/pages/Ranking.tsx:154:13",
+						"data-uid": "src/pages/Ranking.tsx:165:13",
 						"data-prohibitions": "[editContent]",
-						className: "font-black text-foreground/80 text-base",
+						className: "font-black text-foreground/80 text-base shrink-0",
 						children: user.points
 					})]
 				}, user.rank))
@@ -37679,11 +37725,11 @@ function ImportSpreadsheetDialog({ isOpen, onClose }) {
 								},
 								{
 									row: 238,
-									reason: "Pontuação Eixo III excede o limite estabelecido (Máx 600)."
+									reason: "Pontuação Nível III excede o limite estabelecido (Máx 600)."
 								},
 								{
 									row: 502,
-									reason: "Formato numérico inválido na coluna \"Pontos Eixo I\"."
+									reason: "Formato numérico inválido na coluna \"Pontos Nível I\"."
 								}
 							]
 						});
@@ -37730,7 +37776,7 @@ function ImportSpreadsheetDialog({ isOpen, onClose }) {
 						"data-uid": "src/components/admin/ImportSpreadsheetDialog.tsx:93:11",
 						"data-prohibitions": "[]",
 						className: "mt-2",
-						children: "Faça o upload do arquivo contendo as pontuações e status dos Eixos I, II e III para atualização em massa."
+						children: "Faça o upload do arquivo contendo as pontuações e status dos Níveis I, II e III para atualização em massa."
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -39095,18 +39141,18 @@ function AdminDashboard() {
 		if (format === "excel") {
 			exportToCSV([{
 				Nome: "Carlos Silva",
-				"Eixo I": 450,
-				"Eixo II": 300,
-				"Eixo III": 600,
+				"Nível I": 450,
+				"Nível II": 300,
+				"Nível III": 600,
 				Total: 1350,
-				Nivel: "Mobilizador"
+				Nivel: "Nível III - Observador Certificado Mobilizador"
 			}, {
 				Nome: "Ana Souza",
-				"Eixo I": 500,
-				"Eixo II": 400,
-				"Eixo III": 200,
+				"Nível I": 500,
+				"Nível II": 400,
+				"Nível III": 200,
 				Total: 1100,
-				Nivel: "Pleno"
+				Nivel: "Nível II - Observador Certificado Pleno"
 			}], "relatorio_observadores.csv");
 			toast({
 				title: "Exportação Excel",
@@ -39681,7 +39727,7 @@ function AdminDashboard() {
 											"data-uid": "src/pages/admin/AdminDashboard.tsx:311:17",
 											"data-prohibitions": "[]",
 											className: "text-muted-foreground",
-											children: "Eixo de Evolução:"
+											children: "Nível de Evolução:"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 											"data-uid": "src/pages/admin/AdminDashboard.tsx:312:17",
 											"data-prohibitions": "[editContent]",
@@ -40377,8 +40423,8 @@ function AppSidebar() {
 			icon: House
 		},
 		{
-			title: "Eixos de Evolução",
-			url: "/eixos",
+			title: "Níveis de Evolução",
+			url: "/niveis",
 			icon: Compass
 		},
 		{
@@ -40505,35 +40551,36 @@ function AppSidebar() {
 //#region src/components/layout/TopHeader.tsx
 function TopHeader() {
 	const { user } = useAuthStore();
-	const { eixosProgress } = useGameStore();
-	const highestAxisLevel = eixosProgress.some((e) => e.level === "Mobilizador") ? "Mobilizador" : eixosProgress.some((e) => e.level === "Pleno") ? "Pleno" : null;
+	const { levelName } = useGameStore();
+	const shortLevelName = levelName.split(" - ")[0];
+	const badgeColor = levelName.includes("Mobilizador") ? "bg-amber-500 text-amber-950 hover:bg-amber-600" : levelName.includes("Pleno") ? "bg-blue-500 text-white hover:bg-blue-600" : "bg-emerald-500 text-white hover:bg-emerald-600";
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-		"data-uid": "src/components/layout/TopHeader.tsx:18:5",
+		"data-uid": "src/components/layout/TopHeader.tsx:19:5",
 		"data-prohibitions": "[editContent]",
 		className: "h-16 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 shadow-sm",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/layout/TopHeader.tsx:19:7",
+			"data-uid": "src/components/layout/TopHeader.tsx:20:7",
 			"data-prohibitions": "[]",
 			className: "flex items-center gap-4",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SidebarTrigger, {
-				"data-uid": "src/components/layout/TopHeader.tsx:20:9",
+				"data-uid": "src/components/layout/TopHeader.tsx:21:9",
 				"data-prohibitions": "[editContent]",
 				className: "text-muted-foreground hover:text-foreground transition-colors min-h-[44px] min-w-[44px]"
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/layout/TopHeader.tsx:21:9",
+				"data-uid": "src/components/layout/TopHeader.tsx:22:9",
 				"data-prohibitions": "[]",
 				className: "hidden md:flex items-center",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/layout/TopHeader.tsx:22:11",
+					"data-uid": "src/components/layout/TopHeader.tsx:23:11",
 					"data-prohibitions": "[]",
 					className: "flex flex-col",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-						"data-uid": "src/components/layout/TopHeader.tsx:23:13",
+						"data-uid": "src/components/layout/TopHeader.tsx:24:13",
 						"data-prohibitions": "[]",
 						className: "text-sm font-black text-foreground tracking-tight leading-none uppercase",
 						children: "Observador Certificado"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						"data-uid": "src/components/layout/TopHeader.tsx:26:13",
+						"data-uid": "src/components/layout/TopHeader.tsx:27:13",
 						"data-prohibitions": "[]",
 						className: "text-[10px] font-bold tracking-widest text-amber-600 dark:text-amber-500 uppercase mt-0.5",
 						children: "Jornada de Evolução"
@@ -40541,54 +40588,55 @@ function TopHeader() {
 				})
 			})]
 		}), user && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/layout/TopHeader.tsx:34:9",
+			"data-uid": "src/components/layout/TopHeader.tsx:35:9",
 			"data-prohibitions": "[editContent]",
 			className: "flex items-center gap-3 sm:gap-5",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/layout/TopHeader.tsx:35:11",
+				"data-uid": "src/components/layout/TopHeader.tsx:36:11",
 				"data-prohibitions": "[editContent]",
 				className: "flex items-center gap-2",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
-					"data-uid": "src/components/layout/TopHeader.tsx:36:13",
+					"data-uid": "src/components/layout/TopHeader.tsx:37:13",
 					"data-prohibitions": "[editContent]",
 					variant: "outline",
 					className: `hidden sm:inline-flex border-opacity-50 font-semibold ${user.role === "admin" ? "bg-amber-500/10 text-amber-700 border-amber-500/30 dark:text-amber-400" : "bg-emerald-500/10 text-emerald-700 border-emerald-500/30 dark:text-emerald-400"}`,
 					children: user.role === "admin" ? "Administrador" : "Observador"
-				}), user.role !== "admin" && highestAxisLevel && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
-					"data-uid": "src/components/layout/TopHeader.tsx:48:15",
+				}), user.role !== "admin" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+					"data-uid": "src/components/layout/TopHeader.tsx:49:15",
 					"data-prohibitions": "[editContent]",
-					className: `hidden sm:inline-flex font-bold shadow-sm ${highestAxisLevel === "Mobilizador" ? "bg-amber-500 text-amber-950 hover:bg-amber-600" : "bg-blue-500 text-white hover:bg-blue-600"}`,
-					children: highestAxisLevel
+					className: `hidden sm:inline-flex font-bold shadow-sm ${badgeColor}`,
+					title: levelName,
+					children: shortLevelName
 				})]
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/layout/TopHeader.tsx:60:11",
+				"data-uid": "src/components/layout/TopHeader.tsx:58:11",
 				"data-prohibitions": "[editContent]",
 				className: "flex items-center gap-3 pl-2 sm:pl-5 sm:border-l border-border/50",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/layout/TopHeader.tsx:61:13",
+					"data-uid": "src/components/layout/TopHeader.tsx:59:13",
 					"data-prohibitions": "[editContent]",
 					className: "text-right hidden sm:block",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						"data-uid": "src/components/layout/TopHeader.tsx:62:15",
+						"data-uid": "src/components/layout/TopHeader.tsx:60:15",
 						"data-prohibitions": "[editContent]",
 						className: "text-sm font-bold leading-none text-foreground",
 						children: user.name
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						"data-uid": "src/components/layout/TopHeader.tsx:63:15",
+						"data-uid": "src/components/layout/TopHeader.tsx:61:15",
 						"data-prohibitions": "[editContent]",
 						className: "text-xs text-muted-foreground mt-1 truncate max-w-[150px]",
 						children: user.email
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Avatar, {
-					"data-uid": "src/components/layout/TopHeader.tsx:67:13",
+					"data-uid": "src/components/layout/TopHeader.tsx:65:13",
 					"data-prohibitions": "[editContent]",
 					className: "h-9 w-9 border-2 border-primary/20 shadow-sm",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarImage, {
-						"data-uid": "src/components/layout/TopHeader.tsx:68:15",
+						"data-uid": "src/components/layout/TopHeader.tsx:66:15",
 						"data-prohibitions": "[editContent]",
 						src: `https://img.usecurling.com/ppl/thumbnail?seed=${user.email}`
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarFallback, {
-						"data-uid": "src/components/layout/TopHeader.tsx:69:15",
+						"data-uid": "src/components/layout/TopHeader.tsx:67:15",
 						"data-prohibitions": "[editContent]",
 						className: "bg-primary/10 text-primary font-bold",
 						children: user.name.charAt(0).toUpperCase()
@@ -40687,7 +40735,7 @@ var AppRoutes = () => {
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
 						"data-uid": "src/App.tsx:58:9",
 						"data-prohibitions": "[editContent]",
-						path: "/eixos",
+						path: "/niveis",
 						element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProtectedRoute, {
 							"data-uid": "src/App.tsx:61:13",
 							"data-prohibitions": "[]",
@@ -40800,4 +40848,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-C39V3nfN.js.map
+//# sourceMappingURL=index-9FVcgY7X.js.map

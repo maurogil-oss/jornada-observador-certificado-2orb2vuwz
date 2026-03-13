@@ -184,21 +184,21 @@ export const eixo3Playbook = [
 
 export const competencyMatrixData = [
   {
-    eixo: 'Formação (Eixo I)',
-    iniciante: 'Cursos e especialização.',
-    pleno: 'Publicações e produção validada.',
-    mobilizador: 'Produção de referência (livro, e-book, inovação estrutural).',
+    pilar: 'Formação',
+    nivel1: 'Cursos e especialização.',
+    nivel2: 'Publicações e produção validada.',
+    nivel3: 'Produção de referência (livro, e-book, inovação estrutural).',
   },
   {
-    eixo: 'Atuação (Eixo II)',
-    iniciante: 'Participação em ações e engajamento básico.',
-    pleno: 'Execução de projetos estruturados e impacto local mensurável.',
-    mobilizador: 'Liderança de projetos em larga escala (Nacional/Internacional).',
+    pilar: 'Atuação',
+    nivel1: 'Participação em ações e engajamento básico.',
+    nivel2: 'Execução de projetos estruturados e impacto local mensurável.',
+    nivel3: 'Liderança de projetos em larga escala (Nacional/Internacional).',
   },
   {
-    eixo: 'Liderança (Eixo III)',
-    iniciante: 'Representação pontual e voluntariado.',
-    pleno: 'Representação recorrente institucional.',
-    mobilizador: 'Mentoria, coordenação estratégica e conselhos diretores.',
+    pilar: 'Representatividade',
+    nivel1: 'Representação pontual e voluntariado.',
+    nivel2: 'Representação recorrente institucional.',
+    nivel3: 'Mentoria, coordenação estratégica e conselhos diretores.',
   },
 ]

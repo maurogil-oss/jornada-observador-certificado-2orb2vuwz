@@ -56,8 +56,14 @@ export default function Ranking() {
                   {user.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <div className="text-center mb-3 sm:mb-5 px-1 sm:px-2">
-                <p className="font-bold text-xs sm:text-base leading-tight truncate w-full max-w-[100px] sm:max-w-[140px]">
+              <div className="text-center mb-3 sm:mb-5 px-1 sm:px-2 flex flex-col items-center">
+                <p
+                  className="text-[9px] sm:text-[10px] uppercase font-bold text-secondary line-clamp-1 w-full"
+                  title={user.level}
+                >
+                  {user.level.split(' - ')[0]}
+                </p>
+                <p className="font-bold text-xs sm:text-base leading-tight truncate w-full max-w-[100px] sm:max-w-[140px] mt-0.5">
                   {user.name}
                 </p>
                 <p className="text-[10px] sm:text-sm font-semibold text-muted-foreground">
@@ -90,7 +96,7 @@ export default function Ranking() {
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="w-20 text-center py-4">Posição</TableHead>
                   <TableHead>Observador Certificado</TableHead>
-                  <TableHead>Maturidade</TableHead>
+                  <TableHead>Nível de Certificação</TableHead>
                   <TableHead className="text-right pr-6">Pontuação Geral</TableHead>
                 </TableRow>
               </TableHeader>
@@ -112,7 +118,7 @@ export default function Ranking() {
                       </div>
                     </TableCell>
                     <TableCell className="py-4">
-                      <span className="text-sm font-semibold px-3 py-1 rounded-full bg-secondary/10 text-secondary border border-secondary/20">
+                      <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary/10 text-secondary border border-secondary/20">
                         {user.level}
                       </span>
                     </TableCell>
@@ -132,26 +138,31 @@ export default function Ranking() {
         {rest.map((user) => (
           <Card
             key={user.rank}
-            className="p-4 flex items-center justify-between border-border/60 shadow-sm bg-card hover:bg-muted/10 transition-colors"
+            className="p-4 flex items-center justify-between border-border/60 shadow-sm bg-card hover:bg-muted/10 transition-colors gap-3"
           >
-            <div className="flex items-center gap-3">
-              <span className="font-bold text-muted-foreground text-base w-6 text-center">
+            <div className="flex items-center gap-3 overflow-hidden">
+              <span className="font-bold text-muted-foreground text-base w-6 text-center shrink-0">
                 {user.rank}º
               </span>
-              <Avatar className="w-11 h-11 border-2 border-background shadow-sm">
+              <Avatar className="w-11 h-11 border-2 border-background shadow-sm shrink-0">
                 <AvatarImage src={user.avatar} />
                 <AvatarFallback className="font-semibold text-muted-foreground">
                   {user.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex flex-col">
-                <span className="font-bold text-sm leading-tight text-foreground">{user.name}</span>
-                <span className="text-[11px] font-semibold text-secondary mt-0.5 uppercase tracking-wider">
+              <div className="flex flex-col min-w-0">
+                <span className="font-bold text-sm leading-tight text-foreground truncate">
+                  {user.name}
+                </span>
+                <span
+                  className="text-[10px] font-semibold text-secondary mt-0.5 uppercase tracking-wider line-clamp-1"
+                  title={user.level}
+                >
                   {user.level}
                 </span>
               </div>
             </div>
-            <div className="font-black text-foreground/80 text-base">{user.points}</div>
+            <div className="font-black text-foreground/80 text-base shrink-0">{user.points}</div>
           </Card>
         ))}
       </div>

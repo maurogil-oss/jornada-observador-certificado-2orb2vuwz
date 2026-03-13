@@ -11,16 +11,27 @@ interface Props {
 export function PlaybookEixo3({ onSelect }: Props) {
   return (
     <div className="space-y-8 animate-slide-up outline-none">
+      <div className="bg-amber-50 text-amber-950 dark:bg-amber-950/20 dark:text-amber-50 p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border border-amber-200 dark:border-amber-900/50">
+        <div className="p-4 bg-amber-200 dark:bg-amber-900/50 rounded-2xl shrink-0">
+          <Flag className="w-10 h-10 text-amber-700 dark:text-amber-400" />
+        </div>
+        <div>
+          <h2 className="text-xl md:text-2xl font-bold tracking-tight">
+            Playbook Nível III: Observador Certificado Mobilizador
+          </h2>
+          <p className="opacity-90 mt-2 text-base md:text-lg">
+            Ocupação de espaços estratégicos e formação de novas lideranças na segurança viária.
+          </p>
+        </div>
+      </div>
+
       {eixo3Playbook.map((category, cIdx) => (
         <div key={cIdx} className="space-y-6">
-          <div className="bg-amber-50 text-amber-950 dark:bg-amber-950/20 dark:text-amber-50 p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border border-amber-200 dark:border-amber-900/50">
-            <div className="p-4 bg-amber-200 dark:bg-amber-900/50 rounded-2xl shrink-0">
-              <Flag className="w-10 h-10 text-amber-700 dark:text-amber-400" />
-            </div>
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold tracking-tight">{category.mainTitle}</h2>
-              <p className="opacity-90 mt-2 text-base md:text-lg">{category.desc}</p>
-            </div>
+          <div>
+            <h3 className="text-xl font-bold tracking-tight border-b pb-2 mb-4">
+              {category.mainTitle}
+            </h3>
+            <p className="text-muted-foreground">{category.desc}</p>
           </div>
 
           <div className="grid gap-6">
@@ -57,7 +68,7 @@ export function PlaybookEixo3({ onSelect }: Props) {
                             onSelect({
                               title: item.text,
                               points: item.points,
-                              axis: `Eixo III: ${category.mainTitle}`,
+                              axis: `Nível III: Observador Certificado Mobilizador`,
                             })
                           }
                         >

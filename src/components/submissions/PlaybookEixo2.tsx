@@ -11,16 +11,28 @@ interface Props {
 export function PlaybookEixo2({ onSelect }: Props) {
   return (
     <div className="space-y-8 animate-slide-up outline-none">
+      <div className="bg-blue-50 text-blue-950 dark:bg-blue-950/20 dark:text-blue-50 p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border border-blue-200 dark:border-blue-900/50">
+        <div className="p-4 bg-blue-100 dark:bg-blue-900/50 rounded-2xl shrink-0">
+          <Activity className="w-10 h-10 text-blue-600 dark:text-blue-400" />
+        </div>
+        <div>
+          <h2 className="text-xl md:text-2xl font-bold tracking-tight">
+            Playbook Nível II: Observador Certificado Pleno
+          </h2>
+          <p className="opacity-90 mt-2 text-base md:text-lg">
+            Expanda o alcance da segurança viária através de ações estruturantes, educação e
+            comunicação.
+          </p>
+        </div>
+      </div>
+
       {eixo2Playbook.map((category, cIdx) => (
         <div key={cIdx} className="space-y-6">
-          <div className="bg-blue-50 text-blue-950 dark:bg-blue-950/20 dark:text-blue-50 p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border border-blue-200 dark:border-blue-900/50">
-            <div className="p-4 bg-blue-100 dark:bg-blue-900/50 rounded-2xl shrink-0">
-              <Activity className="w-10 h-10 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold tracking-tight">{category.mainTitle}</h2>
-              <p className="opacity-90 mt-2 text-base md:text-lg">{category.desc}</p>
-            </div>
+          <div>
+            <h3 className="text-xl font-bold tracking-tight border-b pb-2 mb-4">
+              {category.mainTitle}
+            </h3>
+            <p className="text-muted-foreground">{category.desc}</p>
           </div>
 
           <div className="grid gap-6">
@@ -57,7 +69,7 @@ export function PlaybookEixo2({ onSelect }: Props) {
                             onSelect({
                               title: item.text,
                               points: item.points,
-                              axis: `Eixo II: ${category.mainTitle}`,
+                              axis: `Nível II: Observador Certificado Pleno`,
                             })
                           }
                         >

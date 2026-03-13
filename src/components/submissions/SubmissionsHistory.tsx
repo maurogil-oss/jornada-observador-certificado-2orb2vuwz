@@ -58,7 +58,7 @@ export function SubmissionsHistory() {
               <TableHead className="pl-6">Data</TableHead>
               <TableHead>Identificador</TableHead>
               <TableHead>Título da Evidência</TableHead>
-              <TableHead>Eixo Referência</TableHead>
+              <TableHead>Nível Referência</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right pr-6">Pontos Obtidos</TableHead>
             </TableRow>
@@ -70,7 +70,10 @@ export function SubmissionsHistory() {
                 <TableCell className="font-mono text-xs">{sub.id}</TableCell>
                 <TableCell className="font-semibold">{sub.title}</TableCell>
                 <TableCell>
-                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <span
+                    className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground line-clamp-1"
+                    title={sub.axis}
+                  >
                     {sub.axis}
                   </span>
                 </TableCell>

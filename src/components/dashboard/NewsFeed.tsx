@@ -7,11 +7,11 @@ const newsFeedData = [
     title: 'Novas Diretrizes de Submissão 2026',
     date: '10/03/2026',
     content:
-      'Atualizamos o playbook do Eixo II. Projetos locais agora contam com avaliação acelerada e bônus de pontuação.',
+      'Atualizamos o playbook do Nível II. Projetos locais agora contam com avaliação acelerada e bônus de pontuação.',
   },
   {
     id: 2,
-    title: 'Webinar: Como alcançar o nível Mobilizador',
+    title: 'Webinar: Como alcançar o Nível III - Mobilizador',
     date: '08/03/2026',
     content:
       'Participe do nosso encontro na próxima terça-feira e descubra as melhores estratégias de impacto institucional.',

@@ -58,8 +58,8 @@ export function ImportSpreadsheetDialog({ isOpen, onClose }: Props) {
               success: 795,
               errors: [
                 { row: 14, reason: 'E-mail não encontrado na base de dados.' },
-                { row: 238, reason: 'Pontuação Eixo III excede o limite estabelecido (Máx 600).' },
-                { row: 502, reason: 'Formato numérico inválido na coluna "Pontos Eixo I".' },
+                { row: 238, reason: 'Pontuação Nível III excede o limite estabelecido (Máx 600).' },
+                { row: 502, reason: 'Formato numérico inválido na coluna "Pontos Nível I".' },
               ],
             })
             // Email Notification Mock
@@ -91,7 +91,7 @@ export function ImportSpreadsheetDialog({ isOpen, onClose }: Props) {
             Importar Planilha de Observadores
           </DialogTitle>
           <DialogDescription className="mt-2">
-            Faça o upload do arquivo contendo as pontuações e status dos Eixos I, II e III para
+            Faça o upload do arquivo contendo as pontuações e status dos Níveis I, II e III para
             atualização em massa.
           </DialogDescription>
         </DialogHeader>

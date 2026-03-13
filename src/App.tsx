@@ -56,7 +56,7 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="/eixos"
+          path="/niveis"
           element={
             <ProtectedRoute allowedRoles={['observer']}>
               <Axes />

@@ -24,7 +24,7 @@ export function HeroProgress() {
         />
         <div className="space-y-4 text-center md:text-left">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-            Maturidade: <span className="text-accent">{levelName}</span>
+            Maturidade: <span className="text-accent block mt-1">{levelName}</span>
           </h2>
           <p className="text-secondary-foreground/80 text-lg max-w-xl">
             Você possui <strong>{points} pontos</strong> de impacto institucional. Faltam{' '}
@@ -35,7 +35,7 @@ export function HeroProgress() {
             variant="secondary"
             className="mt-4 bg-background text-foreground hover:bg-background/90 font-bold h-11 px-6 shadow-sm"
           >
-            <Link to="/eixos">
+            <Link to="/niveis">
               Ver Missões e Evoluir <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </Button>

@@ -799,6 +799,12 @@ section[aria-label='Notifications alt+T'] {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
 }
+.line-clamp-2{
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
 .block{
   display: block;
 }
@@ -1112,6 +1118,9 @@ section[aria-label='Notifications alt+T'] {
 .max-w-\[200px\]{
   max-width: 200px;
 }
+.max-w-full{
+  max-width: 100%;
+}
 .max-w-lg{
   max-width: 32rem;
 }
@@ -1246,9 +1255,6 @@ section[aria-label='Notifications alt+T'] {
 }
 .grid-cols-2{
   grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.grid-cols-3{
-  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .flex-row{
   flex-direction: row;
@@ -1392,6 +1398,9 @@ section[aria-label='Notifications alt+T'] {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.text-ellipsis{
+  text-overflow: ellipsis;
 }
 .whitespace-nowrap{
   white-space: nowrap;
@@ -1567,8 +1576,9 @@ section[aria-label='Notifications alt+T'] {
   --tw-border-opacity: 1;
   border-left-color: rgb(59 130 246 / var(--tw-border-opacity, 1));
 }
-.border-l-muted{
-  border-left-color: hsl(var(--muted));
+.border-l-emerald-500{
+  --tw-border-opacity: 1;
+  border-left-color: rgb(16 185 129 / var(--tw-border-opacity, 1));
 }
 .border-l-transparent{
   border-left-color: transparent;
@@ -1675,6 +1685,9 @@ section[aria-label='Notifications alt+T'] {
 .bg-emerald-50{
   --tw-bg-opacity: 1;
   background-color: rgb(236 253 245 / var(--tw-bg-opacity, 1));
+}
+.bg-emerald-50\/40{
+  background-color: rgb(236 253 245 / 0.4);
 }
 .bg-emerald-50\/50{
   background-color: rgb(236 253 245 / 0.5);
@@ -1826,6 +1839,10 @@ section[aria-label='Notifications alt+T'] {
 .px-1{
   padding-left: 0.25rem;
   padding-right: 0.25rem;
+}
+.px-1\.5{
+  padding-left: 0.375rem;
+  padding-right: 0.375rem;
 }
 .px-10{
   padding-left: 2.5rem;
@@ -2009,6 +2026,9 @@ section[aria-label='Notifications alt+T'] {
 }
 .text-\[11px\]{
   font-size: 11px;
+}
+.text-\[9px\]{
+  font-size: 9px;
 }
 .text-base{
   font-size: 1rem;
@@ -2654,6 +2674,10 @@ section[aria-label='Notifications alt+T'] {
 .hover\:bg-emerald-50:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(236 253 245 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-emerald-600:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(5 150 105 / var(--tw-bg-opacity, 1));
 }
 .hover\:bg-emerald-700:hover{
   --tw-bg-opacity: 1;
@@ -3701,6 +3725,9 @@ section[aria-label='Notifications alt+T'] {
     font-size: 2.25rem;
     line-height: 2.5rem;
   }
+  .sm\:text-\[10px\]{
+    font-size: 10px;
+  }
   .sm\:text-base{
     font-size: 1rem;
     line-height: 1.5rem;
@@ -3767,6 +3794,9 @@ section[aria-label='Notifications alt+T'] {
   }
   .md\:items-center{
     align-items: center;
+  }
+  .md\:gap-0{
+    gap: 0px;
   }
   .md\:gap-6{
     gap: 1.5rem;
@@ -3854,6 +3884,15 @@ section[aria-label='Notifications alt+T'] {
   }
   .lg\:p-8{
     padding: 2rem;
+  }
+}
+@media (min-width: 1280px){
+  .xl\:flex-row{
+    flex-direction: row;
+  }
+  .xl\:text-sm{
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 }
 .\[\&\:first-child\[data-selected\=true\]_button\]\:rounded-l-md:first-child[data-selected=true] button{

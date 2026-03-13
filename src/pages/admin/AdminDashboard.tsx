@@ -52,19 +52,19 @@ export default function AdminDashboard() {
       const reportData = [
         {
           Nome: 'Carlos Silva',
-          'Eixo I': 450,
-          'Eixo II': 300,
-          'Eixo III': 600,
+          'Nível I': 450,
+          'Nível II': 300,
+          'Nível III': 600,
           Total: 1350,
-          Nivel: 'Mobilizador',
+          Nivel: 'Nível III - Observador Certificado Mobilizador',
         },
         {
           Nome: 'Ana Souza',
-          'Eixo I': 500,
-          'Eixo II': 400,
-          'Eixo III': 200,
+          'Nível I': 500,
+          'Nível II': 400,
+          'Nível III': 200,
           Total: 1100,
-          Nivel: 'Pleno',
+          Nivel: 'Nível II - Observador Certificado Pleno',
         },
       ]
       exportToCSV(reportData, 'relatorio_observadores.csv')
@@ -308,7 +308,7 @@ export default function AdminDashboard() {
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Eixo de Evolução:</span>
+                <span className="text-muted-foreground">Nível de Evolução:</span>
                 <span className="font-semibold text-foreground">{selectedSub?.axis}</span>
               </div>
             </div>
