@@ -30968,19 +30968,26 @@ function Submissions() {
 //#endregion
 //#region src/components/shared/Logo.tsx
 function Logo({ className }) {
+	const [hasError, setHasError] = (0, import_react.useState)(false);
+	const rawBase = "/";
+	const logoPath = `${(rawBase === "./" ? "/" : rawBase).replace(/\/$/, "")}/logo.png?v=coroa-oficial-2026`;
+	(0, import_react.useEffect)(() => {
+		setHasError(false);
+	}, [logoPath]);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		"data-uid": "src/components/shared/Logo.tsx:9:5",
+		"data-uid": "src/components/shared/Logo.tsx:27:5",
 		"data-prohibitions": "[editContent]",
 		className: cn$1("relative flex items-center justify-center shrink-0", className),
 		title: "Observador Certificado - ONSV",
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-			"data-uid": "src/components/shared/Logo.tsx:13:7",
+		children: !hasError && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+			"data-uid": "src/components/shared/Logo.tsx:32:9",
 			"data-prohibitions": "[editContent]",
-			src: "/logo.png",
-			alt: "Logo Observador Certificado",
+			src: logoPath,
+			alt: "Coroa de Louros Oficial",
 			className: "w-full h-full object-contain drop-shadow-md",
 			loading: "eager",
-			fetchPriority: "high"
+			fetchPriority: "high",
+			onError: () => setHasError(true)
 		})
 	});
 }
@@ -40863,4 +40870,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-etn_HaOd.js.map
+//# sourceMappingURL=index-Bwyy3mmh.js.map
