@@ -1,8 +1,5 @@
 import { cn } from '@/lib/utils'
 
-// Static import implementation to prevent path resolution errors across different nested routes (e.g., /ranking)
-import logoImg from '/logo.png'
-
 interface LogoProps {
   className?: string
 }
@@ -10,7 +7,7 @@ interface LogoProps {
 export function Logo({ className }: LogoProps) {
   // Cache buster ensures the latest official high-fidelity Coroa de Louros file is loaded
   // completely replacing any previously cached versions or placeholders.
-  const logoPath = `${logoImg}?v=coroa-oficial-2026`
+  const logoPath = '/logo.png?v=coroa-oficial-2026'
 
   return (
     <div
