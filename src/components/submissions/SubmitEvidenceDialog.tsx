@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { UploadCloud } from 'lucide-react'
 import { useState } from 'react'
+import useSubmissionsStore from '@/stores/useSubmissionsStore'
 
 interface Props {
   isOpen: boolean
@@ -23,12 +24,16 @@ interface Props {
 export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+  const { addSubmission } = useSubmissionsStore()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setTimeout(() => {
       setLoading(false)
+      if (item) {
+        addSubmission({ title: item.title, axis: item.axis })
+      }
       toast({
         title: 'Comprovação enviada com sucesso!',
         description: `A equipe de avaliação analisará sua submissão para "${item?.title}".`,

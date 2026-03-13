@@ -24488,6 +24488,279 @@ function useAuthStore() {
 	return context;
 }
 //#endregion
+//#region src/lib/data.ts
+var principles = [
+	{
+		title: "Meritocracia",
+		desc: "Impacto real e comprovado.",
+		icon: Star
+	},
+	{
+		title: "Valorização",
+		desc: "Foco na produção técnica.",
+		icon: Award
+	},
+	{
+		title: "Liderança",
+		desc: "Atuação institucional.",
+		icon: Flag
+	},
+	{
+		title: "Maturidade",
+		desc: "Progressão estruturada.",
+		icon: Sprout
+	},
+	{
+		title: "Transparência",
+		desc: "Rastreabilidade total.",
+		icon: Eye
+	}
+];
+var axesData = [
+	{
+		id: "I",
+		title: "Formação e Produção",
+		purpose: "Construir autoridade técnica.",
+		progress: 75,
+		icon: BookOpen,
+		items: [
+			{
+				title: "Titulação Acadêmica",
+				points: 200,
+				desc: "Comprovação de mestrado ou doutorado na área viária ou correlata."
+			},
+			{
+				title: "Cursos Complementares",
+				points: 50,
+				desc: "Certificados de cursos extracurriculares de especialização técnica."
+			},
+			{
+				title: "Produção Técnica Publicada",
+				points: 100,
+				desc: "Artigos, papers ou livros publicados e validados por pares."
+			}
+		]
+	},
+	{
+		id: "II",
+		title: "Atuação e Impacto",
+		purpose: "Gerar transformação prática.",
+		progress: 40,
+		icon: Activity,
+		items: [
+			{
+				title: "Intervenções Técnicas",
+				points: 150,
+				desc: "Projetos aplicados com impacto comprovado na redução de sinistros."
+			},
+			{
+				title: "Produção Educativa",
+				points: 80,
+				desc: "Desenvolvimento de materiais didáticos e metodologias para o trânsito."
+			},
+			{
+				title: "Mobilização Social",
+				points: 120,
+				desc: "Organização de eventos comunitários ou campanhas de conscientização locais."
+			}
+		]
+	},
+	{
+		id: "III",
+		title: "Liderança Institucional",
+		purpose: "Consolidar influência e representação.",
+		progress: 15,
+		icon: Users,
+		items: [
+			{
+				title: "Representante Institucional",
+				points: 300,
+				desc: "Atuação formal como porta-voz oficial do ONSV em eventos e fóruns."
+			},
+			{
+				title: "Mentoria",
+				points: 150,
+				desc: "Orientação ativa de novos observadores na jornada de certificação."
+			},
+			{
+				title: "Instâncias Estratégicas",
+				points: 200,
+				desc: "Participação ativa em comitês técnicos ou conselhos de decisão."
+			}
+		]
+	}
+];
+var recentActivity = [
+	{
+		id: 1,
+		action: "Artigo \"Segurança Viária\" aprovado",
+		points: "+100",
+		time: "Há 2 horas",
+		type: "success"
+	},
+	{
+		id: 2,
+		action: "Certificado de Curso ABNT em Análise",
+		points: "Pendente",
+		time: "Ontem",
+		type: "pending"
+	},
+	{
+		id: 3,
+		action: "Mentoria nível I concluída",
+		points: "+150",
+		time: "Há 3 dias",
+		type: "success"
+	}
+];
+var rankingData = [
+	{
+		rank: 1,
+		name: "Carlos Silva",
+		level: "Mestre",
+		points: 4500,
+		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=1"
+	},
+	{
+		rank: 2,
+		name: "Ana Souza",
+		level: "Mestre",
+		points: 4320,
+		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=female&seed=2"
+	},
+	{
+		rank: 3,
+		name: "Roberto Almeida",
+		level: "Líder",
+		points: 3900,
+		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=3"
+	},
+	{
+		rank: 4,
+		name: "Mariana Costa",
+		level: "Líder",
+		points: 3750,
+		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=female&seed=4"
+	},
+	{
+		rank: 5,
+		name: "Fernando Lima",
+		level: "Estrategista",
+		points: 2800,
+		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=5"
+	},
+	{
+		rank: 6,
+		name: "Camila Barros",
+		level: "Estrategista",
+		points: 2650,
+		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=female&seed=6"
+	},
+	{
+		rank: 7,
+		name: "José Mendes",
+		level: "Engajado",
+		points: 1900,
+		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=7"
+	}
+];
+var submissionsData = [
+	{
+		id: "SUB-001",
+		date: "12/03/2026",
+		title: "Certificado Curso ABNT",
+		axis: "Eixo I",
+		status: "Aprovado",
+		points: 50
+	},
+	{
+		id: "SUB-002",
+		date: "10/03/2026",
+		title: "Relatório de Palestra na Escola",
+		axis: "Eixo II",
+		status: "Em Análise",
+		points: "-"
+	},
+	{
+		id: "SUB-003",
+		date: "05/03/2026",
+		title: "Artigo Revista Trânsito Seguro",
+		axis: "Eixo I",
+		status: "Aprovado",
+		points: 100
+	},
+	{
+		id: "SUB-004",
+		date: "01/03/2026",
+		title: "Participação Conselho Municipal",
+		axis: "Eixo III",
+		status: "Ajuste Necessário",
+		points: "-"
+	}
+];
+//#endregion
+//#region src/stores/useSubmissionsStore.tsx
+var mockAdminSubmissions = [
+	{
+		id: "SUB-101",
+		user: "Ana Souza",
+		title: "Titulação (Doutorado)",
+		date: "12/03/2026",
+		status: "Em Análise",
+		axis: "Eixo I",
+		points: "-"
+	},
+	{
+		id: "SUB-102",
+		user: "Carlos Silva",
+		title: "Artigo Científico",
+		date: "11/03/2026",
+		status: "Em Análise",
+		axis: "Eixo I",
+		points: "-"
+	},
+	{
+		id: "SUB-104",
+		user: "Camila Barros",
+		title: "Desenvolver projetos viários",
+		date: "09/03/2026",
+		status: "Em Análise",
+		axis: "Eixo II",
+		points: "-"
+	}
+];
+var SubmissionsContext = (0, import_react.createContext)(void 0);
+var SubmissionsProvider = ({ children }) => {
+	const [submissions, setSubmissions] = (0, import_react.useState)([...submissionsData.map((s) => ({
+		...s,
+		user: "Você"
+	})), ...mockAdminSubmissions]);
+	const addSubmission = (sub) => {
+		setSubmissions([{
+			...sub,
+			id: `SUB-${String(submissions.length + 1).padStart(3, "0")}`,
+			user: "Você",
+			date: (/* @__PURE__ */ new Date()).toLocaleDateString("pt-BR"),
+			status: "Em Análise",
+			points: "-"
+		}, ...submissions]);
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SubmissionsContext.Provider, {
+		"data-uid": "src/stores/useSubmissionsStore.tsx:70:5",
+		"data-prohibitions": "[editContent]",
+		value: {
+			submissions,
+			addSubmission
+		},
+		children
+	});
+};
+function useSubmissionsStore() {
+	const context = (0, import_react.useContext)(SubmissionsContext);
+	if (!context) throw new Error("useSubmissionsStore must be used within a SubmissionsProvider");
+	return context;
+}
+//#endregion
 //#region src/components/shared/DonutChart.tsx
 function DonutChart({ progress, size = 120, strokeWidth = 10, className }) {
 	const radius = (size - strokeWidth) / 2;
@@ -24934,217 +25207,6 @@ var Button = import_react.forwardRef(({ className, variant, size, asChild = fals
 	});
 });
 Button.displayName = "Button";
-//#endregion
-//#region src/lib/data.ts
-var principles = [
-	{
-		title: "Meritocracia",
-		desc: "Impacto real e comprovado.",
-		icon: Star
-	},
-	{
-		title: "Valorização",
-		desc: "Foco na produção técnica.",
-		icon: Award
-	},
-	{
-		title: "Liderança",
-		desc: "Atuação institucional.",
-		icon: Flag
-	},
-	{
-		title: "Maturidade",
-		desc: "Progressão estruturada.",
-		icon: Sprout
-	},
-	{
-		title: "Transparência",
-		desc: "Rastreabilidade total.",
-		icon: Eye
-	}
-];
-var axesData = [
-	{
-		id: "I",
-		title: "Formação e Produção",
-		purpose: "Construir autoridade técnica.",
-		progress: 75,
-		icon: BookOpen,
-		items: [
-			{
-				title: "Titulação Acadêmica",
-				points: 200,
-				desc: "Comprovação de mestrado ou doutorado na área viária ou correlata."
-			},
-			{
-				title: "Cursos Complementares",
-				points: 50,
-				desc: "Certificados de cursos extracurriculares de especialização técnica."
-			},
-			{
-				title: "Produção Técnica Publicada",
-				points: 100,
-				desc: "Artigos, papers ou livros publicados e validados por pares."
-			}
-		]
-	},
-	{
-		id: "II",
-		title: "Atuação e Impacto",
-		purpose: "Gerar transformação prática.",
-		progress: 40,
-		icon: Activity,
-		items: [
-			{
-				title: "Intervenções Técnicas",
-				points: 150,
-				desc: "Projetos aplicados com impacto comprovado na redução de sinistros."
-			},
-			{
-				title: "Produção Educativa",
-				points: 80,
-				desc: "Desenvolvimento de materiais didáticos e metodologias para o trânsito."
-			},
-			{
-				title: "Mobilização Social",
-				points: 120,
-				desc: "Organização de eventos comunitários ou campanhas de conscientização locais."
-			}
-		]
-	},
-	{
-		id: "III",
-		title: "Liderança Institucional",
-		purpose: "Consolidar influência e representação.",
-		progress: 15,
-		icon: Users,
-		items: [
-			{
-				title: "Representante Institucional",
-				points: 300,
-				desc: "Atuação formal como porta-voz oficial do ONSV em eventos e fóruns."
-			},
-			{
-				title: "Mentoria",
-				points: 150,
-				desc: "Orientação ativa de novos observadores na jornada de certificação."
-			},
-			{
-				title: "Instâncias Estratégicas",
-				points: 200,
-				desc: "Participação ativa em comitês técnicos ou conselhos de decisão."
-			}
-		]
-	}
-];
-var recentActivity = [
-	{
-		id: 1,
-		action: "Artigo \"Segurança Viária\" aprovado",
-		points: "+100",
-		time: "Há 2 horas",
-		type: "success"
-	},
-	{
-		id: 2,
-		action: "Certificado de Curso ABNT em Análise",
-		points: "Pendente",
-		time: "Ontem",
-		type: "pending"
-	},
-	{
-		id: 3,
-		action: "Mentoria nível I concluída",
-		points: "+150",
-		time: "Há 3 dias",
-		type: "success"
-	}
-];
-var rankingData = [
-	{
-		rank: 1,
-		name: "Carlos Silva",
-		level: "Mestre",
-		points: 4500,
-		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=1"
-	},
-	{
-		rank: 2,
-		name: "Ana Souza",
-		level: "Mestre",
-		points: 4320,
-		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=female&seed=2"
-	},
-	{
-		rank: 3,
-		name: "Roberto Almeida",
-		level: "Líder",
-		points: 3900,
-		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=3"
-	},
-	{
-		rank: 4,
-		name: "Mariana Costa",
-		level: "Líder",
-		points: 3750,
-		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=female&seed=4"
-	},
-	{
-		rank: 5,
-		name: "Fernando Lima",
-		level: "Estrategista",
-		points: 2800,
-		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=5"
-	},
-	{
-		rank: 6,
-		name: "Camila Barros",
-		level: "Estrategista",
-		points: 2650,
-		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=female&seed=6"
-	},
-	{
-		rank: 7,
-		name: "José Mendes",
-		level: "Engajado",
-		points: 1900,
-		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=7"
-	}
-];
-var submissionsData = [
-	{
-		id: "SUB-001",
-		date: "12/03/2026",
-		title: "Certificado Curso ABNT",
-		axis: "Eixo I",
-		status: "Aprovado",
-		points: 50
-	},
-	{
-		id: "SUB-002",
-		date: "10/03/2026",
-		title: "Relatório de Palestra na Escola",
-		axis: "Eixo II",
-		status: "Em Análise",
-		points: "-"
-	},
-	{
-		id: "SUB-003",
-		date: "05/03/2026",
-		title: "Artigo Revista Trânsito Seguro",
-		axis: "Eixo I",
-		status: "Aprovado",
-		points: 100
-	},
-	{
-		id: "SUB-004",
-		date: "01/03/2026",
-		title: "Participação Conselho Municipal",
-		axis: "Eixo III",
-		status: "Ajuste Necessário",
-		points: "-"
-	}
-];
 //#endregion
 //#region src/pages/Index.tsx
 function Index() {
@@ -27264,11 +27326,16 @@ Textarea.displayName = "Textarea";
 function SubmitEvidenceDialog({ isOpen, onClose, item }) {
 	const { toast } = useToast();
 	const [loading, setLoading] = (0, import_react.useState)(false);
+	const { addSubmission } = useSubmissionsStore();
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		setLoading(true);
 		setTimeout(() => {
 			setLoading(false);
+			if (item) addSubmission({
+				title: item.title,
+				axis: item.axis
+			});
 			toast({
 				title: "Comprovação enviada com sucesso!",
 				description: `A equipe de avaliação analisará sua submissão para "${item?.title}".`
@@ -27278,35 +27345,35 @@ function SubmitEvidenceDialog({ isOpen, onClose, item }) {
 	};
 	if (!item) return null;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dialog, {
-		"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:43:5",
+		"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:48:5",
 		"data-prohibitions": "[editContent]",
 		open: isOpen,
 		onOpenChange: (open) => !open && onClose(),
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogContent, {
-			"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:44:7",
+			"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:49:7",
 			"data-prohibitions": "[editContent]",
 			className: "sm:max-w-[550px]",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
-				"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:45:9",
+				"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:50:9",
 				"data-prohibitions": "[editContent]",
 				onSubmit: handleSubmit,
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogHeader, {
-						"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:46:11",
+						"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:51:11",
 						"data-prohibitions": "[editContent]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogTitle, {
-							"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:47:13",
+							"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:52:13",
 							"data-prohibitions": "[]",
 							className: "text-xl",
 							children: "Submeter Comprovação"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogDescription, {
-							"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:48:13",
+							"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:53:13",
 							"data-prohibitions": "[editContent]",
 							className: "mt-2",
 							children: [
 								"Envie documentos que comprovem sua atuação em ",
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
-									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:49:61",
+									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:54:61",
 									"data-prohibitions": "[editContent]",
 									children: item.title
 								}),
@@ -27315,7 +27382,7 @@ function SubmitEvidenceDialog({ isOpen, onClose, item }) {
 								"). Ao ser validado, você receberá até",
 								" ",
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("strong", {
-									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:51:15",
+									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:56:15",
 									"data-prohibitions": "[editContent]",
 									className: "text-accent",
 									children: [item.points, " pts"]
@@ -27325,65 +27392,65 @@ function SubmitEvidenceDialog({ isOpen, onClose, item }) {
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:54:11",
+						"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:59:11",
 						"data-prohibitions": "[]",
 						className: "grid gap-6 py-6",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:55:13",
+								"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:60:13",
 								"data-prohibitions": "[]",
 								className: "space-y-2",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:56:15",
+									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:61:15",
 									"data-prohibitions": "[]",
 									htmlFor: "link",
 									children: "Link Externo (Opcional)"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:57:15",
+									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:62:15",
 									"data-prohibitions": "[editContent]",
 									id: "link",
 									placeholder: "Ex: https://meu-artigo-publicado.com"
 								})]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:59:13",
+								"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:64:13",
 								"data-prohibitions": "[]",
 								className: "space-y-2",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Label, {
-									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:60:15",
+									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:65:15",
 									"data-prohibitions": "[]",
 									htmlFor: "file",
 									className: "flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-muted/20 hover:bg-muted/40 transition-all border-muted-foreground/30 hover:border-primary/50 group",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:64:17",
+										"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:69:17",
 										"data-prohibitions": "[]",
 										className: "flex flex-col items-center justify-center pt-5 pb-6",
 										children: [
 											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CloudUpload, {
-												"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:65:19",
+												"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:70:19",
 												"data-prohibitions": "[editContent]",
 												className: "w-10 h-10 mb-3 text-muted-foreground group-hover:text-primary transition-colors"
 											}),
 											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-												"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:66:19",
+												"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:71:19",
 												"data-prohibitions": "[]",
 												className: "mb-2 text-sm text-muted-foreground",
 												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-													"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:67:21",
+													"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:72:21",
 													"data-prohibitions": "[]",
 													className: "font-semibold text-foreground",
 													children: "Clique para anexar"
 												}), " ou arraste e solte"]
 											}),
 											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-												"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:70:19",
+												"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:75:19",
 												"data-prohibitions": "[]",
 												className: "text-xs text-muted-foreground/80",
 												children: "PDF, PNG, JPG (Max. 10MB)"
 											})
 										]
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-										"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:72:17",
+										"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:77:17",
 										"data-prohibitions": "[editContent]",
 										id: "file",
 										type: "file",
@@ -27393,16 +27460,16 @@ function SubmitEvidenceDialog({ isOpen, onClose, item }) {
 								})
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:75:13",
+								"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:80:13",
 								"data-prohibitions": "[]",
 								className: "space-y-2",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:76:15",
+									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:81:15",
 									"data-prohibitions": "[]",
 									htmlFor: "desc",
 									children: "Detalhes da Atuação"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Textarea, {
-									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:77:15",
+									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:82:15",
 									"data-prohibitions": "[editContent]",
 									id: "desc",
 									placeholder: "Descreva brevemente o impacto gerado por esta atividade...",
@@ -27412,10 +27479,10 @@ function SubmitEvidenceDialog({ isOpen, onClose, item }) {
 						]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogFooter, {
-						"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:84:11",
+						"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:89:11",
 						"data-prohibitions": "[editContent]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-							"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:85:13",
+							"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:90:13",
 							"data-prohibitions": "[]",
 							type: "button",
 							variant: "outline",
@@ -27423,7 +27490,7 @@ function SubmitEvidenceDialog({ isOpen, onClose, item }) {
 							disabled: loading,
 							children: "Cancelar"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-							"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:88:13",
+							"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:93:13",
 							"data-prohibitions": "[editContent]",
 							type: "submit",
 							disabled: loading,
@@ -27677,7 +27744,7 @@ var TableCaption = import_react.forwardRef(({ className, ...props }, ref) => /* 
 }));
 TableCaption.displayName = "TableCaption";
 //#endregion
-//#region src/pages/Submissions.tsx
+//#region src/lib/playbookData.ts
 var eixo1Sections = [
 	{
 		title: "Titulação Acadêmica",
@@ -27735,91 +27802,552 @@ var eixo1Sections = [
 		]
 	}
 ];
+var eixo2Playbook = [
+	{
+		mainTitle: "Atuação Profissional e Projetos",
+		desc: "Ações estruturantes, intervenções técnicas e implementação de soluções.",
+		groups: [
+			{
+				title: "Atuação Profissional e Dados",
+				items: [
+					{
+						points: 50,
+						text: "Trabalhar com trânsito/mobilidade (Validação anual)"
+					},
+					{
+						points: 50,
+						text: "Trabalhar em estandes/feiras relacionadas (Até 5x)"
+					},
+					{
+						points: 70,
+						text: "Organização de banco de dados local de sinistros (Até 2x)"
+					},
+					{
+						points: 50,
+						text: "Aplicação de pesquisa com usuários de trânsito (Até 5x)"
+					}
+				]
+			},
+			{
+				title: "Inovação e Projetos Viários",
+				items: [
+					{
+						points: 50,
+						text: "Desenvolver projetos viários (traffic calming, ruas completas) (Até 5x)"
+					},
+					{
+						points: 100,
+						text: "Inovação técnica inédita e estruturada (Até 2x)"
+					},
+					{
+						points: 300,
+						text: "Inovação aplicada (implementada com impacto) (Única)"
+					}
+				]
+			},
+			{
+				title: "Implementação de Projetos Estruturados",
+				desc: "(Até 3x locais, 2x nac/int):",
+				items: [
+					{
+						points: 70,
+						text: "Implementação de projeto escolar contínuo"
+					},
+					{
+						points: 50,
+						text: "Projeto Local (Municipal)"
+					},
+					{
+						points: 100,
+						text: "Projeto Estadual"
+					},
+					{
+						points: 150,
+						text: "Projeto Nacional"
+					},
+					{
+						points: 200,
+						text: "Projeto Internacional"
+					}
+				]
+			}
+		]
+	},
+	{
+		mainTitle: "Produção Educativa e Mobilização",
+		desc: "Expanda o alcance da segurança viária através da educação e comunicação.",
+		groups: [
+			{
+				title: "Produção de Conteúdo (Validação Editorial)",
+				items: [
+					{
+						points: 150,
+						text: "Livro publicado com ISBN (Até 2x)"
+					},
+					{
+						points: 150,
+						text: "EBook publicado na Plataforma Digital (Até 2x)"
+					},
+					{
+						points: 100,
+						text: "Produção de material educativo (Até 3x)"
+					},
+					{
+						points: 100,
+						text: "Produção de vídeo técnico educativo (Até 3x)"
+					},
+					{
+						points: 50,
+						text: "Publicar gratuitamente materiais/artigos (Até 5x)"
+					}
+				]
+			},
+			{
+				title: "Ações e Eventos Educativos",
+				items: [
+					{
+						points: 100,
+						text: "Criar e coordenar ações educativas (Até 3x)"
+					},
+					{
+						points: 20,
+						text: "Trabalhar como colaborador em ações educativas (Até 5x)"
+					},
+					{
+						points: 50,
+						text: "Ser instrutor/dar aulas de trânsito (Até 5x)"
+					},
+					{
+						points: 100,
+						text: "Ministrar palestras técnicas (Até 5x)"
+					},
+					{
+						points: 100,
+						text: "Participar de eventos/conferências ONSV (Até 3x)"
+					},
+					{
+						points: 80,
+						text: "Organizar eventos técnicos (Até 3x)"
+					}
+				]
+			},
+			{
+				title: "Mídia e Digital",
+				items: [
+					{
+						points: 80,
+						text: "Administrar site ou canal ativo sobre Segurança Viária (Até 3x)"
+					},
+					{
+						points: 50,
+						text: "Compartilhamento: Mín. 15 reposts/mês no Instagram ONSV (Até 6 meses)"
+					},
+					{
+						points: 30,
+						text: "Entrevista TV/Impresso (Até 5x)"
+					},
+					{
+						points: 20,
+						text: "Entrevista Online/Rádio (Até 5x)"
+					}
+				]
+			}
+		]
+	},
+	{
+		mainTitle: "Reconhecimento e Engajamento Civil",
+		desc: "Interação com poder público, validação externa e dedicação institucional.",
+		groups: [
+			{
+				title: "Participação Pública (Até 5x)",
+				items: [
+					{
+						points: 30,
+						text: "Participação e contribuição em Audiência Pública"
+					},
+					{
+						points: 30,
+						text: "Participação e contribuição técnica em Consulta Pública"
+					},
+					{
+						points: 70,
+						text: "Proposição formal de melhoria viária protocolada (Até 3x)"
+					},
+					{
+						points: 70,
+						text: "Apresentar o Cadastro Positivo de Condutores (RNPC) (Até 5x)"
+					}
+				]
+			},
+			{
+				title: "Reconhecimento Institucional (Documentado)",
+				items: [
+					{
+						points: 100,
+						text: "Recebimento de prêmio nacional"
+					},
+					{
+						points: 50,
+						text: "Recebimento de prêmio regional"
+					},
+					{
+						points: 100,
+						text: "Recebimento de moção/homenagem pública"
+					},
+					{
+						points: 100,
+						text: "Destaque anual do programa (Reconhecimento ONSV interno, 1x/ano)"
+					}
+				]
+			},
+			{
+				title: "Engajamento Institucional",
+				items: [
+					{
+						points: 30,
+						text: "Atualização anual de cadastro técnico (Obrigatório, 1x/ano)"
+					},
+					{
+						points: 70,
+						text: "Representação formal do ONSV em eventos técnicos (Até 5x)"
+					},
+					{
+						points: 50,
+						text: "Atuar como voluntário formal em ONG de trânsito (Até 5x)"
+					}
+				]
+			}
+		]
+	}
+];
+//#endregion
+//#region src/components/submissions/PlaybookEixo1.tsx
+function PlaybookEixo1({ onSelect }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		"data-uid": "src/components/submissions/PlaybookEixo1.tsx:13:5",
+		"data-prohibitions": "[editContent]",
+		className: "space-y-6 animate-slide-up outline-none",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			"data-uid": "src/components/submissions/PlaybookEixo1.tsx:14:7",
+			"data-prohibitions": "[]",
+			className: "bg-emerald-50 text-emerald-950 dark:bg-emerald-950/20 dark:text-emerald-50 p-6 md:p-8 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border border-emerald-200 dark:border-emerald-900/50",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"data-uid": "src/components/submissions/PlaybookEixo1.tsx:15:9",
+				"data-prohibitions": "[]",
+				className: "p-4 bg-emerald-100 dark:bg-emerald-900/50 rounded-2xl shrink-0",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BookOpen, {
+					"data-uid": "src/components/submissions/PlaybookEixo1.tsx:16:11",
+					"data-prohibitions": "[editContent]",
+					className: "w-10 h-10 text-emerald-600 dark:text-emerald-400"
+				})
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				"data-uid": "src/components/submissions/PlaybookEixo1.tsx:18:9",
+				"data-prohibitions": "[]",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+					"data-uid": "src/components/submissions/PlaybookEixo1.tsx:19:11",
+					"data-prohibitions": "[]",
+					className: "text-2xl font-bold tracking-tight",
+					children: "Playbook Eixo I: Formação e Conhecimento"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					"data-uid": "src/components/submissions/PlaybookEixo1.tsx:22:11",
+					"data-prohibitions": "[]",
+					className: "opacity-90 mt-2 text-lg",
+					children: "Construa sua base e autoridade técnica. Atividades estruturais (Titulação) não são cumulativas."
+				})]
+			})]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			"data-uid": "src/components/submissions/PlaybookEixo1.tsx:29:7",
+			"data-prohibitions": "[editContent]",
+			className: "space-y-6",
+			children: eixo1Sections.map((section, sIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+				"data-uid": "src/components/submissions/PlaybookEixo1.tsx:31:11",
+				"data-prohibitions": "[editContent]",
+				className: "overflow-hidden border-border/60 shadow-subtle",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
+					"data-uid": "src/components/submissions/PlaybookEixo1.tsx:32:13",
+					"data-prohibitions": "[editContent]",
+					className: "bg-muted/30 border-b border-border/50 py-4",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
+						"data-uid": "src/components/submissions/PlaybookEixo1.tsx:33:15",
+						"data-prohibitions": "[editContent]",
+						className: "text-lg flex flex-wrap items-baseline gap-2",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							"data-uid": "src/components/submissions/PlaybookEixo1.tsx:34:17",
+							"data-prohibitions": "[editContent]",
+							children: section.title
+						}), section.desc && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							"data-uid": "src/components/submissions/PlaybookEixo1.tsx:36:19",
+							"data-prohibitions": "[editContent]",
+							className: "text-muted-foreground font-normal text-sm md:text-base",
+							children: section.desc
+						})]
+					})
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
+					"data-uid": "src/components/submissions/PlaybookEixo1.tsx:42:13",
+					"data-prohibitions": "[editContent]",
+					className: "p-0",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						"data-uid": "src/components/submissions/PlaybookEixo1.tsx:43:15",
+						"data-prohibitions": "[editContent]",
+						className: "divide-y divide-border/50",
+						children: section.items.map((item, iIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							"data-uid": "src/components/submissions/PlaybookEixo1.tsx:45:19",
+							"data-prohibitions": "[editContent]",
+							className: "flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-muted/20 transition-colors",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/components/submissions/PlaybookEixo1.tsx:49:21",
+								"data-prohibitions": "[editContent]",
+								className: "flex items-center gap-3",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
+									"data-uid": "src/components/submissions/PlaybookEixo1.tsx:50:23",
+									"data-prohibitions": "[editContent]",
+									className: "bg-emerald-600 hover:bg-emerald-700 text-white font-mono px-2 py-0.5 rounded shadow-sm whitespace-nowrap",
+									children: [
+										"[",
+										item.points,
+										" pts]"
+									]
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									"data-uid": "src/components/submissions/PlaybookEixo1.tsx:53:23",
+									"data-prohibitions": "[editContent]",
+									className: "font-medium text-sm md:text-base",
+									children: item.text
+								})]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+								"data-uid": "src/components/submissions/PlaybookEixo1.tsx:55:21",
+								"data-prohibitions": "[]",
+								variant: "outline",
+								size: "sm",
+								className: "shrink-0 sm:w-auto w-full border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 dark:border-emerald-800 dark:hover:bg-emerald-950 dark:hover:text-emerald-300",
+								onClick: () => onSelect({
+									title: item.text,
+									points: item.points,
+									axis: "Eixo I: Formação e Conhecimento"
+								}),
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Upload, {
+									"data-uid": "src/components/submissions/PlaybookEixo1.tsx:67:23",
+									"data-prohibitions": "[editContent]",
+									className: "w-4 h-4 mr-2"
+								}), "Upload"]
+							})]
+						}, iIdx))
+					})
+				})]
+			}, sIdx))
+		})]
+	});
+}
+//#endregion
+//#region src/components/submissions/PlaybookEixo2.tsx
+function PlaybookEixo2({ onSelect }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		"data-uid": "src/components/submissions/PlaybookEixo2.tsx:13:5",
+		"data-prohibitions": "[editContent]",
+		className: "space-y-8 animate-slide-up outline-none",
+		children: eixo2Playbook.map((category, cIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			"data-uid": "src/components/submissions/PlaybookEixo2.tsx:15:9",
+			"data-prohibitions": "[editContent]",
+			className: "space-y-6",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				"data-uid": "src/components/submissions/PlaybookEixo2.tsx:16:11",
+				"data-prohibitions": "[editContent]",
+				className: "bg-blue-50 text-blue-950 dark:bg-blue-950/20 dark:text-blue-50 p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border border-blue-200 dark:border-blue-900/50",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					"data-uid": "src/components/submissions/PlaybookEixo2.tsx:17:13",
+					"data-prohibitions": "[]",
+					className: "p-4 bg-blue-100 dark:bg-blue-900/50 rounded-2xl shrink-0",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Activity, {
+						"data-uid": "src/components/submissions/PlaybookEixo2.tsx:18:15",
+						"data-prohibitions": "[editContent]",
+						className: "w-10 h-10 text-blue-600 dark:text-blue-400"
+					})
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					"data-uid": "src/components/submissions/PlaybookEixo2.tsx:20:13",
+					"data-prohibitions": "[editContent]",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+						"data-uid": "src/components/submissions/PlaybookEixo2.tsx:21:15",
+						"data-prohibitions": "[editContent]",
+						className: "text-xl md:text-2xl font-bold tracking-tight",
+						children: category.mainTitle
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						"data-uid": "src/components/submissions/PlaybookEixo2.tsx:22:15",
+						"data-prohibitions": "[editContent]",
+						className: "opacity-90 mt-2 text-base md:text-lg",
+						children: category.desc
+					})]
+				})]
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"data-uid": "src/components/submissions/PlaybookEixo2.tsx:26:11",
+				"data-prohibitions": "[editContent]",
+				className: "grid gap-6",
+				children: category.groups.map((group, gIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+					"data-uid": "src/components/submissions/PlaybookEixo2.tsx:28:15",
+					"data-prohibitions": "[editContent]",
+					className: "overflow-hidden border-border/60 shadow-subtle",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
+						"data-uid": "src/components/submissions/PlaybookEixo2.tsx:29:17",
+						"data-prohibitions": "[editContent]",
+						className: "bg-muted/30 border-b border-border/50 py-4",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
+							"data-uid": "src/components/submissions/PlaybookEixo2.tsx:30:19",
+							"data-prohibitions": "[editContent]",
+							className: "text-lg flex flex-wrap items-baseline gap-2",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								"data-uid": "src/components/submissions/PlaybookEixo2.tsx:31:21",
+								"data-prohibitions": "[editContent]",
+								children: group.title
+							}), group.desc && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								"data-uid": "src/components/submissions/PlaybookEixo2.tsx:33:23",
+								"data-prohibitions": "[editContent]",
+								className: "text-muted-foreground font-normal text-sm md:text-base",
+								children: group.desc
+							})]
+						})
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
+						"data-uid": "src/components/submissions/PlaybookEixo2.tsx:39:17",
+						"data-prohibitions": "[editContent]",
+						className: "p-0",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							"data-uid": "src/components/submissions/PlaybookEixo2.tsx:40:19",
+							"data-prohibitions": "[editContent]",
+							className: "divide-y divide-border/50",
+							children: group.items.map((item, iIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/components/submissions/PlaybookEixo2.tsx:42:23",
+								"data-prohibitions": "[editContent]",
+								className: "flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-muted/20 transition-colors",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									"data-uid": "src/components/submissions/PlaybookEixo2.tsx:46:25",
+									"data-prohibitions": "[editContent]",
+									className: "flex items-center gap-3",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
+										"data-uid": "src/components/submissions/PlaybookEixo2.tsx:47:27",
+										"data-prohibitions": "[editContent]",
+										className: "bg-blue-600 hover:bg-blue-700 text-white font-mono px-2 py-0.5 rounded shadow-sm whitespace-nowrap",
+										children: [
+											"[",
+											item.points,
+											" pts]"
+										]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										"data-uid": "src/components/submissions/PlaybookEixo2.tsx:50:27",
+										"data-prohibitions": "[editContent]",
+										className: "font-medium text-sm md:text-base",
+										children: item.text
+									})]
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+									"data-uid": "src/components/submissions/PlaybookEixo2.tsx:52:25",
+									"data-prohibitions": "[]",
+									variant: "outline",
+									size: "sm",
+									className: "shrink-0 sm:w-auto w-full border-blue-200 hover:bg-blue-50 hover:text-blue-700 dark:border-blue-800 dark:hover:bg-blue-950 dark:hover:text-blue-300",
+									onClick: () => onSelect({
+										title: item.text,
+										points: item.points,
+										axis: `Eixo II: ${category.mainTitle}`
+									}),
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Upload, {
+										"data-uid": "src/components/submissions/PlaybookEixo2.tsx:64:27",
+										"data-prohibitions": "[editContent]",
+										className: "w-4 h-4 mr-2"
+									}), "Upload"]
+								})]
+							}, iIdx))
+						})
+					})]
+				}, gIdx))
+			})]
+		}, cIdx))
+	});
+}
+//#endregion
+//#region src/pages/Submissions.tsx
 function Submissions() {
 	const [selectedItem, setSelectedItem] = (0, import_react.useState)(null);
+	const { submissions } = useSubmissionsStore();
+	const mySubmissions = submissions.filter((s) => s.user === "Você");
 	const getStatusBadge = (status) => {
 		switch (status) {
 			case "Aprovado": return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
-				"data-uid": "src/pages/Submissions.tsx:60:11",
+				"data-uid": "src/pages/Submissions.tsx:33:11",
 				"data-prohibitions": "[]",
 				className: "bg-primary hover:bg-primary/90 font-medium px-2.5 py-0.5",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleCheck, {
-					"data-uid": "src/pages/Submissions.tsx:61:13",
+					"data-uid": "src/pages/Submissions.tsx:34:13",
 					"data-prohibitions": "[editContent]",
 					className: "w-3.5 h-3.5 mr-1.5"
 				}), " Aprovado"]
 			});
 			case "Em Análise": return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
-				"data-uid": "src/pages/Submissions.tsx:66:11",
+				"data-uid": "src/pages/Submissions.tsx:39:11",
 				"data-prohibitions": "[]",
 				variant: "secondary",
 				className: "bg-yellow-500/15 text-yellow-700 hover:bg-yellow-500/25 font-medium px-2.5 py-0.5",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, {
-					"data-uid": "src/pages/Submissions.tsx:70:13",
+					"data-uid": "src/pages/Submissions.tsx:43:13",
 					"data-prohibitions": "[editContent]",
 					className: "w-3.5 h-3.5 mr-1.5"
 				}), " Em Análise"]
 			});
 			case "Ajuste Necessário": return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
-				"data-uid": "src/pages/Submissions.tsx:75:11",
+				"data-uid": "src/pages/Submissions.tsx:48:11",
 				"data-prohibitions": "[]",
 				variant: "destructive",
 				className: "font-medium px-2.5 py-0.5",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleAlert, {
-					"data-uid": "src/pages/Submissions.tsx:76:13",
+					"data-uid": "src/pages/Submissions.tsx:49:13",
 					"data-prohibitions": "[editContent]",
 					className: "w-3.5 h-3.5 mr-1.5"
 				}), " Ajuste Necessário"]
 			});
 			default: return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
-				"data-uid": "src/pages/Submissions.tsx:80:16",
+				"data-uid": "src/pages/Submissions.tsx:53:16",
 				"data-prohibitions": "[editContent]",
 				children: status
 			});
 		}
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		"data-uid": "src/pages/Submissions.tsx:85:5",
+		"data-uid": "src/pages/Submissions.tsx:58:5",
 		"data-prohibitions": "[editContent]",
 		className: "max-w-5xl mx-auto space-y-8 animate-fade-in-up",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/pages/Submissions.tsx:86:7",
+				"data-uid": "src/pages/Submissions.tsx:59:7",
 				"data-prohibitions": "[]",
 				className: "flex flex-col md:flex-row md:items-center justify-between gap-4",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/pages/Submissions.tsx:87:9",
+					"data-uid": "src/pages/Submissions.tsx:60:9",
 					"data-prohibitions": "[]",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-						"data-uid": "src/pages/Submissions.tsx:88:11",
+						"data-uid": "src/pages/Submissions.tsx:61:11",
 						"data-prohibitions": "[]",
 						className: "text-3xl font-bold tracking-tight",
 						children: "Cofre de Evidências"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						"data-uid": "src/pages/Submissions.tsx:89:11",
+						"data-uid": "src/pages/Submissions.tsx:62:11",
 						"data-prohibitions": "[]",
 						className: "text-muted-foreground mt-2 text-lg",
 						children: "Acompanhe o status das suas submissões garantindo a rastreabilidade."
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/pages/Submissions.tsx:93:9",
+					"data-uid": "src/pages/Submissions.tsx:66:9",
 					"data-prohibitions": "[]",
 					className: "p-3 bg-primary/10 text-primary rounded-xl flex items-center gap-3 shadow-sm border border-primary/20",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FileSearch, {
-						"data-uid": "src/pages/Submissions.tsx:94:11",
+						"data-uid": "src/pages/Submissions.tsx:67:11",
 						"data-prohibitions": "[editContent]",
 						className: "w-6 h-6"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/pages/Submissions.tsx:95:11",
+						"data-uid": "src/pages/Submissions.tsx:68:11",
 						"data-prohibitions": "[]",
 						className: "flex flex-col",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							"data-uid": "src/pages/Submissions.tsx:96:13",
+							"data-uid": "src/pages/Submissions.tsx:69:13",
 							"data-prohibitions": "[]",
 							className: "text-xs font-semibold uppercase tracking-wider",
 							children: "Transparência"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							"data-uid": "src/pages/Submissions.tsx:97:13",
+							"data-uid": "src/pages/Submissions.tsx:70:13",
 							"data-prohibitions": "[]",
 							className: "text-sm font-bold",
 							children: "100% Auditável"
@@ -27828,208 +28356,126 @@ function Submissions() {
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Tabs, {
-				"data-uid": "src/pages/Submissions.tsx:102:7",
+				"data-uid": "src/pages/Submissions.tsx:75:7",
 				"data-prohibitions": "[editContent]",
-				defaultValue: "playbook",
+				defaultValue: "eixo1",
 				className: "w-full",
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TabsList, {
-						"data-uid": "src/pages/Submissions.tsx:103:9",
+						"data-uid": "src/pages/Submissions.tsx:76:9",
 						"data-prohibitions": "[]",
-						className: "mb-6 grid w-full grid-cols-2 max-w-md bg-muted/60 p-1.5 rounded-lg h-auto",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsTrigger, {
-							"data-uid": "src/pages/Submissions.tsx:104:11",
-							"data-prohibitions": "[]",
-							value: "playbook",
-							className: "text-sm py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all",
-							children: "Playbook Eixo I"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsTrigger, {
-							"data-uid": "src/pages/Submissions.tsx:110:11",
-							"data-prohibitions": "[]",
-							value: "history",
-							className: "text-sm py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all",
-							children: "Histórico"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TabsContent, {
-						"data-uid": "src/pages/Submissions.tsx:118:9",
-						"data-prohibitions": "[editContent]",
-						value: "playbook",
-						className: "space-y-6 animate-slide-up outline-none",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/pages/Submissions.tsx:119:11",
-							"data-prohibitions": "[]",
-							className: "bg-emerald-50 text-emerald-950 dark:bg-emerald-950/20 dark:text-emerald-50 p-6 md:p-8 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border border-emerald-200 dark:border-emerald-900/50",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/pages/Submissions.tsx:120:13",
+						className: "mb-6 grid w-full grid-cols-3 max-w-xl bg-muted/60 p-1.5 rounded-lg h-auto",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsTrigger, {
+								"data-uid": "src/pages/Submissions.tsx:77:11",
 								"data-prohibitions": "[]",
-								className: "p-4 bg-emerald-100 dark:bg-emerald-900/50 rounded-2xl shrink-0",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BookOpen, {
-									"data-uid": "src/pages/Submissions.tsx:121:15",
-									"data-prohibitions": "[editContent]",
-									className: "w-10 h-10 text-emerald-600 dark:text-emerald-400"
-								})
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/pages/Submissions.tsx:123:13",
+								value: "eixo1",
+								className: "text-sm py-2.5 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all",
+								children: "Playbook Eixo I"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsTrigger, {
+								"data-uid": "src/pages/Submissions.tsx:83:11",
 								"data-prohibitions": "[]",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-									"data-uid": "src/pages/Submissions.tsx:124:15",
-									"data-prohibitions": "[]",
-									className: "text-2xl font-bold tracking-tight",
-									children: "Playbook Eixo I: Formação e Conhecimento"
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-									"data-uid": "src/pages/Submissions.tsx:127:15",
-									"data-prohibitions": "[]",
-									className: "opacity-90 mt-2 text-lg",
-									children: "Construa sua base e autoridade técnica. Atividades estruturais (Titulação) não são cumulativas."
-								})]
-							})]
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							"data-uid": "src/pages/Submissions.tsx:134:11",
-							"data-prohibitions": "[editContent]",
-							className: "space-y-6",
-							children: eixo1Sections.map((section, sIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-								"data-uid": "src/pages/Submissions.tsx:136:15",
-								"data-prohibitions": "[editContent]",
-								className: "overflow-hidden border-border/60 shadow-subtle",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-									"data-uid": "src/pages/Submissions.tsx:137:17",
-									"data-prohibitions": "[editContent]",
-									className: "bg-muted/30 border-b border-border/50 py-4",
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-										"data-uid": "src/pages/Submissions.tsx:138:19",
-										"data-prohibitions": "[editContent]",
-										className: "text-lg flex flex-wrap items-baseline gap-2",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											"data-uid": "src/pages/Submissions.tsx:139:21",
-											"data-prohibitions": "[editContent]",
-											children: section.title
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											"data-uid": "src/pages/Submissions.tsx:140:21",
-											"data-prohibitions": "[editContent]",
-											className: "text-muted-foreground font-normal text-sm md:text-base",
-											children: section.desc
-										})]
-									})
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-									"data-uid": "src/pages/Submissions.tsx:145:17",
-									"data-prohibitions": "[editContent]",
-									className: "p-0",
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										"data-uid": "src/pages/Submissions.tsx:146:19",
-										"data-prohibitions": "[editContent]",
-										className: "divide-y divide-border/50",
-										children: section.items.map((item, iIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											"data-uid": "src/pages/Submissions.tsx:148:23",
-											"data-prohibitions": "[editContent]",
-											className: "flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-muted/20 transition-colors",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-												"data-uid": "src/pages/Submissions.tsx:152:25",
-												"data-prohibitions": "[editContent]",
-												className: "flex items-center gap-3",
-												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
-													"data-uid": "src/pages/Submissions.tsx:153:27",
-													"data-prohibitions": "[editContent]",
-													className: "bg-emerald-600 hover:bg-emerald-700 text-white font-mono px-2 py-0.5 rounded shadow-sm whitespace-nowrap",
-													children: [
-														"[",
-														item.points,
-														" pts]"
-													]
-												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-													"data-uid": "src/pages/Submissions.tsx:156:27",
-													"data-prohibitions": "[editContent]",
-													className: "font-medium text-sm md:text-base",
-													children: item.text
-												})]
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-												"data-uid": "src/pages/Submissions.tsx:158:25",
-												"data-prohibitions": "[]",
-												variant: "outline",
-												size: "sm",
-												className: "shrink-0 sm:w-auto w-full border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 dark:border-emerald-800 dark:hover:bg-emerald-950 dark:hover:text-emerald-300",
-												onClick: () => setSelectedItem({
-													title: item.text,
-													points: item.points,
-													axis: "Eixo I: Formação e Conhecimento"
-												}),
-												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Upload, {
-													"data-uid": "src/pages/Submissions.tsx:170:27",
-													"data-prohibitions": "[editContent]",
-													className: "w-4 h-4 mr-2"
-												}), "Upload"]
-											})]
-										}, iIdx))
-									})
-								})]
-							}, sIdx))
-						})]
+								value: "eixo2",
+								className: "text-sm py-2.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all",
+								children: "Playbook Eixo II"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsTrigger, {
+								"data-uid": "src/pages/Submissions.tsx:89:11",
+								"data-prohibitions": "[]",
+								value: "history",
+								className: "text-sm py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all",
+								children: "Histórico"
+							})
+						]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsContent, {
-						"data-uid": "src/pages/Submissions.tsx:182:9",
+						"data-uid": "src/pages/Submissions.tsx:97:9",
+						"data-prohibitions": "[]",
+						value: "eixo1",
+						className: "animate-slide-up outline-none",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlaybookEixo1, {
+							"data-uid": "src/pages/Submissions.tsx:98:11",
+							"data-prohibitions": "[editContent]",
+							onSelect: setSelectedItem
+						})
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsContent, {
+						"data-uid": "src/pages/Submissions.tsx:101:9",
+						"data-prohibitions": "[]",
+						value: "eixo2",
+						className: "animate-slide-up outline-none",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlaybookEixo2, {
+							"data-uid": "src/pages/Submissions.tsx:102:11",
+							"data-prohibitions": "[editContent]",
+							onSelect: setSelectedItem
+						})
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabsContent, {
+						"data-uid": "src/pages/Submissions.tsx:105:9",
 						"data-prohibitions": "[editContent]",
 						value: "history",
 						className: "animate-slide-up outline-none",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-							"data-uid": "src/pages/Submissions.tsx:183:11",
+							"data-uid": "src/pages/Submissions.tsx:106:11",
 							"data-prohibitions": "[editContent]",
 							className: "shadow-subtle border-border/60",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
-								"data-uid": "src/pages/Submissions.tsx:184:13",
+								"data-uid": "src/pages/Submissions.tsx:107:13",
 								"data-prohibitions": "[]",
 								className: "bg-muted/30 border-b border-border/50",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
-									"data-uid": "src/pages/Submissions.tsx:185:15",
+									"data-uid": "src/pages/Submissions.tsx:108:15",
 									"data-prohibitions": "[]",
 									children: "Histórico de Submissões"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, {
-									"data-uid": "src/pages/Submissions.tsx:186:15",
+									"data-uid": "src/pages/Submissions.tsx:109:15",
 									"data-prohibitions": "[]",
 									children: "Todas as evidências enviadas e seus respectivos status na curadoria."
 								})]
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-								"data-uid": "src/pages/Submissions.tsx:190:13",
+								"data-uid": "src/pages/Submissions.tsx:113:13",
 								"data-prohibitions": "[editContent]",
 								className: "p-0",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Table, {
-									"data-uid": "src/pages/Submissions.tsx:191:15",
+									"data-uid": "src/pages/Submissions.tsx:114:15",
 									"data-prohibitions": "[editContent]",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHeader, {
-										"data-uid": "src/pages/Submissions.tsx:192:17",
+										"data-uid": "src/pages/Submissions.tsx:115:17",
 										"data-prohibitions": "[]",
 										className: "bg-muted/10",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
-											"data-uid": "src/pages/Submissions.tsx:193:19",
+											"data-uid": "src/pages/Submissions.tsx:116:19",
 											"data-prohibitions": "[]",
 											children: [
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-													"data-uid": "src/pages/Submissions.tsx:194:21",
+													"data-uid": "src/pages/Submissions.tsx:117:21",
 													"data-prohibitions": "[]",
 													className: "pl-6",
 													children: "Data"
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-													"data-uid": "src/pages/Submissions.tsx:195:21",
+													"data-uid": "src/pages/Submissions.tsx:118:21",
 													"data-prohibitions": "[]",
 													children: "Identificador"
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-													"data-uid": "src/pages/Submissions.tsx:196:21",
+													"data-uid": "src/pages/Submissions.tsx:119:21",
 													"data-prohibitions": "[]",
 													children: "Título da Evidência"
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-													"data-uid": "src/pages/Submissions.tsx:197:21",
+													"data-uid": "src/pages/Submissions.tsx:120:21",
 													"data-prohibitions": "[]",
 													children: "Eixo Referência"
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-													"data-uid": "src/pages/Submissions.tsx:198:21",
+													"data-uid": "src/pages/Submissions.tsx:121:21",
 													"data-prohibitions": "[]",
 													children: "Status"
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-													"data-uid": "src/pages/Submissions.tsx:199:21",
+													"data-uid": "src/pages/Submissions.tsx:122:21",
 													"data-prohibitions": "[]",
 													className: "text-right pr-6",
 													children: "Pontos Obtidos"
@@ -28037,52 +28483,52 @@ function Submissions() {
 											]
 										})
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableBody, {
-										"data-uid": "src/pages/Submissions.tsx:202:17",
+										"data-uid": "src/pages/Submissions.tsx:125:17",
 										"data-prohibitions": "[editContent]",
-										children: submissionsData.map((sub) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
-											"data-uid": "src/pages/Submissions.tsx:204:21",
+										children: mySubmissions.map((sub) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
+											"data-uid": "src/pages/Submissions.tsx:127:21",
 											"data-prohibitions": "[editContent]",
 											className: "hover:bg-muted/30 transition-colors",
 											children: [
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-													"data-uid": "src/pages/Submissions.tsx:205:23",
+													"data-uid": "src/pages/Submissions.tsx:128:23",
 													"data-prohibitions": "[editContent]",
 													className: "font-medium text-muted-foreground pl-6",
 													children: sub.date
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-													"data-uid": "src/pages/Submissions.tsx:208:23",
+													"data-uid": "src/pages/Submissions.tsx:131:23",
 													"data-prohibitions": "[editContent]",
 													className: "font-mono text-xs",
 													children: sub.id
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-													"data-uid": "src/pages/Submissions.tsx:209:23",
+													"data-uid": "src/pages/Submissions.tsx:132:23",
 													"data-prohibitions": "[editContent]",
 													className: "font-semibold",
 													children: sub.title
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-													"data-uid": "src/pages/Submissions.tsx:210:23",
+													"data-uid": "src/pages/Submissions.tsx:133:23",
 													"data-prohibitions": "[editContent]",
 													children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-														"data-uid": "src/pages/Submissions.tsx:211:25",
+														"data-uid": "src/pages/Submissions.tsx:134:25",
 														"data-prohibitions": "[editContent]",
 														className: "text-xs font-bold uppercase tracking-wider text-muted-foreground",
 														children: sub.axis
 													})
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-													"data-uid": "src/pages/Submissions.tsx:215:23",
+													"data-uid": "src/pages/Submissions.tsx:138:23",
 													"data-prohibitions": "[editContent]",
 													children: getStatusBadge(sub.status)
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-													"data-uid": "src/pages/Submissions.tsx:216:23",
+													"data-uid": "src/pages/Submissions.tsx:139:23",
 													"data-prohibitions": "[editContent]",
 													className: "text-right pr-6 font-bold text-lg text-accent",
 													children: sub.points !== "-" ? `+${sub.points}` : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-														"data-uid": "src/pages/Submissions.tsx:220:27",
+														"data-uid": "src/pages/Submissions.tsx:143:27",
 														"data-prohibitions": "[]",
 														className: "text-muted-foreground/50",
 														children: "-"
@@ -28098,7 +28544,7 @@ function Submissions() {
 				]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SubmitEvidenceDialog, {
-				"data-uid": "src/pages/Submissions.tsx:232:7",
+				"data-uid": "src/pages/Submissions.tsx:155:7",
 				"data-prohibitions": "[editContent]",
 				isOpen: !!selectedItem,
 				onClose: () => setSelectedItem(null),
@@ -34251,109 +34697,77 @@ function Login() {
 }
 //#endregion
 //#region src/pages/admin/AdminDashboard.tsx
-var pendingSubmissions = [
-	{
-		id: "SUB-101",
-		user: "Ana Souza",
-		type: "Titulação (Doutorado)",
-		date: "12/03/2026",
-		status: "Pendente",
-		axis: "Eixo I"
-	},
-	{
-		id: "SUB-102",
-		user: "Carlos Silva",
-		type: "Artigo Científico",
-		date: "11/03/2026",
-		status: "Pendente",
-		axis: "Eixo I"
-	},
-	{
-		id: "SUB-103",
-		user: "Roberto Almeida",
-		type: "Mentoria Estratégica",
-		date: "10/03/2026",
-		status: "Em Análise",
-		axis: "Eixo III"
-	},
-	{
-		id: "SUB-104",
-		user: "Camila Barros",
-		type: "Palestra Educativa",
-		date: "09/03/2026",
-		status: "Pendente",
-		axis: "Eixo II"
-	}
-];
 function AdminDashboard() {
+	const { submissions } = useSubmissionsStore();
+	const pendingSubmissions = submissions.filter((s) => s.status === "Em Análise");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		"data-uid": "src/pages/admin/AdminDashboard.tsx:51:5",
+		"data-uid": "src/pages/admin/AdminDashboard.tsx:20:5",
 		"data-prohibitions": "[editContent]",
 		className: "max-w-6xl mx-auto space-y-8 animate-fade-in-up",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/pages/admin/AdminDashboard.tsx:52:7",
+				"data-uid": "src/pages/admin/AdminDashboard.tsx:21:7",
 				"data-prohibitions": "[]",
 				className: "flex flex-col md:flex-row md:items-center justify-between gap-4",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/pages/admin/AdminDashboard.tsx:53:9",
+					"data-uid": "src/pages/admin/AdminDashboard.tsx:22:9",
 					"data-prohibitions": "[]",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:54:11",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:23:11",
 						"data-prohibitions": "[]",
 						className: "text-3xl font-bold tracking-tight text-foreground",
 						children: "Painel de Gestão ONSV"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:57:11",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:26:11",
 						"data-prohibitions": "[]",
 						className: "text-muted-foreground mt-2 text-lg",
 						children: "Visão geral administrativa e curadoria de submissões estratégicas."
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
-					"data-uid": "src/pages/admin/AdminDashboard.tsx:61:9",
+					"data-uid": "src/pages/admin/AdminDashboard.tsx:30:9",
 					"data-prohibitions": "[]",
 					variant: "outline",
 					className: "px-4 py-2 text-sm bg-primary/5 text-primary border-primary/20 flex items-center gap-2 w-fit shadow-sm",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShieldAlert, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:65:11",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:34:11",
 						"data-prohibitions": "[editContent]",
 						className: "w-4 h-4"
 					}), "Modo Administrador"]
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/pages/admin/AdminDashboard.tsx:71:7",
+				"data-uid": "src/pages/admin/AdminDashboard.tsx:40:7",
 				"data-prohibitions": "[]",
 				className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4",
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:72:9",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:41:9",
 						"data-prohibitions": "[]",
 						className: "border-emerald-200 shadow-sm bg-emerald-50/50 dark:bg-emerald-950/20 dark:border-emerald-900/50",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:73:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:42:11",
 							"data-prohibitions": "[]",
 							className: "pb-2",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:74:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:43:13",
 								"data-prohibitions": "[]",
 								className: "text-sm font-semibold text-emerald-800 dark:text-emerald-400 flex items-center gap-2",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Users, {
-									"data-uid": "src/pages/admin/AdminDashboard.tsx:75:15",
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:44:15",
 									"data-prohibitions": "[editContent]",
 									className: "w-4 h-4"
 								}), " Observadores Ativos"]
 							})
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:78:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:47:11",
 							"data-prohibitions": "[]",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:79:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:48:13",
 								"data-prohibitions": "[]",
 								className: "text-3xl font-black text-emerald-950 dark:text-emerald-50",
 								children: "1,248"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:80:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:49:13",
 								"data-prohibitions": "[]",
 								className: "text-xs font-medium text-emerald-600 dark:text-emerald-500 mt-1",
 								children: "+12 este mês"
@@ -34361,33 +34775,33 @@ function AdminDashboard() {
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:86:9",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:55:9",
 						"data-prohibitions": "[]",
 						className: "border-blue-200 shadow-sm bg-blue-50/50 dark:bg-blue-950/20 dark:border-blue-900/50",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:87:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:56:11",
 							"data-prohibitions": "[]",
 							className: "pb-2",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:88:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:57:13",
 								"data-prohibitions": "[]",
 								className: "text-sm font-semibold text-blue-800 dark:text-blue-400 flex items-center gap-2",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FileText, {
-									"data-uid": "src/pages/admin/AdminDashboard.tsx:89:15",
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:58:15",
 									"data-prohibitions": "[editContent]",
 									className: "w-4 h-4"
 								}), " Total de Submissões"]
 							})
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:92:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:61:11",
 							"data-prohibitions": "[]",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:93:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:62:13",
 								"data-prohibitions": "[]",
 								className: "text-3xl font-black text-blue-950 dark:text-blue-50",
 								children: "8,432"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:94:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:63:13",
 								"data-prohibitions": "[]",
 								className: "text-xs font-medium text-blue-600 dark:text-blue-500 mt-1",
 								children: "Nível de engajamento alto"
@@ -34395,33 +34809,33 @@ function AdminDashboard() {
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:100:9",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:69:9",
 						"data-prohibitions": "[]",
 						className: "border-amber-200 shadow-sm bg-amber-50/50 dark:bg-amber-950/20 dark:border-amber-900/50",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:101:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:70:11",
 							"data-prohibitions": "[]",
 							className: "pb-2",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:102:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:71:13",
 								"data-prohibitions": "[]",
 								className: "text-sm font-semibold text-amber-800 dark:text-amber-400 flex items-center gap-2",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, {
-									"data-uid": "src/pages/admin/AdminDashboard.tsx:103:15",
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:72:15",
 									"data-prohibitions": "[editContent]",
 									className: "w-4 h-4"
 								}), " Fila de Curadoria"]
 							})
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:106:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:75:11",
 							"data-prohibitions": "[]",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:107:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:76:13",
 								"data-prohibitions": "[]",
 								className: "text-3xl font-black text-amber-950 dark:text-amber-50",
 								children: "45"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:108:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:77:13",
 								"data-prohibitions": "[]",
 								className: "text-xs font-medium text-amber-600 dark:text-amber-500 mt-1",
 								children: "Ações requeridas hoje"
@@ -34429,33 +34843,33 @@ function AdminDashboard() {
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:114:9",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:83:9",
 						"data-prohibitions": "[]",
 						className: "border-primary/20 shadow-sm bg-primary/5",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:115:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:84:11",
 							"data-prohibitions": "[]",
 							className: "pb-2",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:116:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:85:13",
 								"data-prohibitions": "[]",
 								className: "text-sm font-semibold text-primary flex items-center gap-2",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleCheckBig, {
-									"data-uid": "src/pages/admin/AdminDashboard.tsx:117:15",
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:86:15",
 									"data-prohibitions": "[editContent]",
 									className: "w-4 h-4"
 								}), " Aprovadas (Mês)"]
 							})
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:120:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:89:11",
 							"data-prohibitions": "[]",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:121:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:90:13",
 								"data-prohibitions": "[]",
 								className: "text-3xl font-black text-foreground",
 								children: "312"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:122:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:91:13",
 								"data-prohibitions": "[]",
 								className: "text-xs font-medium text-muted-foreground mt-1",
 								children: "Taxa de aprovação: 89%"
@@ -34465,70 +34879,70 @@ function AdminDashboard() {
 				]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-				"data-uid": "src/pages/admin/AdminDashboard.tsx:128:7",
+				"data-uid": "src/pages/admin/AdminDashboard.tsx:97:7",
 				"data-prohibitions": "[editContent]",
 				className: "shadow-subtle border-border/60",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
-					"data-uid": "src/pages/admin/AdminDashboard.tsx:129:9",
+					"data-uid": "src/pages/admin/AdminDashboard.tsx:98:9",
 					"data-prohibitions": "[]",
 					className: "bg-muted/30 border-b border-border/50",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:130:11",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:99:11",
 						"data-prohibitions": "[]",
 						children: "Ações Pendentes de Curadoria"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:131:11",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:100:11",
 						"data-prohibitions": "[]",
 						children: "Evidências submetidas por Observadores aguardando validação do comitê de meritocracia."
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-					"data-uid": "src/pages/admin/AdminDashboard.tsx:135:9",
+					"data-uid": "src/pages/admin/AdminDashboard.tsx:104:9",
 					"data-prohibitions": "[editContent]",
 					className: "p-0",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Table, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:136:11",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:105:11",
 						"data-prohibitions": "[editContent]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHeader, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:137:13",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:106:13",
 							"data-prohibitions": "[]",
 							className: "bg-muted/10",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:138:15",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:107:15",
 								"data-prohibitions": "[]",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:139:17",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:108:17",
 										"data-prohibitions": "[]",
 										className: "pl-6",
 										children: "Identificador"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:140:17",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:109:17",
 										"data-prohibitions": "[]",
 										children: "Observador"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:141:17",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:110:17",
 										"data-prohibitions": "[]",
 										children: "Evidência (Tipo)"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:142:17",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:111:17",
 										"data-prohibitions": "[]",
 										children: "Eixo"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:143:17",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:112:17",
 										"data-prohibitions": "[]",
 										children: "Data"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:144:17",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:113:17",
 										"data-prohibitions": "[]",
 										children: "Status"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:145:17",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:114:17",
 										"data-prohibitions": "[]",
 										className: "text-right pr-6",
 										children: "Ação"
@@ -34536,63 +34950,63 @@ function AdminDashboard() {
 								]
 							})
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableBody, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:148:13",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:117:13",
 							"data-prohibitions": "[editContent]",
 							children: pendingSubmissions.map((sub) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:150:17",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:119:17",
 								"data-prohibitions": "[editContent]",
 								className: "hover:bg-muted/30 transition-colors",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:151:19",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:120:19",
 										"data-prohibitions": "[editContent]",
 										className: "font-mono text-xs text-muted-foreground pl-6",
 										children: sub.id
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:154:19",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:123:19",
 										"data-prohibitions": "[editContent]",
 										className: "font-semibold",
 										children: sub.user
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:155:19",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:124:19",
 										"data-prohibitions": "[editContent]",
-										children: sub.type
+										children: sub.title
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:156:19",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:125:19",
 										"data-prohibitions": "[editContent]",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											"data-uid": "src/pages/admin/AdminDashboard.tsx:157:21",
+											"data-uid": "src/pages/admin/AdminDashboard.tsx:126:21",
 											"data-prohibitions": "[editContent]",
 											className: "text-xs font-bold uppercase tracking-wider text-muted-foreground",
 											children: sub.axis
 										})
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:161:19",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:130:19",
 										"data-prohibitions": "[editContent]",
 										className: "text-muted-foreground",
 										children: sub.date
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:162:19",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:131:19",
 										"data-prohibitions": "[editContent]",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
-											"data-uid": "src/pages/admin/AdminDashboard.tsx:163:21",
+											"data-uid": "src/pages/admin/AdminDashboard.tsx:132:21",
 											"data-prohibitions": "[editContent]",
 											variant: "secondary",
-											className: sub.status === "Pendente" ? "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400" : "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400",
+											className: "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400",
 											children: sub.status
 										})
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:174:19",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:139:19",
 										"data-prohibitions": "[]",
 										className: "text-right pr-6",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-											"data-uid": "src/pages/admin/AdminDashboard.tsx:175:21",
+											"data-uid": "src/pages/admin/AdminDashboard.tsx:140:21",
 											"data-prohibitions": "[]",
 											size: "sm",
 											variant: "default",
@@ -35500,13 +35914,13 @@ function Layout() {
 var ProtectedRoute = ({ children, allowedRoles }) => {
 	const { isAuthenticated, user } = useAuthStore();
 	if (!isAuthenticated) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
-		"data-uid": "src/App.tsx:27:12",
+		"data-uid": "src/App.tsx:28:12",
 		"data-prohibitions": "[editContent]",
 		to: "/login",
 		replace: true
 	});
 	if (allowedRoles && user?.role && !allowedRoles.includes(user.role)) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
-		"data-uid": "src/App.tsx:31:12",
+		"data-uid": "src/App.tsx:32:12",
 		"data-prohibitions": "[editContent]",
 		to: user.role === "admin" ? "/admin" : "/",
 		replace: true
@@ -35515,96 +35929,96 @@ var ProtectedRoute = ({ children, allowedRoles }) => {
 };
 var AppRoutes = () => {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Routes, {
-		"data-uid": "src/App.tsx:39:5",
+		"data-uid": "src/App.tsx:40:5",
 		"data-prohibitions": "[]",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-				"data-uid": "src/App.tsx:40:7",
+				"data-uid": "src/App.tsx:41:7",
 				"data-prohibitions": "[editContent]",
 				path: "/login",
 				element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Login, {
-					"data-uid": "src/App.tsx:40:37",
+					"data-uid": "src/App.tsx:41:37",
 					"data-prohibitions": "[editContent]"
 				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Route, {
-				"data-uid": "src/App.tsx:42:7",
+				"data-uid": "src/App.tsx:43:7",
 				"data-prohibitions": "[]",
 				element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProtectedRoute, {
-					"data-uid": "src/App.tsx:44:11",
+					"data-uid": "src/App.tsx:45:11",
 					"data-prohibitions": "[]",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Layout, {
-						"data-uid": "src/App.tsx:45:13",
+						"data-uid": "src/App.tsx:46:13",
 						"data-prohibitions": "[editContent]"
 					})
 				}),
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-						"data-uid": "src/App.tsx:49:9",
+						"data-uid": "src/App.tsx:50:9",
 						"data-prohibitions": "[editContent]",
 						path: "/",
 						element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProtectedRoute, {
-							"data-uid": "src/App.tsx:52:13",
+							"data-uid": "src/App.tsx:53:13",
 							"data-prohibitions": "[]",
 							allowedRoles: ["observer"],
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Index, {
-								"data-uid": "src/App.tsx:53:15",
+								"data-uid": "src/App.tsx:54:15",
 								"data-prohibitions": "[editContent]"
 							})
 						})
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-						"data-uid": "src/App.tsx:57:9",
+						"data-uid": "src/App.tsx:58:9",
 						"data-prohibitions": "[editContent]",
 						path: "/eixos",
 						element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProtectedRoute, {
-							"data-uid": "src/App.tsx:60:13",
+							"data-uid": "src/App.tsx:61:13",
 							"data-prohibitions": "[]",
 							allowedRoles: ["observer"],
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Axes, {
-								"data-uid": "src/App.tsx:61:15",
+								"data-uid": "src/App.tsx:62:15",
 								"data-prohibitions": "[editContent]"
 							})
 						})
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-						"data-uid": "src/App.tsx:65:9",
+						"data-uid": "src/App.tsx:66:9",
 						"data-prohibitions": "[editContent]",
 						path: "/submissoes",
 						element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProtectedRoute, {
-							"data-uid": "src/App.tsx:68:13",
+							"data-uid": "src/App.tsx:69:13",
 							"data-prohibitions": "[]",
 							allowedRoles: ["observer"],
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Submissions, {
-								"data-uid": "src/App.tsx:69:15",
+								"data-uid": "src/App.tsx:70:15",
 								"data-prohibitions": "[editContent]"
 							})
 						})
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-						"data-uid": "src/App.tsx:73:9",
+						"data-uid": "src/App.tsx:74:9",
 						"data-prohibitions": "[editContent]",
 						path: "/ranking",
 						element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProtectedRoute, {
-							"data-uid": "src/App.tsx:76:13",
+							"data-uid": "src/App.tsx:77:13",
 							"data-prohibitions": "[]",
 							allowedRoles: ["observer"],
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ranking, {
-								"data-uid": "src/App.tsx:77:15",
+								"data-uid": "src/App.tsx:78:15",
 								"data-prohibitions": "[editContent]"
 							})
 						})
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-						"data-uid": "src/App.tsx:81:9",
+						"data-uid": "src/App.tsx:82:9",
 						"data-prohibitions": "[editContent]",
 						path: "/admin",
 						element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProtectedRoute, {
-							"data-uid": "src/App.tsx:84:13",
+							"data-uid": "src/App.tsx:85:13",
 							"data-prohibitions": "[]",
 							allowedRoles: ["admin"],
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminDashboard, {
-								"data-uid": "src/App.tsx:85:15",
+								"data-uid": "src/App.tsx:86:15",
 								"data-prohibitions": "[editContent]"
 							})
 						})
@@ -35612,11 +36026,11 @@ var AppRoutes = () => {
 				]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-				"data-uid": "src/App.tsx:91:7",
+				"data-uid": "src/App.tsx:92:7",
 				"data-prohibitions": "[editContent]",
 				path: "*",
 				element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(NotFound, {
-					"data-uid": "src/App.tsx:91:32",
+					"data-uid": "src/App.tsx:92:32",
 					"data-prohibitions": "[editContent]"
 				})
 			})
@@ -35624,35 +36038,39 @@ var AppRoutes = () => {
 	});
 };
 var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
-	"data-uid": "src/App.tsx:97:3",
+	"data-uid": "src/App.tsx:98:3",
 	"data-prohibitions": "[]",
 	future: {
 		v7_startTransition: false,
 		v7_relativeSplatPath: false
 	},
 	children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AuthProvider, {
-		"data-uid": "src/App.tsx:98:5",
+		"data-uid": "src/App.tsx:99:5",
 		"data-prohibitions": "[]",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(GameProvider, {
-			"data-uid": "src/App.tsx:99:7",
+			"data-uid": "src/App.tsx:100:7",
 			"data-prohibitions": "[]",
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TooltipProvider, {
-				"data-uid": "src/App.tsx:100:9",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SubmissionsProvider, {
+				"data-uid": "src/App.tsx:101:9",
 				"data-prohibitions": "[]",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Toaster$2, {
-						"data-uid": "src/App.tsx:101:11",
-						"data-prohibitions": "[editContent]"
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Toaster, {
-						"data-uid": "src/App.tsx:102:11",
-						"data-prohibitions": "[editContent]"
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AppRoutes, {
-						"data-uid": "src/App.tsx:103:11",
-						"data-prohibitions": "[editContent]"
-					})
-				]
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TooltipProvider, {
+					"data-uid": "src/App.tsx:102:11",
+					"data-prohibitions": "[]",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Toaster$2, {
+							"data-uid": "src/App.tsx:103:13",
+							"data-prohibitions": "[editContent]"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Toaster, {
+							"data-uid": "src/App.tsx:104:13",
+							"data-prohibitions": "[editContent]"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AppRoutes, {
+							"data-uid": "src/App.tsx:105:13",
+							"data-prohibitions": "[editContent]"
+						})
+					]
+				})
 			})
 		})
 	})
@@ -35665,4 +36083,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-DMcYWnDP.js.map
+//# sourceMappingURL=index-bYbJFl33.js.map

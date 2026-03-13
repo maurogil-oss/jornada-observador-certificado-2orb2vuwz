@@ -4,6 +4,7 @@ import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { GameProvider } from '@/stores/useGameStore'
 import { AuthProvider } from '@/stores/useAuthStore'
+import { SubmissionsProvider } from '@/stores/useSubmissionsStore'
 import useAuthStore from '@/stores/useAuthStore'
 import Index from './pages/Index'
 import Axes from './pages/Axes'
@@ -97,11 +98,13 @@ const App = () => (
   <BrowserRouter future={{ v7_startTransition: false, v7_relativeSplatPath: false }}>
     <AuthProvider>
       <GameProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <AppRoutes />
-        </TooltipProvider>
+        <SubmissionsProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <AppRoutes />
+          </TooltipProvider>
+        </SubmissionsProvider>
       </GameProvider>
     </AuthProvider>
   </BrowserRouter>

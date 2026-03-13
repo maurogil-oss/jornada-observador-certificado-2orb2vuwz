@@ -10,41 +10,11 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import { submissionsData } from '@/lib/data'
-import { CheckCircle2, Clock, AlertCircle, FileSearch, Upload, BookOpen } from 'lucide-react'
+import { CheckCircle2, Clock, AlertCircle, FileSearch } from 'lucide-react'
 import { SubmitEvidenceDialog } from '@/components/submissions/SubmitEvidenceDialog'
-
-const eixo1Sections = [
-  {
-    title: 'Titulação Acadêmica',
-    desc: '(Envio de Diploma, Pontuação Única):',
-    items: [
-      { points: 80, text: 'Graduação (Reconhecida MEC)' },
-      { points: 100, text: 'Pós-graduação Lato Sensu' },
-      { points: 150, text: 'Mestrado' },
-      { points: 200, text: 'Doutorado' },
-      { points: 250, text: 'Pós-Doutorado (Estágio concluído)' },
-    ],
-  },
-  {
-    title: 'Capacitação Contínua',
-    desc: '(Até 5x cada):',
-    items: [
-      { points: 30, text: 'Curso geral na área de trânsito/mobilidade (Mínimo 8h)' },
-      { points: 50, text: 'Curso oficial promovido pelo ONSV' },
-    ],
-  },
-  {
-    title: 'Produção Acadêmica',
-    desc: '(Até 5x, Análise Técnica):',
-    items: [
-      { points: 50, text: 'Artigos publicados' },
-      { points: 50, text: 'Estudos publicados' },
-      { points: 50, text: 'Papers publicados em revistas/anais' },
-    ],
-  },
-]
+import { PlaybookEixo1 } from '@/components/submissions/PlaybookEixo1'
+import { PlaybookEixo2 } from '@/components/submissions/PlaybookEixo2'
+import useSubmissionsStore from '@/stores/useSubmissionsStore'
 
 export default function Submissions() {
   const [selectedItem, setSelectedItem] = useState<{
@@ -52,6 +22,9 @@ export default function Submissions() {
     points: number
     axis: string
   } | null>(null)
+
+  const { submissions } = useSubmissionsStore()
+  const mySubmissions = submissions.filter((s) => s.user === 'Você')
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -99,13 +72,19 @@ export default function Submissions() {
         </div>
       </div>
 
-      <Tabs defaultValue="playbook" className="w-full">
-        <TabsList className="mb-6 grid w-full grid-cols-2 max-w-md bg-muted/60 p-1.5 rounded-lg h-auto">
+      <Tabs defaultValue="eixo1" className="w-full">
+        <TabsList className="mb-6 grid w-full grid-cols-3 max-w-xl bg-muted/60 p-1.5 rounded-lg h-auto">
           <TabsTrigger
-            value="playbook"
-            className="text-sm py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all"
+            value="eixo1"
+            className="text-sm py-2.5 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all"
           >
             Playbook Eixo I
+          </TabsTrigger>
+          <TabsTrigger
+            value="eixo2"
+            className="text-sm py-2.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all"
+          >
+            Playbook Eixo II
           </TabsTrigger>
           <TabsTrigger
             value="history"
@@ -115,68 +94,12 @@ export default function Submissions() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="playbook" className="space-y-6 animate-slide-up outline-none">
-          <div className="bg-emerald-50 text-emerald-950 dark:bg-emerald-950/20 dark:text-emerald-50 p-6 md:p-8 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-6 shadow-elevation border border-emerald-200 dark:border-emerald-900/50">
-            <div className="p-4 bg-emerald-100 dark:bg-emerald-900/50 rounded-2xl shrink-0">
-              <BookOpen className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">
-                Playbook Eixo I: Formação e Conhecimento
-              </h2>
-              <p className="opacity-90 mt-2 text-lg">
-                Construa sua base e autoridade técnica. Atividades estruturais (Titulação) não são
-                cumulativas.
-              </p>
-            </div>
-          </div>
+        <TabsContent value="eixo1" className="animate-slide-up outline-none">
+          <PlaybookEixo1 onSelect={setSelectedItem} />
+        </TabsContent>
 
-          <div className="space-y-6">
-            {eixo1Sections.map((section, sIdx) => (
-              <Card key={sIdx} className="overflow-hidden border-border/60 shadow-subtle">
-                <CardHeader className="bg-muted/30 border-b border-border/50 py-4">
-                  <CardTitle className="text-lg flex flex-wrap items-baseline gap-2">
-                    <span>{section.title}</span>
-                    <span className="text-muted-foreground font-normal text-sm md:text-base">
-                      {section.desc}
-                    </span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="divide-y divide-border/50">
-                    {section.items.map((item, iIdx) => (
-                      <div
-                        key={iIdx}
-                        className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-muted/20 transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <Badge className="bg-emerald-600 hover:bg-emerald-700 text-white font-mono px-2 py-0.5 rounded shadow-sm whitespace-nowrap">
-                            [{item.points} pts]
-                          </Badge>
-                          <span className="font-medium text-sm md:text-base">{item.text}</span>
-                        </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="shrink-0 sm:w-auto w-full border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 dark:border-emerald-800 dark:hover:bg-emerald-950 dark:hover:text-emerald-300"
-                          onClick={() =>
-                            setSelectedItem({
-                              title: item.text,
-                              points: item.points,
-                              axis: 'Eixo I: Formação e Conhecimento',
-                            })
-                          }
-                        >
-                          <Upload className="w-4 h-4 mr-2" />
-                          Upload
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        <TabsContent value="eixo2" className="animate-slide-up outline-none">
+          <PlaybookEixo2 onSelect={setSelectedItem} />
         </TabsContent>
 
         <TabsContent value="history" className="animate-slide-up outline-none">
@@ -200,7 +123,7 @@ export default function Submissions() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {submissionsData.map((sub) => (
+                  {mySubmissions.map((sub) => (
                     <TableRow key={sub.id} className="hover:bg-muted/30 transition-colors">
                       <TableCell className="font-medium text-muted-foreground pl-6">
                         {sub.date}

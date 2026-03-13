@@ -10,43 +10,12 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-
-const pendingSubmissions = [
-  {
-    id: 'SUB-101',
-    user: 'Ana Souza',
-    type: 'Titulação (Doutorado)',
-    date: '12/03/2026',
-    status: 'Pendente',
-    axis: 'Eixo I',
-  },
-  {
-    id: 'SUB-102',
-    user: 'Carlos Silva',
-    type: 'Artigo Científico',
-    date: '11/03/2026',
-    status: 'Pendente',
-    axis: 'Eixo I',
-  },
-  {
-    id: 'SUB-103',
-    user: 'Roberto Almeida',
-    type: 'Mentoria Estratégica',
-    date: '10/03/2026',
-    status: 'Em Análise',
-    axis: 'Eixo III',
-  },
-  {
-    id: 'SUB-104',
-    user: 'Camila Barros',
-    type: 'Palestra Educativa',
-    date: '09/03/2026',
-    status: 'Pendente',
-    axis: 'Eixo II',
-  },
-]
+import useSubmissionsStore from '@/stores/useSubmissionsStore'
 
 export default function AdminDashboard() {
+  const { submissions } = useSubmissionsStore()
+  const pendingSubmissions = submissions.filter((s) => s.status === 'Em Análise')
+
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in-up">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -152,7 +121,7 @@ export default function AdminDashboard() {
                     {sub.id}
                   </TableCell>
                   <TableCell className="font-semibold">{sub.user}</TableCell>
-                  <TableCell>{sub.type}</TableCell>
+                  <TableCell>{sub.title}</TableCell>
                   <TableCell>
                     <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                       {sub.axis}
@@ -162,11 +131,7 @@ export default function AdminDashboard() {
                   <TableCell>
                     <Badge
                       variant="secondary"
-                      className={
-                        sub.status === 'Pendente'
-                          ? 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400'
-                          : 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400'
-                      }
+                      className="bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400"
                     >
                       {sub.status}
                     </Badge>
