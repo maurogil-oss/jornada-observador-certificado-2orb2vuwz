@@ -16,7 +16,6 @@ import {
 import useAuthStore from '@/stores/useAuthStore'
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Logo } from '@/components/shared/Logo'
 
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido. Utilize o formato: seu@email.com'),
@@ -63,9 +62,6 @@ export default function Login() {
 
       <Card className="w-full max-w-md shadow-elevation border-border/60 relative z-10 backdrop-blur-md bg-background/80 animate-fade-in-up">
         <CardHeader className="space-y-3 pb-6 text-center">
-          <div className="mx-auto mb-2 flex justify-center">
-            <Logo className="w-24 h-24" />
-          </div>
           <CardTitle className="text-2xl font-bold tracking-tight">
             Portal Estratégico ONSV
           </CardTitle>

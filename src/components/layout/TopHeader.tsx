@@ -3,7 +3,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import useAuthStore from '@/stores/useAuthStore'
 import useGameStore from '@/stores/useGameStore'
 import { Badge } from '@/components/ui/badge'
-import { Logo } from '@/components/shared/Logo'
 
 export function TopHeader() {
   const { user } = useAuthStore()
@@ -19,8 +18,7 @@ export function TopHeader() {
     <header className="h-16 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 shadow-sm">
       <div className="flex items-center gap-4">
         <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors min-h-[44px] min-w-[44px]" />
-        <div className="hidden md:flex items-center gap-3">
-          <Logo className="w-10 h-10" />
+        <div className="hidden md:flex items-center">
           <div className="flex flex-col">
             <h2 className="text-sm font-black text-foreground tracking-tight leading-none uppercase">
               Observador Certificado

@@ -13,7 +13,6 @@ import {
 import { Home, Compass, FileCheck, Trophy, LogOut, LayoutDashboard } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
-import { Logo } from '@/components/shared/Logo'
 
 export function AppSidebar() {
   const location = useLocation()
@@ -33,10 +32,7 @@ export function AppSidebar() {
   return (
     <Sidebar variant="sidebar" collapsible="icon" className="border-r border-border/50 shadow-sm">
       <SidebarHeader className="p-4 border-b border-border/50 bg-amber-50/50 dark:bg-amber-950/20">
-        <div className="flex items-center gap-3 px-2">
-          <div className="w-8 h-8 shrink-0 flex items-center justify-center group-data-[collapsible=icon]:mx-auto">
-            <Logo className="w-full h-full" />
-          </div>
+        <div className="flex items-center px-2">
           <div className="flex flex-col group-data-[collapsible=icon]:hidden whitespace-nowrap overflow-hidden">
             <span className="font-black text-sm tracking-tight text-foreground leading-none">
               OBSERVADOR

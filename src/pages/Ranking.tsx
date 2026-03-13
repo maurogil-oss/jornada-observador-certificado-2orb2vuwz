@@ -1,7 +1,6 @@
 import { rankingData } from '@/lib/data'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
-import { Logo } from '@/components/shared/Logo'
 import {
   Table,
   TableBody,
@@ -19,9 +18,6 @@ export default function Ranking() {
   return (
     <div className="max-w-5xl mx-auto space-y-12 animate-fade-in-up pb-10">
       <div className="text-center space-y-3">
-        <div className="inline-flex items-center justify-center mb-2">
-          <Logo className="w-24 h-24" />
-        </div>
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Quadro de Honra</h1>
         <p className="text-muted-foreground text-lg max-w-2xl mx-auto px-4">
           O princípio da Meritocracia em ação. Acompanhe os líderes da Jornada de Evolução.
@@ -47,9 +43,6 @@ export default function Ranking() {
               className="flex flex-col items-center relative animate-slide-up flex-1 max-w-[160px]"
               style={{ animationDelay: `${(3 - position) * 150}ms` }}
             >
-              {position === 1 && (
-                <Logo className="w-16 h-16 sm:w-20 sm:h-20 absolute -top-20 sm:-top-24 z-20" />
-              )}
               <Avatar
                 className={cn(
                   'border-4 shadow-xl mb-3 sm:mb-5 z-10 bg-background',
