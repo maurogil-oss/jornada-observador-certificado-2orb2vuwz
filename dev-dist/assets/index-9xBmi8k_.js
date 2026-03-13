@@ -31168,32 +31168,86 @@ function Logo({ className }) {
 		"data-uid": "src/components/shared/Logo.tsx:9:5",
 		"data-prohibitions": "[editContent]",
 		viewBox: "0 0 100 100",
+		fill: "none",
 		xmlns: "http://www.w3.org/2000/svg",
 		className: cn$1("shrink-0", className),
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-				"data-uid": "src/components/shared/Logo.tsx:14:7",
+				"data-uid": "src/components/shared/Logo.tsx:16:7",
 				"data-prohibitions": "[editContent]",
-				d: "M50 5 L10 25 V50 C10 75 30 90 50 95 C70 90 90 75 90 50 V25 Z",
+				d: "M15 80 Q 50 95 85 80 L 80 70 L 20 70 Z",
+				fill: "currentColor",
+				className: "text-amber-600 dark:text-amber-700"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", {
+				"data-uid": "src/components/shared/Logo.tsx:22:7",
+				"data-prohibitions": "[editContent]",
+				x: "22",
+				y: "74",
+				width: "56",
+				height: "5",
+				rx: "2.5",
+				fill: "currentColor",
+				className: "text-amber-800/40"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+				"data-uid": "src/components/shared/Logo.tsx:33:7",
+				"data-prohibitions": "[editContent]",
+				d: "M10 70 L 5 30 L 28 50 L 50 15 L 72 50 L 95 30 L 90 70 Z",
 				fill: "currentColor",
 				className: "text-amber-500"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-				"data-uid": "src/components/shared/Logo.tsx:19:7",
+				"data-uid": "src/components/shared/Logo.tsx:39:7",
 				"data-prohibitions": "[editContent]",
-				d: "M50 15 L20 32 V50 C20 70 35 82 50 85 C65 82 80 70 80 50 V32 Z",
-				fill: "#ffffff"
+				d: "M50 15 L 28 50 L 50 70 L 72 50 Z",
+				fill: "currentColor",
+				className: "text-amber-400 opacity-70"
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-				"data-uid": "src/components/shared/Logo.tsx:20:7",
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
+				"data-uid": "src/components/shared/Logo.tsx:46:7",
 				"data-prohibitions": "[editContent]",
-				d: "M40 55 L48 63 L65 40",
-				stroke: "currentColor",
-				"stroke-width": "8",
-				"stroke-linecap": "round",
-				"stroke-linejoin": "round",
-				fill: "none",
-				className: "text-emerald-600"
+				cx: "5",
+				cy: "25",
+				r: "5",
+				fill: "currentColor",
+				className: "text-emerald-600 dark:text-emerald-500"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
+				"data-uid": "src/components/shared/Logo.tsx:53:7",
+				"data-prohibitions": "[editContent]",
+				cx: "28",
+				cy: "45",
+				r: "4",
+				fill: "currentColor",
+				className: "text-emerald-600 dark:text-emerald-500"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
+				"data-uid": "src/components/shared/Logo.tsx:60:7",
+				"data-prohibitions": "[editContent]",
+				cx: "50",
+				cy: "10",
+				r: "6",
+				fill: "currentColor",
+				className: "text-emerald-600 dark:text-emerald-500"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
+				"data-uid": "src/components/shared/Logo.tsx:67:7",
+				"data-prohibitions": "[editContent]",
+				cx: "72",
+				cy: "45",
+				r: "4",
+				fill: "currentColor",
+				className: "text-emerald-600 dark:text-emerald-500"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
+				"data-uid": "src/components/shared/Logo.tsx:74:7",
+				"data-prohibitions": "[editContent]",
+				cx: "95",
+				cy: "25",
+				r: "5",
+				fill: "currentColor",
+				className: "text-emerald-600 dark:text-emerald-500"
 			})
 		]
 	});
@@ -39724,4 +39778,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-Bj80N8RG.js.map
+//# sourceMappingURL=index-9xBmi8k_.js.map

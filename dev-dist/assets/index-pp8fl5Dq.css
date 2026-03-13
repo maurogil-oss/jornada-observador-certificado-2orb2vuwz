@@ -2097,6 +2097,9 @@ section[aria-label='Notifications alt+T'] {
   --tw-text-opacity: 1;
   color: rgb(146 64 14 / var(--tw-text-opacity, 1));
 }
+.text-amber-800\/40{
+  color: rgb(146 64 14 / 0.4);
+}
 .text-amber-950{
   --tw-text-opacity: 1;
   color: rgb(69 26 3 / var(--tw-text-opacity, 1));
@@ -3523,6 +3526,10 @@ section[aria-label='Notifications alt+T'] {
 .dark\:text-amber-500:is(.dark *){
   --tw-text-opacity: 1;
   color: rgb(245 158 11 / var(--tw-text-opacity, 1));
+}
+.dark\:text-amber-700:is(.dark *){
+  --tw-text-opacity: 1;
+  color: rgb(180 83 9 / var(--tw-text-opacity, 1));
 }
 .dark\:text-blue-400:is(.dark *){
   --tw-text-opacity: 1;
