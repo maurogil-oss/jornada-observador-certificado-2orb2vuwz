@@ -27299,7 +27299,7 @@ function useImageLoadingStatus(src, { referrerPolicy, crossOrigin }) {
 	return loadingStatus;
 }
 var Root$5 = Avatar$1;
-var Image = AvatarImage$1;
+var Image$1 = AvatarImage$1;
 var Fallback = AvatarFallback$1;
 //#endregion
 //#region src/components/ui/avatar.tsx
@@ -27311,14 +27311,14 @@ var Avatar = import_react.forwardRef(({ className, ...props }, ref) => /* @__PUR
 	...props
 }));
 Avatar.displayName = Root$5.displayName;
-var AvatarImage = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Image, {
+var AvatarImage = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Image$1, {
 	"data-uid": "src/components/ui/avatar.tsx:23:3",
 	"data-prohibitions": "[editContent]",
 	ref,
 	className: cn$1("aspect-square h-full w-full", className),
 	...props
 }));
-AvatarImage.displayName = Image.displayName;
+AvatarImage.displayName = Image$1.displayName;
 var AvatarFallback = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Fallback, {
 	"data-uid": "src/components/ui/avatar.tsx:35:3",
 	"data-prohibitions": "[editContent]",
@@ -30968,23 +30968,120 @@ function Submissions() {
 //#endregion
 //#region src/components/shared/Logo.tsx
 function Logo({ className }) {
-	const [imgError, setImgError] = (0, import_react.useState)(false);
+	const [imgStatus, setImgStatus] = (0, import_react.useState)("loading");
+	(0, import_react.useEffect)(() => {
+		const img = new Image();
+		img.src = "/coroa-de-louros.png";
+		img.onload = () => setImgStatus("loaded");
+		img.onerror = () => setImgStatus("error");
+	}, []);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		"data-uid": "src/components/shared/Logo.tsx:12:5",
+		"data-uid": "src/components/shared/Logo.tsx:20:5",
 		"data-prohibitions": "[editContent]",
 		className: cn$1("relative flex items-center justify-center shrink-0", className),
-		children: !imgError ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-			"data-uid": "src/components/shared/Logo.tsx:14:9",
+		title: "Coroa de Louros - ONSV",
+		children: imgStatus === "loaded" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+			"data-uid": "src/components/shared/Logo.tsx:25:9",
 			"data-prohibitions": "[editContent]",
-			src: "/logo.png",
-			alt: "Observador Certificado Logo",
-			className: "w-full h-full object-contain",
-			onError: () => setImgError(true)
-		}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			"data-uid": "src/components/shared/Logo.tsx:21:9",
-			"data-prohibitions": "[]",
-			className: "w-full h-full flex items-center justify-center bg-amber-50 rounded-full border-2 border-amber-500 text-amber-700 font-bold text-[8px] sm:text-[10px] text-center p-1 leading-tight shadow-sm aspect-square",
-			children: "ONSV"
+			src: "/coroa-de-louros.png",
+			alt: "Coroa de Louros - Observador Certificado",
+			className: "w-full h-full object-contain drop-shadow-md animate-in fade-in duration-300"
+		}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
+			"data-uid": "src/components/shared/Logo.tsx:32:9",
+			"data-prohibitions": "[editContent]",
+			xmlns: "http://www.w3.org/2000/svg",
+			viewBox: "0 0 120 120",
+			className: "w-full h-full object-contain drop-shadow-md text-amber-500 dark:text-amber-400",
+			fill: "none",
+			stroke: "currentColor",
+			"stroke-width": "3",
+			"stroke-linecap": "round",
+			"stroke-linejoin": "round",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+					"data-uid": "src/components/shared/Logo.tsx:43:11",
+					"data-prohibitions": "[editContent]",
+					d: "M 60 105 C 25 105 15 65 20 35 C 25 15 45 10 55 15",
+					"stroke-width": "4"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+					"data-uid": "src/components/shared/Logo.tsx:44:11",
+					"data-prohibitions": "[editContent]",
+					d: "M 60 105 C 95 105 105 65 100 35 C 95 15 75 10 65 15",
+					"stroke-width": "4"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("g", {
+					"data-uid": "src/components/shared/Logo.tsx:47:11",
+					"data-prohibitions": "[]",
+					fill: "currentColor",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+							"data-uid": "src/components/shared/Logo.tsx:48:13",
+							"data-prohibitions": "[editContent]",
+							d: "M 20 35 C 10 30 10 15 20 10 C 35 10 40 25 20 35 Z"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+							"data-uid": "src/components/shared/Logo.tsx:49:13",
+							"data-prohibitions": "[editContent]",
+							d: "M 18 55 C 5 50 5 35 18 30 C 32 35 32 50 18 55 Z"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+							"data-uid": "src/components/shared/Logo.tsx:50:13",
+							"data-prohibitions": "[editContent]",
+							d: "M 22 75 C 10 70 10 55 25 50 C 38 55 38 70 22 75 Z"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+							"data-uid": "src/components/shared/Logo.tsx:51:13",
+							"data-prohibitions": "[editContent]",
+							d: "M 35 95 C 20 90 20 75 35 70 C 48 75 48 90 35 95 Z"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+							"data-uid": "src/components/shared/Logo.tsx:52:13",
+							"data-prohibitions": "[editContent]",
+							d: "M 50 105 C 40 100 40 85 50 80 C 60 85 60 100 50 105 Z"
+						})
+					]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("g", {
+					"data-uid": "src/components/shared/Logo.tsx:56:11",
+					"data-prohibitions": "[]",
+					fill: "currentColor",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+							"data-uid": "src/components/shared/Logo.tsx:57:13",
+							"data-prohibitions": "[editContent]",
+							d: "M 100 35 C 110 30 110 15 100 10 C 85 10 80 25 100 35 Z"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+							"data-uid": "src/components/shared/Logo.tsx:58:13",
+							"data-prohibitions": "[editContent]",
+							d: "M 102 55 C 115 50 115 35 102 30 C 88 35 88 50 102 55 Z"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+							"data-uid": "src/components/shared/Logo.tsx:59:13",
+							"data-prohibitions": "[editContent]",
+							d: "M 98 75 C 110 70 110 55 95 50 C 82 55 82 70 98 75 Z"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+							"data-uid": "src/components/shared/Logo.tsx:60:13",
+							"data-prohibitions": "[editContent]",
+							d: "M 85 95 C 100 90 100 75 85 70 C 72 75 72 90 85 95 Z"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+							"data-uid": "src/components/shared/Logo.tsx:61:13",
+							"data-prohibitions": "[editContent]",
+							d: "M 70 105 C 80 100 80 85 70 80 C 60 85 60 100 70 105 Z"
+						})
+					]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("polygon", {
+					"data-uid": "src/components/shared/Logo.tsx:65:11",
+					"data-prohibitions": "[editContent]",
+					points: "60,40 66,52 80,52 69,60 73,73 60,65 47,73 51,60 40,52 54,52",
+					fill: "currentColor",
+					stroke: "none"
+				})
+			]
 		})
 	});
 }
@@ -40867,4 +40964,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-DETFaxhy.js.map
+//# sourceMappingURL=index-DJbvwiYf.js.map

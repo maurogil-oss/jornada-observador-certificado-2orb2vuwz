@@ -2020,9 +2020,6 @@ section[aria-label='Notifications alt+T'] {
 .text-\[11px\]{
   font-size: 11px;
 }
-.text-\[8px\]{
-  font-size: 8px;
-}
 .text-base{
   font-size: 1rem;
   line-height: 1.5rem;
@@ -2478,6 +2475,9 @@ section[aria-label='Notifications alt+T'] {
   --tw-enter-rotate: initial;
   --tw-enter-translate-x: initial;
   --tw-enter-translate-y: initial;
+}
+.fade-in{
+  --tw-enter-opacity: 0;
 }
 .fade-in-0{
   --tw-enter-opacity: 0;
@@ -3734,9 +3734,6 @@ section[aria-label='Notifications alt+T'] {
   .sm\:text-4xl{
     font-size: 2.25rem;
     line-height: 2.5rem;
-  }
-  .sm\:text-\[10px\]{
-    font-size: 10px;
   }
   .sm\:text-base{
     font-size: 1rem;
