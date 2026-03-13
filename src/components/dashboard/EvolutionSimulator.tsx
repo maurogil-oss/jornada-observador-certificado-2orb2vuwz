@@ -11,28 +11,32 @@ export function EvolutionSimulator() {
     if (currentLevel === 'Mobilizador') {
       return {
         msg: 'Nível Máximo Atingido!',
-        target: 'Manter engajamento contínuo',
+        target: 'Manter engajamento contínuo na rede',
         percent: 100,
       }
     }
     if (currentLevel === 'Pleno') {
       const needed = 500 - points
-      let action = needed > 100 ? 'Submeter Projeto de Inovação' : 'Publicar 1 Artigo Técnico'
+      let action =
+        needed > 100
+          ? `Faltam ${Math.ceil(needed / 150)} projetos de impacto para o Nível Mobilizador`
+          : `Faltam ${Math.ceil(needed / 50)} publicações para o Nível Mobilizador`
       if (eixoId === 'III') {
-        action = `${Math.ceil(needed / 100)} Representações Formais em Comitês`
+        action = `Faltam ${Math.ceil(needed / 100)} representações em comitês para o Nível Mobilizador`
       }
       return {
-        msg: `Faltam ${needed} pontos para Nível Mobilizador`,
+        msg: `Faltam ${needed} pts para Mobilizador`,
         target: action,
         percent: Math.round((points / 500) * 100),
       }
     }
     // Iniciante
     const needed = 200 - points
-    let action = 'Concluir 1 Curso Oficial ONSV e 1 Ação de Impacto'
-    if (eixoId === 'III') action = 'Realizar 1 Mentoria ou Representação em Campanha'
+    let action = `Faltam ${Math.ceil(needed / 50)} cursos para o Nível Pleno`
+    if (eixoId === 'III') action = `Faltam ${Math.ceil(needed / 200)} mentorias para o Nível Pleno`
+
     return {
-      msg: `Faltam ${needed} pontos para Nível Pleno`,
+      msg: `Faltam ${needed} pts para Pleno`,
       target: action,
       percent: Math.round((points / 200) * 100),
     }
@@ -42,7 +46,7 @@ export function EvolutionSimulator() {
     <Card className="shadow-subtle border-border/60">
       <CardHeader className="bg-primary/5 border-b border-border/30">
         <CardTitle className="text-lg flex items-center gap-2 text-primary">
-          <Target className="w-5 h-5" /> Simulador de Projeção (Próxima Insígnia)
+          <Target className="w-5 h-5" /> Simulador de Evolução
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-6">
@@ -68,9 +72,8 @@ export function EvolutionSimulator() {
                   {rec.percent < 100 && (
                     <p className="text-xs text-muted-foreground flex items-start gap-2 bg-background p-3 rounded-md border border-border/60 shadow-sm mt-2">
                       <Zap className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                      <span className="leading-relaxed">
-                        Ação sugerida:{' '}
-                        <strong className="text-foreground font-semibold">{rec.target}</strong>
+                      <span className="leading-relaxed font-medium text-foreground">
+                        {rec.target}
                       </span>
                     </p>
                   )}

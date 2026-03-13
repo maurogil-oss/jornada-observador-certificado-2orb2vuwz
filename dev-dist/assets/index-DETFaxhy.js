@@ -18140,8 +18140,8 @@ var Branch = DismissableLayerBranch;
 var useLayoutEffect2 = globalThis?.document ? import_react.useLayoutEffect : () => {};
 //#endregion
 //#region ../../cache/modules/jornada-observador-certificado-1427c/node_modules/.pnpm/@radix-ui+react-portal@1.1.9_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react_7668895bec2444446faa4e0f4eb5244b/node_modules/@radix-ui/react-portal/dist/index.mjs
-var PORTAL_NAME$2 = "Portal";
-var Portal$1 = import_react.forwardRef((props, forwardedRef) => {
+var PORTAL_NAME$4 = "Portal";
+var Portal$2 = import_react.forwardRef((props, forwardedRef) => {
 	const { container: containerProp, ...portalProps } = props;
 	const [mounted, setMounted] = import_react.useState(false);
 	useLayoutEffect2(() => setMounted(true), []);
@@ -18151,7 +18151,7 @@ var Portal$1 = import_react.forwardRef((props, forwardedRef) => {
 		ref: forwardedRef
 	}), container) : null;
 });
-Portal$1.displayName = PORTAL_NAME$2;
+Portal$2.displayName = PORTAL_NAME$4;
 //#endregion
 //#region ../../cache/modules/jornada-observador-certificado-1427c/node_modules/.pnpm/@radix-ui+react-presence@1.1.5_@types+react-dom@19.2.3_@types+react@19.2.14__@types+rea_c01c26c80b5ab5e3ecefbda6eca51ad1/node_modules/@radix-ui/react-presence/dist/index.mjs
 function useStateMachine$1(initialState, machine) {
@@ -18337,8 +18337,8 @@ var Root$8 = VisuallyHidden;
 //#endregion
 //#region ../../cache/modules/jornada-observador-certificado-1427c/node_modules/.pnpm/@radix-ui+react-toast@1.2.15_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react_4581e89c6ba13e4159ce65546c8b2a16/node_modules/@radix-ui/react-toast/dist/index.mjs
 var PROVIDER_NAME$1 = "ToastProvider";
-var [Collection$1, useCollection$1, createCollectionScope$1] = createCollection("Toast");
-var [createToastContext, createToastScope] = createContextScope$1("Toast", [createCollectionScope$1]);
+var [Collection$2, useCollection$2, createCollectionScope$2] = createCollection("Toast");
+var [createToastContext, createToastScope] = createContextScope$1("Toast", [createCollectionScope$2]);
 var [ToastProviderProvider, useToastProviderContext] = createToastContext(PROVIDER_NAME$1);
 var ToastProvider$1 = (props) => {
 	const { __scopeToast, label = "Notification", duration = 5e3, swipeDirection = "right", swipeThreshold = 50, children } = props;
@@ -18347,7 +18347,7 @@ var ToastProvider$1 = (props) => {
 	const isFocusedToastEscapeKeyDownRef = import_react.useRef(false);
 	const isClosePausedRef = import_react.useRef(false);
 	if (!label.trim()) console.error(`Invalid prop \`label\` supplied to \`${PROVIDER_NAME$1}\`. Expected non-empty \`string\`.`);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection$1.Provider, {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection$2.Provider, {
 		scope: __scopeToast,
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ToastProviderProvider, {
 			scope: __scopeToast,
@@ -18374,7 +18374,7 @@ var VIEWPORT_RESUME = "toast.viewportResume";
 var ToastViewport$1 = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeToast, hotkey = VIEWPORT_DEFAULT_HOTKEY, label = "Notifications ({hotkey})", ...viewportProps } = props;
 	const context = useToastProviderContext(VIEWPORT_NAME$1, __scopeToast);
-	const getItems = useCollection$1(__scopeToast);
+	const getItems = useCollection$2(__scopeToast);
 	const wrapperRef = import_react.useRef(null);
 	const headFocusProxyRef = import_react.useRef(null);
 	const tailFocusProxyRef = import_react.useRef(null);
@@ -18451,7 +18451,7 @@ var ToastViewport$1 = import_react.forwardRef((props, forwardedRef) => {
 					}
 					const sortedCandidates = getSortedTabbableCandidates({ tabbingDirection: isTabbingBackwards ? "backwards" : "forwards" });
 					const index = sortedCandidates.findIndex((candidate) => candidate === focusedElement);
-					if (focusFirst$2(sortedCandidates.slice(index + 1))) event.preventDefault();
+					if (focusFirst$3(sortedCandidates.slice(index + 1))) event.preventDefault();
 					else isTabbingBackwards ? headFocusProxyRef.current?.focus() : tailFocusProxyRef.current?.focus();
 				}
 			};
@@ -18469,10 +18469,10 @@ var ToastViewport$1 = import_react.forwardRef((props, forwardedRef) => {
 			hasToasts && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FocusProxy, {
 				ref: headFocusProxyRef,
 				onFocusFromOutsideViewport: () => {
-					focusFirst$2(getSortedTabbableCandidates({ tabbingDirection: "forwards" }));
+					focusFirst$3(getSortedTabbableCandidates({ tabbingDirection: "forwards" }));
 				}
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection$1.Slot, {
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection$2.Slot, {
 				scope: __scopeToast,
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.ol, {
 					tabIndex: -1,
@@ -18483,7 +18483,7 @@ var ToastViewport$1 = import_react.forwardRef((props, forwardedRef) => {
 			hasToasts && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FocusProxy, {
 				ref: tailFocusProxyRef,
 				onFocusFromOutsideViewport: () => {
-					focusFirst$2(getSortedTabbableCandidates({ tabbingDirection: "backwards" }));
+					focusFirst$3(getSortedTabbableCandidates({ tabbingDirection: "backwards" }));
 				}
 			})
 		]
@@ -18631,7 +18631,7 @@ var ToastImpl = import_react.forwardRef((props, forwardedRef) => {
 	}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ToastInteractiveProvider, {
 		scope: __scopeToast,
 		onClose: handleClose,
-		children: import_react_dom.createPortal(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection$1.ItemSlot, {
+		children: import_react_dom.createPortal(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection$2.ItemSlot, {
 			scope: __scopeToast,
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$9, {
 				asChild: true,
@@ -18724,7 +18724,7 @@ var ToastAnnounce = (props) => {
 		const timer = window.setTimeout(() => setIsAnnounced(true), 1e3);
 		return () => window.clearTimeout(timer);
 	}, []);
-	return isAnnounced ? null : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal$1, {
+	return isAnnounced ? null : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal$2, {
 		asChild: true,
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(VisuallyHidden, {
 			...announceProps,
@@ -18853,7 +18853,7 @@ function getTabbableCandidates$1(container) {
 	while (walker.nextNode()) nodes.push(walker.currentNode);
 	return nodes;
 }
-function focusFirst$2(candidates) {
+function focusFirst$3(candidates) {
 	const previouslyFocusedElement = document.activeElement;
 	return candidates.some((candidate) => {
 		if (candidate === previouslyFocusedElement) return true;
@@ -18863,7 +18863,7 @@ function focusFirst$2(candidates) {
 }
 var Provider$1 = ToastProvider$1;
 var Viewport$1 = ToastViewport$1;
-var Root2$2 = Toast$2;
+var Root2$3 = Toast$2;
 var Title$1 = ToastTitle$1;
 var Description$1 = ToastDescription$1;
 var Action = ToastAction$1;
@@ -19086,6 +19086,14 @@ var BookOpen = createLucideIcon("book-open", [["path", {
 	d: "M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z",
 	key: "ruj8y"
 }]]);
+var Check = createLucideIcon("check", [["path", {
+	d: "M20 6 9 17l-5-5",
+	key: "1gmf2c"
+}]]);
+var ChevronRight = createLucideIcon("chevron-right", [["path", {
+	d: "m9 18 6-6-6-6",
+	key: "mthhwq"
+}]]);
 var CircleAlert = createLucideIcon("circle-alert", [
 	["circle", {
 		cx: "12",
@@ -19140,6 +19148,12 @@ var CirclePlus = createLucideIcon("circle-plus", [
 		key: "napkw2"
 	}]
 ]);
+var Circle = createLucideIcon("circle", [["circle", {
+	cx: "12",
+	cy: "12",
+	r: "10",
+	key: "1mglay"
+}]]);
 var Clock = createLucideIcon("clock", [["circle", {
 	cx: "12",
 	cy: "12",
@@ -19271,6 +19285,28 @@ var FileSpreadsheet = createLucideIcon("file-spreadsheet", [
 	["path", {
 		d: "M14 17h2",
 		key: "10kma7"
+	}]
+]);
+var FileTypeCorner = createLucideIcon("file-type-corner", [
+	["path", {
+		d: "M12 22h6a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v6",
+		key: "15usau"
+	}],
+	["path", {
+		d: "M14 2v5a1 1 0 0 0 1 1h5",
+		key: "wfsgrz"
+	}],
+	["path", {
+		d: "M3 16v-1.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5V16",
+		key: "s1gz5"
+	}],
+	["path", {
+		d: "M6 22h2",
+		key: "194x9m"
+	}],
+	["path", {
+		d: "M7 14v8",
+		key: "11ixej"
 	}]
 ]);
 var FileText = createLucideIcon("file-text", [
@@ -20988,7 +21024,7 @@ var toastVariants = cva("group pointer-events-auto relative flex w-full items-ce
 	defaultVariants: { variant: "default" }
 });
 var Toast$1 = import_react.forwardRef(({ className, variant, ...props }, ref) => {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root2$2, {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root2$3, {
 		"data-uid": "src/components/ui/toast.tsx:47:5",
 		"data-prohibitions": "[editContent]",
 		ref,
@@ -20996,7 +21032,7 @@ var Toast$1 = import_react.forwardRef(({ className, variant, ...props }, ref) =>
 		...props
 	});
 });
-Toast$1.displayName = Root2$2.displayName;
+Toast$1.displayName = Root2$3.displayName;
 var ToastAction = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Action, {
 	"data-uid": "src/components/ui/toast.tsx:60:3",
 	"data-prohibitions": "[editContent]",
@@ -23775,10 +23811,10 @@ var Popper = (props) => {
 	});
 };
 Popper.displayName = POPPER_NAME;
-var ANCHOR_NAME = "PopperAnchor";
+var ANCHOR_NAME$1 = "PopperAnchor";
 var PopperAnchor = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopePopper, virtualRef, ...anchorProps } = props;
-	const context = usePopperContext(ANCHOR_NAME, __scopePopper);
+	const context = usePopperContext(ANCHOR_NAME$1, __scopePopper);
 	const ref = import_react.useRef(null);
 	const composedRefs = useComposedRefs(forwardedRef, ref);
 	const anchorRef = import_react.useRef(null);
@@ -23792,12 +23828,12 @@ var PopperAnchor = import_react.forwardRef((props, forwardedRef) => {
 		ref: composedRefs
 	});
 });
-PopperAnchor.displayName = ANCHOR_NAME;
-var CONTENT_NAME$3 = "PopperContent";
-var [PopperContentProvider, useContentContext] = createPopperContext(CONTENT_NAME$3);
+PopperAnchor.displayName = ANCHOR_NAME$1;
+var CONTENT_NAME$5 = "PopperContent";
+var [PopperContentProvider, useContentContext] = createPopperContext(CONTENT_NAME$5);
 var PopperContent = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopePopper, side = "bottom", sideOffset = 0, align = "center", alignOffset = 0, arrowPadding = 0, avoidCollisions = true, collisionBoundary = [], collisionPadding: collisionPaddingProp = 0, sticky = "partial", hideWhenDetached = false, updatePositionStrategy = "optimized", onPlaced, ...contentProps } = props;
-	const context = usePopperContext(CONTENT_NAME$3, __scopePopper);
+	const context = usePopperContext(CONTENT_NAME$5, __scopePopper);
 	const [content, setContent] = import_react.useState(null);
 	const composedRefs = useComposedRefs(forwardedRef, (node) => setContent(node));
 	const [arrow$4, setArrow] = import_react.useState(null);
@@ -23910,8 +23946,8 @@ var PopperContent = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-PopperContent.displayName = CONTENT_NAME$3;
-var ARROW_NAME$1 = "PopperArrow";
+PopperContent.displayName = CONTENT_NAME$5;
+var ARROW_NAME$3 = "PopperArrow";
 var OPPOSITE_SIDE = {
 	top: "bottom",
 	right: "left",
@@ -23920,7 +23956,7 @@ var OPPOSITE_SIDE = {
 };
 var PopperArrow = import_react.forwardRef(function PopperArrow2(props, forwardedRef) {
 	const { __scopePopper, ...arrowProps } = props;
-	const contentContext = useContentContext(ARROW_NAME$1, __scopePopper);
+	const contentContext = useContentContext(ARROW_NAME$3, __scopePopper);
 	const baseSide = OPPOSITE_SIDE[contentContext.placedSide];
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 		ref: contentContext.onArrowChange,
@@ -23953,7 +23989,7 @@ var PopperArrow = import_react.forwardRef(function PopperArrow2(props, forwarded
 		})
 	});
 });
-PopperArrow.displayName = ARROW_NAME$1;
+PopperArrow.displayName = ARROW_NAME$3;
 function isNotNull(value) {
 	return value !== null;
 }
@@ -23998,14 +24034,14 @@ function getSideAndAlignFromPlacement(placement) {
 	const [side, align = "center"] = placement.split("-");
 	return [side, align];
 }
-var Root2$1 = Popper;
+var Root2$2 = Popper;
 var Anchor = PopperAnchor;
 var Content$2 = PopperContent;
 var Arrow = PopperArrow;
 //#endregion
 //#region ../../cache/modules/jornada-observador-certificado-1427c/node_modules/.pnpm/@radix-ui+react-tooltip@1.2.8_@types+react-dom@19.2.3_@types+react@19.2.14__@types+reac_9074d9fb06315b089b2bee17c4c65951/node_modules/@radix-ui/react-tooltip/dist/index.mjs
 var [createTooltipContext, createTooltipScope] = createContextScope$1("Tooltip", [createPopperScope]);
-var usePopperScope = createPopperScope();
+var usePopperScope$1 = createPopperScope();
 var PROVIDER_NAME = "TooltipProvider";
 var DEFAULT_DELAY_DURATION = 700;
 var TOOLTIP_OPEN = "tooltip.open";
@@ -24045,7 +24081,7 @@ var [TooltipContextProvider, useTooltipContext] = createTooltipContext(TOOLTIP_N
 var Tooltip$1 = (props) => {
 	const { __scopeTooltip, children, open: openProp, defaultOpen, onOpenChange, disableHoverableContent: disableHoverableContentProp, delayDuration: delayDurationProp } = props;
 	const providerContext = useTooltipProviderContext(TOOLTIP_NAME, props.__scopeTooltip);
-	const popperScope = usePopperScope(__scopeTooltip);
+	const popperScope = usePopperScope$1(__scopeTooltip);
 	const [trigger, setTrigger] = import_react.useState(null);
 	const contentId = useId();
 	const openTimerRef = import_react.useRef(0);
@@ -24094,7 +24130,7 @@ var Tooltip$1 = (props) => {
 			}
 		};
 	}, []);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root2$1, {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root2$2, {
 		...popperScope,
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TooltipContextProvider, {
 			scope: __scopeTooltip,
@@ -24126,12 +24162,12 @@ var Tooltip$1 = (props) => {
 	});
 };
 Tooltip$1.displayName = TOOLTIP_NAME;
-var TRIGGER_NAME$2 = "TooltipTrigger";
+var TRIGGER_NAME$3 = "TooltipTrigger";
 var TooltipTrigger$1 = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeTooltip, ...triggerProps } = props;
-	const context = useTooltipContext(TRIGGER_NAME$2, __scopeTooltip);
-	const providerContext = useTooltipProviderContext(TRIGGER_NAME$2, __scopeTooltip);
-	const popperScope = usePopperScope(__scopeTooltip);
+	const context = useTooltipContext(TRIGGER_NAME$3, __scopeTooltip);
+	const providerContext = useTooltipProviderContext(TRIGGER_NAME$3, __scopeTooltip);
+	const popperScope = usePopperScope$1(__scopeTooltip);
 	const composedRefs = useComposedRefs(forwardedRef, import_react.useRef(null), context.onTriggerChange);
 	const isPointerDownRef = import_react.useRef(false);
 	const hasPointerMoveOpenedRef = import_react.useRef(false);
@@ -24171,18 +24207,18 @@ var TooltipTrigger$1 = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-TooltipTrigger$1.displayName = TRIGGER_NAME$2;
-var PORTAL_NAME$1 = "TooltipPortal";
-var [PortalProvider$1, usePortalContext$1] = createTooltipContext(PORTAL_NAME$1, { forceMount: void 0 });
+TooltipTrigger$1.displayName = TRIGGER_NAME$3;
+var PORTAL_NAME$3 = "TooltipPortal";
+var [PortalProvider$2, usePortalContext$2] = createTooltipContext(PORTAL_NAME$3, { forceMount: void 0 });
 var TooltipPortal = (props) => {
 	const { __scopeTooltip, forceMount, children, container } = props;
-	const context = useTooltipContext(PORTAL_NAME$1, __scopeTooltip);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PortalProvider$1, {
+	const context = useTooltipContext(PORTAL_NAME$3, __scopeTooltip);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PortalProvider$2, {
 		scope: __scopeTooltip,
 		forceMount,
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
 			present: forceMount || context.open,
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal$1, {
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal$2, {
 				asChild: true,
 				container,
 				children
@@ -24190,12 +24226,12 @@ var TooltipPortal = (props) => {
 		})
 	});
 };
-TooltipPortal.displayName = PORTAL_NAME$1;
-var CONTENT_NAME$2 = "TooltipContent";
+TooltipPortal.displayName = PORTAL_NAME$3;
+var CONTENT_NAME$4 = "TooltipContent";
 var TooltipContent$1 = import_react.forwardRef((props, forwardedRef) => {
-	const portalContext = usePortalContext$1(CONTENT_NAME$2, props.__scopeTooltip);
+	const portalContext = usePortalContext$2(CONTENT_NAME$4, props.__scopeTooltip);
 	const { forceMount = portalContext.forceMount, side = "top", ...contentProps } = props;
-	const context = useTooltipContext(CONTENT_NAME$2, props.__scopeTooltip);
+	const context = useTooltipContext(CONTENT_NAME$4, props.__scopeTooltip);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
 		present: forceMount || context.open,
 		children: context.disableHoverableContent ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TooltipContentImpl, {
@@ -24210,8 +24246,8 @@ var TooltipContent$1 = import_react.forwardRef((props, forwardedRef) => {
 	});
 });
 var TooltipContentHoverable = import_react.forwardRef((props, forwardedRef) => {
-	const context = useTooltipContext(CONTENT_NAME$2, props.__scopeTooltip);
-	const providerContext = useTooltipProviderContext(CONTENT_NAME$2, props.__scopeTooltip);
+	const context = useTooltipContext(CONTENT_NAME$4, props.__scopeTooltip);
+	const providerContext = useTooltipProviderContext(CONTENT_NAME$4, props.__scopeTooltip);
 	const ref = import_react.useRef(null);
 	const composedRefs = useComposedRefs(forwardedRef, ref);
 	const [pointerGraceArea, setPointerGraceArea] = import_react.useState(null);
@@ -24262,7 +24298,7 @@ var TooltipContentHoverable = import_react.forwardRef((props, forwardedRef) => {
 					y: event.clientY
 				};
 				const hasEnteredTarget = trigger?.contains(target) || content?.contains(target);
-				const isPointerOutsideGraceArea = !isPointInPolygon(pointerPosition, pointerGraceArea);
+				const isPointerOutsideGraceArea = !isPointInPolygon$1(pointerPosition, pointerGraceArea);
 				if (hasEnteredTarget) handleRemoveGraceArea();
 				else if (isPointerOutsideGraceArea) {
 					handleRemoveGraceArea();
@@ -24288,8 +24324,8 @@ var [VisuallyHiddenContentContextProvider, useVisuallyHiddenContentContext] = cr
 var Slottable = /* @__PURE__ */ createSlottable("TooltipContent");
 var TooltipContentImpl = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeTooltip, children, "aria-label": ariaLabel, onEscapeKeyDown, onPointerDownOutside, ...contentProps } = props;
-	const context = useTooltipContext(CONTENT_NAME$2, __scopeTooltip);
-	const popperScope = usePopperScope(__scopeTooltip);
+	const context = useTooltipContext(CONTENT_NAME$4, __scopeTooltip);
+	const popperScope = usePopperScope$1(__scopeTooltip);
 	const { onClose } = context;
 	import_react.useEffect(() => {
 		document.addEventListener(TOOLTIP_OPEN, onClose);
@@ -24336,18 +24372,18 @@ var TooltipContentImpl = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-TooltipContent$1.displayName = CONTENT_NAME$2;
-var ARROW_NAME = "TooltipArrow";
+TooltipContent$1.displayName = CONTENT_NAME$4;
+var ARROW_NAME$2 = "TooltipArrow";
 var TooltipArrow = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeTooltip, ...arrowProps } = props;
-	const popperScope = usePopperScope(__scopeTooltip);
-	return useVisuallyHiddenContentContext(ARROW_NAME, __scopeTooltip).isInside ? null : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Arrow, {
+	const popperScope = usePopperScope$1(__scopeTooltip);
+	return useVisuallyHiddenContentContext(ARROW_NAME$2, __scopeTooltip).isInside ? null : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Arrow, {
 		...popperScope,
 		...arrowProps,
 		ref: forwardedRef
 	});
 });
-TooltipArrow.displayName = ARROW_NAME;
+TooltipArrow.displayName = ARROW_NAME$2;
 function getExitSideFromRect(point, rect) {
 	const top = Math.abs(rect.top - point.y);
 	const bottom = Math.abs(rect.bottom - point.y);
@@ -24424,7 +24460,7 @@ function getPointsFromRect(rect) {
 		}
 	];
 }
-function isPointInPolygon(point, polygon) {
+function isPointInPolygon$1(point, polygon) {
 	const { x, y } = point;
 	let inside = false;
 	for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
@@ -24479,15 +24515,15 @@ function getHullPresorted(points) {
 	else return upperHull.concat(lowerHull);
 }
 var Provider = TooltipProvider$1;
-var Root3 = Tooltip$1;
-var Trigger$2 = TooltipTrigger$1;
-var Content2 = TooltipContent$1;
+var Root3$1 = Tooltip$1;
+var Trigger$3 = TooltipTrigger$1;
+var Content2$2 = TooltipContent$1;
 //#endregion
 //#region src/components/ui/tooltip.tsx
 var TooltipProvider = Provider;
-var Tooltip = Root3;
-var TooltipTrigger = Trigger$2;
-var TooltipContent = import_react.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Content2, {
+var Tooltip = Root3$1;
+var TooltipTrigger = Trigger$3;
+var TooltipContent = import_react.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Content2$2, {
 	"data-uid": "src/components/ui/tooltip.tsx:17:3",
 	"data-prohibitions": "[editContent]",
 	ref,
@@ -24495,7 +24531,7 @@ var TooltipContent = import_react.forwardRef(({ className, sideOffset = 4, ...pr
 	className: cn$1("z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-tooltip-content-transform-origin]", className),
 	...props
 }));
-TooltipContent.displayName = Content2.displayName;
+TooltipContent.displayName = Content2$2.displayName;
 //#endregion
 //#region src/stores/useGameStore.tsx
 var GameContext = (0, import_react.createContext)(void 0);
@@ -24667,29 +24703,6 @@ var axesData = [
 		]
 	}
 ];
-var recentActivity = [
-	{
-		id: 1,
-		action: "Artigo \"Segurança Viária\" aprovado",
-		points: "+100",
-		time: "Há 2 horas",
-		type: "success"
-	},
-	{
-		id: 2,
-		action: "Certificado de Curso ABNT em Análise",
-		points: "Pendente",
-		time: "Ontem",
-		type: "pending"
-	},
-	{
-		id: 3,
-		action: "Mentoria nível I concluída",
-		points: "+150",
-		time: "Há 3 dias",
-		type: "success"
-	}
-];
 var rankingData = [
 	{
 		rank: 1,
@@ -24846,61 +24859,6 @@ function useSubmissionsStore() {
 	return context;
 }
 //#endregion
-//#region src/components/shared/DonutChart.tsx
-function DonutChart({ progress, size = 120, strokeWidth = 10, className }) {
-	const radius = (size - strokeWidth) / 2;
-	const circumference = 2 * Math.PI * radius;
-	const offset = circumference - progress / 100 * circumference;
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		"data-uid": "src/components/shared/DonutChart.tsx:16:5",
-		"data-prohibitions": "[editContent]",
-		className: cn$1("relative inline-flex items-center justify-center", className),
-		style: {
-			width: size,
-			height: size
-		},
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
-			"data-uid": "src/components/shared/DonutChart.tsx:20:7",
-			"data-prohibitions": "[]",
-			className: "transform -rotate-90 w-full h-full",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
-				"data-uid": "src/components/shared/DonutChart.tsx:21:9",
-				"data-prohibitions": "[editContent]",
-				cx: size / 2,
-				cy: size / 2,
-				r: radius,
-				stroke: "currentColor",
-				"stroke-width": strokeWidth,
-				fill: "transparent",
-				className: "text-muted/30"
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
-				"data-uid": "src/components/shared/DonutChart.tsx:30:9",
-				"data-prohibitions": "[editContent]",
-				cx: size / 2,
-				cy: size / 2,
-				r: radius,
-				stroke: "currentColor",
-				"stroke-width": strokeWidth,
-				fill: "transparent",
-				className: "text-primary transition-all duration-1000 ease-out",
-				"stroke-dasharray": circumference,
-				"stroke-dashoffset": offset,
-				"stroke-linecap": "round"
-			})]
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			"data-uid": "src/components/shared/DonutChart.tsx:43:7",
-			"data-prohibitions": "[editContent]",
-			className: "absolute flex flex-col items-center justify-center",
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-				"data-uid": "src/components/shared/DonutChart.tsx:44:9",
-				"data-prohibitions": "[editContent]",
-				className: "text-3xl font-black",
-				children: [progress, "%"]
-			})
-		})]
-	});
-}
-//#endregion
 //#region src/components/ui/card.tsx
 var Card = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 	"data-uid": "src/components/ui/card.tsx:8:5",
@@ -24950,223 +24908,6 @@ var CardFooter = import_react.forwardRef(({ className, ...props }, ref) => /* @_
 	...props
 }));
 CardFooter.displayName = "CardFooter";
-//#endregion
-//#region ../../cache/modules/jornada-observador-certificado-1427c/node_modules/.pnpm/@radix-ui+react-slot@1.2.4_@types+react@19.2.14_react@19.2.4/node_modules/@radix-ui/react-slot/dist/index.mjs
-var REACT_LAZY_TYPE = Symbol.for("react.lazy");
-var use = import_react[" use ".trim().toString()];
-function isPromiseLike(value) {
-	return typeof value === "object" && value !== null && "then" in value;
-}
-function isLazyComponent(element) {
-	return element != null && typeof element === "object" && "$$typeof" in element && element.$$typeof === REACT_LAZY_TYPE && "_payload" in element && isPromiseLike(element._payload);
-}
-/* @__NO_SIDE_EFFECTS__ */
-function createSlot(ownerName) {
-	const SlotClone = /* @__PURE__ */ createSlotClone(ownerName);
-	const Slot2 = import_react.forwardRef((props, forwardedRef) => {
-		let { children, ...slotProps } = props;
-		if (isLazyComponent(children) && typeof use === "function") children = use(children._payload);
-		const childrenArray = import_react.Children.toArray(children);
-		const slottable = childrenArray.find(isSlottable);
-		if (slottable) {
-			const newElement = slottable.props.children;
-			const newChildren = childrenArray.map((child) => {
-				if (child === slottable) {
-					if (import_react.Children.count(newElement) > 1) return import_react.Children.only(null);
-					return import_react.isValidElement(newElement) ? newElement.props.children : null;
-				} else return child;
-			});
-			return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SlotClone, {
-				...slotProps,
-				ref: forwardedRef,
-				children: import_react.isValidElement(newElement) ? import_react.cloneElement(newElement, void 0, newChildren) : null
-			});
-		}
-		return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SlotClone, {
-			...slotProps,
-			ref: forwardedRef,
-			children
-		});
-	});
-	Slot2.displayName = `${ownerName}.Slot`;
-	return Slot2;
-}
-var Slot$1 = /* @__PURE__ */ createSlot("Slot");
-/* @__NO_SIDE_EFFECTS__ */
-function createSlotClone(ownerName) {
-	const SlotClone = import_react.forwardRef((props, forwardedRef) => {
-		let { children, ...slotProps } = props;
-		if (isLazyComponent(children) && typeof use === "function") children = use(children._payload);
-		if (import_react.isValidElement(children)) {
-			const childrenRef = getElementRef(children);
-			const props2 = mergeProps(slotProps, children.props);
-			if (children.type !== import_react.Fragment) props2.ref = forwardedRef ? composeRefs(forwardedRef, childrenRef) : childrenRef;
-			return import_react.cloneElement(children, props2);
-		}
-		return import_react.Children.count(children) > 1 ? import_react.Children.only(null) : null;
-	});
-	SlotClone.displayName = `${ownerName}.SlotClone`;
-	return SlotClone;
-}
-var SLOTTABLE_IDENTIFIER = Symbol("radix.slottable");
-function isSlottable(child) {
-	return import_react.isValidElement(child) && typeof child.type === "function" && "__radixId" in child.type && child.type.__radixId === SLOTTABLE_IDENTIFIER;
-}
-function mergeProps(slotProps, childProps) {
-	const overrideProps = { ...childProps };
-	for (const propName in childProps) {
-		const slotPropValue = slotProps[propName];
-		const childPropValue = childProps[propName];
-		if (/^on[A-Z]/.test(propName)) {
-			if (slotPropValue && childPropValue) overrideProps[propName] = (...args) => {
-				const result = childPropValue(...args);
-				slotPropValue(...args);
-				return result;
-			};
-			else if (slotPropValue) overrideProps[propName] = slotPropValue;
-		} else if (propName === "style") overrideProps[propName] = {
-			...slotPropValue,
-			...childPropValue
-		};
-		else if (propName === "className") overrideProps[propName] = [slotPropValue, childPropValue].filter(Boolean).join(" ");
-	}
-	return {
-		...slotProps,
-		...overrideProps
-	};
-}
-function getElementRef(element) {
-	let getter = Object.getOwnPropertyDescriptor(element.props, "ref")?.get;
-	let mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
-	if (mayWarn) return element.ref;
-	getter = Object.getOwnPropertyDescriptor(element, "ref")?.get;
-	mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
-	if (mayWarn) return element.props.ref;
-	return element.props.ref || element.ref;
-}
-//#endregion
-//#region src/components/ui/button.tsx
-var buttonVariants = cva("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0", {
-	variants: {
-		variant: {
-			default: "bg-primary text-primary-foreground hover:bg-primary/90",
-			destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-			outline: "border border-input bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground",
-			secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-			ghost: "text-foreground hover:bg-accent hover:text-accent-foreground",
-			link: "text-foreground underline-offset-4 hover:underline"
-		},
-		size: {
-			default: "h-10 px-4 py-2",
-			sm: "h-9 rounded-md px-3",
-			lg: "h-11 rounded-md px-8",
-			icon: "h-10 w-10"
-		}
-	},
-	defaultVariants: {
-		variant: "default",
-		size: "default"
-	}
-});
-var Button = import_react.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot$1 : "button", {
-		"data-uid": "src/components/ui/button.tsx:44:7",
-		"data-prohibitions": "[editContent]",
-		className: cn$1(buttonVariants({
-			variant,
-			size,
-			className
-		})),
-		ref,
-		...props
-	});
-});
-Button.displayName = "Button";
-//#endregion
-//#region src/components/dashboard/HeroProgress.tsx
-function HeroProgress() {
-	const { levelName, points } = useGameStore();
-	const nextLevelPoints = 2e3;
-	const progressToNext = Math.min(100, Math.round(points / nextLevelPoints * 100));
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-		"data-uid": "src/components/dashboard/HeroProgress.tsx:14:5",
-		"data-prohibitions": "[editContent]",
-		className: "bg-secondary text-secondary-foreground overflow-hidden relative border-none shadow-elevation",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			"data-uid": "src/components/dashboard/HeroProgress.tsx:15:7",
-			"data-prohibitions": "[]",
-			className: "absolute top-0 right-0 p-12 opacity-5 pointer-events-none",
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Trophy, {
-				"data-uid": "src/components/dashboard/HeroProgress.tsx:16:9",
-				"data-prohibitions": "[editContent]",
-				size: 200
-			})
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-			"data-uid": "src/components/dashboard/HeroProgress.tsx:18:7",
-			"data-prohibitions": "[editContent]",
-			className: "p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 relative z-10",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DonutChart, {
-				"data-uid": "src/components/dashboard/HeroProgress.tsx:19:9",
-				"data-prohibitions": "[editContent]",
-				progress: progressToNext,
-				size: 160,
-				strokeWidth: 12,
-				className: "text-primary-foreground drop-shadow-lg shrink-0"
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/dashboard/HeroProgress.tsx:25:9",
-				"data-prohibitions": "[editContent]",
-				className: "space-y-4 text-center md:text-left",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
-						"data-uid": "src/components/dashboard/HeroProgress.tsx:26:11",
-						"data-prohibitions": "[editContent]",
-						className: "text-3xl md:text-4xl font-bold tracking-tight",
-						children: ["Maturidade: ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							"data-uid": "src/components/dashboard/HeroProgress.tsx:27:25",
-							"data-prohibitions": "[editContent]",
-							className: "text-accent",
-							children: levelName
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-						"data-uid": "src/components/dashboard/HeroProgress.tsx:29:11",
-						"data-prohibitions": "[editContent]",
-						className: "text-secondary-foreground/80 text-lg max-w-xl",
-						children: [
-							"Você possui ",
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("strong", {
-								"data-uid": "src/components/dashboard/HeroProgress.tsx:30:25",
-								"data-prohibitions": "[editContent]",
-								children: [points, " pontos"]
-							}),
-							" de impacto institucional. Faltam",
-							" ",
-							nextLevelPoints - points,
-							" pontos para desbloquear a próxima insígnia estratégica."
-						]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-						"data-uid": "src/components/dashboard/HeroProgress.tsx:33:11",
-						"data-prohibitions": "[]",
-						asChild: true,
-						variant: "secondary",
-						className: "mt-4 bg-background text-foreground hover:bg-background/90 font-bold h-11 px-6 shadow-sm",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
-							"data-uid": "src/components/dashboard/HeroProgress.tsx:38:13",
-							"data-prohibitions": "[]",
-							to: "/eixos",
-							children: ["Ver Missões e Evoluir ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowRight, {
-								"data-uid": "src/components/dashboard/HeroProgress.tsx:39:37",
-								"data-prohibitions": "[editContent]",
-								className: "ml-2 w-4 h-4"
-							})]
-						})
-					})
-				]
-			})]
-		})]
-	});
-}
 //#endregion
 //#region ../../cache/modules/jornada-observador-certificado-1427c/node_modules/.pnpm/@radix-ui+react-context@1.1.3_@types+react@19.2.14_react@19.2.4/node_modules/@radix-ui/react-context/dist/index.mjs
 function createContextScope(scopeName, createContextScopeDeps = []) {
@@ -25231,6 +24972,100 @@ function composeContextScopes(...scopes) {
 	};
 	createScope.scopeName = baseScope.scopeName;
 	return createScope;
+}
+//#endregion
+//#region ../../cache/modules/jornada-observador-certificado-1427c/node_modules/.pnpm/@radix-ui+react-slot@1.2.4_@types+react@19.2.14_react@19.2.4/node_modules/@radix-ui/react-slot/dist/index.mjs
+var REACT_LAZY_TYPE = Symbol.for("react.lazy");
+var use = import_react[" use ".trim().toString()];
+function isPromiseLike(value) {
+	return typeof value === "object" && value !== null && "then" in value;
+}
+function isLazyComponent(element) {
+	return element != null && typeof element === "object" && "$$typeof" in element && element.$$typeof === REACT_LAZY_TYPE && "_payload" in element && isPromiseLike(element._payload);
+}
+/* @__NO_SIDE_EFFECTS__ */
+function createSlot(ownerName) {
+	const SlotClone = /* @__PURE__ */ createSlotClone(ownerName);
+	const Slot2 = import_react.forwardRef((props, forwardedRef) => {
+		let { children, ...slotProps } = props;
+		if (isLazyComponent(children) && typeof use === "function") children = use(children._payload);
+		const childrenArray = import_react.Children.toArray(children);
+		const slottable = childrenArray.find(isSlottable);
+		if (slottable) {
+			const newElement = slottable.props.children;
+			const newChildren = childrenArray.map((child) => {
+				if (child === slottable) {
+					if (import_react.Children.count(newElement) > 1) return import_react.Children.only(null);
+					return import_react.isValidElement(newElement) ? newElement.props.children : null;
+				} else return child;
+			});
+			return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SlotClone, {
+				...slotProps,
+				ref: forwardedRef,
+				children: import_react.isValidElement(newElement) ? import_react.cloneElement(newElement, void 0, newChildren) : null
+			});
+		}
+		return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SlotClone, {
+			...slotProps,
+			ref: forwardedRef,
+			children
+		});
+	});
+	Slot2.displayName = `${ownerName}.Slot`;
+	return Slot2;
+}
+var Slot$2 = /* @__PURE__ */ createSlot("Slot");
+/* @__NO_SIDE_EFFECTS__ */
+function createSlotClone(ownerName) {
+	const SlotClone = import_react.forwardRef((props, forwardedRef) => {
+		let { children, ...slotProps } = props;
+		if (isLazyComponent(children) && typeof use === "function") children = use(children._payload);
+		if (import_react.isValidElement(children)) {
+			const childrenRef = getElementRef(children);
+			const props2 = mergeProps(slotProps, children.props);
+			if (children.type !== import_react.Fragment) props2.ref = forwardedRef ? composeRefs(forwardedRef, childrenRef) : childrenRef;
+			return import_react.cloneElement(children, props2);
+		}
+		return import_react.Children.count(children) > 1 ? import_react.Children.only(null) : null;
+	});
+	SlotClone.displayName = `${ownerName}.SlotClone`;
+	return SlotClone;
+}
+var SLOTTABLE_IDENTIFIER = Symbol("radix.slottable");
+function isSlottable(child) {
+	return import_react.isValidElement(child) && typeof child.type === "function" && "__radixId" in child.type && child.type.__radixId === SLOTTABLE_IDENTIFIER;
+}
+function mergeProps(slotProps, childProps) {
+	const overrideProps = { ...childProps };
+	for (const propName in childProps) {
+		const slotPropValue = slotProps[propName];
+		const childPropValue = childProps[propName];
+		if (/^on[A-Z]/.test(propName)) {
+			if (slotPropValue && childPropValue) overrideProps[propName] = (...args) => {
+				const result = childPropValue(...args);
+				slotPropValue(...args);
+				return result;
+			};
+			else if (slotPropValue) overrideProps[propName] = slotPropValue;
+		} else if (propName === "style") overrideProps[propName] = {
+			...slotPropValue,
+			...childPropValue
+		};
+		else if (propName === "className") overrideProps[propName] = [slotPropValue, childPropValue].filter(Boolean).join(" ");
+	}
+	return {
+		...slotProps,
+		...overrideProps
+	};
+}
+function getElementRef(element) {
+	let getter = Object.getOwnPropertyDescriptor(element.props, "ref")?.get;
+	let mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
+	if (mayWarn) return element.ref;
+	getter = Object.getOwnPropertyDescriptor(element, "ref")?.get;
+	mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
+	if (mayWarn) return element.props.ref;
+	return element.props.ref || element.ref;
 }
 //#endregion
 //#region ../../cache/modules/jornada-observador-certificado-1427c/node_modules/.pnpm/@radix-ui+react-primitive@2.1.4_@types+react-dom@19.2.3_@types+react@19.2.14__@types+re_0243fb2db8a1fb85ca77b8d9e5c2d650/node_modules/@radix-ui/react-primitive/dist/index.mjs
@@ -25301,10 +25136,10 @@ var Progress$1 = import_react.forwardRef((props, forwardedRef) => {
 	});
 });
 Progress$1.displayName = PROGRESS_NAME;
-var INDICATOR_NAME = "ProgressIndicator";
+var INDICATOR_NAME$1 = "ProgressIndicator";
 var ProgressIndicator = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeProgress, ...indicatorProps } = props;
-	const context = useProgressContext(INDICATOR_NAME, __scopeProgress);
+	const context = useProgressContext(INDICATOR_NAME$1, __scopeProgress);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive.div, {
 		"data-state": getProgressState(context.value, context.max),
 		"data-value": context.value ?? void 0,
@@ -25313,7 +25148,7 @@ var ProgressIndicator = import_react.forwardRef((props, forwardedRef) => {
 		ref: forwardedRef
 	});
 });
-ProgressIndicator.displayName = INDICATOR_NAME;
+ProgressIndicator.displayName = INDICATOR_NAME$1;
 function defaultGetValueLabel(value, max) {
 	return `${Math.round(value / max * 100)}%`;
 }
@@ -25529,67 +25364,67 @@ function EvolutionSimulator() {
 	const getRecommendation = (eixoId, currentLevel, points) => {
 		if (currentLevel === "Mobilizador") return {
 			msg: "Nível Máximo Atingido!",
-			target: "Manter engajamento contínuo",
+			target: "Manter engajamento contínuo na rede",
 			percent: 100
 		};
 		if (currentLevel === "Pleno") {
 			const needed = 500 - points;
-			let action = needed > 100 ? "Submeter Projeto de Inovação" : "Publicar 1 Artigo Técnico";
-			if (eixoId === "III") action = `${Math.ceil(needed / 100)} Representações Formais em Comitês`;
+			let action = needed > 100 ? `Faltam ${Math.ceil(needed / 150)} projetos de impacto para o Nível Mobilizador` : `Faltam ${Math.ceil(needed / 50)} publicações para o Nível Mobilizador`;
+			if (eixoId === "III") action = `Faltam ${Math.ceil(needed / 100)} representações em comitês para o Nível Mobilizador`;
 			return {
-				msg: `Faltam ${needed} pontos para Nível Mobilizador`,
+				msg: `Faltam ${needed} pts para Mobilizador`,
 				target: action,
 				percent: Math.round(points / 500 * 100)
 			};
 		}
 		const needed = 200 - points;
-		let action = "Concluir 1 Curso Oficial ONSV e 1 Ação de Impacto";
-		if (eixoId === "III") action = "Realizar 1 Mentoria ou Representação em Campanha";
+		let action = `Faltam ${Math.ceil(needed / 50)} cursos para o Nível Pleno`;
+		if (eixoId === "III") action = `Faltam ${Math.ceil(needed / 200)} mentorias para o Nível Pleno`;
 		return {
-			msg: `Faltam ${needed} pontos para Nível Pleno`,
+			msg: `Faltam ${needed} pts para Pleno`,
 			target: action,
 			percent: Math.round(points / 200 * 100)
 		};
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-		"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:42:5",
+		"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:46:5",
 		"data-prohibitions": "[editContent]",
 		className: "shadow-subtle border-border/60",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-			"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:43:7",
+			"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:47:7",
 			"data-prohibitions": "[]",
 			className: "bg-primary/5 border-b border-border/30",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-				"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:44:9",
+				"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:48:9",
 				"data-prohibitions": "[]",
 				className: "text-lg flex items-center gap-2 text-primary",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Target, {
-					"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:45:11",
+					"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:49:11",
 					"data-prohibitions": "[editContent]",
 					className: "w-5 h-5"
-				}), " Simulador de Projeção (Próxima Insígnia)"]
+				}), " Simulador de Evolução"]
 			})
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-			"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:48:7",
+			"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:52:7",
 			"data-prohibitions": "[editContent]",
 			className: "pt-6",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:49:9",
+				"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:53:9",
 				"data-prohibitions": "[editContent]",
 				className: "grid grid-cols-1 md:grid-cols-3 gap-6",
 				children: eixosProgress.map((eixo) => {
 					const rec = getRecommendation(eixo.id, eixo.level, eixo.points);
 					return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:53:15",
+						"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:57:15",
 						"data-prohibitions": "[editContent]",
 						className: "flex flex-col space-y-3 p-4 bg-muted/30 rounded-xl border border-border/50 shadow-sm hover:border-primary/30 transition-colors",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:57:17",
+								"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:61:17",
 								"data-prohibitions": "[editContent]",
 								className: "flex justify-between items-start",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h4", {
-									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:58:19",
+									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:62:19",
 									"data-prohibitions": "[editContent]",
 									className: "font-bold text-sm text-foreground",
 									children: [
@@ -25599,7 +25434,7 @@ function EvolutionSimulator() {
 										eixo.name
 									]
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
-									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:61:19",
+									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:65:19",
 									"data-prohibitions": "[editContent]",
 									variant: "outline",
 									className: "text-[10px] font-bold uppercase shrink-0",
@@ -25607,42 +25442,33 @@ function EvolutionSimulator() {
 								})]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Progress, {
-								"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:65:17",
+								"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:69:17",
 								"data-prohibitions": "[editContent]",
 								value: rec.percent,
 								className: "h-2 bg-muted-foreground/20"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:66:17",
+								"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:70:17",
 								"data-prohibitions": "[editContent]",
 								className: "text-sm flex-1 flex flex-col justify-between",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:67:19",
+									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:71:19",
 									"data-prohibitions": "[editContent]",
 									className: "font-semibold text-foreground/80 mb-2",
 									children: rec.msg
 								}), rec.percent < 100 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:69:21",
+									"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:73:21",
 									"data-prohibitions": "[editContent]",
 									className: "text-xs text-muted-foreground flex items-start gap-2 bg-background p-3 rounded-md border border-border/60 shadow-sm mt-2",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Zap, {
-										"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:70:23",
+										"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:74:23",
 										"data-prohibitions": "[editContent]",
 										className: "w-4 h-4 text-amber-500 shrink-0 mt-0.5"
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-										"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:71:23",
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:75:23",
 										"data-prohibitions": "[editContent]",
-										className: "leading-relaxed",
-										children: [
-											"Ação sugerida:",
-											" ",
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
-												"data-uid": "src/components/dashboard/EvolutionSimulator.tsx:73:25",
-												"data-prohibitions": "[editContent]",
-												className: "text-foreground font-semibold",
-												children: rec.target
-											})
-										]
+										className: "leading-relaxed font-medium text-foreground",
+										children: rec.target
 									})]
 								})]
 							})
@@ -27109,6 +26935,44 @@ function useEmblaCarousel(options = {}, plugins = []) {
 }
 useEmblaCarousel.globalOptions = void 0;
 //#endregion
+//#region src/components/ui/button.tsx
+var buttonVariants = cva("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0", {
+	variants: {
+		variant: {
+			default: "bg-primary text-primary-foreground hover:bg-primary/90",
+			destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+			outline: "border border-input bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground",
+			secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+			ghost: "text-foreground hover:bg-accent hover:text-accent-foreground",
+			link: "text-foreground underline-offset-4 hover:underline"
+		},
+		size: {
+			default: "h-10 px-4 py-2",
+			sm: "h-9 rounded-md px-3",
+			lg: "h-11 rounded-md px-8",
+			icon: "h-10 w-10"
+		}
+	},
+	defaultVariants: {
+		variant: "default",
+		size: "default"
+	}
+});
+var Button = import_react.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot$2 : "button", {
+		"data-uid": "src/components/ui/button.tsx:44:7",
+		"data-prohibitions": "[editContent]",
+		className: cn$1(buttonVariants({
+			variant,
+			size,
+			className
+		})),
+		ref,
+		...props
+	});
+});
+Button.displayName = "Button";
+//#endregion
 //#region src/components/ui/carousel.tsx
 var CarouselContext = import_react.createContext(null);
 function useCarousel() {
@@ -27646,117 +27510,57 @@ function NewsFeed() {
 	});
 }
 //#endregion
-//#region src/components/dashboard/RecentActivity.tsx
-function RecentActivity() {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-		"data-uid": "src/components/dashboard/RecentActivity.tsx:8:5",
-		"data-prohibitions": "[editContent]",
-		className: "shadow-subtle border-border/60 h-full",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-			"data-uid": "src/components/dashboard/RecentActivity.tsx:9:7",
-			"data-prohibitions": "[]",
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-				"data-uid": "src/components/dashboard/RecentActivity.tsx:10:9",
-				"data-prohibitions": "[]",
-				className: "text-lg flex items-center gap-2",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, {
-					"data-uid": "src/components/dashboard/RecentActivity.tsx:11:11",
-					"data-prohibitions": "[editContent]",
-					className: "w-5 h-5 text-muted-foreground"
-				}), " Atividade Recente"]
-			})
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-			"data-uid": "src/components/dashboard/RecentActivity.tsx:14:7",
-			"data-prohibitions": "[editContent]",
-			className: "space-y-5",
-			children: recentActivity.map((act) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/dashboard/RecentActivity.tsx:16:11",
-				"data-prohibitions": "[editContent]",
-				className: "flex items-start gap-3",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					"data-uid": "src/components/dashboard/RecentActivity.tsx:17:13",
-					"data-prohibitions": "[editContent]",
-					className: cn$1("p-1.5 rounded-full mt-0.5 shrink-0", act.type === "success" ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"),
-					children: act.type === "success" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleCheck, {
-						"data-uid": "src/components/dashboard/RecentActivity.tsx:26:17",
-						"data-prohibitions": "[editContent]",
-						className: "w-4 h-4"
-					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, {
-						"data-uid": "src/components/dashboard/RecentActivity.tsx:28:17",
-						"data-prohibitions": "[editContent]",
-						className: "w-4 h-4"
-					})
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/dashboard/RecentActivity.tsx:31:13",
-					"data-prohibitions": "[editContent]",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						"data-uid": "src/components/dashboard/RecentActivity.tsx:32:15",
-						"data-prohibitions": "[editContent]",
-						className: "text-sm font-medium leading-tight text-foreground",
-						children: act.action
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-						"data-uid": "src/components/dashboard/RecentActivity.tsx:33:15",
-						"data-prohibitions": "[editContent]",
-						className: "text-xs text-muted-foreground mt-1.5",
-						children: [
-							act.time,
-							" •",
-							" ",
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								"data-uid": "src/components/dashboard/RecentActivity.tsx:35:17",
-								"data-prohibitions": "[editContent]",
-								className: cn$1("font-bold", act.type === "success" ? "text-emerald-600" : "text-amber-600"),
-								children: act.points
-							})
-						]
-					})]
-				})]
-			}, act.id))
-		})]
-	});
-}
-//#endregion
 //#region src/pages/Index.tsx
 function Index() {
+	const { user } = useAuthStore();
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		"data-uid": "src/pages/Index.tsx:10:5",
-		"data-prohibitions": "[]",
+		"data-uid": "src/pages/Index.tsx:11:5",
+		"data-prohibitions": "[editContent]",
 		className: "max-w-6xl mx-auto space-y-8 animate-fade-in-up pb-10",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HeroProgress, {
-				"data-uid": "src/pages/Index.tsx:11:7",
-				"data-prohibitions": "[editContent]"
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				"data-uid": "src/pages/Index.tsx:12:7",
+				"data-prohibitions": "[editContent]",
+				className: "space-y-2",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h1", {
+					"data-uid": "src/pages/Index.tsx:13:9",
+					"data-prohibitions": "[editContent]",
+					className: "text-3xl md:text-4xl font-bold tracking-tight text-foreground",
+					children: ["Olá, ", user?.name.split(" ")[0] || "Observador"]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					"data-uid": "src/pages/Index.tsx:16:9",
+					"data-prohibitions": "[]",
+					className: "text-muted-foreground text-lg",
+					children: "Acompanhe sua jornada de evolução, impacto institucional e as novidades da rede."
+				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HighlightsMural, {
-				"data-uid": "src/pages/Index.tsx:13:7",
+				"data-uid": "src/pages/Index.tsx:21:7",
 				"data-prohibitions": "[editContent]"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/pages/Index.tsx:15:7",
+				"data-uid": "src/pages/Index.tsx:23:7",
 				"data-prohibitions": "[]",
 				className: "grid grid-cols-1 lg:grid-cols-3 gap-8",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/pages/Index.tsx:16:9",
+					"data-uid": "src/pages/Index.tsx:24:9",
 					"data-prohibitions": "[]",
 					className: "lg:col-span-2 space-y-8",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(EvolutionSimulator, {
-						"data-uid": "src/pages/Index.tsx:17:11",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AxesBadges, {
+						"data-uid": "src/pages/Index.tsx:25:11",
 						"data-prohibitions": "[editContent]"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AxesBadges, {
-						"data-uid": "src/pages/Index.tsx:18:11",
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(EvolutionSimulator, {
+						"data-uid": "src/pages/Index.tsx:26:11",
 						"data-prohibitions": "[editContent]"
 					})]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/pages/Index.tsx:20:9",
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					"data-uid": "src/pages/Index.tsx:28:9",
 					"data-prohibitions": "[]",
 					className: "space-y-8",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(NewsFeed, {
-						"data-uid": "src/pages/Index.tsx:21:11",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(NewsFeed, {
+						"data-uid": "src/pages/Index.tsx:29:11",
 						"data-prohibitions": "[editContent]"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RecentActivity, {
-						"data-uid": "src/pages/Index.tsx:22:11",
-						"data-prohibitions": "[editContent]"
-					})]
+					})
 				})]
 			})
 		]
@@ -27776,14 +27580,14 @@ var EVENT_OPTIONS$1 = {
 	bubbles: false,
 	cancelable: true
 };
-var GROUP_NAME = "RovingFocusGroup";
-var [Collection, useCollection, createCollectionScope] = createCollection(GROUP_NAME);
-var [createRovingFocusGroupContext, createRovingFocusGroupScope] = createContextScope$1(GROUP_NAME, [createCollectionScope]);
-var [RovingFocusProvider, useRovingFocusContext] = createRovingFocusGroupContext(GROUP_NAME);
+var GROUP_NAME$2 = "RovingFocusGroup";
+var [Collection$1, useCollection$1, createCollectionScope$1] = createCollection(GROUP_NAME$2);
+var [createRovingFocusGroupContext, createRovingFocusGroupScope] = createContextScope$1(GROUP_NAME$2, [createCollectionScope$1]);
+var [RovingFocusProvider, useRovingFocusContext] = createRovingFocusGroupContext(GROUP_NAME$2);
 var RovingFocusGroup = import_react.forwardRef((props, forwardedRef) => {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection.Provider, {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection$1.Provider, {
 		scope: props.__scopeRovingFocusGroup,
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection.Slot, {
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection$1.Slot, {
 			scope: props.__scopeRovingFocusGroup,
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RovingFocusGroupImpl, {
 				...props,
@@ -27792,7 +27596,7 @@ var RovingFocusGroup = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-RovingFocusGroup.displayName = GROUP_NAME;
+RovingFocusGroup.displayName = GROUP_NAME$2;
 var RovingFocusGroupImpl = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeRovingFocusGroup, orientation, loop = false, dir, currentTabStopId: currentTabStopIdProp, defaultCurrentTabStopId, onCurrentTabStopIdChange, onEntryFocus, preventScrollOnEntryFocus = false, ...groupProps } = props;
 	const ref = import_react.useRef(null);
@@ -27802,11 +27606,11 @@ var RovingFocusGroupImpl = import_react.forwardRef((props, forwardedRef) => {
 		prop: currentTabStopIdProp,
 		defaultProp: defaultCurrentTabStopId ?? null,
 		onChange: onCurrentTabStopIdChange,
-		caller: GROUP_NAME
+		caller: GROUP_NAME$2
 	});
 	const [isTabbingBackOut, setIsTabbingBackOut] = import_react.useState(false);
 	const handleEntryFocus = useCallbackRef$1(onEntryFocus);
-	const getItems = useCollection(__scopeRovingFocusGroup);
+	const getItems = useCollection$1(__scopeRovingFocusGroup);
 	const isClickFocusRef = import_react.useRef(false);
 	const [focusableItemsCount, setFocusableItemsCount] = import_react.useState(0);
 	import_react.useEffect(() => {
@@ -27845,7 +27649,7 @@ var RovingFocusGroupImpl = import_react.forwardRef((props, forwardedRef) => {
 					event.currentTarget.dispatchEvent(entryFocusEvent);
 					if (!entryFocusEvent.defaultPrevented) {
 						const items = getItems().filter((item) => item.focusable);
-						focusFirst$1([
+						focusFirst$2([
 							items.find((item) => item.active),
 							items.find((item) => item.id === currentTabStopId),
 							...items
@@ -27858,14 +27662,14 @@ var RovingFocusGroupImpl = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-var ITEM_NAME = "RovingFocusGroupItem";
+var ITEM_NAME$2 = "RovingFocusGroupItem";
 var RovingFocusGroupItem = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeRovingFocusGroup, focusable = true, active = false, tabStopId, children, ...itemProps } = props;
 	const autoId = useId();
 	const id = tabStopId || autoId;
-	const context = useRovingFocusContext(ITEM_NAME, __scopeRovingFocusGroup);
+	const context = useRovingFocusContext(ITEM_NAME$2, __scopeRovingFocusGroup);
 	const isCurrentTabStop = context.currentTabStopId === id;
-	const getItems = useCollection(__scopeRovingFocusGroup);
+	const getItems = useCollection$1(__scopeRovingFocusGroup);
 	const { onFocusableItemAdd, onFocusableItemRemove, currentTabStopId } = context;
 	import_react.useEffect(() => {
 		if (focusable) {
@@ -27877,7 +27681,7 @@ var RovingFocusGroupItem = import_react.forwardRef((props, forwardedRef) => {
 		onFocusableItemAdd,
 		onFocusableItemRemove
 	]);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection.ItemSlot, {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection$1.ItemSlot, {
 		scope: __scopeRovingFocusGroup,
 		id,
 		focusable,
@@ -27907,9 +27711,9 @@ var RovingFocusGroupItem = import_react.forwardRef((props, forwardedRef) => {
 					else if (focusIntent === "prev" || focusIntent === "next") {
 						if (focusIntent === "prev") candidateNodes.reverse();
 						const currentIndex = candidateNodes.indexOf(event.currentTarget);
-						candidateNodes = context.loop ? wrapArray(candidateNodes, currentIndex + 1) : candidateNodes.slice(currentIndex + 1);
+						candidateNodes = context.loop ? wrapArray$1(candidateNodes, currentIndex + 1) : candidateNodes.slice(currentIndex + 1);
 					}
-					setTimeout(() => focusFirst$1(candidateNodes));
+					setTimeout(() => focusFirst$2(candidateNodes));
 				}
 			}),
 			children: typeof children === "function" ? children({
@@ -27919,7 +27723,7 @@ var RovingFocusGroupItem = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-RovingFocusGroupItem.displayName = ITEM_NAME;
+RovingFocusGroupItem.displayName = ITEM_NAME$2;
 var MAP_KEY_TO_FOCUS_INTENT = {
 	ArrowLeft: "prev",
 	ArrowUp: "prev",
@@ -27940,7 +27744,7 @@ function getFocusIntent(event, orientation, dir) {
 	if (orientation === "horizontal" && ["ArrowUp", "ArrowDown"].includes(key)) return void 0;
 	return MAP_KEY_TO_FOCUS_INTENT[key];
 }
-function focusFirst$1(candidates, preventScroll = false) {
+function focusFirst$2(candidates, preventScroll = false) {
 	const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
 	for (const candidate of candidates) {
 		if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
@@ -27948,7 +27752,7 @@ function focusFirst$1(candidates, preventScroll = false) {
 		if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
 	}
 }
-function wrapArray(array, startIndex) {
+function wrapArray$1(array, startIndex) {
 	return array.map((_, index) => array[(startIndex + index) % array.length]);
 }
 var Root$4 = RovingFocusGroup;
@@ -27957,7 +27761,7 @@ var Item = RovingFocusGroupItem;
 //#region ../../cache/modules/jornada-observador-certificado-1427c/node_modules/.pnpm/@radix-ui+react-tabs@1.1.13_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react@_2ad0945e3cb98dc5bbfaaf29c105e977/node_modules/@radix-ui/react-tabs/dist/index.mjs
 var TABS_NAME = "Tabs";
 var [createTabsContext, createTabsScope] = createContextScope$1(TABS_NAME, [createRovingFocusGroupScope]);
-var useRovingFocusGroupScope = createRovingFocusGroupScope();
+var useRovingFocusGroupScope$1 = createRovingFocusGroupScope();
 var [TabsProvider, useTabsContext] = createTabsContext(TABS_NAME);
 var Tabs$1 = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeTabs, value: valueProp, onValueChange, defaultValue, orientation = "horizontal", dir, activationMode = "automatic", ...tabsProps } = props;
@@ -27989,7 +27793,7 @@ var TAB_LIST_NAME = "TabsList";
 var TabsList$1 = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeTabs, loop = true, ...listProps } = props;
 	const context = useTabsContext(TAB_LIST_NAME, __scopeTabs);
-	const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeTabs);
+	const rovingFocusGroupScope = useRovingFocusGroupScope$1(__scopeTabs);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$4, {
 		asChild: true,
 		...rovingFocusGroupScope,
@@ -28005,11 +27809,11 @@ var TabsList$1 = import_react.forwardRef((props, forwardedRef) => {
 	});
 });
 TabsList$1.displayName = TAB_LIST_NAME;
-var TRIGGER_NAME$1 = "TabsTrigger";
+var TRIGGER_NAME$2 = "TabsTrigger";
 var TabsTrigger$1 = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeTabs, value, disabled = false, ...triggerProps } = props;
-	const context = useTabsContext(TRIGGER_NAME$1, __scopeTabs);
-	const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeTabs);
+	const context = useTabsContext(TRIGGER_NAME$2, __scopeTabs);
+	const rovingFocusGroupScope = useRovingFocusGroupScope$1(__scopeTabs);
 	const triggerId = makeTriggerId(context.baseId, value);
 	const contentId = makeContentId(context.baseId, value);
 	const isSelected = value === context.value;
@@ -28043,11 +27847,11 @@ var TabsTrigger$1 = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-TabsTrigger$1.displayName = TRIGGER_NAME$1;
-var CONTENT_NAME$1 = "TabsContent";
+TabsTrigger$1.displayName = TRIGGER_NAME$2;
+var CONTENT_NAME$3 = "TabsContent";
 var TabsContent$1 = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeTabs, value, forceMount, children, ...contentProps } = props;
-	const context = useTabsContext(CONTENT_NAME$1, __scopeTabs);
+	const context = useTabsContext(CONTENT_NAME$3, __scopeTabs);
 	const triggerId = makeTriggerId(context.baseId, value);
 	const contentId = makeContentId(context.baseId, value);
 	const isSelected = value === context.value;
@@ -28076,20 +27880,20 @@ var TabsContent$1 = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-TabsContent$1.displayName = CONTENT_NAME$1;
+TabsContent$1.displayName = CONTENT_NAME$3;
 function makeTriggerId(baseId, value) {
 	return `${baseId}-trigger-${value}`;
 }
 function makeContentId(baseId, value) {
 	return `${baseId}-content-${value}`;
 }
-var Root2 = Tabs$1;
+var Root2$1 = Tabs$1;
 var List = TabsList$1;
-var Trigger$1 = TabsTrigger$1;
+var Trigger$2 = TabsTrigger$1;
 var Content$1 = TabsContent$1;
 //#endregion
 //#region src/components/ui/tabs.tsx
-var Tabs = Root2;
+var Tabs = Root2$1;
 var TabsList = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(List, {
 	"data-uid": "src/components/ui/tabs.tsx:13:3",
 	"data-prohibitions": "[editContent]",
@@ -28098,14 +27902,14 @@ var TabsList = import_react.forwardRef(({ className, ...props }, ref) => /* @__P
 	...props
 }));
 TabsList.displayName = List.displayName;
-var TabsTrigger = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Trigger$1, {
+var TabsTrigger = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Trigger$2, {
 	"data-uid": "src/components/ui/tabs.tsx:28:3",
 	"data-prohibitions": "[editContent]",
 	ref,
 	className: cn$1("inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm", className),
 	...props
 }));
-TabsTrigger.displayName = Trigger$1.displayName;
+TabsTrigger.displayName = Trigger$2.displayName;
 var TabsContent = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Content$1, {
 	"data-uid": "src/components/ui/tabs.tsx:43:3",
 	"data-prohibitions": "[editContent]",
@@ -28182,7 +27986,7 @@ var FocusScope = import_react.forwardRef((props, forwardedRef) => {
 				container.addEventListener(AUTOFOCUS_ON_MOUNT, onMountAutoFocus);
 				container.dispatchEvent(mountEvent);
 				if (!mountEvent.defaultPrevented) {
-					focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
+					focusFirst$1(removeLinks(getTabbableCandidates(container)), { select: true });
 					if (document.activeElement === previouslyFocusedElement) focus(container);
 				}
 			}
@@ -28235,7 +28039,7 @@ var FocusScope = import_react.forwardRef((props, forwardedRef) => {
 	});
 });
 FocusScope.displayName = FOCUS_SCOPE_NAME;
-function focusFirst(candidates, { select = false } = {}) {
+function focusFirst$1(candidates, { select = false } = {}) {
 	const previouslyFocusedElement = document.activeElement;
 	for (const candidate of candidates) {
 		focus(candidate, { select });
@@ -29177,10 +28981,10 @@ var Dialog$1 = (props) => {
 	});
 };
 Dialog$1.displayName = DIALOG_NAME;
-var TRIGGER_NAME = "DialogTrigger";
+var TRIGGER_NAME$1 = "DialogTrigger";
 var DialogTrigger$1 = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeDialog, ...triggerProps } = props;
-	const context = useDialogContext(TRIGGER_NAME, __scopeDialog);
+	const context = useDialogContext(TRIGGER_NAME$1, __scopeDialog);
 	const composedTriggerRef = useComposedRefs(forwardedRef, context.triggerRef);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.button, {
 		type: "button",
@@ -29193,18 +28997,18 @@ var DialogTrigger$1 = import_react.forwardRef((props, forwardedRef) => {
 		onClick: composeEventHandlers(props.onClick, context.onOpenToggle)
 	});
 });
-DialogTrigger$1.displayName = TRIGGER_NAME;
-var PORTAL_NAME = "DialogPortal";
-var [PortalProvider, usePortalContext] = createDialogContext(PORTAL_NAME, { forceMount: void 0 });
+DialogTrigger$1.displayName = TRIGGER_NAME$1;
+var PORTAL_NAME$2 = "DialogPortal";
+var [PortalProvider$1, usePortalContext$1] = createDialogContext(PORTAL_NAME$2, { forceMount: void 0 });
 var DialogPortal$1 = (props) => {
 	const { __scopeDialog, forceMount, children, container } = props;
-	const context = useDialogContext(PORTAL_NAME, __scopeDialog);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PortalProvider, {
+	const context = useDialogContext(PORTAL_NAME$2, __scopeDialog);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PortalProvider$1, {
 		scope: __scopeDialog,
 		forceMount,
 		children: import_react.Children.map(children, (child) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
 			present: forceMount || context.open,
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal$1, {
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal$2, {
 				asChild: true,
 				container,
 				children: child
@@ -29212,10 +29016,10 @@ var DialogPortal$1 = (props) => {
 		}))
 	});
 };
-DialogPortal$1.displayName = PORTAL_NAME;
+DialogPortal$1.displayName = PORTAL_NAME$2;
 var OVERLAY_NAME = "DialogOverlay";
 var DialogOverlay$1 = import_react.forwardRef((props, forwardedRef) => {
-	const portalContext = usePortalContext(OVERLAY_NAME, props.__scopeDialog);
+	const portalContext = usePortalContext$1(OVERLAY_NAME, props.__scopeDialog);
 	const { forceMount = portalContext.forceMount, ...overlayProps } = props;
 	const context = useDialogContext(OVERLAY_NAME, props.__scopeDialog);
 	return context.modal ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
@@ -29227,12 +29031,12 @@ var DialogOverlay$1 = import_react.forwardRef((props, forwardedRef) => {
 	}) : null;
 });
 DialogOverlay$1.displayName = OVERLAY_NAME;
-var Slot = /* @__PURE__ */ createSlot$1("DialogOverlay.RemoveScroll");
+var Slot$1 = /* @__PURE__ */ createSlot$1("DialogOverlay.RemoveScroll");
 var DialogOverlayImpl = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeDialog, ...overlayProps } = props;
 	const context = useDialogContext(OVERLAY_NAME, __scopeDialog);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ReactRemoveScroll, {
-		as: Slot,
+		as: Slot$1,
 		allowPinchZoom: true,
 		shards: [context.contentRef],
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.div, {
@@ -29246,11 +29050,11 @@ var DialogOverlayImpl = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-var CONTENT_NAME = "DialogContent";
+var CONTENT_NAME$2 = "DialogContent";
 var DialogContent$1 = import_react.forwardRef((props, forwardedRef) => {
-	const portalContext = usePortalContext(CONTENT_NAME, props.__scopeDialog);
+	const portalContext = usePortalContext$1(CONTENT_NAME$2, props.__scopeDialog);
 	const { forceMount = portalContext.forceMount, ...contentProps } = props;
-	const context = useDialogContext(CONTENT_NAME, props.__scopeDialog);
+	const context = useDialogContext(CONTENT_NAME$2, props.__scopeDialog);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
 		present: forceMount || context.open,
 		children: context.modal ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogContentModal, {
@@ -29262,9 +29066,9 @@ var DialogContent$1 = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-DialogContent$1.displayName = CONTENT_NAME;
+DialogContent$1.displayName = CONTENT_NAME$2;
 var DialogContentModal = import_react.forwardRef((props, forwardedRef) => {
-	const context = useDialogContext(CONTENT_NAME, props.__scopeDialog);
+	const context = useDialogContext(CONTENT_NAME$2, props.__scopeDialog);
 	const contentRef = import_react.useRef(null);
 	const composedRefs = useComposedRefs(forwardedRef, context.contentRef, contentRef);
 	import_react.useEffect(() => {
@@ -29289,7 +29093,7 @@ var DialogContentModal = import_react.forwardRef((props, forwardedRef) => {
 	});
 });
 var DialogContentNonModal = import_react.forwardRef((props, forwardedRef) => {
-	const context = useDialogContext(CONTENT_NAME, props.__scopeDialog);
+	const context = useDialogContext(CONTENT_NAME$2, props.__scopeDialog);
 	const hasInteractedOutsideRef = import_react.useRef(false);
 	const hasPointerDownOutsideRef = import_react.useRef(false);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogContentImpl, {
@@ -29320,7 +29124,7 @@ var DialogContentNonModal = import_react.forwardRef((props, forwardedRef) => {
 });
 var DialogContentImpl = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeDialog, trapFocus, onOpenAutoFocus, onCloseAutoFocus, ...contentProps } = props;
-	const context = useDialogContext(CONTENT_NAME, __scopeDialog);
+	const context = useDialogContext(CONTENT_NAME$2, __scopeDialog);
 	const contentRef = import_react.useRef(null);
 	const composedRefs = useComposedRefs(forwardedRef, contentRef);
 	useFocusGuards();
@@ -29384,7 +29188,7 @@ function getState(open) {
 }
 var TITLE_WARNING_NAME = "DialogTitleWarning";
 var [WarningProvider, useWarningContext] = createContext2(TITLE_WARNING_NAME, {
-	contentName: CONTENT_NAME,
+	contentName: CONTENT_NAME$2,
 	titleName: TITLE_NAME,
 	docsSlug: "dialog"
 });
@@ -29418,7 +29222,7 @@ var DescriptionWarning = ({ contentRef, descriptionId }) => {
 	return null;
 };
 var Root$3 = Dialog$1;
-var Portal = DialogPortal$1;
+var Portal$1 = DialogPortal$1;
 var Overlay = DialogOverlay$1;
 var Content = DialogContent$1;
 var Title = DialogTitle$1;
@@ -29427,7 +29231,7 @@ var Close = DialogClose$1;
 //#endregion
 //#region src/components/ui/dialog.tsx
 var Dialog = Root$3;
-var DialogPortal = Portal;
+var DialogPortal = Portal$1;
 var DialogOverlay = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Overlay, {
 	"data-uid": "src/components/ui/dialog.tsx:20:3",
 	"data-prohibitions": "[editContent]",
@@ -29512,7 +29316,7 @@ Input.displayName = "Input";
 //#endregion
 //#region ../../cache/modules/jornada-observador-certificado-1427c/node_modules/.pnpm/@radix-ui+react-label@2.1.8_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react@_55fa612a976b7bdfbf4dcdd93d861aab/node_modules/@radix-ui/react-label/dist/index.mjs
 var NAME$1 = "Label";
-var Label$1 = import_react.forwardRef((props, forwardedRef) => {
+var Label$2 = import_react.forwardRef((props, forwardedRef) => {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive.label, {
 		...props,
 		ref: forwardedRef,
@@ -29523,19 +29327,19 @@ var Label$1 = import_react.forwardRef((props, forwardedRef) => {
 		}
 	});
 });
-Label$1.displayName = NAME$1;
-var Root$2 = Label$1;
+Label$2.displayName = NAME$1;
+var Root$2 = Label$2;
 //#endregion
 //#region src/components/ui/label.tsx
 var labelVariants = cva("text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70");
-var Label = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$2, {
+var Label$1 = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$2, {
 	"data-uid": "src/components/ui/label.tsx:16:3",
 	"data-prohibitions": "[editContent]",
 	ref,
 	className: cn$1(labelVariants(), className),
 	...props
 }));
-Label.displayName = Root$2.displayName;
+Label$1.displayName = Root$2.displayName;
 //#endregion
 //#region src/components/ui/textarea.tsx
 var Textarea = import_react.forwardRef(({ className, ...props }, ref) => {
@@ -29627,7 +29431,7 @@ function SubmitEvidenceDialog({ isOpen, onClose, item }) {
 								"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:60:13",
 								"data-prohibitions": "[]",
 								className: "space-y-2",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label$1, {
 									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:61:15",
 									"data-prohibitions": "[]",
 									htmlFor: "link",
@@ -29643,7 +29447,7 @@ function SubmitEvidenceDialog({ isOpen, onClose, item }) {
 								"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:64:13",
 								"data-prohibitions": "[]",
 								className: "space-y-2",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Label, {
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Label$1, {
 									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:65:15",
 									"data-prohibitions": "[]",
 									htmlFor: "file",
@@ -29690,7 +29494,7 @@ function SubmitEvidenceDialog({ isOpen, onClose, item }) {
 								"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:80:13",
 								"data-prohibitions": "[]",
 								className: "space-y-2",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label$1, {
 									"data-uid": "src/components/submissions/SubmitEvidenceDialog.tsx:81:15",
 									"data-prohibitions": "[]",
 									htmlFor: "desc",
@@ -31164,92 +30968,24 @@ function Submissions() {
 //#endregion
 //#region src/components/shared/Logo.tsx
 function Logo({ className }) {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
-		"data-uid": "src/components/shared/Logo.tsx:9:5",
+	const [imgError, setImgError] = (0, import_react.useState)(false);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		"data-uid": "src/components/shared/Logo.tsx:12:5",
 		"data-prohibitions": "[editContent]",
-		viewBox: "0 0 100 100",
-		fill: "none",
-		xmlns: "http://www.w3.org/2000/svg",
-		className: cn$1("shrink-0", className),
-		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-				"data-uid": "src/components/shared/Logo.tsx:16:7",
-				"data-prohibitions": "[editContent]",
-				d: "M15 80 Q 50 95 85 80 L 80 70 L 20 70 Z",
-				fill: "currentColor",
-				className: "text-amber-600 dark:text-amber-700"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", {
-				"data-uid": "src/components/shared/Logo.tsx:22:7",
-				"data-prohibitions": "[editContent]",
-				x: "22",
-				y: "74",
-				width: "56",
-				height: "5",
-				rx: "2.5",
-				fill: "currentColor",
-				className: "text-amber-800/40"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-				"data-uid": "src/components/shared/Logo.tsx:33:7",
-				"data-prohibitions": "[editContent]",
-				d: "M10 70 L 5 30 L 28 50 L 50 15 L 72 50 L 95 30 L 90 70 Z",
-				fill: "currentColor",
-				className: "text-amber-500"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-				"data-uid": "src/components/shared/Logo.tsx:39:7",
-				"data-prohibitions": "[editContent]",
-				d: "M50 15 L 28 50 L 50 70 L 72 50 Z",
-				fill: "currentColor",
-				className: "text-amber-400 opacity-70"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
-				"data-uid": "src/components/shared/Logo.tsx:46:7",
-				"data-prohibitions": "[editContent]",
-				cx: "5",
-				cy: "25",
-				r: "5",
-				fill: "currentColor",
-				className: "text-emerald-600 dark:text-emerald-500"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
-				"data-uid": "src/components/shared/Logo.tsx:53:7",
-				"data-prohibitions": "[editContent]",
-				cx: "28",
-				cy: "45",
-				r: "4",
-				fill: "currentColor",
-				className: "text-emerald-600 dark:text-emerald-500"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
-				"data-uid": "src/components/shared/Logo.tsx:60:7",
-				"data-prohibitions": "[editContent]",
-				cx: "50",
-				cy: "10",
-				r: "6",
-				fill: "currentColor",
-				className: "text-emerald-600 dark:text-emerald-500"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
-				"data-uid": "src/components/shared/Logo.tsx:67:7",
-				"data-prohibitions": "[editContent]",
-				cx: "72",
-				cy: "45",
-				r: "4",
-				fill: "currentColor",
-				className: "text-emerald-600 dark:text-emerald-500"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
-				"data-uid": "src/components/shared/Logo.tsx:74:7",
-				"data-prohibitions": "[editContent]",
-				cx: "95",
-				cy: "25",
-				r: "5",
-				fill: "currentColor",
-				className: "text-emerald-600 dark:text-emerald-500"
-			})
-		]
+		className: cn$1("relative flex items-center justify-center shrink-0", className),
+		children: !imgError ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+			"data-uid": "src/components/shared/Logo.tsx:14:9",
+			"data-prohibitions": "[editContent]",
+			src: "/logo.png",
+			alt: "Observador Certificado Logo",
+			className: "w-full h-full object-contain",
+			onError: () => setImgError(true)
+		}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			"data-uid": "src/components/shared/Logo.tsx:21:9",
+			"data-prohibitions": "[]",
+			className: "w-full h-full flex items-center justify-center bg-amber-50 rounded-full border-2 border-amber-500 text-amber-700 font-bold text-[8px] sm:text-[10px] text-center p-1 leading-tight shadow-sm aspect-square",
+			children: "ONSV"
+		})
 	});
 }
 //#endregion
@@ -31274,7 +31010,7 @@ function Ranking() {
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Logo, {
 							"data-uid": "src/pages/Ranking.tsx:23:11",
 							"data-prohibitions": "[editContent]",
-							className: "w-20 h-20 drop-shadow-md"
+							className: "w-24 h-24 drop-shadow-md"
 						})
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
@@ -31317,7 +31053,7 @@ function Ranking() {
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Avatar, {
 								"data-uid": "src/pages/Ranking.tsx:53:15",
 								"data-prohibitions": "[editContent]",
-								className: cn$1("border-4 shadow-xl mb-3 sm:mb-5 z-10", position === 1 ? "w-20 h-20 sm:w-28 sm:h-28 border-amber-500" : "w-16 h-16 sm:w-24 sm:h-24 border-background"),
+								className: cn$1("border-4 shadow-xl mb-3 sm:mb-5 z-10 bg-background", position === 1 ? "w-20 h-20 sm:w-28 sm:h-28 border-amber-500" : "w-16 h-16 sm:w-24 sm:h-24 border-background"),
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarImage, {
 									"data-uid": "src/pages/Ranking.tsx:61:17",
 									"data-prohibitions": "[editContent]",
@@ -31325,35 +31061,36 @@ function Ranking() {
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarFallback, {
 									"data-uid": "src/pages/Ranking.tsx:62:17",
 									"data-prohibitions": "[editContent]",
+									className: "font-bold text-lg sm:text-2xl text-muted-foreground",
 									children: user.name.charAt(0)
 								})]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/pages/Ranking.tsx:64:15",
+								"data-uid": "src/pages/Ranking.tsx:66:15",
 								"data-prohibitions": "[editContent]",
 								className: "text-center mb-3 sm:mb-5 px-1 sm:px-2",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-									"data-uid": "src/pages/Ranking.tsx:65:17",
+									"data-uid": "src/pages/Ranking.tsx:67:17",
 									"data-prohibitions": "[editContent]",
 									className: "font-bold text-xs sm:text-base leading-tight truncate w-full max-w-[100px] sm:max-w-[140px]",
 									children: user.name
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-									"data-uid": "src/pages/Ranking.tsx:68:17",
+									"data-uid": "src/pages/Ranking.tsx:70:17",
 									"data-prohibitions": "[editContent]",
 									className: "text-[10px] sm:text-sm font-semibold text-muted-foreground",
 									children: [user.points, " pts"]
 								})]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/pages/Ranking.tsx:72:15",
+								"data-uid": "src/pages/Ranking.tsx:74:15",
 								"data-prohibitions": "[editContent]",
 								className: cn$1("w-full rounded-t-xl flex flex-col items-center justify-start pt-4 sm:pt-6 shadow-lg relative overflow-hidden", heightClass, colorClass),
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									"data-uid": "src/pages/Ranking.tsx:79:17",
+									"data-uid": "src/pages/Ranking.tsx:81:17",
 									"data-prohibitions": "[]",
 									className: "absolute inset-0 bg-gradient-to-b from-white/20 to-transparent"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									"data-uid": "src/pages/Ranking.tsx:80:17",
+									"data-uid": "src/pages/Ranking.tsx:82:17",
 									"data-prohibitions": "[editContent]",
 									className: "text-3xl sm:text-4xl font-black relative z-10 opacity-80",
 									children: position
@@ -31363,121 +31100,185 @@ function Ranking() {
 					}, user.rank);
 				})
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
-				"data-uid": "src/pages/Ranking.tsx:90:7",
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"data-uid": "src/pages/Ranking.tsx:92:7",
 				"data-prohibitions": "[editContent]",
-				className: "border-border/60 shadow-elevation overflow-hidden",
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-					"data-uid": "src/pages/Ranking.tsx:91:9",
+				className: "hidden md:block",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
+					"data-uid": "src/pages/Ranking.tsx:93:9",
 					"data-prohibitions": "[editContent]",
-					className: "p-0",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Table, {
-						"data-uid": "src/pages/Ranking.tsx:92:11",
+					className: "border-border/60 shadow-elevation overflow-hidden",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
+						"data-uid": "src/pages/Ranking.tsx:94:11",
 						"data-prohibitions": "[editContent]",
-						className: "whitespace-nowrap md:whitespace-normal",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHeader, {
-							"data-uid": "src/pages/Ranking.tsx:93:13",
-							"data-prohibitions": "[]",
-							className: "bg-muted/40 border-b border-border/50",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
-								"data-uid": "src/pages/Ranking.tsx:94:15",
-								"data-prohibitions": "[]",
-								className: "hover:bg-transparent",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/Ranking.tsx:95:17",
-										"data-prohibitions": "[]",
-										className: "w-16 sm:w-20 text-center py-4",
-										children: "Posição"
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/Ranking.tsx:96:17",
-										"data-prohibitions": "[]",
-										children: "Observador Certificado"
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/Ranking.tsx:97:17",
-										"data-prohibitions": "[]",
-										children: "Maturidade"
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/Ranking.tsx:98:17",
-										"data-prohibitions": "[]",
-										className: "text-right pr-4 sm:pr-6",
-										children: "Pontuação Geral"
-									})
-								]
-							})
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableBody, {
-							"data-uid": "src/pages/Ranking.tsx:101:13",
+						className: "p-0",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Table, {
+							"data-uid": "src/pages/Ranking.tsx:95:13",
 							"data-prohibitions": "[editContent]",
-							children: rest.map((user) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
-								"data-uid": "src/pages/Ranking.tsx:103:17",
-								"data-prohibitions": "[editContent]",
-								className: "hover:bg-muted/30 transition-colors",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/Ranking.tsx:104:19",
-										"data-prohibitions": "[editContent]",
-										className: "text-center py-4",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-											"data-uid": "src/pages/Ranking.tsx:105:21",
-											"data-prohibitions": "[editContent]",
-											className: "font-bold text-muted-foreground text-base sm:text-lg",
-											children: [user.rank, "º"]
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHeader, {
+								"data-uid": "src/pages/Ranking.tsx:96:15",
+								"data-prohibitions": "[]",
+								className: "bg-muted/40 border-b border-border/50",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
+									"data-uid": "src/pages/Ranking.tsx:97:17",
+									"data-prohibitions": "[]",
+									className: "hover:bg-transparent",
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+											"data-uid": "src/pages/Ranking.tsx:98:19",
+											"data-prohibitions": "[]",
+											className: "w-20 text-center py-4",
+											children: "Posição"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+											"data-uid": "src/pages/Ranking.tsx:99:19",
+											"data-prohibitions": "[]",
+											children: "Observador Certificado"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+											"data-uid": "src/pages/Ranking.tsx:100:19",
+											"data-prohibitions": "[]",
+											children: "Maturidade"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+											"data-uid": "src/pages/Ranking.tsx:101:19",
+											"data-prohibitions": "[]",
+											className: "text-right pr-6",
+											children: "Pontuação Geral"
 										})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/Ranking.tsx:109:19",
-										"data-prohibitions": "[editContent]",
-										className: "py-3 sm:py-4",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									]
+								})
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableBody, {
+								"data-uid": "src/pages/Ranking.tsx:104:15",
+								"data-prohibitions": "[editContent]",
+								children: rest.map((user) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
+									"data-uid": "src/pages/Ranking.tsx:106:19",
+									"data-prohibitions": "[editContent]",
+									className: "hover:bg-muted/30 transition-colors",
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+											"data-uid": "src/pages/Ranking.tsx:107:21",
+											"data-prohibitions": "[editContent]",
+											className: "text-center py-4",
+											children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+												"data-uid": "src/pages/Ranking.tsx:108:23",
+												"data-prohibitions": "[editContent]",
+												className: "font-bold text-muted-foreground text-lg",
+												children: [user.rank, "º"]
+											})
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
 											"data-uid": "src/pages/Ranking.tsx:110:21",
 											"data-prohibitions": "[editContent]",
-											className: "flex items-center gap-3 sm:gap-4",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Avatar, {
+											className: "py-4",
+											children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 												"data-uid": "src/pages/Ranking.tsx:111:23",
 												"data-prohibitions": "[editContent]",
-												className: "w-9 h-9 sm:w-10 sm:h-10 border-2 border-background shadow-sm shrink-0",
-												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarImage, {
+												className: "flex items-center gap-4",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Avatar, {
 													"data-uid": "src/pages/Ranking.tsx:112:25",
 													"data-prohibitions": "[editContent]",
-													src: user.avatar
-												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarFallback, {
-													"data-uid": "src/pages/Ranking.tsx:113:25",
+													className: "w-10 h-10 border-2 border-background shadow-sm shrink-0",
+													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarImage, {
+														"data-uid": "src/pages/Ranking.tsx:113:27",
+														"data-prohibitions": "[editContent]",
+														src: user.avatar
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarFallback, {
+														"data-uid": "src/pages/Ranking.tsx:114:27",
+														"data-prohibitions": "[editContent]",
+														className: "font-semibold text-muted-foreground",
+														children: user.name.charAt(0)
+													})]
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													"data-uid": "src/pages/Ranking.tsx:118:25",
 													"data-prohibitions": "[editContent]",
-													children: user.name.charAt(0)
+													className: "font-bold text-base",
+													children: user.name
 												})]
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-												"data-uid": "src/pages/Ranking.tsx:115:23",
-												"data-prohibitions": "[editContent]",
-												className: "font-bold text-sm sm:text-base truncate max-w-[150px] sm:max-w-none",
-												children: user.name
-											})]
-										})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/Ranking.tsx:120:19",
-										"data-prohibitions": "[editContent]",
-										className: "py-3 sm:py-4",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											})
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
 											"data-uid": "src/pages/Ranking.tsx:121:21",
 											"data-prohibitions": "[editContent]",
-											className: "text-xs sm:text-sm font-semibold px-2.5 sm:px-3 py-1 rounded-full bg-secondary/10 text-secondary border border-secondary/20",
-											children: user.level
+											className: "py-4",
+											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												"data-uid": "src/pages/Ranking.tsx:122:23",
+												"data-prohibitions": "[editContent]",
+												className: "text-sm font-semibold px-3 py-1 rounded-full bg-secondary/10 text-secondary border border-secondary/20",
+												children: user.level
+											})
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+											"data-uid": "src/pages/Ranking.tsx:126:21",
+											"data-prohibitions": "[editContent]",
+											className: "text-right pr-6 font-black text-lg text-foreground/80 py-4",
+											children: user.points
 										})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/Ranking.tsx:125:19",
-										"data-prohibitions": "[editContent]",
-										className: "text-right pr-4 sm:pr-6 font-black text-base sm:text-lg text-foreground/80 py-3 sm:py-4",
-										children: user.points
-									})
-								]
-							}, user.rank))
-						})]
+									]
+								}, user.rank))
+							})]
+						})
 					})
 				})
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"data-uid": "src/pages/Ranking.tsx:138:7",
+				"data-prohibitions": "[editContent]",
+				className: "md:hidden space-y-3 px-2",
+				children: rest.map((user) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+					"data-uid": "src/pages/Ranking.tsx:140:11",
+					"data-prohibitions": "[editContent]",
+					className: "p-4 flex items-center justify-between border-border/60 shadow-sm bg-card hover:bg-muted/10 transition-colors",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						"data-uid": "src/pages/Ranking.tsx:144:13",
+						"data-prohibitions": "[editContent]",
+						className: "flex items-center gap-3",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+								"data-uid": "src/pages/Ranking.tsx:145:15",
+								"data-prohibitions": "[editContent]",
+								className: "font-bold text-muted-foreground text-base w-6 text-center",
+								children: [user.rank, "º"]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Avatar, {
+								"data-uid": "src/pages/Ranking.tsx:148:15",
+								"data-prohibitions": "[editContent]",
+								className: "w-11 h-11 border-2 border-background shadow-sm",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarImage, {
+									"data-uid": "src/pages/Ranking.tsx:149:17",
+									"data-prohibitions": "[editContent]",
+									src: user.avatar
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarFallback, {
+									"data-uid": "src/pages/Ranking.tsx:150:17",
+									"data-prohibitions": "[editContent]",
+									className: "font-semibold text-muted-foreground",
+									children: user.name.charAt(0)
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/pages/Ranking.tsx:154:15",
+								"data-prohibitions": "[editContent]",
+								className: "flex flex-col",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									"data-uid": "src/pages/Ranking.tsx:155:17",
+									"data-prohibitions": "[editContent]",
+									className: "font-bold text-sm leading-tight text-foreground",
+									children: user.name
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									"data-uid": "src/pages/Ranking.tsx:156:17",
+									"data-prohibitions": "[editContent]",
+									className: "text-[11px] font-semibold text-secondary mt-0.5 uppercase tracking-wider",
+									children: user.level
+								})]
+							})
+						]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						"data-uid": "src/pages/Ranking.tsx:161:13",
+						"data-prohibitions": "[editContent]",
+						className: "font-black text-foreground/80 text-base",
+						children: user.points
+					})]
+				}, user.rank))
 			})
 		]
 	});
@@ -36886,7 +36687,7 @@ var FormItem = import_react.forwardRef(({ className, ...props }, ref) => {
 FormItem.displayName = "FormItem";
 var FormLabel = import_react.forwardRef(({ className, ...props }, ref) => {
 	const { error, formItemId } = useFormField();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label$1, {
 		"data-uid": "src/components/ui/form.tsx:90:5",
 		"data-prohibitions": "[editContent]",
 		ref,
@@ -36898,7 +36699,7 @@ var FormLabel = import_react.forwardRef(({ className, ...props }, ref) => {
 FormLabel.displayName = "FormLabel";
 var FormControl = import_react.forwardRef(({ ...props }, ref) => {
 	const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Slot$1, {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Slot$2, {
 		"data-uid": "src/components/ui/form.tsx:107:5",
 		"data-prohibitions": "[editContent]",
 		ref,
@@ -38203,6 +38004,1140 @@ function ImportSpreadsheetDialog({ isOpen, onClose }) {
 	});
 }
 //#endregion
+//#region ../../cache/modules/jornada-observador-certificado-1427c/node_modules/.pnpm/@radix-ui+react-menu@2.1.16_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react@_73ff7391b7be14d4dbff03af4dbac090/node_modules/@radix-ui/react-menu/dist/index.mjs
+var SELECTION_KEYS = ["Enter", " "];
+var FIRST_KEYS = [
+	"ArrowDown",
+	"PageUp",
+	"Home"
+];
+var LAST_KEYS = [
+	"ArrowUp",
+	"PageDown",
+	"End"
+];
+var FIRST_LAST_KEYS = [...FIRST_KEYS, ...LAST_KEYS];
+var SUB_OPEN_KEYS = {
+	ltr: [...SELECTION_KEYS, "ArrowRight"],
+	rtl: [...SELECTION_KEYS, "ArrowLeft"]
+};
+var SUB_CLOSE_KEYS = {
+	ltr: ["ArrowLeft"],
+	rtl: ["ArrowRight"]
+};
+var MENU_NAME = "Menu";
+var [Collection, useCollection, createCollectionScope] = createCollection(MENU_NAME);
+var [createMenuContext, createMenuScope] = createContextScope$1(MENU_NAME, [
+	createCollectionScope,
+	createPopperScope,
+	createRovingFocusGroupScope
+]);
+var usePopperScope = createPopperScope();
+var useRovingFocusGroupScope = createRovingFocusGroupScope();
+var [MenuProvider, useMenuContext] = createMenuContext(MENU_NAME);
+var [MenuRootProvider, useMenuRootContext] = createMenuContext(MENU_NAME);
+var Menu = (props) => {
+	const { __scopeMenu, open = false, children, dir, onOpenChange, modal = true } = props;
+	const popperScope = usePopperScope(__scopeMenu);
+	const [content, setContent] = import_react.useState(null);
+	const isUsingKeyboardRef = import_react.useRef(false);
+	const handleOpenChange = useCallbackRef$1(onOpenChange);
+	const direction = useDirection(dir);
+	import_react.useEffect(() => {
+		const handleKeyDown = () => {
+			isUsingKeyboardRef.current = true;
+			document.addEventListener("pointerdown", handlePointer, {
+				capture: true,
+				once: true
+			});
+			document.addEventListener("pointermove", handlePointer, {
+				capture: true,
+				once: true
+			});
+		};
+		const handlePointer = () => isUsingKeyboardRef.current = false;
+		document.addEventListener("keydown", handleKeyDown, { capture: true });
+		return () => {
+			document.removeEventListener("keydown", handleKeyDown, { capture: true });
+			document.removeEventListener("pointerdown", handlePointer, { capture: true });
+			document.removeEventListener("pointermove", handlePointer, { capture: true });
+		};
+	}, []);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root2$2, {
+		...popperScope,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuProvider, {
+			scope: __scopeMenu,
+			open,
+			onOpenChange: handleOpenChange,
+			content,
+			onContentChange: setContent,
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuRootProvider, {
+				scope: __scopeMenu,
+				onClose: import_react.useCallback(() => handleOpenChange(false), [handleOpenChange]),
+				isUsingKeyboardRef,
+				dir: direction,
+				modal,
+				children
+			})
+		})
+	});
+};
+Menu.displayName = MENU_NAME;
+var ANCHOR_NAME = "MenuAnchor";
+var MenuAnchor = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeMenu, ...anchorProps } = props;
+	const popperScope = usePopperScope(__scopeMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Anchor, {
+		...popperScope,
+		...anchorProps,
+		ref: forwardedRef
+	});
+});
+MenuAnchor.displayName = ANCHOR_NAME;
+var PORTAL_NAME$1 = "MenuPortal";
+var [PortalProvider, usePortalContext] = createMenuContext(PORTAL_NAME$1, { forceMount: void 0 });
+var MenuPortal = (props) => {
+	const { __scopeMenu, forceMount, children, container } = props;
+	const context = useMenuContext(PORTAL_NAME$1, __scopeMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PortalProvider, {
+		scope: __scopeMenu,
+		forceMount,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
+			present: forceMount || context.open,
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal$2, {
+				asChild: true,
+				container,
+				children
+			})
+		})
+	});
+};
+MenuPortal.displayName = PORTAL_NAME$1;
+var CONTENT_NAME$1 = "MenuContent";
+var [MenuContentProvider, useMenuContentContext] = createMenuContext(CONTENT_NAME$1);
+var MenuContent = import_react.forwardRef((props, forwardedRef) => {
+	const portalContext = usePortalContext(CONTENT_NAME$1, props.__scopeMenu);
+	const { forceMount = portalContext.forceMount, ...contentProps } = props;
+	const context = useMenuContext(CONTENT_NAME$1, props.__scopeMenu);
+	const rootContext = useMenuRootContext(CONTENT_NAME$1, props.__scopeMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection.Provider, {
+		scope: props.__scopeMenu,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
+			present: forceMount || context.open,
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection.Slot, {
+				scope: props.__scopeMenu,
+				children: rootContext.modal ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuRootContentModal, {
+					...contentProps,
+					ref: forwardedRef
+				}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuRootContentNonModal, {
+					...contentProps,
+					ref: forwardedRef
+				})
+			})
+		})
+	});
+});
+var MenuRootContentModal = import_react.forwardRef((props, forwardedRef) => {
+	const context = useMenuContext(CONTENT_NAME$1, props.__scopeMenu);
+	const ref = import_react.useRef(null);
+	const composedRefs = useComposedRefs(forwardedRef, ref);
+	import_react.useEffect(() => {
+		const content = ref.current;
+		if (content) return hideOthers(content);
+	}, []);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuContentImpl, {
+		...props,
+		ref: composedRefs,
+		trapFocus: context.open,
+		disableOutsidePointerEvents: context.open,
+		disableOutsideScroll: true,
+		onFocusOutside: composeEventHandlers(props.onFocusOutside, (event) => event.preventDefault(), { checkForDefaultPrevented: false }),
+		onDismiss: () => context.onOpenChange(false)
+	});
+});
+var MenuRootContentNonModal = import_react.forwardRef((props, forwardedRef) => {
+	const context = useMenuContext(CONTENT_NAME$1, props.__scopeMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuContentImpl, {
+		...props,
+		ref: forwardedRef,
+		trapFocus: false,
+		disableOutsidePointerEvents: false,
+		disableOutsideScroll: false,
+		onDismiss: () => context.onOpenChange(false)
+	});
+});
+var Slot = /* @__PURE__ */ createSlot$1("MenuContent.ScrollLock");
+var MenuContentImpl = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeMenu, loop = false, trapFocus, onOpenAutoFocus, onCloseAutoFocus, disableOutsidePointerEvents, onEntryFocus, onEscapeKeyDown, onPointerDownOutside, onFocusOutside, onInteractOutside, onDismiss, disableOutsideScroll, ...contentProps } = props;
+	const context = useMenuContext(CONTENT_NAME$1, __scopeMenu);
+	const rootContext = useMenuRootContext(CONTENT_NAME$1, __scopeMenu);
+	const popperScope = usePopperScope(__scopeMenu);
+	const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeMenu);
+	const getItems = useCollection(__scopeMenu);
+	const [currentItemId, setCurrentItemId] = import_react.useState(null);
+	const contentRef = import_react.useRef(null);
+	const composedRefs = useComposedRefs(forwardedRef, contentRef, context.onContentChange);
+	const timerRef = import_react.useRef(0);
+	const searchRef = import_react.useRef("");
+	const pointerGraceTimerRef = import_react.useRef(0);
+	const pointerGraceIntentRef = import_react.useRef(null);
+	const pointerDirRef = import_react.useRef("right");
+	const lastPointerXRef = import_react.useRef(0);
+	const ScrollLockWrapper = disableOutsideScroll ? ReactRemoveScroll : import_react.Fragment;
+	const scrollLockWrapperProps = disableOutsideScroll ? {
+		as: Slot,
+		allowPinchZoom: true
+	} : void 0;
+	const handleTypeaheadSearch = (key) => {
+		const search = searchRef.current + key;
+		const items = getItems().filter((item) => !item.disabled);
+		const currentItem = document.activeElement;
+		const currentMatch = items.find((item) => item.ref.current === currentItem)?.textValue;
+		const nextMatch = getNextMatch(items.map((item) => item.textValue), search, currentMatch);
+		const newItem = items.find((item) => item.textValue === nextMatch)?.ref.current;
+		(function updateSearch(value) {
+			searchRef.current = value;
+			window.clearTimeout(timerRef.current);
+			if (value !== "") timerRef.current = window.setTimeout(() => updateSearch(""), 1e3);
+		})(search);
+		if (newItem) setTimeout(() => newItem.focus());
+	};
+	import_react.useEffect(() => {
+		return () => window.clearTimeout(timerRef.current);
+	}, []);
+	useFocusGuards();
+	const isPointerMovingToSubmenu = import_react.useCallback((event) => {
+		return pointerDirRef.current === pointerGraceIntentRef.current?.side && isPointerInGraceArea(event, pointerGraceIntentRef.current?.area);
+	}, []);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuContentProvider, {
+		scope: __scopeMenu,
+		searchRef,
+		onItemEnter: import_react.useCallback((event) => {
+			if (isPointerMovingToSubmenu(event)) event.preventDefault();
+		}, [isPointerMovingToSubmenu]),
+		onItemLeave: import_react.useCallback((event) => {
+			if (isPointerMovingToSubmenu(event)) return;
+			contentRef.current?.focus();
+			setCurrentItemId(null);
+		}, [isPointerMovingToSubmenu]),
+		onTriggerLeave: import_react.useCallback((event) => {
+			if (isPointerMovingToSubmenu(event)) event.preventDefault();
+		}, [isPointerMovingToSubmenu]),
+		pointerGraceTimerRef,
+		onPointerGraceIntentChange: import_react.useCallback((intent) => {
+			pointerGraceIntentRef.current = intent;
+		}, []),
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ScrollLockWrapper, {
+			...scrollLockWrapperProps,
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FocusScope, {
+				asChild: true,
+				trapped: trapFocus,
+				onMountAutoFocus: composeEventHandlers(onOpenAutoFocus, (event) => {
+					event.preventDefault();
+					contentRef.current?.focus({ preventScroll: true });
+				}),
+				onUnmountAutoFocus: onCloseAutoFocus,
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DismissableLayer, {
+					asChild: true,
+					disableOutsidePointerEvents,
+					onEscapeKeyDown,
+					onPointerDownOutside,
+					onFocusOutside,
+					onInteractOutside,
+					onDismiss,
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$4, {
+						asChild: true,
+						...rovingFocusGroupScope,
+						dir: rootContext.dir,
+						orientation: "vertical",
+						loop,
+						currentTabStopId: currentItemId,
+						onCurrentTabStopIdChange: setCurrentItemId,
+						onEntryFocus: composeEventHandlers(onEntryFocus, (event) => {
+							if (!rootContext.isUsingKeyboardRef.current) event.preventDefault();
+						}),
+						preventScrollOnEntryFocus: true,
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Content$2, {
+							role: "menu",
+							"aria-orientation": "vertical",
+							"data-state": getOpenState(context.open),
+							"data-radix-menu-content": "",
+							dir: rootContext.dir,
+							...popperScope,
+							...contentProps,
+							ref: composedRefs,
+							style: {
+								outline: "none",
+								...contentProps.style
+							},
+							onKeyDown: composeEventHandlers(contentProps.onKeyDown, (event) => {
+								const isKeyDownInside = event.target.closest("[data-radix-menu-content]") === event.currentTarget;
+								const isModifierKey = event.ctrlKey || event.altKey || event.metaKey;
+								const isCharacterKey = event.key.length === 1;
+								if (isKeyDownInside) {
+									if (event.key === "Tab") event.preventDefault();
+									if (!isModifierKey && isCharacterKey) handleTypeaheadSearch(event.key);
+								}
+								const content = contentRef.current;
+								if (event.target !== content) return;
+								if (!FIRST_LAST_KEYS.includes(event.key)) return;
+								event.preventDefault();
+								const candidateNodes = getItems().filter((item) => !item.disabled).map((item) => item.ref.current);
+								if (LAST_KEYS.includes(event.key)) candidateNodes.reverse();
+								focusFirst(candidateNodes);
+							}),
+							onBlur: composeEventHandlers(props.onBlur, (event) => {
+								if (!event.currentTarget.contains(event.target)) {
+									window.clearTimeout(timerRef.current);
+									searchRef.current = "";
+								}
+							}),
+							onPointerMove: composeEventHandlers(props.onPointerMove, whenMouse((event) => {
+								const target = event.target;
+								const pointerXHasChanged = lastPointerXRef.current !== event.clientX;
+								if (event.currentTarget.contains(target) && pointerXHasChanged) {
+									pointerDirRef.current = event.clientX > lastPointerXRef.current ? "right" : "left";
+									lastPointerXRef.current = event.clientX;
+								}
+							}))
+						})
+					})
+				})
+			})
+		})
+	});
+});
+MenuContent.displayName = CONTENT_NAME$1;
+var GROUP_NAME$1 = "MenuGroup";
+var MenuGroup = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeMenu, ...groupProps } = props;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.div, {
+		role: "group",
+		...groupProps,
+		ref: forwardedRef
+	});
+});
+MenuGroup.displayName = GROUP_NAME$1;
+var LABEL_NAME$1 = "MenuLabel";
+var MenuLabel = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeMenu, ...labelProps } = props;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.div, {
+		...labelProps,
+		ref: forwardedRef
+	});
+});
+MenuLabel.displayName = LABEL_NAME$1;
+var ITEM_NAME$1 = "MenuItem";
+var ITEM_SELECT = "menu.itemSelect";
+var MenuItem = import_react.forwardRef((props, forwardedRef) => {
+	const { disabled = false, onSelect, ...itemProps } = props;
+	const ref = import_react.useRef(null);
+	const rootContext = useMenuRootContext(ITEM_NAME$1, props.__scopeMenu);
+	const contentContext = useMenuContentContext(ITEM_NAME$1, props.__scopeMenu);
+	const composedRefs = useComposedRefs(forwardedRef, ref);
+	const isPointerDownRef = import_react.useRef(false);
+	const handleSelect = () => {
+		const menuItem = ref.current;
+		if (!disabled && menuItem) {
+			const itemSelectEvent = new CustomEvent(ITEM_SELECT, {
+				bubbles: true,
+				cancelable: true
+			});
+			menuItem.addEventListener(ITEM_SELECT, (event) => onSelect?.(event), { once: true });
+			dispatchDiscreteCustomEvent(menuItem, itemSelectEvent);
+			if (itemSelectEvent.defaultPrevented) isPointerDownRef.current = false;
+			else rootContext.onClose();
+		}
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuItemImpl, {
+		...itemProps,
+		ref: composedRefs,
+		disabled,
+		onClick: composeEventHandlers(props.onClick, handleSelect),
+		onPointerDown: (event) => {
+			props.onPointerDown?.(event);
+			isPointerDownRef.current = true;
+		},
+		onPointerUp: composeEventHandlers(props.onPointerUp, (event) => {
+			if (!isPointerDownRef.current) event.currentTarget?.click();
+		}),
+		onKeyDown: composeEventHandlers(props.onKeyDown, (event) => {
+			const isTypingAhead = contentContext.searchRef.current !== "";
+			if (disabled || isTypingAhead && event.key === " ") return;
+			if (SELECTION_KEYS.includes(event.key)) {
+				event.currentTarget.click();
+				event.preventDefault();
+			}
+		})
+	});
+});
+MenuItem.displayName = ITEM_NAME$1;
+var MenuItemImpl = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeMenu, disabled = false, textValue, ...itemProps } = props;
+	const contentContext = useMenuContentContext(ITEM_NAME$1, __scopeMenu);
+	const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeMenu);
+	const ref = import_react.useRef(null);
+	const composedRefs = useComposedRefs(forwardedRef, ref);
+	const [isFocused, setIsFocused] = import_react.useState(false);
+	const [textContent, setTextContent] = import_react.useState("");
+	import_react.useEffect(() => {
+		const menuItem = ref.current;
+		if (menuItem) setTextContent((menuItem.textContent ?? "").trim());
+	}, [itemProps.children]);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection.ItemSlot, {
+		scope: __scopeMenu,
+		disabled,
+		textValue: textValue ?? textContent,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Item, {
+			asChild: true,
+			...rovingFocusGroupScope,
+			focusable: !disabled,
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.div, {
+				role: "menuitem",
+				"data-highlighted": isFocused ? "" : void 0,
+				"aria-disabled": disabled || void 0,
+				"data-disabled": disabled ? "" : void 0,
+				...itemProps,
+				ref: composedRefs,
+				onPointerMove: composeEventHandlers(props.onPointerMove, whenMouse((event) => {
+					if (disabled) contentContext.onItemLeave(event);
+					else {
+						contentContext.onItemEnter(event);
+						if (!event.defaultPrevented) event.currentTarget.focus({ preventScroll: true });
+					}
+				})),
+				onPointerLeave: composeEventHandlers(props.onPointerLeave, whenMouse((event) => contentContext.onItemLeave(event))),
+				onFocus: composeEventHandlers(props.onFocus, () => setIsFocused(true)),
+				onBlur: composeEventHandlers(props.onBlur, () => setIsFocused(false))
+			})
+		})
+	});
+});
+var CHECKBOX_ITEM_NAME$1 = "MenuCheckboxItem";
+var MenuCheckboxItem = import_react.forwardRef((props, forwardedRef) => {
+	const { checked = false, onCheckedChange, ...checkboxItemProps } = props;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ItemIndicatorProvider, {
+		scope: props.__scopeMenu,
+		checked,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuItem, {
+			role: "menuitemcheckbox",
+			"aria-checked": isIndeterminate(checked) ? "mixed" : checked,
+			...checkboxItemProps,
+			ref: forwardedRef,
+			"data-state": getCheckedState(checked),
+			onSelect: composeEventHandlers(checkboxItemProps.onSelect, () => onCheckedChange?.(isIndeterminate(checked) ? true : !checked), { checkForDefaultPrevented: false })
+		})
+	});
+});
+MenuCheckboxItem.displayName = CHECKBOX_ITEM_NAME$1;
+var RADIO_GROUP_NAME$1 = "MenuRadioGroup";
+var [RadioGroupProvider, useRadioGroupContext] = createMenuContext(RADIO_GROUP_NAME$1, {
+	value: void 0,
+	onValueChange: () => {}
+});
+var MenuRadioGroup = import_react.forwardRef((props, forwardedRef) => {
+	const { value, onValueChange, ...groupProps } = props;
+	const handleValueChange = useCallbackRef$1(onValueChange);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RadioGroupProvider, {
+		scope: props.__scopeMenu,
+		value,
+		onValueChange: handleValueChange,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuGroup, {
+			...groupProps,
+			ref: forwardedRef
+		})
+	});
+});
+MenuRadioGroup.displayName = RADIO_GROUP_NAME$1;
+var RADIO_ITEM_NAME$1 = "MenuRadioItem";
+var MenuRadioItem = import_react.forwardRef((props, forwardedRef) => {
+	const { value, ...radioItemProps } = props;
+	const context = useRadioGroupContext(RADIO_ITEM_NAME$1, props.__scopeMenu);
+	const checked = value === context.value;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ItemIndicatorProvider, {
+		scope: props.__scopeMenu,
+		checked,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuItem, {
+			role: "menuitemradio",
+			"aria-checked": checked,
+			...radioItemProps,
+			ref: forwardedRef,
+			"data-state": getCheckedState(checked),
+			onSelect: composeEventHandlers(radioItemProps.onSelect, () => context.onValueChange?.(value), { checkForDefaultPrevented: false })
+		})
+	});
+});
+MenuRadioItem.displayName = RADIO_ITEM_NAME$1;
+var ITEM_INDICATOR_NAME = "MenuItemIndicator";
+var [ItemIndicatorProvider, useItemIndicatorContext] = createMenuContext(ITEM_INDICATOR_NAME, { checked: false });
+var MenuItemIndicator = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeMenu, forceMount, ...itemIndicatorProps } = props;
+	const indicatorContext = useItemIndicatorContext(ITEM_INDICATOR_NAME, __scopeMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
+		present: forceMount || isIndeterminate(indicatorContext.checked) || indicatorContext.checked === true,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.span, {
+			...itemIndicatorProps,
+			ref: forwardedRef,
+			"data-state": getCheckedState(indicatorContext.checked)
+		})
+	});
+});
+MenuItemIndicator.displayName = ITEM_INDICATOR_NAME;
+var SEPARATOR_NAME$1 = "MenuSeparator";
+var MenuSeparator = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeMenu, ...separatorProps } = props;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.div, {
+		role: "separator",
+		"aria-orientation": "horizontal",
+		...separatorProps,
+		ref: forwardedRef
+	});
+});
+MenuSeparator.displayName = SEPARATOR_NAME$1;
+var ARROW_NAME$1 = "MenuArrow";
+var MenuArrow = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeMenu, ...arrowProps } = props;
+	const popperScope = usePopperScope(__scopeMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Arrow, {
+		...popperScope,
+		...arrowProps,
+		ref: forwardedRef
+	});
+});
+MenuArrow.displayName = ARROW_NAME$1;
+var SUB_NAME = "MenuSub";
+var [MenuSubProvider, useMenuSubContext] = createMenuContext(SUB_NAME);
+var MenuSub = (props) => {
+	const { __scopeMenu, children, open = false, onOpenChange } = props;
+	const parentMenuContext = useMenuContext(SUB_NAME, __scopeMenu);
+	const popperScope = usePopperScope(__scopeMenu);
+	const [trigger, setTrigger] = import_react.useState(null);
+	const [content, setContent] = import_react.useState(null);
+	const handleOpenChange = useCallbackRef$1(onOpenChange);
+	import_react.useEffect(() => {
+		if (parentMenuContext.open === false) handleOpenChange(false);
+		return () => handleOpenChange(false);
+	}, [parentMenuContext.open, handleOpenChange]);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root2$2, {
+		...popperScope,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuProvider, {
+			scope: __scopeMenu,
+			open,
+			onOpenChange: handleOpenChange,
+			content,
+			onContentChange: setContent,
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuSubProvider, {
+				scope: __scopeMenu,
+				contentId: useId(),
+				triggerId: useId(),
+				trigger,
+				onTriggerChange: setTrigger,
+				children
+			})
+		})
+	});
+};
+MenuSub.displayName = SUB_NAME;
+var SUB_TRIGGER_NAME$1 = "MenuSubTrigger";
+var MenuSubTrigger = import_react.forwardRef((props, forwardedRef) => {
+	const context = useMenuContext(SUB_TRIGGER_NAME$1, props.__scopeMenu);
+	const rootContext = useMenuRootContext(SUB_TRIGGER_NAME$1, props.__scopeMenu);
+	const subContext = useMenuSubContext(SUB_TRIGGER_NAME$1, props.__scopeMenu);
+	const contentContext = useMenuContentContext(SUB_TRIGGER_NAME$1, props.__scopeMenu);
+	const openTimerRef = import_react.useRef(null);
+	const { pointerGraceTimerRef, onPointerGraceIntentChange } = contentContext;
+	const scope = { __scopeMenu: props.__scopeMenu };
+	const clearOpenTimer = import_react.useCallback(() => {
+		if (openTimerRef.current) window.clearTimeout(openTimerRef.current);
+		openTimerRef.current = null;
+	}, []);
+	import_react.useEffect(() => clearOpenTimer, [clearOpenTimer]);
+	import_react.useEffect(() => {
+		const pointerGraceTimer = pointerGraceTimerRef.current;
+		return () => {
+			window.clearTimeout(pointerGraceTimer);
+			onPointerGraceIntentChange(null);
+		};
+	}, [pointerGraceTimerRef, onPointerGraceIntentChange]);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuAnchor, {
+		asChild: true,
+		...scope,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuItemImpl, {
+			id: subContext.triggerId,
+			"aria-haspopup": "menu",
+			"aria-expanded": context.open,
+			"aria-controls": subContext.contentId,
+			"data-state": getOpenState(context.open),
+			...props,
+			ref: composeRefs(forwardedRef, subContext.onTriggerChange),
+			onClick: (event) => {
+				props.onClick?.(event);
+				if (props.disabled || event.defaultPrevented) return;
+				event.currentTarget.focus();
+				if (!context.open) context.onOpenChange(true);
+			},
+			onPointerMove: composeEventHandlers(props.onPointerMove, whenMouse((event) => {
+				contentContext.onItemEnter(event);
+				if (event.defaultPrevented) return;
+				if (!props.disabled && !context.open && !openTimerRef.current) {
+					contentContext.onPointerGraceIntentChange(null);
+					openTimerRef.current = window.setTimeout(() => {
+						context.onOpenChange(true);
+						clearOpenTimer();
+					}, 100);
+				}
+			})),
+			onPointerLeave: composeEventHandlers(props.onPointerLeave, whenMouse((event) => {
+				clearOpenTimer();
+				const contentRect = context.content?.getBoundingClientRect();
+				if (contentRect) {
+					const side = context.content?.dataset.side;
+					const rightSide = side === "right";
+					const bleed = rightSide ? -5 : 5;
+					const contentNearEdge = contentRect[rightSide ? "left" : "right"];
+					const contentFarEdge = contentRect[rightSide ? "right" : "left"];
+					contentContext.onPointerGraceIntentChange({
+						area: [
+							{
+								x: event.clientX + bleed,
+								y: event.clientY
+							},
+							{
+								x: contentNearEdge,
+								y: contentRect.top
+							},
+							{
+								x: contentFarEdge,
+								y: contentRect.top
+							},
+							{
+								x: contentFarEdge,
+								y: contentRect.bottom
+							},
+							{
+								x: contentNearEdge,
+								y: contentRect.bottom
+							}
+						],
+						side
+					});
+					window.clearTimeout(pointerGraceTimerRef.current);
+					pointerGraceTimerRef.current = window.setTimeout(() => contentContext.onPointerGraceIntentChange(null), 300);
+				} else {
+					contentContext.onTriggerLeave(event);
+					if (event.defaultPrevented) return;
+					contentContext.onPointerGraceIntentChange(null);
+				}
+			})),
+			onKeyDown: composeEventHandlers(props.onKeyDown, (event) => {
+				const isTypingAhead = contentContext.searchRef.current !== "";
+				if (props.disabled || isTypingAhead && event.key === " ") return;
+				if (SUB_OPEN_KEYS[rootContext.dir].includes(event.key)) {
+					context.onOpenChange(true);
+					context.content?.focus();
+					event.preventDefault();
+				}
+			})
+		})
+	});
+});
+MenuSubTrigger.displayName = SUB_TRIGGER_NAME$1;
+var SUB_CONTENT_NAME$1 = "MenuSubContent";
+var MenuSubContent = import_react.forwardRef((props, forwardedRef) => {
+	const portalContext = usePortalContext(CONTENT_NAME$1, props.__scopeMenu);
+	const { forceMount = portalContext.forceMount, ...subContentProps } = props;
+	const context = useMenuContext(CONTENT_NAME$1, props.__scopeMenu);
+	const rootContext = useMenuRootContext(CONTENT_NAME$1, props.__scopeMenu);
+	const subContext = useMenuSubContext(SUB_CONTENT_NAME$1, props.__scopeMenu);
+	const ref = import_react.useRef(null);
+	const composedRefs = useComposedRefs(forwardedRef, ref);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection.Provider, {
+		scope: props.__scopeMenu,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
+			present: forceMount || context.open,
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection.Slot, {
+				scope: props.__scopeMenu,
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MenuContentImpl, {
+					id: subContext.contentId,
+					"aria-labelledby": subContext.triggerId,
+					...subContentProps,
+					ref: composedRefs,
+					align: "start",
+					side: rootContext.dir === "rtl" ? "left" : "right",
+					disableOutsidePointerEvents: false,
+					disableOutsideScroll: false,
+					trapFocus: false,
+					onOpenAutoFocus: (event) => {
+						if (rootContext.isUsingKeyboardRef.current) ref.current?.focus();
+						event.preventDefault();
+					},
+					onCloseAutoFocus: (event) => event.preventDefault(),
+					onFocusOutside: composeEventHandlers(props.onFocusOutside, (event) => {
+						if (event.target !== subContext.trigger) context.onOpenChange(false);
+					}),
+					onEscapeKeyDown: composeEventHandlers(props.onEscapeKeyDown, (event) => {
+						rootContext.onClose();
+						event.preventDefault();
+					}),
+					onKeyDown: composeEventHandlers(props.onKeyDown, (event) => {
+						const isKeyDownInside = event.currentTarget.contains(event.target);
+						const isCloseKey = SUB_CLOSE_KEYS[rootContext.dir].includes(event.key);
+						if (isKeyDownInside && isCloseKey) {
+							context.onOpenChange(false);
+							subContext.trigger?.focus();
+							event.preventDefault();
+						}
+					})
+				})
+			})
+		})
+	});
+});
+MenuSubContent.displayName = SUB_CONTENT_NAME$1;
+function getOpenState(open) {
+	return open ? "open" : "closed";
+}
+function isIndeterminate(checked) {
+	return checked === "indeterminate";
+}
+function getCheckedState(checked) {
+	return isIndeterminate(checked) ? "indeterminate" : checked ? "checked" : "unchecked";
+}
+function focusFirst(candidates) {
+	const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
+	for (const candidate of candidates) {
+		if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
+		candidate.focus();
+		if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
+	}
+}
+function wrapArray(array, startIndex) {
+	return array.map((_, index) => array[(startIndex + index) % array.length]);
+}
+function getNextMatch(values, search, currentMatch) {
+	const normalizedSearch = search.length > 1 && Array.from(search).every((char) => char === search[0]) ? search[0] : search;
+	const currentMatchIndex = currentMatch ? values.indexOf(currentMatch) : -1;
+	let wrappedValues = wrapArray(values, Math.max(currentMatchIndex, 0));
+	if (normalizedSearch.length === 1) wrappedValues = wrappedValues.filter((v) => v !== currentMatch);
+	const nextMatch = wrappedValues.find((value) => value.toLowerCase().startsWith(normalizedSearch.toLowerCase()));
+	return nextMatch !== currentMatch ? nextMatch : void 0;
+}
+function isPointInPolygon(point, polygon) {
+	const { x, y } = point;
+	let inside = false;
+	for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+		const ii = polygon[i];
+		const jj = polygon[j];
+		const xi = ii.x;
+		const yi = ii.y;
+		const xj = jj.x;
+		const yj = jj.y;
+		if (yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+	}
+	return inside;
+}
+function isPointerInGraceArea(event, area) {
+	if (!area) return false;
+	return isPointInPolygon({
+		x: event.clientX,
+		y: event.clientY
+	}, area);
+}
+function whenMouse(handler) {
+	return (event) => event.pointerType === "mouse" ? handler(event) : void 0;
+}
+var Root3 = Menu;
+var Anchor2 = MenuAnchor;
+var Portal = MenuPortal;
+var Content2$1 = MenuContent;
+var Group = MenuGroup;
+var Label = MenuLabel;
+var Item2$1 = MenuItem;
+var CheckboxItem = MenuCheckboxItem;
+var RadioGroup = MenuRadioGroup;
+var RadioItem = MenuRadioItem;
+var ItemIndicator = MenuItemIndicator;
+var Separator$2 = MenuSeparator;
+var Arrow2 = MenuArrow;
+var SubTrigger = MenuSubTrigger;
+var SubContent = MenuSubContent;
+//#endregion
+//#region ../../cache/modules/jornada-observador-certificado-1427c/node_modules/.pnpm/@radix-ui+react-dropdown-menu@2.1.16_@types+react-dom@19.2.3_@types+react@19.2.14__@typ_73af8346b6b2e99f5d79f55f5dac0b34/node_modules/@radix-ui/react-dropdown-menu/dist/index.mjs
+var DROPDOWN_MENU_NAME = "DropdownMenu";
+var [createDropdownMenuContext, createDropdownMenuScope] = createContextScope$1(DROPDOWN_MENU_NAME, [createMenuScope]);
+var useMenuScope = createMenuScope();
+var [DropdownMenuProvider, useDropdownMenuContext] = createDropdownMenuContext(DROPDOWN_MENU_NAME);
+var DropdownMenu$1 = (props) => {
+	const { __scopeDropdownMenu, children, dir, open: openProp, defaultOpen, onOpenChange, modal = true } = props;
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	const triggerRef = import_react.useRef(null);
+	const [open, setOpen] = useControllableState({
+		prop: openProp,
+		defaultProp: defaultOpen ?? false,
+		onChange: onOpenChange,
+		caller: DROPDOWN_MENU_NAME
+	});
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DropdownMenuProvider, {
+		scope: __scopeDropdownMenu,
+		triggerId: useId(),
+		triggerRef,
+		contentId: useId(),
+		open,
+		onOpenChange: setOpen,
+		onOpenToggle: import_react.useCallback(() => setOpen((prevOpen) => !prevOpen), [setOpen]),
+		modal,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root3, {
+			...menuScope,
+			open,
+			onOpenChange: setOpen,
+			dir,
+			modal,
+			children
+		})
+	});
+};
+DropdownMenu$1.displayName = DROPDOWN_MENU_NAME;
+var TRIGGER_NAME = "DropdownMenuTrigger";
+var DropdownMenuTrigger$1 = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeDropdownMenu, disabled = false, ...triggerProps } = props;
+	const context = useDropdownMenuContext(TRIGGER_NAME, __scopeDropdownMenu);
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Anchor2, {
+		asChild: true,
+		...menuScope,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.button, {
+			type: "button",
+			id: context.triggerId,
+			"aria-haspopup": "menu",
+			"aria-expanded": context.open,
+			"aria-controls": context.open ? context.contentId : void 0,
+			"data-state": context.open ? "open" : "closed",
+			"data-disabled": disabled ? "" : void 0,
+			disabled,
+			...triggerProps,
+			ref: composeRefs(forwardedRef, context.triggerRef),
+			onPointerDown: composeEventHandlers(props.onPointerDown, (event) => {
+				if (!disabled && event.button === 0 && event.ctrlKey === false) {
+					context.onOpenToggle();
+					if (!context.open) event.preventDefault();
+				}
+			}),
+			onKeyDown: composeEventHandlers(props.onKeyDown, (event) => {
+				if (disabled) return;
+				if (["Enter", " "].includes(event.key)) context.onOpenToggle();
+				if (event.key === "ArrowDown") context.onOpenChange(true);
+				if ([
+					"Enter",
+					" ",
+					"ArrowDown"
+				].includes(event.key)) event.preventDefault();
+			})
+		})
+	});
+});
+DropdownMenuTrigger$1.displayName = TRIGGER_NAME;
+var PORTAL_NAME = "DropdownMenuPortal";
+var DropdownMenuPortal$1 = (props) => {
+	const { __scopeDropdownMenu, ...portalProps } = props;
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal, {
+		...menuScope,
+		...portalProps
+	});
+};
+DropdownMenuPortal$1.displayName = PORTAL_NAME;
+var CONTENT_NAME = "DropdownMenuContent";
+var DropdownMenuContent$1 = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeDropdownMenu, ...contentProps } = props;
+	const context = useDropdownMenuContext(CONTENT_NAME, __scopeDropdownMenu);
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	const hasInteractedOutsideRef = import_react.useRef(false);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Content2$1, {
+		id: context.contentId,
+		"aria-labelledby": context.triggerId,
+		...menuScope,
+		...contentProps,
+		ref: forwardedRef,
+		onCloseAutoFocus: composeEventHandlers(props.onCloseAutoFocus, (event) => {
+			if (!hasInteractedOutsideRef.current) context.triggerRef.current?.focus();
+			hasInteractedOutsideRef.current = false;
+			event.preventDefault();
+		}),
+		onInteractOutside: composeEventHandlers(props.onInteractOutside, (event) => {
+			const originalEvent = event.detail.originalEvent;
+			const ctrlLeftClick = originalEvent.button === 0 && originalEvent.ctrlKey === true;
+			const isRightClick = originalEvent.button === 2 || ctrlLeftClick;
+			if (!context.modal || isRightClick) hasInteractedOutsideRef.current = true;
+		}),
+		style: {
+			...props.style,
+			"--radix-dropdown-menu-content-transform-origin": "var(--radix-popper-transform-origin)",
+			"--radix-dropdown-menu-content-available-width": "var(--radix-popper-available-width)",
+			"--radix-dropdown-menu-content-available-height": "var(--radix-popper-available-height)",
+			"--radix-dropdown-menu-trigger-width": "var(--radix-popper-anchor-width)",
+			"--radix-dropdown-menu-trigger-height": "var(--radix-popper-anchor-height)"
+		}
+	});
+});
+DropdownMenuContent$1.displayName = CONTENT_NAME;
+var GROUP_NAME = "DropdownMenuGroup";
+var DropdownMenuGroup$1 = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeDropdownMenu, ...groupProps } = props;
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Group, {
+		...menuScope,
+		...groupProps,
+		ref: forwardedRef
+	});
+});
+DropdownMenuGroup$1.displayName = GROUP_NAME;
+var LABEL_NAME = "DropdownMenuLabel";
+var DropdownMenuLabel$1 = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeDropdownMenu, ...labelProps } = props;
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+		...menuScope,
+		...labelProps,
+		ref: forwardedRef
+	});
+});
+DropdownMenuLabel$1.displayName = LABEL_NAME;
+var ITEM_NAME = "DropdownMenuItem";
+var DropdownMenuItem$1 = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeDropdownMenu, ...itemProps } = props;
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Item2$1, {
+		...menuScope,
+		...itemProps,
+		ref: forwardedRef
+	});
+});
+DropdownMenuItem$1.displayName = ITEM_NAME;
+var CHECKBOX_ITEM_NAME = "DropdownMenuCheckboxItem";
+var DropdownMenuCheckboxItem$1 = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeDropdownMenu, ...checkboxItemProps } = props;
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CheckboxItem, {
+		...menuScope,
+		...checkboxItemProps,
+		ref: forwardedRef
+	});
+});
+DropdownMenuCheckboxItem$1.displayName = CHECKBOX_ITEM_NAME;
+var RADIO_GROUP_NAME = "DropdownMenuRadioGroup";
+var DropdownMenuRadioGroup$1 = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeDropdownMenu, ...radioGroupProps } = props;
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RadioGroup, {
+		...menuScope,
+		...radioGroupProps,
+		ref: forwardedRef
+	});
+});
+DropdownMenuRadioGroup$1.displayName = RADIO_GROUP_NAME;
+var RADIO_ITEM_NAME = "DropdownMenuRadioItem";
+var DropdownMenuRadioItem$1 = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeDropdownMenu, ...radioItemProps } = props;
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RadioItem, {
+		...menuScope,
+		...radioItemProps,
+		ref: forwardedRef
+	});
+});
+DropdownMenuRadioItem$1.displayName = RADIO_ITEM_NAME;
+var INDICATOR_NAME = "DropdownMenuItemIndicator";
+var DropdownMenuItemIndicator = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeDropdownMenu, ...itemIndicatorProps } = props;
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ItemIndicator, {
+		...menuScope,
+		...itemIndicatorProps,
+		ref: forwardedRef
+	});
+});
+DropdownMenuItemIndicator.displayName = INDICATOR_NAME;
+var SEPARATOR_NAME = "DropdownMenuSeparator";
+var DropdownMenuSeparator$1 = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeDropdownMenu, ...separatorProps } = props;
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Separator$2, {
+		...menuScope,
+		...separatorProps,
+		ref: forwardedRef
+	});
+});
+DropdownMenuSeparator$1.displayName = SEPARATOR_NAME;
+var ARROW_NAME = "DropdownMenuArrow";
+var DropdownMenuArrow = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeDropdownMenu, ...arrowProps } = props;
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Arrow2, {
+		...menuScope,
+		...arrowProps,
+		ref: forwardedRef
+	});
+});
+DropdownMenuArrow.displayName = ARROW_NAME;
+var SUB_TRIGGER_NAME = "DropdownMenuSubTrigger";
+var DropdownMenuSubTrigger$1 = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeDropdownMenu, ...subTriggerProps } = props;
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SubTrigger, {
+		...menuScope,
+		...subTriggerProps,
+		ref: forwardedRef
+	});
+});
+DropdownMenuSubTrigger$1.displayName = SUB_TRIGGER_NAME;
+var SUB_CONTENT_NAME = "DropdownMenuSubContent";
+var DropdownMenuSubContent$1 = import_react.forwardRef((props, forwardedRef) => {
+	const { __scopeDropdownMenu, ...subContentProps } = props;
+	const menuScope = useMenuScope(__scopeDropdownMenu);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SubContent, {
+		...menuScope,
+		...subContentProps,
+		ref: forwardedRef,
+		style: {
+			...props.style,
+			"--radix-dropdown-menu-content-transform-origin": "var(--radix-popper-transform-origin)",
+			"--radix-dropdown-menu-content-available-width": "var(--radix-popper-available-width)",
+			"--radix-dropdown-menu-content-available-height": "var(--radix-popper-available-height)",
+			"--radix-dropdown-menu-trigger-width": "var(--radix-popper-anchor-width)",
+			"--radix-dropdown-menu-trigger-height": "var(--radix-popper-anchor-height)"
+		}
+	});
+});
+DropdownMenuSubContent$1.displayName = SUB_CONTENT_NAME;
+var Root2 = DropdownMenu$1;
+var Trigger = DropdownMenuTrigger$1;
+var Portal2 = DropdownMenuPortal$1;
+var Content2 = DropdownMenuContent$1;
+var Label2 = DropdownMenuLabel$1;
+var Item2 = DropdownMenuItem$1;
+var CheckboxItem2 = DropdownMenuCheckboxItem$1;
+var RadioItem2 = DropdownMenuRadioItem$1;
+var ItemIndicator2 = DropdownMenuItemIndicator;
+var Separator2 = DropdownMenuSeparator$1;
+var SubTrigger2 = DropdownMenuSubTrigger$1;
+var SubContent2 = DropdownMenuSubContent$1;
+//#endregion
+//#region src/components/ui/dropdown-menu.tsx
+var DropdownMenu = Root2;
+var DropdownMenuTrigger = Trigger;
+var DropdownMenuSubTrigger = import_react.forwardRef(({ className, inset, children, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(SubTrigger2, {
+	"data-uid": "src/components/ui/dropdown-menu.tsx:26:3",
+	"data-prohibitions": "[editContent]",
+	ref,
+	className: cn$1("flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0", inset && "pl-8", className),
+	...props,
+	children: [children, /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronRight, {
+		"data-uid": "src/components/ui/dropdown-menu.tsx:36:5",
+		"data-prohibitions": "[editContent]",
+		className: "ml-auto"
+	})]
+}));
+DropdownMenuSubTrigger.displayName = SubTrigger2.displayName;
+var DropdownMenuSubContent = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SubContent2, {
+	"data-uid": "src/components/ui/dropdown-menu.tsx:45:3",
+	"data-prohibitions": "[editContent]",
+	ref,
+	className: cn$1("z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]", className),
+	...props
+}));
+DropdownMenuSubContent.displayName = SubContent2.displayName;
+var DropdownMenuContent = import_react.forwardRef(({ className, sideOffset = 4, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal2, {
+	"data-uid": "src/components/ui/dropdown-menu.tsx:60:3",
+	"data-prohibitions": "[editContent]",
+	children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Content2, {
+		"data-uid": "src/components/ui/dropdown-menu.tsx:61:5",
+		"data-prohibitions": "[editContent]",
+		ref,
+		sideOffset,
+		className: cn$1("z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]", className),
+		...props
+	})
+}));
+DropdownMenuContent.displayName = Content2.displayName;
+var DropdownMenuItem = import_react.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Item2, {
+	"data-uid": "src/components/ui/dropdown-menu.tsx:80:3",
+	"data-prohibitions": "[editContent]",
+	ref,
+	className: cn$1("relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0", inset && "pl-8", className),
+	...props
+}));
+DropdownMenuItem.displayName = Item2.displayName;
+var DropdownMenuCheckboxItem = import_react.forwardRef(({ className, children, checked, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CheckboxItem2, {
+	"data-uid": "src/components/ui/dropdown-menu.tsx:96:3",
+	"data-prohibitions": "[editContent]",
+	ref,
+	className: cn$1("relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50", className),
+	checked,
+	...props,
+	children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+		"data-uid": "src/components/ui/dropdown-menu.tsx:105:5",
+		"data-prohibitions": "[]",
+		className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ItemIndicator2, {
+			"data-uid": "src/components/ui/dropdown-menu.tsx:106:7",
+			"data-prohibitions": "[]",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Check, {
+				"data-uid": "src/components/ui/dropdown-menu.tsx:107:9",
+				"data-prohibitions": "[editContent]",
+				className: "h-4 w-4"
+			})
+		})
+	}), children]
+}));
+DropdownMenuCheckboxItem.displayName = CheckboxItem2.displayName;
+var DropdownMenuRadioItem = import_react.forwardRef(({ className, children, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(RadioItem2, {
+	"data-uid": "src/components/ui/dropdown-menu.tsx:119:3",
+	"data-prohibitions": "[editContent]",
+	ref,
+	className: cn$1("relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50", className),
+	...props,
+	children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+		"data-uid": "src/components/ui/dropdown-menu.tsx:127:5",
+		"data-prohibitions": "[]",
+		className: "absolute left-2 flex h-3.5 w-3.5 items-center justify-center",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ItemIndicator2, {
+			"data-uid": "src/components/ui/dropdown-menu.tsx:128:7",
+			"data-prohibitions": "[]",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Circle, {
+				"data-uid": "src/components/ui/dropdown-menu.tsx:129:9",
+				"data-prohibitions": "[editContent]",
+				className: "h-2 w-2 fill-current"
+			})
+		})
+	}), children]
+}));
+DropdownMenuRadioItem.displayName = RadioItem2.displayName;
+var DropdownMenuLabel = import_react.forwardRef(({ className, inset, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label2, {
+	"data-uid": "src/components/ui/dropdown-menu.tsx:143:3",
+	"data-prohibitions": "[editContent]",
+	ref,
+	className: cn$1("px-2 py-1.5 text-sm font-semibold", inset && "pl-8", className),
+	...props
+}));
+DropdownMenuLabel.displayName = Label2.displayName;
+var DropdownMenuSeparator = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Separator2, {
+	"data-uid": "src/components/ui/dropdown-menu.tsx:155:3",
+	"data-prohibitions": "[editContent]",
+	ref,
+	className: cn$1("-mx-1 my-1 h-px bg-muted", className),
+	...props
+}));
+DropdownMenuSeparator.displayName = Separator2.displayName;
+var DropdownMenuShortcut = ({ className, ...props }) => {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+		"data-uid": "src/components/ui/dropdown-menu.tsx:164:10",
+		"data-prohibitions": "[editContent]",
+		className: cn$1("ml-auto text-xs tracking-widest opacity-60", className),
+		...props
+	});
+};
+DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
+//#endregion
 //#region src/pages/admin/AdminDashboard.tsx
 function AdminDashboard() {
 	const { submissions, updateSubmissionStatus } = useSubmissionsStore();
@@ -38210,44 +39145,30 @@ function AdminDashboard() {
 	const pendingSubmissions = submissions.filter((s) => s.status === "Em Análise");
 	const [isImportOpen, setIsImportOpen] = (0, import_react.useState)(false);
 	const [selectedSub, setSelectedSub] = (0, import_react.useState)(null);
-	const handleExport = () => {
-		exportToCSV([
-			{
+	const handleExport = (format) => {
+		if (format === "excel") {
+			exportToCSV([{
 				Nome: "Carlos Silva",
 				"Eixo I": 450,
 				"Eixo II": 300,
 				"Eixo III": 600,
 				Total: 1350,
 				Nivel: "Mobilizador"
-			},
-			{
+			}, {
 				Nome: "Ana Souza",
 				"Eixo I": 500,
 				"Eixo II": 400,
 				"Eixo III": 200,
 				Total: 1100,
 				Nivel: "Pleno"
-			},
-			{
-				Nome: "Roberto Almeida",
-				"Eixo I": 150,
-				"Eixo II": 100,
-				"Eixo III": 50,
-				Total: 300,
-				Nivel: "Iniciante"
-			},
-			{
-				Nome: "Mariana Costa",
-				"Eixo I": 300,
-				"Eixo II": 500,
-				"Eixo III": 150,
-				Total: 950,
-				Nivel: "Pleno"
-			}
-		], "relatorio_observadores.csv");
-		toast({
-			title: "Relatório Exportado",
-			description: "O download do arquivo CSV iniciou com sucesso."
+			}], "relatorio_observadores.csv");
+			toast({
+				title: "Exportação Excel",
+				description: "O download do arquivo foi iniciado com sucesso."
+			});
+		} else toast({
+			title: "Exportação PDF",
+			description: "O relatório em PDF está sendo gerado e será baixado em instantes."
 		});
 	};
 	const handleReview = (status) => {
@@ -38255,69 +39176,102 @@ function AdminDashboard() {
 			updateSubmissionStatus(selectedSub.id, status);
 			toast({
 				title: `Evidência ${status}`,
-				description: `O observador foi notificado por e-mail sobre a atualização de status.`
+				description: `O observador foi notificado por e-mail.`
 			});
 			setSelectedSub(null);
 		}
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		"data-uid": "src/pages/admin/AdminDashboard.tsx:89:5",
+		"data-uid": "src/pages/admin/AdminDashboard.tsx:95:5",
 		"data-prohibitions": "[editContent]",
-		className: "max-w-6xl mx-auto space-y-8 animate-fade-in-up",
+		className: "max-w-6xl mx-auto space-y-8 animate-fade-in-up pb-10",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/pages/admin/AdminDashboard.tsx:90:7",
+				"data-uid": "src/pages/admin/AdminDashboard.tsx:96:7",
 				"data-prohibitions": "[]",
 				className: "flex flex-col md:flex-row md:items-center justify-between gap-4",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/pages/admin/AdminDashboard.tsx:91:9",
+					"data-uid": "src/pages/admin/AdminDashboard.tsx:97:9",
 					"data-prohibitions": "[]",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:92:11",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:98:11",
 						"data-prohibitions": "[]",
 						className: "text-3xl font-bold tracking-tight text-foreground",
 						children: "Painel de Gestão ONSV"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:95:11",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:101:11",
 						"data-prohibitions": "[]",
 						className: "text-muted-foreground mt-2 text-lg",
 						children: "Visão geral administrativa e curadoria de submissões estratégicas."
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/pages/admin/AdminDashboard.tsx:99:9",
+					"data-uid": "src/pages/admin/AdminDashboard.tsx:105:9",
 					"data-prohibitions": "[]",
 					className: "flex flex-wrap items-center gap-3",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:100:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:106:11",
 							"data-prohibitions": "[]",
 							variant: "outline",
 							className: "px-4 py-2.5 text-sm bg-primary/5 text-primary border-primary/20 flex items-center gap-2 shadow-sm mr-auto md:mr-0",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShieldAlert, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:104:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:110:13",
 								"data-prohibitions": "[editContent]",
 								className: "w-4 h-4"
 							}), "Admin"]
 						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:107:11",
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DropdownMenu, {
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:113:11",
 							"data-prohibitions": "[]",
-							onClick: handleExport,
-							variant: "outline",
-							className: "shadow-sm border-border/60 hover:bg-muted",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Download, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:112:13",
-								"data-prohibitions": "[editContent]",
-								className: "w-4 h-4 mr-2"
-							}), "Exportar Relatório"]
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DropdownMenuTrigger, {
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:114:13",
+								"data-prohibitions": "[]",
+								asChild: true,
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:115:15",
+									"data-prohibitions": "[]",
+									variant: "outline",
+									className: "shadow-sm border-border/60 hover:bg-muted",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Download, {
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:116:17",
+										"data-prohibitions": "[editContent]",
+										className: "w-4 h-4 mr-2"
+									}), "Exportar Relatório"]
+								})
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DropdownMenuContent, {
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:120:13",
+								"data-prohibitions": "[]",
+								align: "end",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DropdownMenuItem, {
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:121:15",
+									"data-prohibitions": "[]",
+									onClick: () => handleExport("excel"),
+									className: "cursor-pointer",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FileSpreadsheet, {
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:122:17",
+										"data-prohibitions": "[editContent]",
+										className: "w-4 h-4 mr-2 text-emerald-600"
+									}), "Excel (.xlsx)"]
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DropdownMenuItem, {
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:125:15",
+									"data-prohibitions": "[]",
+									onClick: () => handleExport("pdf"),
+									className: "cursor-pointer",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FileTypeCorner, {
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:126:17",
+										"data-prohibitions": "[editContent]",
+										className: "w-4 h-4 mr-2 text-red-600"
+									}), "PDF"]
+								})]
+							})]
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:115:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:131:11",
 							"data-prohibitions": "[]",
 							onClick: () => setIsImportOpen(true),
 							className: "bg-amber-600 hover:bg-amber-700 text-white shadow-sm",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Upload, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:119:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:135:13",
 								"data-prohibitions": "[editContent]",
 								className: "w-4 h-4 mr-2"
 							}), "Importar Lote"]
@@ -38326,33 +39280,33 @@ function AdminDashboard() {
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/pages/admin/AdminDashboard.tsx:125:7",
+				"data-uid": "src/pages/admin/AdminDashboard.tsx:141:7",
 				"data-prohibitions": "[editContent]",
 				className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4",
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:127:9",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:143:9",
 						"data-prohibitions": "[]",
 						className: "border-emerald-200 shadow-sm bg-emerald-50/50 dark:bg-emerald-950/20 dark:border-emerald-900/50",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:128:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:144:11",
 							"data-prohibitions": "[]",
 							className: "pb-2",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:129:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:145:13",
 								"data-prohibitions": "[]",
 								className: "text-sm font-semibold text-emerald-800 dark:text-emerald-400 flex items-center gap-2",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Users, {
-									"data-uid": "src/pages/admin/AdminDashboard.tsx:130:15",
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:146:15",
 									"data-prohibitions": "[editContent]",
 									className: "w-4 h-4"
 								}), " Observadores Ativos"]
 							})
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:133:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:149:11",
 							"data-prohibitions": "[]",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:134:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:150:13",
 								"data-prohibitions": "[]",
 								className: "text-3xl font-black text-emerald-950 dark:text-emerald-50",
 								children: "800"
@@ -38360,28 +39314,28 @@ function AdminDashboard() {
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:137:9",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:153:9",
 						"data-prohibitions": "[]",
 						className: "border-blue-200 shadow-sm bg-blue-50/50 dark:bg-blue-950/20 dark:border-blue-900/50",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:138:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:154:11",
 							"data-prohibitions": "[]",
 							className: "pb-2",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:139:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:155:13",
 								"data-prohibitions": "[]",
 								className: "text-sm font-semibold text-blue-800 dark:text-blue-400 flex items-center gap-2",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FileText, {
-									"data-uid": "src/pages/admin/AdminDashboard.tsx:140:15",
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:156:15",
 									"data-prohibitions": "[editContent]",
 									className: "w-4 h-4"
 								}), " Submissões"]
 							})
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:143:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:159:11",
 							"data-prohibitions": "[]",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:144:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:160:13",
 								"data-prohibitions": "[]",
 								className: "text-3xl font-black text-blue-950 dark:text-blue-50",
 								children: "8,432"
@@ -38389,28 +39343,28 @@ function AdminDashboard() {
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:147:9",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:163:9",
 						"data-prohibitions": "[editContent]",
 						className: "border-amber-200 shadow-sm bg-amber-50/50 dark:bg-amber-950/20 dark:border-amber-900/50",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:148:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:164:11",
 							"data-prohibitions": "[]",
 							className: "pb-2",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:149:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:165:13",
 								"data-prohibitions": "[]",
 								className: "text-sm font-semibold text-amber-800 dark:text-amber-400 flex items-center gap-2",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, {
-									"data-uid": "src/pages/admin/AdminDashboard.tsx:150:15",
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:166:15",
 									"data-prohibitions": "[editContent]",
 									className: "w-4 h-4"
 								}), " Fila"]
 							})
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:153:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:169:11",
 							"data-prohibitions": "[editContent]",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:154:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:170:13",
 								"data-prohibitions": "[editContent]",
 								className: "text-3xl font-black text-amber-950 dark:text-amber-50",
 								children: pendingSubmissions.length
@@ -38418,28 +39372,28 @@ function AdminDashboard() {
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:159:9",
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:175:9",
 						"data-prohibitions": "[]",
 						className: "border-primary/20 shadow-sm bg-primary/5",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:160:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:176:11",
 							"data-prohibitions": "[]",
 							className: "pb-2",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:161:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:177:13",
 								"data-prohibitions": "[]",
 								className: "text-sm font-semibold text-primary flex items-center gap-2",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleCheckBig, {
-									"data-uid": "src/pages/admin/AdminDashboard.tsx:162:15",
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:178:15",
 									"data-prohibitions": "[editContent]",
 									className: "w-4 h-4"
 								}), " Aprovadas"]
 							})
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:165:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:181:11",
 							"data-prohibitions": "[]",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:166:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:182:13",
 								"data-prohibitions": "[]",
 								className: "text-3xl font-black text-foreground",
 								children: "312"
@@ -38448,219 +39402,342 @@ function AdminDashboard() {
 					})
 				]
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-				"data-uid": "src/pages/admin/AdminDashboard.tsx:171:7",
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				"data-uid": "src/pages/admin/AdminDashboard.tsx:187:7",
 				"data-prohibitions": "[editContent]",
-				className: "shadow-subtle border-border/60",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
-					"data-uid": "src/pages/admin/AdminDashboard.tsx:172:9",
+				className: "grid grid-cols-1 lg:grid-cols-2 gap-8",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+					"data-uid": "src/pages/admin/AdminDashboard.tsx:188:9",
 					"data-prohibitions": "[]",
-					className: "bg-muted/30 border-b border-border/50",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:173:11",
+					className: "shadow-subtle border-border/60",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:189:11",
 						"data-prohibitions": "[]",
-						children: "Ações Pendentes de Curadoria"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:174:11",
-						"data-prohibitions": "[]",
-						children: "Evidências submetidas aguardando validação para cômputo de pontos e insígnias."
-					})]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-					"data-uid": "src/pages/admin/AdminDashboard.tsx:178:9",
-					"data-prohibitions": "[editContent]",
-					className: "p-0",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Table, {
-						"data-uid": "src/pages/admin/AdminDashboard.tsx:179:11",
-						"data-prohibitions": "[editContent]",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHeader, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:180:13",
-							"data-prohibitions": "[]",
-							className: "bg-muted/10",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:181:15",
-								"data-prohibitions": "[]",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:182:17",
-										"data-prohibitions": "[]",
-										className: "pl-6",
-										children: "ID"
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:183:17",
-										"data-prohibitions": "[]",
-										children: "Observador"
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:184:17",
-										"data-prohibitions": "[]",
-										children: "Evidência (Tipo)"
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:185:17",
-										"data-prohibitions": "[]",
-										children: "Eixo"
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:186:17",
-										"data-prohibitions": "[]",
-										children: "Data"
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:187:17",
-										"data-prohibitions": "[]",
-										className: "text-right pr-6",
-										children: "Ação"
-									})
-								]
-							})
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableBody, {
+						className: "bg-muted/30 border-b border-border/50",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
 							"data-uid": "src/pages/admin/AdminDashboard.tsx:190:13",
-							"data-prohibitions": "[editContent]",
-							children: pendingSubmissions.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableRow, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:192:17",
-								"data-prohibitions": "[]",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-									"data-uid": "src/pages/admin/AdminDashboard.tsx:193:19",
-									"data-prohibitions": "[]",
-									colSpan: 6,
-									className: "text-center py-8 text-muted-foreground",
-									children: "Nenhuma submissão pendente no momento."
-								})
-							}) : pendingSubmissions.map((sub) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:199:19",
-								"data-prohibitions": "[editContent]",
-								className: "hover:bg-muted/30 transition-colors",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:200:21",
-										"data-prohibitions": "[editContent]",
-										className: "font-mono text-xs text-muted-foreground pl-6",
-										children: sub.id
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:203:21",
-										"data-prohibitions": "[editContent]",
-										className: "font-semibold",
-										children: sub.user
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:204:21",
-										"data-prohibitions": "[editContent]",
-										children: sub.title
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:205:21",
-										"data-prohibitions": "[editContent]",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											"data-uid": "src/pages/admin/AdminDashboard.tsx:206:23",
-											"data-prohibitions": "[editContent]",
-											className: "text-xs font-bold uppercase tracking-wider text-muted-foreground",
-											children: sub.axis
-										})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:210:21",
-										"data-prohibitions": "[editContent]",
-										className: "text-muted-foreground",
-										children: sub.date
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:211:21",
-										"data-prohibitions": "[]",
-										className: "text-right pr-6",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-											"data-uid": "src/pages/admin/AdminDashboard.tsx:212:23",
-											"data-prohibitions": "[]",
-											size: "sm",
-											onClick: () => setSelectedSub(sub),
-											className: "h-8 font-semibold shadow-sm",
-											children: "Analisar"
-										})
-									})
-								]
-							}, sub.id))
+							"data-prohibitions": "[]",
+							children: "Log de Importação"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, {
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:191:13",
+							"data-prohibitions": "[]",
+							children: "Histórico de sucesso e erros das últimas importações em lote."
 						})]
-					})
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:195:11",
+						"data-prohibitions": "[]",
+						className: "p-0",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:196:13",
+							"data-prohibitions": "[]",
+							className: "overflow-x-auto",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Table, {
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:197:15",
+								"data-prohibitions": "[]",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHeader, {
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:198:17",
+									"data-prohibitions": "[]",
+									className: "bg-muted/10",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:199:19",
+										"data-prohibitions": "[]",
+										children: [
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+												"data-uid": "src/pages/admin/AdminDashboard.tsx:200:21",
+												"data-prohibitions": "[]",
+												className: "pl-6 whitespace-nowrap",
+												children: "Data / Hora"
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+												"data-uid": "src/pages/admin/AdminDashboard.tsx:201:21",
+												"data-prohibitions": "[]",
+												children: "Status"
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+												"data-uid": "src/pages/admin/AdminDashboard.tsx:202:21",
+												"data-prohibitions": "[]",
+												className: "whitespace-nowrap",
+												children: "Linhas Afetadas"
+											})
+										]
+									})
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableBody, {
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:205:17",
+									"data-prohibitions": "[]",
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
+											"data-uid": "src/pages/admin/AdminDashboard.tsx:206:19",
+											"data-prohibitions": "[]",
+											className: "hover:bg-muted/30 transition-colors",
+											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/admin/AdminDashboard.tsx:207:21",
+													"data-prohibitions": "[]",
+													className: "text-muted-foreground pl-6 whitespace-nowrap",
+													children: "12/03/2026 14:30"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/admin/AdminDashboard.tsx:210:21",
+													"data-prohibitions": "[]",
+													children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+														"data-uid": "src/pages/admin/AdminDashboard.tsx:211:23",
+														"data-prohibitions": "[]",
+														className: "bg-emerald-500 text-white",
+														children: "Sucesso"
+													})
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/admin/AdminDashboard.tsx:213:21",
+													"data-prohibitions": "[]",
+													children: "795 registros (0 Erros)"
+												})
+											]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
+											"data-uid": "src/pages/admin/AdminDashboard.tsx:215:19",
+											"data-prohibitions": "[]",
+											className: "hover:bg-muted/30 transition-colors",
+											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/admin/AdminDashboard.tsx:216:21",
+													"data-prohibitions": "[]",
+													className: "text-muted-foreground pl-6 whitespace-nowrap",
+													children: "10/03/2026 09:15"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/admin/AdminDashboard.tsx:219:21",
+													"data-prohibitions": "[]",
+													children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+														"data-uid": "src/pages/admin/AdminDashboard.tsx:220:23",
+														"data-prohibitions": "[]",
+														className: "bg-amber-500 text-white",
+														children: "Atenção"
+													})
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/admin/AdminDashboard.tsx:222:21",
+													"data-prohibitions": "[]",
+													children: "450 registros (3 Erros)"
+												})
+											]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
+											"data-uid": "src/pages/admin/AdminDashboard.tsx:224:19",
+											"data-prohibitions": "[]",
+											className: "hover:bg-muted/30 transition-colors",
+											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/admin/AdminDashboard.tsx:225:21",
+													"data-prohibitions": "[]",
+													className: "text-muted-foreground pl-6 whitespace-nowrap",
+													children: "01/03/2026 18:00"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/admin/AdminDashboard.tsx:228:21",
+													"data-prohibitions": "[]",
+													children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+														"data-uid": "src/pages/admin/AdminDashboard.tsx:229:23",
+														"data-prohibitions": "[]",
+														className: "bg-emerald-500 text-white",
+														children: "Sucesso"
+													})
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+													"data-uid": "src/pages/admin/AdminDashboard.tsx:231:21",
+													"data-prohibitions": "[]",
+													children: "800 registros (0 Erros)"
+												})
+											]
+										})
+									]
+								})]
+							})
+						})
+					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+					"data-uid": "src/pages/admin/AdminDashboard.tsx:239:9",
+					"data-prohibitions": "[editContent]",
+					className: "shadow-subtle border-border/60",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:240:11",
+						"data-prohibitions": "[]",
+						className: "bg-muted/30 border-b border-border/50",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:241:13",
+							"data-prohibitions": "[]",
+							children: "Ações Pendentes"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, {
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:242:13",
+							"data-prohibitions": "[]",
+							children: "Evidências submetidas aguardando validação para cômputo de pontos."
+						})]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
+						"data-uid": "src/pages/admin/AdminDashboard.tsx:246:11",
+						"data-prohibitions": "[editContent]",
+						className: "p-0",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:247:13",
+							"data-prohibitions": "[editContent]",
+							className: "overflow-x-auto",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Table, {
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:248:15",
+								"data-prohibitions": "[editContent]",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHeader, {
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:249:17",
+									"data-prohibitions": "[]",
+									className: "bg-muted/10",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:250:19",
+										"data-prohibitions": "[]",
+										children: [
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+												"data-uid": "src/pages/admin/AdminDashboard.tsx:251:21",
+												"data-prohibitions": "[]",
+												className: "pl-6",
+												children: "Observador"
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+												"data-uid": "src/pages/admin/AdminDashboard.tsx:252:21",
+												"data-prohibitions": "[]",
+												children: "Evidência"
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableHead, {
+												"data-uid": "src/pages/admin/AdminDashboard.tsx:253:21",
+												"data-prohibitions": "[]",
+												className: "text-right pr-6",
+												children: "Ação"
+											})
+										]
+									})
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableBody, {
+									"data-uid": "src/pages/admin/AdminDashboard.tsx:256:17",
+									"data-prohibitions": "[editContent]",
+									children: pendingSubmissions.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableRow, {
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:258:21",
+										"data-prohibitions": "[]",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+											"data-uid": "src/pages/admin/AdminDashboard.tsx:259:23",
+											"data-prohibitions": "[]",
+											colSpan: 3,
+											className: "text-center py-8 text-muted-foreground",
+											children: "Nenhuma submissão pendente no momento."
+										})
+									}) : pendingSubmissions.map((sub) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(TableRow, {
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:265:23",
+										"data-prohibitions": "[editContent]",
+										className: "hover:bg-muted/30 transition-colors",
+										children: [
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+												"data-uid": "src/pages/admin/AdminDashboard.tsx:266:25",
+												"data-prohibitions": "[editContent]",
+												className: "font-semibold pl-6 whitespace-nowrap",
+												children: sub.user
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+												"data-uid": "src/pages/admin/AdminDashboard.tsx:269:25",
+												"data-prohibitions": "[editContent]",
+												className: "max-w-[200px] truncate",
+												title: sub.title,
+												children: sub.title
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TableCell, {
+												"data-uid": "src/pages/admin/AdminDashboard.tsx:272:25",
+												"data-prohibitions": "[]",
+												className: "text-right pr-6",
+												children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+													"data-uid": "src/pages/admin/AdminDashboard.tsx:273:27",
+													"data-prohibitions": "[]",
+													size: "sm",
+													onClick: () => setSelectedSub(sub),
+													className: "h-8 font-semibold shadow-sm",
+													children: "Analisar"
+												})
+											})
+										]
+									}, sub.id))
+								})]
+							})
+						})
+					})]
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ImportSpreadsheetDialog, {
-				"data-uid": "src/pages/admin/AdminDashboard.tsx:228:7",
+				"data-uid": "src/pages/admin/AdminDashboard.tsx:291:7",
 				"data-prohibitions": "[editContent]",
 				isOpen: isImportOpen,
 				onClose: () => setIsImportOpen(false)
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dialog, {
-				"data-uid": "src/pages/admin/AdminDashboard.tsx:230:7",
+				"data-uid": "src/pages/admin/AdminDashboard.tsx:293:7",
 				"data-prohibitions": "[editContent]",
 				open: !!selectedSub,
 				onOpenChange: (open) => !open && setSelectedSub(null),
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogContent, {
-					"data-uid": "src/pages/admin/AdminDashboard.tsx:231:9",
+					"data-uid": "src/pages/admin/AdminDashboard.tsx:294:9",
 					"data-prohibitions": "[editContent]",
 					className: "sm:max-w-[450px]",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogHeader, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:232:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:295:11",
 							"data-prohibitions": "[]",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogTitle, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:233:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:296:13",
 								"data-prohibitions": "[]",
 								children: "Analisar Comprovação"
 							})
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:235:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:298:11",
 							"data-prohibitions": "[editContent]",
 							className: "py-4 space-y-4",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:236:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:299:13",
 								"data-prohibitions": "[editContent]",
 								className: "bg-muted/30 p-4 rounded-lg border border-border/50 text-sm space-y-2",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:237:15",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:300:15",
 										"data-prohibitions": "[editContent]",
 										className: "flex justify-between",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											"data-uid": "src/pages/admin/AdminDashboard.tsx:238:17",
+											"data-uid": "src/pages/admin/AdminDashboard.tsx:301:17",
 											"data-prohibitions": "[]",
 											className: "text-muted-foreground",
 											children: "Observador:"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											"data-uid": "src/pages/admin/AdminDashboard.tsx:239:17",
+											"data-uid": "src/pages/admin/AdminDashboard.tsx:302:17",
 											"data-prohibitions": "[editContent]",
 											className: "font-semibold text-foreground",
 											children: selectedSub?.user
 										})]
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:241:15",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:304:15",
 										"data-prohibitions": "[editContent]",
 										className: "flex justify-between",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											"data-uid": "src/pages/admin/AdminDashboard.tsx:242:17",
+											"data-uid": "src/pages/admin/AdminDashboard.tsx:305:17",
 											"data-prohibitions": "[]",
 											className: "text-muted-foreground",
 											children: "Atividade:"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											"data-uid": "src/pages/admin/AdminDashboard.tsx:243:17",
+											"data-uid": "src/pages/admin/AdminDashboard.tsx:306:17",
 											"data-prohibitions": "[editContent]",
 											className: "font-semibold text-foreground text-right",
 											children: selectedSub?.title
 										})]
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/pages/admin/AdminDashboard.tsx:247:15",
+										"data-uid": "src/pages/admin/AdminDashboard.tsx:310:15",
 										"data-prohibitions": "[editContent]",
 										className: "flex justify-between",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											"data-uid": "src/pages/admin/AdminDashboard.tsx:248:17",
+											"data-uid": "src/pages/admin/AdminDashboard.tsx:311:17",
 											"data-prohibitions": "[]",
 											className: "text-muted-foreground",
 											children: "Eixo de Evolução:"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											"data-uid": "src/pages/admin/AdminDashboard.tsx:249:17",
+											"data-uid": "src/pages/admin/AdminDashboard.tsx:312:17",
 											"data-prohibitions": "[editContent]",
 											className: "font-semibold text-foreground",
 											children: selectedSub?.axis
@@ -38668,25 +39745,25 @@ function AdminDashboard() {
 									})
 								]
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:252:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:315:13",
 								"data-prohibitions": "[]",
 								className: "text-sm text-muted-foreground",
 								children: "A avaliação desta evidência enviará automaticamente um e-mail ao observador notificando sobre a aprovação ou necessidade de ajustes."
 							})]
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(DialogFooter, {
-							"data-uid": "src/pages/admin/AdminDashboard.tsx:257:11",
+							"data-uid": "src/pages/admin/AdminDashboard.tsx:320:11",
 							"data-prohibitions": "[]",
 							className: "flex gap-2 sm:justify-end",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:258:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:321:13",
 								"data-prohibitions": "[]",
 								variant: "destructive",
 								className: "w-full sm:w-auto",
 								onClick: () => handleReview("Ajuste Necessário"),
 								children: "Devolver p/ Ajuste"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-								"data-uid": "src/pages/admin/AdminDashboard.tsx:265:13",
+								"data-uid": "src/pages/admin/AdminDashboard.tsx:328:13",
 								"data-prohibitions": "[]",
 								className: "bg-emerald-600 hover:bg-emerald-700 text-white w-full sm:w-auto",
 								onClick: () => handleReview("Aprovado"),
@@ -38794,7 +39871,7 @@ Separator.displayName = Root.displayName;
 //#endregion
 //#region src/components/ui/sheet.tsx
 var Sheet = Root$3;
-var SheetPortal = Portal;
+var SheetPortal = Portal$1;
 var SheetOverlay = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Overlay, {
 	"data-uid": "src/components/ui/sheet.tsx:21:3",
 	"data-prohibitions": "[editContent]",
@@ -39165,7 +40242,7 @@ var SidebarGroup = import_react.forwardRef(({ className, ...props }, ref) => {
 });
 SidebarGroup.displayName = "SidebarGroup";
 var SidebarGroupLabel = import_react.forwardRef(({ className, asChild = false, ...props }, ref) => {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot$1 : "div", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot$2 : "div", {
 		"data-uid": "src/components/ui/sidebar.tsx:433:5",
 		"data-prohibitions": "[editContent]",
 		ref,
@@ -39176,7 +40253,7 @@ var SidebarGroupLabel = import_react.forwardRef(({ className, asChild = false, .
 });
 SidebarGroupLabel.displayName = "SidebarGroupLabel";
 var SidebarGroupAction = import_react.forwardRef(({ className, asChild = false, ...props }, ref) => {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot$1 : "button", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot$2 : "button", {
 		"data-uid": "src/components/ui/sidebar.tsx:454:5",
 		"data-prohibitions": "[editContent]",
 		ref,
@@ -39231,7 +40308,7 @@ var sidebarMenuButtonVariants = cva("peer/menu-button flex w-full items-center g
 	}
 });
 var SidebarMenuButton = import_react.forwardRef(({ asChild = false, isActive = false, variant = "default", size = "default", tooltip, className, ...props }, ref) => {
-	const Comp = asChild ? Slot$1 : "button";
+	const Comp = asChild ? Slot$2 : "button";
 	const { isMobile, state } = useSidebar();
 	const button = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Comp, {
 		"data-uid": "src/components/ui/sidebar.tsx:552:7",
@@ -39268,7 +40345,7 @@ var SidebarMenuButton = import_react.forwardRef(({ asChild = false, isActive = f
 });
 SidebarMenuButton.displayName = "SidebarMenuButton";
 var SidebarMenuAction = import_react.forwardRef(({ className, asChild = false, showOnHover = false, ...props }, ref) => {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot$1 : "button", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot$2 : "button", {
 		"data-uid": "src/components/ui/sidebar.tsx:597:5",
 		"data-prohibitions": "[editContent]",
 		ref,
@@ -39330,7 +40407,7 @@ var SidebarMenuSubItem = import_react.forwardRef(({ ...props }, ref) => /* @__PU
 }));
 SidebarMenuSubItem.displayName = "SidebarMenuSubItem";
 var SidebarMenuSubButton = import_react.forwardRef(({ asChild = false, size = "md", isActive, className, ...props }, ref) => {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot$1 : "a", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot$2 : "a", {
 		"data-uid": "src/components/ui/sidebar.tsx:703:5",
 		"data-prohibitions": "[editContent]",
 		ref,
@@ -39491,37 +40568,39 @@ function AppSidebar() {
 //#region src/components/layout/TopHeader.tsx
 function TopHeader() {
 	const { user } = useAuthStore();
+	const { eixosProgress } = useGameStore();
+	const highestAxisLevel = eixosProgress.some((e) => e.level === "Mobilizador") ? "Mobilizador" : eixosProgress.some((e) => e.level === "Pleno") ? "Pleno" : null;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-		"data-uid": "src/components/layout/TopHeader.tsx:11:5",
+		"data-uid": "src/components/layout/TopHeader.tsx:19:5",
 		"data-prohibitions": "[editContent]",
 		className: "h-16 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 shadow-sm",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/layout/TopHeader.tsx:12:7",
+			"data-uid": "src/components/layout/TopHeader.tsx:20:7",
 			"data-prohibitions": "[]",
 			className: "flex items-center gap-4",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SidebarTrigger, {
-				"data-uid": "src/components/layout/TopHeader.tsx:13:9",
+				"data-uid": "src/components/layout/TopHeader.tsx:21:9",
 				"data-prohibitions": "[editContent]",
 				className: "text-muted-foreground hover:text-foreground transition-colors min-h-[44px] min-w-[44px]"
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/layout/TopHeader.tsx:14:9",
+				"data-uid": "src/components/layout/TopHeader.tsx:22:9",
 				"data-prohibitions": "[]",
 				className: "hidden md:flex items-center gap-3",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Logo, {
-					"data-uid": "src/components/layout/TopHeader.tsx:15:11",
+					"data-uid": "src/components/layout/TopHeader.tsx:23:11",
 					"data-prohibitions": "[editContent]",
-					className: "w-8 h-8 drop-shadow-sm"
+					className: "w-10 h-10 drop-shadow-sm"
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/layout/TopHeader.tsx:16:11",
+					"data-uid": "src/components/layout/TopHeader.tsx:24:11",
 					"data-prohibitions": "[]",
 					className: "flex flex-col",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-						"data-uid": "src/components/layout/TopHeader.tsx:17:13",
+						"data-uid": "src/components/layout/TopHeader.tsx:25:13",
 						"data-prohibitions": "[]",
 						className: "text-sm font-black text-foreground tracking-tight leading-none uppercase",
 						children: "Observador Certificado"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						"data-uid": "src/components/layout/TopHeader.tsx:20:13",
+						"data-uid": "src/components/layout/TopHeader.tsx:28:13",
 						"data-prohibitions": "[]",
 						className: "text-[10px] font-bold tracking-widest text-amber-600 dark:text-amber-500 uppercase mt-0.5",
 						children: "Jornada de Evolução"
@@ -39529,44 +40608,54 @@ function TopHeader() {
 				})]
 			})]
 		}), user && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/layout/TopHeader.tsx:28:9",
+			"data-uid": "src/components/layout/TopHeader.tsx:36:9",
 			"data-prohibitions": "[editContent]",
-			className: "flex items-center gap-5",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
-				"data-uid": "src/components/layout/TopHeader.tsx:29:11",
+			className: "flex items-center gap-3 sm:gap-5",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				"data-uid": "src/components/layout/TopHeader.tsx:37:11",
 				"data-prohibitions": "[editContent]",
-				variant: "outline",
-				className: `hidden sm:inline-flex border-opacity-50 font-semibold ${user.role === "admin" ? "bg-amber-500/10 text-amber-700 border-amber-500/30 dark:text-amber-400" : "bg-emerald-500/10 text-emerald-700 border-emerald-500/30 dark:text-emerald-400"}`,
-				children: user.role === "admin" ? "Administrador" : "Observador Certificado"
+				className: "flex items-center gap-2",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+					"data-uid": "src/components/layout/TopHeader.tsx:38:13",
+					"data-prohibitions": "[editContent]",
+					variant: "outline",
+					className: `hidden sm:inline-flex border-opacity-50 font-semibold ${user.role === "admin" ? "bg-amber-500/10 text-amber-700 border-amber-500/30 dark:text-amber-400" : "bg-emerald-500/10 text-emerald-700 border-emerald-500/30 dark:text-emerald-400"}`,
+					children: user.role === "admin" ? "Administrador" : "Observador"
+				}), user.role !== "admin" && highestAxisLevel && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+					"data-uid": "src/components/layout/TopHeader.tsx:50:15",
+					"data-prohibitions": "[editContent]",
+					className: `hidden sm:inline-flex font-bold shadow-sm ${highestAxisLevel === "Mobilizador" ? "bg-amber-500 text-amber-950 hover:bg-amber-600" : "bg-blue-500 text-white hover:bg-blue-600"}`,
+					children: highestAxisLevel
+				})]
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/layout/TopHeader.tsx:39:11",
+				"data-uid": "src/components/layout/TopHeader.tsx:62:11",
 				"data-prohibitions": "[editContent]",
 				className: "flex items-center gap-3 pl-2 sm:pl-5 sm:border-l border-border/50",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/layout/TopHeader.tsx:40:13",
+					"data-uid": "src/components/layout/TopHeader.tsx:63:13",
 					"data-prohibitions": "[editContent]",
 					className: "text-right hidden sm:block",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						"data-uid": "src/components/layout/TopHeader.tsx:41:15",
+						"data-uid": "src/components/layout/TopHeader.tsx:64:15",
 						"data-prohibitions": "[editContent]",
 						className: "text-sm font-bold leading-none text-foreground",
 						children: user.name
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						"data-uid": "src/components/layout/TopHeader.tsx:42:15",
+						"data-uid": "src/components/layout/TopHeader.tsx:65:15",
 						"data-prohibitions": "[editContent]",
 						className: "text-xs text-muted-foreground mt-1 truncate max-w-[150px]",
 						children: user.email
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Avatar, {
-					"data-uid": "src/components/layout/TopHeader.tsx:46:13",
+					"data-uid": "src/components/layout/TopHeader.tsx:69:13",
 					"data-prohibitions": "[editContent]",
 					className: "h-9 w-9 border-2 border-primary/20 shadow-sm",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarImage, {
-						"data-uid": "src/components/layout/TopHeader.tsx:47:15",
+						"data-uid": "src/components/layout/TopHeader.tsx:70:15",
 						"data-prohibitions": "[editContent]",
 						src: `https://img.usecurling.com/ppl/thumbnail?seed=${user.email}`
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarFallback, {
-						"data-uid": "src/components/layout/TopHeader.tsx:48:15",
+						"data-uid": "src/components/layout/TopHeader.tsx:71:15",
 						"data-prohibitions": "[editContent]",
 						className: "bg-primary/10 text-primary font-bold",
 						children: user.name.charAt(0).toUpperCase()
@@ -39778,4 +40867,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-9xBmi8k_.js.map
+//# sourceMappingURL=index-DETFaxhy.js.map
