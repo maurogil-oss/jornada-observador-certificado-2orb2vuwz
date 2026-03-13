@@ -10,7 +10,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from '@/components/ui/sidebar'
-import { Home, Compass, FileCheck, Trophy, LogOut, LayoutDashboard } from 'lucide-react'
+import { Home, Compass, FileCheck, Trophy, LogOut, LayoutDashboard, BarChart } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
 
@@ -25,7 +25,10 @@ export function AppSidebar() {
     { title: 'Ranking / Mérito', url: '/ranking', icon: Trophy },
   ]
 
-  const adminNav = [{ title: 'Painel de Gestão', url: '/admin', icon: LayoutDashboard }]
+  const adminNav = [
+    { title: 'Painel de Gestão', url: '/admin', icon: LayoutDashboard },
+    { title: 'Indicadores', url: '/admin/indicadores', icon: BarChart },
+  ]
 
   const navItems = user?.role === 'admin' ? adminNav : observerNav
 
