@@ -11,10 +11,12 @@ export function TopHeader() {
       <div className="flex items-center gap-4">
         <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" />
         <div className="hidden md:flex flex-col">
-          <h2 className="text-sm font-bold text-foreground tracking-tight leading-tight">
-            Portal Estratégico ONSV
+          <h2 className="text-sm font-black text-foreground tracking-tight leading-none uppercase">
+            Observador Certificado
           </h2>
-          <span className="text-xs text-muted-foreground">Jornada de Evolução</span>
+          <span className="text-[10px] font-bold tracking-widest text-amber-600 dark:text-amber-500 uppercase mt-0.5">
+            Jornada de Evolução
+          </span>
         </div>
       </div>
 

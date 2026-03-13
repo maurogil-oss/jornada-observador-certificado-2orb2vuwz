@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Users, FileText, CheckCircle, Clock, ShieldAlert } from 'lucide-react'
+import { Users, FileText, CheckCircle, Clock, ShieldAlert, Upload } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -11,10 +12,12 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import useSubmissionsStore from '@/stores/useSubmissionsStore'
+import { ImportSpreadsheetDialog } from '@/components/admin/ImportSpreadsheetDialog'
 
 export default function AdminDashboard() {
   const { submissions } = useSubmissionsStore()
   const pendingSubmissions = submissions.filter((s) => s.status === 'Em Análise')
+  const [isImportOpen, setIsImportOpen] = useState(false)
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in-up">
@@ -27,16 +30,24 @@ export default function AdminDashboard() {
             Visão geral administrativa e curadoria de submissões estratégicas.
           </p>
         </div>
-        <Badge
-          variant="outline"
-          className="px-4 py-2 text-sm bg-primary/5 text-primary border-primary/20 flex items-center gap-2 w-fit shadow-sm"
-        >
-          <ShieldAlert className="w-4 h-4" />
-          Modo Administrador
-        </Badge>
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={() => setIsImportOpen(true)}
+            className="bg-amber-600 hover:bg-amber-700 text-white shadow-sm"
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            Importar Planilha
+          </Button>
+          <Badge
+            variant="outline"
+            className="px-4 py-2.5 text-sm bg-primary/5 text-primary border-primary/20 flex items-center gap-2 shadow-sm"
+          >
+            <ShieldAlert className="w-4 h-4" />
+            Modo Administrador
+          </Badge>
+        </div>
       </div>
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="border-emerald-200 shadow-sm bg-emerald-50/50 dark:bg-emerald-950/20 dark:border-emerald-900/50">
           <CardHeader className="pb-2">
@@ -45,9 +56,9 @@ export default function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-black text-emerald-950 dark:text-emerald-50">1,248</div>
+            <div className="text-3xl font-black text-emerald-950 dark:text-emerald-50">800</div>
             <p className="text-xs font-medium text-emerald-600 dark:text-emerald-500 mt-1">
-              +12 este mês
+              Base atualizada
             </p>
           </CardContent>
         </Card>
@@ -93,12 +104,11 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Curation Table */}
       <Card className="shadow-subtle border-border/60">
         <CardHeader className="bg-muted/30 border-b border-border/50">
           <CardTitle>Ações Pendentes de Curadoria</CardTitle>
           <CardDescription>
-            Evidências submetidas por Observadores aguardando validação do comitê de meritocracia.
+            Evidências submetidas por Observadores aguardando validação do comitê.
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
@@ -147,6 +157,8 @@ export default function AdminDashboard() {
           </Table>
         </CardContent>
       </Card>
+
+      <ImportSpreadsheetDialog isOpen={isImportOpen} onClose={() => setIsImportOpen(false)} />
     </div>
   )
 }

@@ -10,16 +10,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from '@/components/ui/sidebar'
-import {
-  Home,
-  Compass,
-  FileCheck,
-  Trophy,
-  LogOut,
-  LayoutDashboard,
-  Settings,
-  Shield,
-} from 'lucide-react'
+import { Home, Compass, FileCheck, Trophy, LogOut, LayoutDashboard, Award } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
 
@@ -40,14 +31,19 @@ export function AppSidebar() {
 
   return (
     <Sidebar variant="sidebar" collapsible="icon" className="border-r border-border/50 shadow-sm">
-      <SidebarHeader className="p-4 border-b border-border/50 bg-muted/10">
+      <SidebarHeader className="p-4 border-b border-border/50 bg-amber-50/50 dark:bg-amber-950/20">
         <div className="flex items-center gap-3 px-2">
-          <div className="p-1.5 bg-primary/10 rounded-md text-primary shrink-0">
-            <Shield className="w-5 h-5" />
+          <div className="p-1.5 bg-amber-500 rounded-full text-amber-950 shrink-0 shadow-sm border border-amber-600/20">
+            <Award className="w-5 h-5 fill-current" />
           </div>
-          <span className="font-bold text-sm tracking-tight group-data-[collapsible=icon]:hidden whitespace-nowrap">
-            Jornada ONSV
-          </span>
+          <div className="flex flex-col group-data-[collapsible=icon]:hidden whitespace-nowrap overflow-hidden">
+            <span className="font-black text-sm tracking-tight text-foreground leading-none">
+              OBSERVADOR
+            </span>
+            <span className="font-bold text-[10px] tracking-[0.2em] text-amber-600 dark:text-amber-500 leading-tight">
+              CERTIFICADO
+            </span>
+          </div>
         </div>
       </SidebarHeader>
       <SidebarContent className="bg-muted/5">

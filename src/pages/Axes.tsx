@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { axesData } from '@/lib/data'
 import { CheckCircle, PlusCircle } from 'lucide-react'
 import { SubmitEvidenceDialog } from '@/components/submissions/SubmitEvidenceDialog'
+import { CompetencyMatrix } from '@/components/axes/CompetencyMatrix'
 import { useState } from 'react'
 
 export default function Axes() {
@@ -15,7 +16,7 @@ export default function Axes() {
   } | null>(null)
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
+    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in pb-10">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Eixos de Evolução</h1>
         <p className="text-muted-foreground mt-2 text-lg">
@@ -103,6 +104,8 @@ export default function Axes() {
           </TabsContent>
         ))}
       </Tabs>
+
+      <CompetencyMatrix />
 
       <SubmitEvidenceDialog
         isOpen={!!selectedItem}

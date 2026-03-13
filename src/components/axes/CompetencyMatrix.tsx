@@ -1,0 +1,75 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { competencyMatrixData } from '@/lib/playbookData'
+import { Sprout, Trophy, Crown } from 'lucide-react'
+
+export function CompetencyMatrix() {
+  return (
+    <Card className="mt-12 shadow-subtle border-border/60 overflow-hidden">
+      <CardHeader className="bg-muted/30 border-b border-border/50">
+        <CardTitle className="text-2xl">Matriz Evolutiva de Competências</CardTitle>
+        <CardDescription className="text-base">
+          O caminho estruturado para a excelência na segurança viária.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="p-0 overflow-x-auto">
+        <Table className="min-w-[700px]">
+          <TableHeader className="bg-muted/20">
+            <TableRow>
+              <TableHead className="w-1/4 font-black text-foreground pl-6">Eixos</TableHead>
+              <TableHead className="w-1/4">
+                <div className="flex flex-col items-start gap-1 py-2">
+                  <div className="flex items-center gap-2 text-primary">
+                    <Sprout className="w-4 h-4" />
+                    <span className="font-bold text-foreground">Iniciante</span>
+                  </div>
+                </div>
+              </TableHead>
+              <TableHead className="w-1/4">
+                <div className="flex flex-col items-start gap-1 py-2">
+                  <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                    <Trophy className="w-4 h-4" />
+                    <span className="font-bold text-foreground">Pleno</span>
+                  </div>
+                </div>
+              </TableHead>
+              <TableHead className="w-1/4 pr-6">
+                <div className="flex flex-col items-start gap-1 py-2">
+                  <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                    <Crown className="w-4 h-4" />
+                    <span className="font-bold text-foreground">Mobilizador</span>
+                  </div>
+                </div>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {competencyMatrixData.map((row, idx) => (
+              <TableRow key={idx} className="hover:bg-muted/30">
+                <TableCell className="font-bold text-muted-foreground pl-6 align-top">
+                  {row.eixo}
+                </TableCell>
+                <TableCell className="text-sm align-top leading-relaxed text-muted-foreground">
+                  {row.iniciante}
+                </TableCell>
+                <TableCell className="text-sm align-top leading-relaxed text-muted-foreground">
+                  {row.pleno}
+                </TableCell>
+                <TableCell className="text-sm align-top leading-relaxed pr-6 text-foreground font-medium">
+                  {row.mobilizador}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  )
+}

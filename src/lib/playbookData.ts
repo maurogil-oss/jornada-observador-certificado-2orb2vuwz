@@ -142,3 +142,63 @@ export const eixo2Playbook = [
     ],
   },
 ]
+
+export const eixo3Playbook = [
+  {
+    mainTitle: 'Mentoria e Repasse de Conhecimento',
+    desc: 'Ocupação de espaços estratégicos e formação de novas lideranças.',
+    groups: [
+      {
+        title: 'Mentoria',
+        desc: 'Até 3x',
+        items: [
+          {
+            points: 200,
+            text: 'Mentoria: Atuação formal como mentor no programa (Validado pela coordenação)',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    mainTitle: 'Representação Institucional Formal',
+    desc: 'Atuação como porta-voz e membro em entidades chave.',
+    groups: [
+      {
+        title: 'Comitês e Conselhos',
+        desc: '1 vez por ano cada',
+        items: [
+          { points: 100, text: 'Representante de Comitês estratégicos' },
+          { points: 50, text: 'Representante da campanha Maio Amarelo' },
+          {
+            points: 50,
+            text: 'Representante de JARI (Junta Administrativa de Recursos de Infrações)',
+          },
+          { points: 50, text: 'Representante de Câmaras Técnicas' },
+          { points: 50, text: 'Representante de Conselhos' },
+        ],
+      },
+    ],
+  },
+]
+
+export const competencyMatrixData = [
+  {
+    eixo: 'Formação (Eixo I)',
+    iniciante: 'Cursos e especialização.',
+    pleno: 'Publicações e produção validada.',
+    mobilizador: 'Produção de referência (livro, e-book, inovação estrutural).',
+  },
+  {
+    eixo: 'Atuação (Eixo II)',
+    iniciante: 'Participação em ações e engajamento básico.',
+    pleno: 'Execução de projetos estruturados e impacto local mensurável.',
+    mobilizador: 'Liderança de projetos em larga escala (Nacional/Internacional).',
+  },
+  {
+    eixo: 'Liderança (Eixo III)',
+    iniciante: 'Representação pontual e voluntariado.',
+    pleno: 'Representação recorrente institucional.',
+    mobilizador: 'Mentoria, coordenação estratégica e conselhos diretores.',
+  },
+]
