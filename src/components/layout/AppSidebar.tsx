@@ -13,6 +13,7 @@ import {
 import { Home, Compass, FileCheck, Trophy, LogOut, LayoutDashboard } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
+import { Logo } from '@/components/shared/Logo'
 
 export function AppSidebar() {
   const location = useLocation()
@@ -34,17 +35,13 @@ export function AppSidebar() {
       <SidebarHeader className="p-4 border-b border-border/50 bg-amber-50/50 dark:bg-amber-950/20">
         <div className="flex items-center gap-3 px-2">
           <div className="w-8 h-8 shrink-0 flex items-center justify-center group-data-[collapsible=icon]:mx-auto">
-            <img
-              src="/logo.png"
-              alt="Logo"
-              className="w-full h-full object-contain drop-shadow-sm"
-            />
+            <Logo className="w-full h-full drop-shadow-sm" />
           </div>
           <div className="flex flex-col group-data-[collapsible=icon]:hidden whitespace-nowrap overflow-hidden">
             <span className="font-black text-sm tracking-tight text-foreground leading-none">
               OBSERVADOR
             </span>
-            <span className="font-bold text-[10px] tracking-[0.2em] text-amber-600 dark:text-amber-500 leading-tight">
+            <span className="font-bold text-[10px] tracking-[0.2em] text-amber-600 dark:text-amber-500 leading-tight mt-0.5">
               CERTIFICADO
             </span>
           </div>
@@ -60,7 +57,7 @@ export function AppSidebar() {
                     asChild
                     isActive={location.pathname === item.url}
                     tooltip={item.title}
-                    className="font-medium"
+                    className="font-medium h-11"
                   >
                     <Link to={item.url}>
                       <item.icon className="w-4 h-4" />
@@ -76,11 +73,11 @@ export function AppSidebar() {
       <SidebarFooter className="p-4 border-t border-border/50 bg-muted/10">
         <Button
           variant="ghost"
-          className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-destructive/10 hover:text-destructive group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center transition-colors"
+          className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-destructive/10 hover:text-destructive group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center transition-colors h-11"
           onClick={logout}
           title="Sair da Plataforma"
         >
-          <LogOut className="w-4 h-4 mr-2 group-data-[collapsible=icon]:mr-0" />
+          <LogOut className="w-5 h-5 mr-2 group-data-[collapsible=icon]:mr-0" />
           <span className="group-data-[collapsible=icon]:hidden">Encerrar Sessão</span>
         </Button>
       </SidebarFooter>
