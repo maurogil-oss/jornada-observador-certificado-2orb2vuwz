@@ -10,7 +10,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from '@/components/ui/sidebar'
-import { Home, Compass, FileCheck, Trophy, LogOut, LayoutDashboard, Award } from 'lucide-react'
+import { Home, Compass, FileCheck, Trophy, LogOut, LayoutDashboard } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
 
@@ -33,8 +33,12 @@ export function AppSidebar() {
     <Sidebar variant="sidebar" collapsible="icon" className="border-r border-border/50 shadow-sm">
       <SidebarHeader className="p-4 border-b border-border/50 bg-amber-50/50 dark:bg-amber-950/20">
         <div className="flex items-center gap-3 px-2">
-          <div className="p-1.5 bg-amber-500 rounded-full text-amber-950 shrink-0 shadow-sm border border-amber-600/20">
-            <Award className="w-5 h-5 fill-current" />
+          <div className="w-8 h-8 shrink-0 flex items-center justify-center group-data-[collapsible=icon]:mx-auto">
+            <img
+              src="/logo.png"
+              alt="Logo"
+              className="w-full h-full object-contain drop-shadow-sm"
+            />
           </div>
           <div className="flex flex-col group-data-[collapsible=icon]:hidden whitespace-nowrap overflow-hidden">
             <span className="font-black text-sm tracking-tight text-foreground leading-none">

@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Medal, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export default function Ranking() {
@@ -19,8 +18,12 @@ export default function Ranking() {
   return (
     <div className="max-w-5xl mx-auto space-y-12 animate-fade-in-up pb-10">
       <div className="text-center space-y-3">
-        <div className="inline-flex items-center justify-center p-3 bg-accent/10 text-accent rounded-full mb-2">
-          <Star className="w-8 h-8" />
+        <div className="inline-flex items-center justify-center mb-2">
+          <img
+            src="/logo.png"
+            alt="Logo Observador Certificado"
+            className="w-20 h-20 drop-shadow-md"
+          />
         </div>
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Quadro de Honra</h1>
         <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
@@ -36,7 +39,7 @@ export default function Ranking() {
           const heightClass = position === 1 ? 'h-56' : position === 2 ? 'h-44' : 'h-36'
           const colorClass =
             position === 1
-              ? 'bg-accent text-accent-foreground shadow-accent/20'
+              ? 'bg-amber-500 text-amber-950 shadow-amber-500/20'
               : position === 2
                 ? 'bg-zinc-300 text-zinc-800 shadow-zinc-400/20'
                 : 'bg-orange-300/90 text-orange-900 shadow-orange-500/20'
@@ -48,12 +51,16 @@ export default function Ranking() {
               style={{ animationDelay: `${(3 - position) * 150}ms` }}
             >
               {position === 1 && (
-                <Medal className="w-16 h-16 text-accent absolute -top-20 drop-shadow-xl z-20" />
+                <img
+                  src="/logo.png"
+                  alt="Primeiro Lugar"
+                  className="w-20 h-20 absolute -top-24 drop-shadow-xl z-20"
+                />
               )}
               <Avatar
                 className={cn(
                   'border-4 shadow-xl mb-5 z-10',
-                  position === 1 ? 'w-28 h-28 border-accent' : 'w-24 h-24 border-background',
+                  position === 1 ? 'w-28 h-28 border-amber-500' : 'w-24 h-24 border-background',
                 )}
               >
                 <AvatarImage src={user.avatar} />
@@ -73,7 +80,7 @@ export default function Ranking() {
                 )}
               >
                 <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent"></div>
-                <span className="text-4xl font-black relative z-10">{position}</span>
+                <span className="text-4xl font-black relative z-10 opacity-80">{position}</span>
               </div>
             </div>
           )
@@ -108,7 +115,7 @@ export default function Ranking() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm font-semibold px-3 py-1 rounded-full bg-secondary/10 text-secondary">
+                    <span className="text-sm font-semibold px-3 py-1 rounded-full bg-secondary/10 text-secondary border border-secondary/20">
                       {user.level}
                     </span>
                   </TableCell>

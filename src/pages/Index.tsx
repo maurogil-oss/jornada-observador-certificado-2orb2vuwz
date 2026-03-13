@@ -5,12 +5,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { principles, axesData, recentActivity } from '@/lib/data'
 import useGameStore from '@/stores/useGameStore'
-import { ArrowRight, Trophy, Clock, CheckCircle2 } from 'lucide-react'
+import { ArrowRight, Trophy, Clock, CheckCircle2, ShieldCheck, Award } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
 export default function Index() {
-  const { levelName, points } = useGameStore()
+  const { levelName, points, eixosProgress } = useGameStore()
   const nextLevelPoints = 2000
   const progressToNext = Math.min(100, Math.round((points / nextLevelPoints) * 100))
 
@@ -49,31 +49,58 @@ export default function Index() {
         </CardContent>
       </Card>
 
-      {/* Principles */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
-        {principles.map((p) => (
-          <Card
-            key={p.title}
-            className="bg-card/60 hover:bg-card hover:shadow-subtle transition-all duration-300 border-border/50 group"
-          >
-            <CardContent className="p-4 flex flex-col items-center text-center gap-2">
-              <div className="p-3 bg-primary/10 rounded-full text-primary group-hover:scale-110 transition-transform">
-                <p.icon className="w-6 h-6" />
-              </div>
-              <h3 className="font-semibold text-sm">{p.title}</h3>
-            </CardContent>
-          </Card>
-        ))}
+      {/* Gamification Badges */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-bold">Insígnias de Excelência</h3>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {eixosProgress.map((ep) => (
+            <Card
+              key={ep.id}
+              className={cn(
+                'border-l-4 shadow-sm transition-all hover:shadow-md',
+                ep.level === 'Mobilizador'
+                  ? 'border-l-amber-500 bg-amber-50/40 dark:bg-amber-950/20'
+                  : ep.level === 'Pleno'
+                    ? 'border-l-blue-500 bg-blue-50/40 dark:bg-blue-950/20'
+                    : 'border-l-muted bg-muted/20',
+              )}
+            >
+              <CardContent className="p-5 flex items-center gap-5">
+                <div
+                  className={cn(
+                    'p-3.5 rounded-full shadow-sm',
+                    ep.level === 'Mobilizador'
+                      ? 'bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400'
+                      : ep.level === 'Pleno'
+                        ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400'
+                        : 'bg-muted text-muted-foreground',
+                  )}
+                >
+                  {ep.level === 'Mobilizador' ? (
+                    <Award className="w-7 h-7" />
+                  ) : ep.level === 'Pleno' ? (
+                    <ShieldCheck className="w-7 h-7" />
+                  ) : (
+                    <div className="w-7 h-7 rounded-full border-2 border-dashed border-current opacity-50" />
+                  )}
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Eixo {ep.id} - {ep.name}
+                  </p>
+                  <p className="text-xl font-black text-foreground mt-0.5">{ep.level}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
 
       {/* Axes Status */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold">Status dos Eixos</h3>
-          <Button variant="link" asChild>
-            <Link to="/eixos">Explorar todos</Link>
-          </Button>
-        </div>
+      <div className="space-y-4 pt-4">
+        <h3 className="text-xl font-bold">Progresso das Missões</h3>
         <div className="grid md:grid-cols-3 gap-6">
           {axesData.map((eixo) => (
             <Card key={eixo.id} className="hover:shadow-elevation transition-all border-border/60">

@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import useAuthStore from '@/stores/useAuthStore'
-import { Shield, Lock, Mail, Eye, EyeOff } from 'lucide-react'
+import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 const loginSchema = z.object({
@@ -62,8 +62,12 @@ export default function Login() {
 
       <Card className="w-full max-w-md shadow-elevation border-border/60 relative z-10 backdrop-blur-md bg-background/80 animate-fade-in-up">
         <CardHeader className="space-y-3 pb-6 text-center">
-          <div className="mx-auto bg-primary/10 p-4 rounded-full w-20 h-20 flex items-center justify-center mb-2 shadow-inner border border-primary/20">
-            <Shield className="w-10 h-10 text-primary" />
+          <div className="mx-auto mb-2 flex justify-center drop-shadow-md">
+            <img
+              src="/logo.png"
+              alt="Logo Observador Certificado"
+              className="w-28 h-28 object-contain"
+            />
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight">
             Portal Estratégico ONSV

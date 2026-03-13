@@ -33,10 +33,10 @@ const mockAdminSubmissions: Submission[] = [
   {
     id: 'SUB-104',
     user: 'Camila Barros',
-    title: 'Desenvolver projetos viários',
+    title: 'Mentoria: Atuação formal',
     date: '09/03/2026',
     status: 'Em Análise',
-    axis: 'Eixo II',
+    axis: 'Eixo III',
     points: '-',
   },
 ]
@@ -44,6 +44,7 @@ const mockAdminSubmissions: Submission[] = [
 interface SubmissionsState {
   submissions: Submission[]
   addSubmission: (sub: { title: string; axis: string }) => void
+  updateSubmissionStatus: (id: string, status: string, points?: number) => void
 }
 
 const SubmissionsContext = createContext<SubmissionsState | undefined>(undefined)
@@ -66,8 +67,14 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     setSubmissions([newSub, ...submissions])
   }
 
+  const updateSubmissionStatus = (id: string, status: string, points?: number) => {
+    setSubmissions((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, status, points: points ?? s.points } : s)),
+    )
+  }
+
   return (
-    <SubmissionsContext.Provider value={{ submissions, addSubmission }}>
+    <SubmissionsContext.Provider value={{ submissions, addSubmission, updateSubmissionStatus }}>
       {children}
     </SubmissionsContext.Provider>
   )

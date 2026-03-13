@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/table'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { competencyMatrixData } from '@/lib/playbookData'
-import { Sprout, Trophy, Crown } from 'lucide-react'
+import { Sprout } from 'lucide-react'
 
 export function CompetencyMatrix() {
   return (
@@ -26,7 +26,7 @@ export function CompetencyMatrix() {
               <TableHead className="w-1/4 font-black text-foreground pl-6">Eixos</TableHead>
               <TableHead className="w-1/4">
                 <div className="flex flex-col items-start gap-1 py-2">
-                  <div className="flex items-center gap-2 text-primary">
+                  <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                     <Sprout className="w-4 h-4" />
                     <span className="font-bold text-foreground">Iniciante</span>
                   </div>
@@ -35,7 +35,11 @@ export function CompetencyMatrix() {
               <TableHead className="w-1/4">
                 <div className="flex flex-col items-start gap-1 py-2">
                   <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
-                    <Trophy className="w-4 h-4" />
+                    <img
+                      src="/logo.png"
+                      alt="Badge Pleno"
+                      className="w-5 h-5 opacity-80 mix-blend-luminosity filter grayscale"
+                    />
                     <span className="font-bold text-foreground">Pleno</span>
                   </div>
                 </div>
@@ -43,7 +47,11 @@ export function CompetencyMatrix() {
               <TableHead className="w-1/4 pr-6">
                 <div className="flex flex-col items-start gap-1 py-2">
                   <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
-                    <Crown className="w-4 h-4" />
+                    <img
+                      src="/logo.png"
+                      alt="Badge Mobilizador"
+                      className="w-6 h-6 drop-shadow-sm"
+                    />
                     <span className="font-bold text-foreground">Mobilizador</span>
                   </div>
                 </div>

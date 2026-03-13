@@ -1,7 +1,7 @@
-import { BookOpen, Activity, Users, Star, Award, Flag, Sprout, Eye } from 'lucide-react'
+import { BookOpen, Activity, Users, Award, Flag, Sprout, Eye } from 'lucide-react'
 
 export const principles = [
-  { title: 'Meritocracia', desc: 'Impacto real e comprovado.', icon: Star },
+  { title: 'Meritocracia', desc: 'Impacto real e comprovado.', icon: Award },
   { title: 'Valorização', desc: 'Foco na produção técnica.', icon: Award },
   { title: 'Liderança', desc: 'Atuação institucional.', icon: Flag },
   { title: 'Maturidade', desc: 'Progressão estruturada.', icon: Sprout },
@@ -59,25 +59,25 @@ export const axesData = [
   },
   {
     id: 'III',
-    title: 'Liderança Institucional',
-    purpose: 'Consolidar influência e representação.',
+    title: 'Representatividade e Liderança',
+    purpose: 'Ocupação de espaços estratégicos e formação de novas lideranças.',
     progress: 15,
     icon: Users,
     items: [
       {
-        title: 'Representante Institucional',
-        points: 300,
-        desc: 'Atuação formal como porta-voz oficial do ONSV em eventos e fóruns.',
-      },
-      {
-        title: 'Mentoria',
-        points: 150,
-        desc: 'Orientação ativa de novos observadores na jornada de certificação.',
-      },
-      {
-        title: 'Instâncias Estratégicas',
+        title: 'Mentoria e Repasse',
         points: 200,
-        desc: 'Participação ativa em comitês técnicos ou conselhos de decisão.',
+        desc: 'Atuação formal como mentor no programa. (Até 3x)',
+      },
+      {
+        title: 'Representação em Comitês',
+        points: 100,
+        desc: 'Participação estratégica em comitês.',
+      },
+      {
+        title: 'Campanhas (Maio Amarelo, JARI)',
+        points: 50,
+        desc: 'Atuação ativa em conselhos e câmaras técnicas.',
       },
     ],
   },
@@ -111,49 +111,49 @@ export const rankingData = [
   {
     rank: 1,
     name: 'Carlos Silva',
-    level: 'Mestre',
+    level: 'Mobilizador',
     points: 4500,
     avatar: 'https://img.usecurling.com/ppl/thumbnail?gender=male&seed=1',
   },
   {
     rank: 2,
     name: 'Ana Souza',
-    level: 'Mestre',
+    level: 'Mobilizador',
     points: 4320,
     avatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=2',
   },
   {
     rank: 3,
     name: 'Roberto Almeida',
-    level: 'Líder',
+    level: 'Pleno',
     points: 3900,
     avatar: 'https://img.usecurling.com/ppl/thumbnail?gender=male&seed=3',
   },
   {
     rank: 4,
     name: 'Mariana Costa',
-    level: 'Líder',
+    level: 'Pleno',
     points: 3750,
     avatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=4',
   },
   {
     rank: 5,
     name: 'Fernando Lima',
-    level: 'Estrategista',
+    level: 'Pleno',
     points: 2800,
     avatar: 'https://img.usecurling.com/ppl/thumbnail?gender=male&seed=5',
   },
   {
     rank: 6,
     name: 'Camila Barros',
-    level: 'Estrategista',
+    level: 'Pleno',
     points: 2650,
     avatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=6',
   },
   {
     rank: 7,
     name: 'José Mendes',
-    level: 'Engajado',
+    level: 'Iniciante',
     points: 1900,
     avatar: 'https://img.usecurling.com/ppl/thumbnail?gender=male&seed=7',
   },
@@ -187,7 +187,7 @@ export const submissionsData = [
   {
     id: 'SUB-004',
     date: '01/03/2026',
-    title: 'Participação Conselho Municipal',
+    title: 'Representação JARI',
     axis: 'Eixo III',
     status: 'Ajuste Necessário',
     points: '-',
