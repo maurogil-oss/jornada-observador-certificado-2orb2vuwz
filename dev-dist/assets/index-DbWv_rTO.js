@@ -27299,7 +27299,7 @@ function useImageLoadingStatus(src, { referrerPolicy, crossOrigin }) {
 	return loadingStatus;
 }
 var Root$5 = Avatar$1;
-var Image$1 = AvatarImage$1;
+var Image = AvatarImage$1;
 var Fallback = AvatarFallback$1;
 //#endregion
 //#region src/components/ui/avatar.tsx
@@ -27311,14 +27311,14 @@ var Avatar = import_react.forwardRef(({ className, ...props }, ref) => /* @__PUR
 	...props
 }));
 Avatar.displayName = Root$5.displayName;
-var AvatarImage = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Image$1, {
+var AvatarImage = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Image, {
 	"data-uid": "src/components/ui/avatar.tsx:23:3",
 	"data-prohibitions": "[editContent]",
 	ref,
 	className: cn$1("aspect-square h-full w-full", className),
 	...props
 }));
-AvatarImage.displayName = Image$1.displayName;
+AvatarImage.displayName = Image.displayName;
 var AvatarFallback = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Fallback, {
 	"data-uid": "src/components/ui/avatar.tsx:35:3",
 	"data-prohibitions": "[editContent]",
@@ -30968,120 +30968,232 @@ function Submissions() {
 //#endregion
 //#region src/components/shared/Logo.tsx
 function Logo({ className }) {
-	const [imgStatus, setImgStatus] = (0, import_react.useState)("loading");
-	(0, import_react.useEffect)(() => {
-		const img = new Image();
-		img.src = "/coroa-de-louros.png";
-		img.onload = () => setImgStatus("loaded");
-		img.onerror = () => setImgStatus("error");
-	}, []);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		"data-uid": "src/components/shared/Logo.tsx:20:5",
+		"data-uid": "src/components/shared/Logo.tsx:9:5",
 		"data-prohibitions": "[editContent]",
 		className: cn$1("relative flex items-center justify-center shrink-0", className),
-		title: "Coroa de Louros - ONSV",
-		children: imgStatus === "loaded" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-			"data-uid": "src/components/shared/Logo.tsx:25:9",
-			"data-prohibitions": "[editContent]",
-			src: "/coroa-de-louros.png",
-			alt: "Coroa de Louros - Observador Certificado",
-			className: "w-full h-full object-contain drop-shadow-md animate-in fade-in duration-300"
-		}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", {
-			"data-uid": "src/components/shared/Logo.tsx:32:9",
+		title: "Observador Certificado - ONSV",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
+			"data-uid": "src/components/shared/Logo.tsx:18:7",
 			"data-prohibitions": "[editContent]",
 			xmlns: "http://www.w3.org/2000/svg",
-			viewBox: "0 0 120 120",
+			viewBox: "0 0 500 500",
 			className: "w-full h-full object-contain drop-shadow-md text-amber-500 dark:text-amber-400",
 			fill: "none",
-			stroke: "currentColor",
-			"stroke-width": "3",
-			"stroke-linecap": "round",
-			"stroke-linejoin": "round",
-			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-					"data-uid": "src/components/shared/Logo.tsx:43:11",
-					"data-prohibitions": "[editContent]",
-					d: "M 60 105 C 25 105 15 65 20 35 C 25 15 45 10 55 15",
-					"stroke-width": "4"
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-					"data-uid": "src/components/shared/Logo.tsx:44:11",
-					"data-prohibitions": "[editContent]",
-					d: "M 60 105 C 95 105 105 65 100 35 C 95 15 75 10 65 15",
-					"stroke-width": "4"
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("g", {
-					"data-uid": "src/components/shared/Logo.tsx:47:11",
-					"data-prohibitions": "[]",
-					fill: "currentColor",
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-							"data-uid": "src/components/shared/Logo.tsx:48:13",
-							"data-prohibitions": "[editContent]",
-							d: "M 20 35 C 10 30 10 15 20 10 C 35 10 40 25 20 35 Z"
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-							"data-uid": "src/components/shared/Logo.tsx:49:13",
-							"data-prohibitions": "[editContent]",
-							d: "M 18 55 C 5 50 5 35 18 30 C 32 35 32 50 18 55 Z"
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-							"data-uid": "src/components/shared/Logo.tsx:50:13",
-							"data-prohibitions": "[editContent]",
-							d: "M 22 75 C 10 70 10 55 25 50 C 38 55 38 70 22 75 Z"
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-							"data-uid": "src/components/shared/Logo.tsx:51:13",
-							"data-prohibitions": "[editContent]",
-							d: "M 35 95 C 20 90 20 75 35 70 C 48 75 48 90 35 95 Z"
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-							"data-uid": "src/components/shared/Logo.tsx:52:13",
-							"data-prohibitions": "[editContent]",
-							d: "M 50 105 C 40 100 40 85 50 80 C 60 85 60 100 50 105 Z"
-						})
-					]
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("g", {
-					"data-uid": "src/components/shared/Logo.tsx:56:11",
-					"data-prohibitions": "[]",
-					fill: "currentColor",
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-							"data-uid": "src/components/shared/Logo.tsx:57:13",
-							"data-prohibitions": "[editContent]",
-							d: "M 100 35 C 110 30 110 15 100 10 C 85 10 80 25 100 35 Z"
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-							"data-uid": "src/components/shared/Logo.tsx:58:13",
-							"data-prohibitions": "[editContent]",
-							d: "M 102 55 C 115 50 115 35 102 30 C 88 35 88 50 102 55 Z"
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-							"data-uid": "src/components/shared/Logo.tsx:59:13",
-							"data-prohibitions": "[editContent]",
-							d: "M 98 75 C 110 70 110 55 95 50 C 82 55 82 70 98 75 Z"
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-							"data-uid": "src/components/shared/Logo.tsx:60:13",
-							"data-prohibitions": "[editContent]",
-							d: "M 85 95 C 100 90 100 75 85 70 C 72 75 72 90 85 95 Z"
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-							"data-uid": "src/components/shared/Logo.tsx:61:13",
-							"data-prohibitions": "[editContent]",
-							d: "M 70 105 C 80 100 80 85 70 80 C 60 85 60 100 70 105 Z"
-						})
-					]
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("polygon", {
-					"data-uid": "src/components/shared/Logo.tsx:65:11",
-					"data-prohibitions": "[editContent]",
-					points: "60,40 66,52 80,52 69,60 73,73 60,65 47,73 51,60 40,52 54,52",
-					fill: "currentColor",
-					stroke: "none"
-				})
-			]
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("g", {
+				"data-uid": "src/components/shared/Logo.tsx:24:9",
+				"data-prohibitions": "[editContent]",
+				fill: "currentColor",
+				stroke: "currentColor",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:26:11",
+						"data-prohibitions": "[editContent]",
+						d: "M250,470 C100,470 40,320 60,170 C70,120 100,70 150,40",
+						fill: "none",
+						strokeWidth: "10",
+						strokeLinecap: "round"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:33:11",
+						"data-prohibitions": "[editContent]",
+						d: "M250,470 C400,470 460,320 440,170 C430,120 400,70 350,40",
+						fill: "none",
+						strokeWidth: "10",
+						strokeLinecap: "round"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:41:11",
+						"data-prohibitions": "[editContent]",
+						d: "M60,170 Q40,150 50,130 Q70,140 60,170 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:42:11",
+						"data-prohibitions": "[editContent]",
+						d: "M45,230 Q20,210 30,180 Q55,200 45,230 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:43:11",
+						"data-prohibitions": "[editContent]",
+						d: "M45,290 Q20,280 35,240 Q65,260 45,290 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:44:11",
+						"data-prohibitions": "[editContent]",
+						d: "M65,350 Q40,340 60,300 Q90,320 65,350 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:45:11",
+						"data-prohibitions": "[editContent]",
+						d: "M105,410 Q80,410 105,370 Q135,390 105,410 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:46:11",
+						"data-prohibitions": "[editContent]",
+						d: "M165,455 Q140,465 170,430 Q195,445 165,455 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:49:11",
+						"data-prohibitions": "[editContent]",
+						d: "M75,150 Q100,140 105,115 Q80,125 75,150 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:50:11",
+						"data-prohibitions": "[editContent]",
+						d: "M65,210 Q95,205 105,175 Q75,185 65,210 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:51:11",
+						"data-prohibitions": "[editContent]",
+						d: "M70,270 Q105,270 120,240 Q85,245 70,270 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:52:11",
+						"data-prohibitions": "[editContent]",
+						d: "M95,330 Q135,335 150,305 Q115,305 95,330 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:53:11",
+						"data-prohibitions": "[editContent]",
+						d: "M140,385 Q180,395 195,365 Q155,360 140,385 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:56:11",
+						"data-prohibitions": "[editContent]",
+						d: "M440,170 Q460,150 450,130 Q430,140 440,170 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:57:11",
+						"data-prohibitions": "[editContent]",
+						d: "M455,230 Q480,210 470,180 Q445,200 455,230 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:58:11",
+						"data-prohibitions": "[editContent]",
+						d: "M455,290 Q480,280 465,240 Q435,260 455,290 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:59:11",
+						"data-prohibitions": "[editContent]",
+						d: "M435,350 Q460,340 440,300 Q410,320 435,350 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:60:11",
+						"data-prohibitions": "[editContent]",
+						d: "M395,410 Q420,410 395,370 Q365,390 395,410 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:61:11",
+						"data-prohibitions": "[editContent]",
+						d: "M335,455 Q360,465 330,430 Q305,445 335,455 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:64:11",
+						"data-prohibitions": "[editContent]",
+						d: "M425,150 Q400,140 395,115 Q420,125 425,150 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:65:11",
+						"data-prohibitions": "[editContent]",
+						d: "M435,210 Q405,205 395,175 Q425,185 435,210 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:66:11",
+						"data-prohibitions": "[editContent]",
+						d: "M430,270 Q395,270 380,240 Q415,245 430,270 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:67:11",
+						"data-prohibitions": "[editContent]",
+						d: "M405,330 Q365,335 350,305 Q385,305 405,330 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:68:11",
+						"data-prohibitions": "[editContent]",
+						d: "M360,385 Q320,395 305,365 Q345,360 360,385 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:71:11",
+						"data-prohibitions": "[editContent]",
+						d: "M230,460 L270,460 L260,490 L240,490 Z",
+						stroke: "none"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
+						"data-uid": "src/components/shared/Logo.tsx:74:11",
+						"data-prohibitions": "[editContent]",
+						cx: "250",
+						cy: "140",
+						r: "35",
+						fill: "none",
+						strokeWidth: "20"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+						"data-uid": "src/components/shared/Logo.tsx:75:11",
+						"data-prohibitions": "[editContent]",
+						d: "M 195 90 Q 250 50 305 90",
+						fill: "none",
+						strokeWidth: "18",
+						strokeLinecap: "round"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("text", {
+						"data-uid": "src/components/shared/Logo.tsx:78:11",
+						"data-prohibitions": "[]",
+						x: "250",
+						y: "260",
+						fontFamily: "ui-sans-serif, system-ui, sans-serif",
+						fontSize: "60",
+						fontWeight: "900",
+						textAnchor: "middle",
+						stroke: "none",
+						letterSpacing: "1",
+						children: "OBSERVADOR"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("text", {
+						"data-uid": "src/components/shared/Logo.tsx:90:11",
+						"data-prohibitions": "[]",
+						x: "250",
+						y: "325",
+						fontFamily: "ui-sans-serif, system-ui, sans-serif",
+						fontSize: "52",
+						fontWeight: "400",
+						textAnchor: "middle",
+						stroke: "none",
+						letterSpacing: "1",
+						children: "CERTIFICADO"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("line", {
+						"data-uid": "src/components/shared/Logo.tsx:104:11",
+						"data-prohibitions": "[editContent]",
+						x1: "100",
+						y1: "350",
+						x2: "400",
+						y2: "350",
+						strokeWidth: "4"
+					})
+				]
+			})
 		})
 	});
 }
@@ -40964,4 +41076,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-DJbvwiYf.js.map
+//# sourceMappingURL=index-DbWv_rTO.js.map
