@@ -1307,9 +1307,6 @@ section[aria-label='Notifications alt+T'] {
 .gap-4{
   gap: 1rem;
 }
-.gap-5{
-  gap: 1.25rem;
-}
 .gap-6{
   gap: 1.5rem;
 }
@@ -2086,6 +2083,9 @@ section[aria-label='Notifications alt+T'] {
 }
 .tracking-tight{
   letter-spacing: -0.025em;
+}
+.tracking-wide{
+  letter-spacing: 0.025em;
 }
 .tracking-wider{
   letter-spacing: 0.05em;
@@ -3798,6 +3798,9 @@ section[aria-label='Notifications alt+T'] {
   .md\:gap-0{
     gap: 0px;
   }
+  .md\:gap-5{
+    gap: 1.25rem;
+  }
   .md\:gap-6{
     gap: 1.5rem;
   }
@@ -3843,6 +3846,10 @@ section[aria-label='Notifications alt+T'] {
   .md\:text-sm{
     font-size: 0.875rem;
     line-height: 1.25rem;
+  }
+  .md\:text-xs{
+    font-size: 0.75rem;
+    line-height: 1rem;
   }
   .md\:opacity-0{
     opacity: 0;

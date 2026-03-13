@@ -25212,23 +25212,23 @@ function AxesBadges() {
 				"data-uid": "src/components/dashboard/AxesBadges.tsx:16:9",
 				"data-prohibitions": "[editContent]",
 				className: "grid grid-cols-1 sm:grid-cols-3 gap-4",
-				children: niveisProgress.map((ep) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
+				children: niveisProgress.map((nivel) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
 					"data-uid": "src/components/dashboard/AxesBadges.tsx:18:13",
 					"data-prohibitions": "[editContent]",
-					className: cn$1("border-l-4 shadow-sm transition-all hover:shadow-md", ep.id === "III" ? "border-l-amber-500 bg-amber-50/40 dark:bg-amber-950/20" : ep.id === "II" ? "border-l-blue-500 bg-blue-50/40 dark:bg-blue-950/20" : "border-l-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20"),
+					className: cn$1("border-l-4 shadow-sm transition-all hover:shadow-md", nivel.id === "III" ? "border-l-amber-500 bg-amber-50/40 dark:bg-amber-950/20" : nivel.id === "II" ? "border-l-blue-500 bg-blue-50/40 dark:bg-blue-950/20" : "border-l-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20"),
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
 						"data-uid": "src/components/dashboard/AxesBadges.tsx:29:15",
 						"data-prohibitions": "[editContent]",
-						className: "p-5 flex items-center gap-5",
+						className: "p-5 flex items-center gap-4 md:gap-5",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 							"data-uid": "src/components/dashboard/AxesBadges.tsx:30:17",
 							"data-prohibitions": "[editContent]",
-							className: cn$1("p-3.5 rounded-full shadow-sm", ep.id === "III" ? "bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400" : ep.id === "II" ? "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400" : "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400"),
-							children: ep.status === "Concluído" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Award, {
+							className: cn$1("p-3.5 rounded-full shadow-sm shrink-0 flex items-center justify-center", nivel.id === "III" ? "bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400" : nivel.id === "II" ? "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400" : "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400"),
+							children: nivel.status === "Concluído" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Award, {
 								"data-uid": "src/components/dashboard/AxesBadges.tsx:41:21",
 								"data-prohibitions": "[editContent]",
 								className: "w-7 h-7"
-							}) : ep.status === "Em Andamento" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShieldCheck, {
+							}) : nivel.status === "Em Andamento" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShieldCheck, {
 								"data-uid": "src/components/dashboard/AxesBadges.tsx:43:21",
 								"data-prohibitions": "[editContent]",
 								className: "w-7 h-7"
@@ -25240,95 +25240,104 @@ function AxesBadges() {
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							"data-uid": "src/components/dashboard/AxesBadges.tsx:48:17",
 							"data-prohibitions": "[editContent]",
-							className: "min-w-0 flex-1",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-								"data-uid": "src/components/dashboard/AxesBadges.tsx:49:19",
-								"data-prohibitions": "[editContent]",
-								className: "text-[10px] font-bold text-muted-foreground uppercase tracking-wider line-clamp-1",
-								title: `Nível ${ep.id} - ${ep.name}`,
-								children: [
-									"Nível ",
-									ep.id,
-									" - ",
-									ep.name
-								]
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								"data-uid": "src/components/dashboard/AxesBadges.tsx:55:19",
-								"data-prohibitions": "[editContent]",
-								className: "text-lg font-black text-foreground mt-0.5",
-								children: ep.status
-							})]
+							className: "min-w-0 flex-1 flex flex-col justify-center",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+									"data-uid": "src/components/dashboard/AxesBadges.tsx:49:19",
+									"data-prohibitions": "[editContent]",
+									className: "text-[11px] md:text-xs font-bold text-muted-foreground uppercase tracking-wider truncate",
+									title: `Nível ${nivel.id} - ${nivel.name}`,
+									children: [
+										"Nível ",
+										nivel.id,
+										" - ",
+										nivel.name
+									]
+								}),
+								nivel.id === "I" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									"data-uid": "src/components/dashboard/AxesBadges.tsx:56:21",
+									"data-prohibitions": "[]",
+									className: "text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold tracking-wide truncate mt-0.5",
+									children: "(Estágio Iniciante)"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									"data-uid": "src/components/dashboard/AxesBadges.tsx:60:19",
+									"data-prohibitions": "[editContent]",
+									className: "text-base md:text-lg font-black text-foreground mt-1 truncate",
+									children: nivel.status
+								})
+							]
 						})]
 					})
-				}, ep.id))
+				}, nivel.id))
 			})]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/dashboard/AxesBadges.tsx:64:7",
+			"data-uid": "src/components/dashboard/AxesBadges.tsx:71:7",
 			"data-prohibitions": "[editContent]",
 			className: "space-y-4",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-				"data-uid": "src/components/dashboard/AxesBadges.tsx:65:9",
+				"data-uid": "src/components/dashboard/AxesBadges.tsx:72:9",
 				"data-prohibitions": "[]",
 				className: "text-xl font-bold",
-				children: "Progresso das Missões"
+				children: "Progresso dos Níveis"
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/dashboard/AxesBadges.tsx:66:9",
+				"data-uid": "src/components/dashboard/AxesBadges.tsx:73:9",
 				"data-prohibitions": "[editContent]",
 				className: "grid grid-cols-1 md:grid-cols-3 gap-6",
 				children: niveisData.map((nivel) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-					"data-uid": "src/components/dashboard/AxesBadges.tsx:68:13",
+					"data-uid": "src/components/dashboard/AxesBadges.tsx:75:13",
 					"data-prohibitions": "[editContent]",
 					className: "hover:shadow-elevation transition-all border-border/60",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
-						"data-uid": "src/components/dashboard/AxesBadges.tsx:69:15",
+						"data-uid": "src/components/dashboard/AxesBadges.tsx:76:15",
 						"data-prohibitions": "[editContent]",
 						className: "pb-3",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/components/dashboard/AxesBadges.tsx:70:17",
+							"data-uid": "src/components/dashboard/AxesBadges.tsx:77:17",
 							"data-prohibitions": "[editContent]",
 							className: "flex items-center gap-3 mb-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/components/dashboard/AxesBadges.tsx:71:19",
+								"data-uid": "src/components/dashboard/AxesBadges.tsx:78:19",
 								"data-prohibitions": "[]",
 								className: "p-2 bg-primary/10 rounded-md text-primary shrink-0",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(nivel.icon, {
-									"data-uid": "src/components/dashboard/AxesBadges.tsx:72:21",
+									"data-uid": "src/components/dashboard/AxesBadges.tsx:79:21",
 									"data-prohibitions": "[editContent]",
 									className: "w-5 h-5"
 								})
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-								"data-uid": "src/components/dashboard/AxesBadges.tsx:74:19",
+								"data-uid": "src/components/dashboard/AxesBadges.tsx:81:19",
 								"data-prohibitions": "[editContent]",
-								className: "text-sm font-bold text-muted-foreground uppercase tracking-wider",
+								className: "text-sm font-bold text-muted-foreground uppercase tracking-wider truncate",
 								children: ["Nível ", nivel.id]
 							})]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
-							"data-uid": "src/components/dashboard/AxesBadges.tsx:78:17",
+							"data-uid": "src/components/dashboard/AxesBadges.tsx:85:17",
 							"data-prohibitions": "[editContent]",
 							className: "text-base leading-tight truncate",
 							title: nivel.title,
 							children: nivel.title
 						})]
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-						"data-uid": "src/components/dashboard/AxesBadges.tsx:82:15",
+						"data-uid": "src/components/dashboard/AxesBadges.tsx:89:15",
 						"data-prohibitions": "[editContent]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/components/dashboard/AxesBadges.tsx:83:17",
+							"data-uid": "src/components/dashboard/AxesBadges.tsx:90:17",
 							"data-prohibitions": "[editContent]",
 							className: "flex justify-between text-sm mb-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								"data-uid": "src/components/dashboard/AxesBadges.tsx:84:19",
+								"data-uid": "src/components/dashboard/AxesBadges.tsx:91:19",
 								"data-prohibitions": "[]",
 								className: "text-muted-foreground",
 								children: "Progresso"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-								"data-uid": "src/components/dashboard/AxesBadges.tsx:85:19",
+								"data-uid": "src/components/dashboard/AxesBadges.tsx:92:19",
 								"data-prohibitions": "[editContent]",
 								className: "font-bold text-primary",
 								children: [nivel.progress, "%"]
 							})]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Progress, {
-							"data-uid": "src/components/dashboard/AxesBadges.tsx:87:17",
+							"data-uid": "src/components/dashboard/AxesBadges.tsx:94:17",
 							"data-prohibitions": "[editContent]",
 							value: nivel.progress,
 							className: "h-2.5 bg-muted/50"
@@ -40848,4 +40857,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-9FVcgY7X.js.map
+//# sourceMappingURL=index-Bly5TSNi.js.map

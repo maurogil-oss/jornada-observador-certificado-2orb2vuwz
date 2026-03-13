@@ -14,45 +14,52 @@ export function AxesBadges() {
       <div className="space-y-4">
         <h3 className="text-xl font-bold">Insígnias de Excelência</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {niveisProgress.map((ep) => (
+          {niveisProgress.map((nivel) => (
             <Card
-              key={ep.id}
+              key={nivel.id}
               className={cn(
                 'border-l-4 shadow-sm transition-all hover:shadow-md',
-                ep.id === 'III'
+                nivel.id === 'III'
                   ? 'border-l-amber-500 bg-amber-50/40 dark:bg-amber-950/20'
-                  : ep.id === 'II'
+                  : nivel.id === 'II'
                     ? 'border-l-blue-500 bg-blue-50/40 dark:bg-blue-950/20'
                     : 'border-l-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20',
               )}
             >
-              <CardContent className="p-5 flex items-center gap-5">
+              <CardContent className="p-5 flex items-center gap-4 md:gap-5">
                 <div
                   className={cn(
-                    'p-3.5 rounded-full shadow-sm',
-                    ep.id === 'III'
+                    'p-3.5 rounded-full shadow-sm shrink-0 flex items-center justify-center',
+                    nivel.id === 'III'
                       ? 'bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400'
-                      : ep.id === 'II'
+                      : nivel.id === 'II'
                         ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400'
                         : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400',
                   )}
                 >
-                  {ep.status === 'Concluído' ? (
+                  {nivel.status === 'Concluído' ? (
                     <Award className="w-7 h-7" />
-                  ) : ep.status === 'Em Andamento' ? (
+                  ) : nivel.status === 'Em Andamento' ? (
                     <ShieldCheck className="w-7 h-7" />
                   ) : (
                     <div className="w-7 h-7 rounded-full border-2 border-dashed border-current opacity-50" />
                   )}
                 </div>
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 flex flex-col justify-center">
                   <p
-                    className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider line-clamp-1"
-                    title={`Nível ${ep.id} - ${ep.name}`}
+                    className="text-[11px] md:text-xs font-bold text-muted-foreground uppercase tracking-wider truncate"
+                    title={`Nível ${nivel.id} - ${nivel.name}`}
                   >
-                    Nível {ep.id} - {ep.name}
+                    Nível {nivel.id} - {nivel.name}
                   </p>
-                  <p className="text-lg font-black text-foreground mt-0.5">{ep.status}</p>
+                  {nivel.id === 'I' && (
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold tracking-wide truncate mt-0.5">
+                      (Estágio Iniciante)
+                    </span>
+                  )}
+                  <p className="text-base md:text-lg font-black text-foreground mt-1 truncate">
+                    {nivel.status}
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -62,7 +69,7 @@ export function AxesBadges() {
 
       {/* Niveis Status */}
       <div className="space-y-4">
-        <h3 className="text-xl font-bold">Progresso das Missões</h3>
+        <h3 className="text-xl font-bold">Progresso dos Níveis</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {niveisData.map((nivel) => (
             <Card key={nivel.id} className="hover:shadow-elevation transition-all border-border/60">
@@ -71,7 +78,7 @@ export function AxesBadges() {
                   <div className="p-2 bg-primary/10 rounded-md text-primary shrink-0">
                     <nivel.icon className="w-5 h-5" />
                   </div>
-                  <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+                  <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider truncate">
                     Nível {nivel.id}
                   </span>
                 </div>
