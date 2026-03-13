@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils'
-import logoImg from '/logo.png'
 
 interface LogoProps {
   className?: string
@@ -12,7 +11,7 @@ export function Logo({ className }: LogoProps) {
       title="Observador Certificado - ONSV"
     >
       <img
-        src={logoImg}
+        src="/logo.png"
         alt="Coroa de Louros Oficial"
         className="w-full h-full object-contain"
         loading="eager"
