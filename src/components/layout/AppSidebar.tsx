@@ -35,7 +35,7 @@ export function AppSidebar() {
       <SidebarHeader className="p-4 border-b border-border/50 bg-amber-50/50 dark:bg-amber-950/20">
         <div className="flex items-center gap-3 px-2">
           <div className="w-8 h-8 shrink-0 flex items-center justify-center group-data-[collapsible=icon]:mx-auto">
-            <Logo className="w-full h-full drop-shadow-sm" />
+            <Logo className="w-full h-full" />
           </div>
           <div className="flex flex-col group-data-[collapsible=icon]:hidden whitespace-nowrap overflow-hidden">
             <span className="font-black text-sm tracking-tight text-foreground leading-none">

@@ -20,7 +20,7 @@ export function TopHeader() {
       <div className="flex items-center gap-4">
         <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors min-h-[44px] min-w-[44px]" />
         <div className="hidden md:flex items-center gap-3">
-          <Logo className="w-10 h-10 drop-shadow-sm" />
+          <Logo className="w-10 h-10" />
           <div className="flex flex-col">
             <h2 className="text-sm font-black text-foreground tracking-tight leading-none uppercase">
               Observador Certificado

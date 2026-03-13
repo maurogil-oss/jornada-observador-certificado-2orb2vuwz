@@ -63,7 +63,7 @@ export default function Login() {
 
       <Card className="w-full max-w-md shadow-elevation border-border/60 relative z-10 backdrop-blur-md bg-background/80 animate-fade-in-up">
         <CardHeader className="space-y-3 pb-6 text-center">
-          <div className="mx-auto mb-2 flex justify-center drop-shadow-md">
+          <div className="mx-auto mb-2 flex justify-center">
             <Logo className="w-24 h-24" />
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight">
