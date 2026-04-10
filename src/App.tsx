@@ -24,7 +24,7 @@ const ProtectedRoute = ({
   children: React.ReactNode
   allowedRoles?: string[]
 }) => {
-  const { isAuthenticated, user, isLoading } = useAuthStore()
+  const { isAuthenticated, user, isLoading, logout } = useAuthStore()
 
   if (isLoading) {
     return (
@@ -36,6 +36,21 @@ const ProtectedRoute = ({
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
+  }
+
+  if (user && user.is_active === false) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background">
+        <h1 className="text-2xl font-bold text-foreground mb-2">Conta Suspensa</h1>
+        <p className="mb-6">Sua conta foi suspensa por um administrador.</p>
+        <button
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+          onClick={logout}
+        >
+          Sair
+        </button>
+      </div>
+    )
   }
 
   if (allowedRoles && user?.role && !allowedRoles.includes(user.role)) {

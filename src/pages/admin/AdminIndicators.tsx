@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import {
   Table,
@@ -14,78 +14,10 @@ import { Download, Users, BookOpen, Activity, Award, ArrowUpDown } from 'lucide-
 import { exportToCSV } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
+import { useRealtime } from '@/hooks/use-realtime'
+import pb from '@/lib/pocketbase/client'
 
-const mockIndicatorsData = {
-  total: 800,
-  nivel1: 500,
-  nivel2: 200,
-  nivel3: 100,
-}
-
-const mockObserversList = [
-  {
-    id: 1,
-    name: 'Carlos Silva',
-    level: 'Nível III - Mobilizador',
-    lastActivity: '14/03/2026',
-  },
-  {
-    id: 2,
-    name: 'Ana Souza',
-    level: 'Nível II - Observador Certificado Pleno',
-    lastActivity: '12/03/2026',
-  },
-  {
-    id: 3,
-    name: 'Roberto Almeida',
-    level: 'Nível II - Observador Certificado Pleno',
-    lastActivity: '10/03/2026',
-  },
-  {
-    id: 4,
-    name: 'Mariana Costa',
-    level: 'Nível I - Observador Certificado (Iniciante)',
-    lastActivity: '09/03/2026',
-  },
-  {
-    id: 5,
-    name: 'Fernando Lima',
-    level: 'Nível I - Observador Certificado (Iniciante)',
-    lastActivity: '08/03/2026',
-  },
-  {
-    id: 6,
-    name: 'Camila Barros',
-    level: 'Nível III - Mobilizador',
-    lastActivity: '05/03/2026',
-  },
-  {
-    id: 7,
-    name: 'José Mendes',
-    level: 'Nível I - Observador Certificado (Iniciante)',
-    lastActivity: '01/03/2026',
-  },
-  {
-    id: 8,
-    name: 'Beatriz Santos',
-    level: 'Nível I - Observador Certificado (Iniciante)',
-    lastActivity: '28/02/2026',
-  },
-  {
-    id: 9,
-    name: 'Lucas Ferreira',
-    level: 'Nível II - Observador Certificado Pleno',
-    lastActivity: '25/02/2026',
-  },
-  {
-    id: 10,
-    name: 'Julia Martins',
-    level: 'Nível I - Observador Certificado (Iniciante)',
-    lastActivity: '20/02/2026',
-  },
-]
-
-type SortKey = 'name' | 'level' | 'lastActivity'
+type SortKey = 'name' | 'level' | 'lastActivityDate'
 
 export default function AdminIndicators() {
   const { toast } = useToast()
@@ -93,11 +25,78 @@ export default function AdminIndicators() {
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'asc' | 'desc' } | null>(
     null,
   )
+  const [users, setUsers] = useState<any[]>([])
+  const [submissions, setSubmissions] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  const loadData = async () => {
+    try {
+      const [usersData, subsData] = await Promise.all([
+        pb.collection('users').getFullList(),
+        pb.collection('submissions').getFullList(),
+      ])
+      setUsers(usersData)
+      setSubmissions(subsData)
+    } catch (error) {
+      toast({
+        title: 'Erro ao carregar dados',
+        description: 'Não foi possível carregar os indicadores reais.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  useRealtime('users', () => {
+    loadData()
+  })
+  useRealtime('submissions', () => {
+    loadData()
+  })
+
+  const observers = users.filter((u) => u.role === 'observer')
+  const total = observers.length
+  const nivel1 = observers.filter((u) => (u.level || '').includes('Nível I')).length
+  const nivel2 = observers.filter((u) => (u.level || '').includes('Nível II')).length
+  const nivel3 = observers.filter((u) => (u.level || '').includes('Nível III')).length
+
+  const observersList = observers.map((obs) => {
+    const userSubs = submissions.filter((s) => s.user_id === obs.id)
+    const lastSub = userSubs.sort(
+      (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime(),
+    )[0]
+
+    const lastActivityDate = lastSub ? new Date(lastSub.created) : new Date(obs.created)
+
+    return {
+      id: obs.id,
+      name: obs.name || obs.email,
+      level: obs.level || 'Nível I - Observador Certificado (Iniciante)',
+      lastActivityDate: lastActivityDate,
+      lastActivity: lastActivityDate.toLocaleDateString('pt-BR'),
+    }
+  })
+
+  const sortedData = [...observersList].sort((a, b) => {
+    if (!sortConfig) return 0
+    const { key, direction } = sortConfig
+    const aVal = a[key]
+    const bVal = b[key]
+
+    if (aVal < bVal) return direction === 'asc' ? -1 : 1
+    if (aVal > bVal) return direction === 'asc' ? 1 : -1
+    return 0
+  })
 
   const handleExport = () => {
     setIsExporting(true)
     try {
-      const exportData = mockObserversList.map((obs) => ({
+      const exportData = observersList.map((obs) => ({
         'Nome do Observador': obs.name,
         'Nível de Certificação': obs.level,
         'Última Atividade': obs.lastActivity,
@@ -120,14 +119,6 @@ export default function AdminIndicators() {
     }
   }
 
-  const sortedData = [...mockObserversList].sort((a, b) => {
-    if (!sortConfig) return 0
-    const { key, direction } = sortConfig
-    if (a[key] < b[key]) return direction === 'asc' ? -1 : 1
-    if (a[key] > b[key]) return direction === 'asc' ? 1 : -1
-    return 0
-  })
-
   const requestSort = (key: SortKey) => {
     let direction: 'asc' | 'desc' = 'asc'
     if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -147,7 +138,7 @@ export default function AdminIndicators() {
         </div>
         <Button
           onClick={handleExport}
-          disabled={isExporting}
+          disabled={isExporting || isLoading}
           className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm w-full md:w-auto"
         >
           <Download className="w-4 h-4 mr-2" />
@@ -163,7 +154,7 @@ export default function AdminIndicators() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-black text-foreground">{mockIndicatorsData.total}</div>
+            <div className="text-3xl font-black text-foreground">{isLoading ? '...' : total}</div>
             <p className="text-xs text-muted-foreground mt-1">Registros ativos na base</p>
           </CardContent>
         </Card>
@@ -176,7 +167,7 @@ export default function AdminIndicators() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-black text-emerald-950 dark:text-emerald-50">
-              {mockIndicatorsData.nivel1}
+              {isLoading ? '...' : nivel1}
             </div>
             <p className="text-xs text-emerald-700/70 dark:text-emerald-400/70 mt-1">
               Observador Certificado (Iniciante)
@@ -192,7 +183,7 @@ export default function AdminIndicators() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-black text-blue-950 dark:text-blue-50">
-              {mockIndicatorsData.nivel2}
+              {isLoading ? '...' : nivel2}
             </div>
             <p className="text-xs text-blue-700/70 dark:text-blue-400/70 mt-1">
               Observador Certificado Pleno
@@ -208,7 +199,7 @@ export default function AdminIndicators() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-black text-amber-950 dark:text-amber-50">
-              {mockIndicatorsData.nivel3}
+              {isLoading ? '...' : nivel3}
             </div>
             <p className="text-xs text-amber-700/70 dark:text-amber-400/70 mt-1">Mobilizador</p>
           </CardContent>
@@ -246,7 +237,7 @@ export default function AdminIndicators() {
                   </TableHead>
                   <TableHead
                     className="text-right pr-6 cursor-pointer hover:bg-muted/50 transition-colors"
-                    onClick={() => requestSort('lastActivity')}
+                    onClick={() => requestSort('lastActivityDate')}
                   >
                     <div className="flex items-center justify-end gap-2">
                       Última Atividade <ArrowUpDown className="w-3 h-3 text-muted-foreground" />
@@ -255,36 +246,50 @@ export default function AdminIndicators() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sortedData.map((obs) => {
-                  const isAmber = obs.level.includes('Nível III')
-                  const isBlue = obs.level.includes('Nível II')
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center h-24 text-muted-foreground">
+                      Carregando dados...
+                    </TableCell>
+                  </TableRow>
+                ) : sortedData.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center h-24 text-muted-foreground">
+                      Nenhum observador encontrado.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  sortedData.map((obs) => {
+                    const isAmber = obs.level.includes('Nível III')
+                    const isBlue = obs.level.includes('Nível II')
 
-                  return (
-                    <TableRow key={obs.id} className="hover:bg-muted/30 transition-colors">
-                      <TableCell className="font-medium pl-6">{obs.name}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="secondary"
-                          className={cn(
-                            'font-semibold px-2.5 py-0.5 whitespace-nowrap',
-                            isAmber &&
-                              'bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400',
-                            isBlue &&
-                              'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400',
-                            !isAmber &&
-                              !isBlue &&
-                              'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400',
-                          )}
-                        >
-                          {obs.level}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right pr-6 text-muted-foreground">
-                        {obs.lastActivity}
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
+                    return (
+                      <TableRow key={obs.id} className="hover:bg-muted/30 transition-colors">
+                        <TableCell className="font-medium pl-6">{obs.name}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="secondary"
+                            className={cn(
+                              'font-semibold px-2.5 py-0.5 whitespace-nowrap',
+                              isAmber &&
+                                'bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400',
+                              isBlue &&
+                                'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400',
+                              !isAmber &&
+                                !isBlue &&
+                                'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400',
+                            )}
+                          >
+                            {obs.level}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right pr-6 text-muted-foreground">
+                          {obs.lastActivity}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })
+                )}
               </TableBody>
             </Table>
           </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Search, Edit, Shield, User as UserIcon } from 'lucide-react'
+import { Search, Edit, Shield, User as UserIcon, Trash2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,20 +18,32 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
-import { getUsers, updateUser } from '@/services/users'
+import { getUsers, updateUser, deleteUser } from '@/services/users'
 import { useRealtime } from '@/hooks/use-realtime'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
 import pb from '@/lib/pocketbase/client'
+import { cn } from '@/lib/utils'
 
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([])
@@ -44,6 +56,9 @@ export default function AdminUsers() {
   const [editPoints, setEditPoints] = useState(0)
   const [editLevel, setEditLevel] = useState('')
   const [isSaving, setIsSaving] = useState(false)
+
+  const [userToDelete, setUserToDelete] = useState<any | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const loadUsers = async () => {
     try {
@@ -108,6 +123,45 @@ export default function AdminUsers() {
     }
   }
 
+  const handleToggleActive = async (user: any, isActive: boolean) => {
+    try {
+      await updateUser(user.id, { is_active: isActive })
+      toast({
+        title: isActive ? 'Usuário ativado' : 'Usuário suspenso',
+        description: isActive
+          ? 'O usuário agora tem acesso ao sistema.'
+          : 'O usuário foi bloqueado de acessar o sistema.',
+      })
+    } catch (error) {
+      toast({
+        title: 'Erro ao alterar status do usuário',
+        description: getErrorMessage(error),
+        variant: 'destructive',
+      })
+    }
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!userToDelete) return
+    setIsDeleting(true)
+    try {
+      await deleteUser(userToDelete.id)
+      toast({
+        title: 'Usuário eliminado',
+        description: 'A conta do observador foi permanentemente removida.',
+      })
+      setUserToDelete(null)
+    } catch (error) {
+      toast({
+        title: 'Erro ao eliminar usuário',
+        description: getErrorMessage(error),
+        variant: 'destructive',
+      })
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   const getInitials = (name?: string, email?: string) => {
     if (name) {
       return name.substring(0, 2).toUpperCase()
@@ -129,7 +183,7 @@ export default function AdminUsers() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Gestão de Usuários</h1>
           <p className="text-muted-foreground mt-1">
-            Gerencie permissões, pontos e níveis dos participantes da jornada.
+            Gerencie permissões, pontos, níveis e status dos participantes da jornada.
           </p>
         </div>
       </div>
@@ -150,28 +204,32 @@ export default function AdminUsers() {
           <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead>Usuário</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Nível Atual</TableHead>
               <TableHead className="text-right">Pontos</TableHead>
               <TableHead>Função</TableHead>
-              <TableHead className="w-[80px]"></TableHead>
+              <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={6} className="h-24 text-center">
                   Carregando usuários...
                 </TableCell>
               </TableRow>
             ) : filteredUsers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                   Nenhum usuário encontrado.
                 </TableCell>
               </TableRow>
             ) : (
               filteredUsers.map((user) => (
-                <TableRow key={user.id}>
+                <TableRow
+                  key={user.id}
+                  className={cn(user.is_active === false && 'opacity-60 bg-muted/30')}
+                >
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-9 w-9">
@@ -185,7 +243,19 @@ export default function AdminUsers() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="max-w-[200px] truncate" title={user.level || 'Não definido'}>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        checked={user.is_active !== false}
+                        onCheckedChange={(checked) => handleToggleActive(user, checked)}
+                        title={user.is_active !== false ? 'Suspender Usuário' : 'Ativar Usuário'}
+                      />
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        {user.is_active !== false ? 'Ativo' : 'Suspenso'}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="max-w-[150px] truncate" title={user.level || 'Não definido'}>
                       {user.level || (
                         <span className="text-muted-foreground italic">Não definido</span>
                       )}
@@ -205,15 +275,26 @@ export default function AdminUsers() {
                       </Badge>
                     )}
                   </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEditClick(user)}
-                      title="Editar Usuário"
-                    >
-                      <Edit className="w-4 h-4 text-muted-foreground" />
-                    </Button>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEditClick(user)}
+                        title="Editar Usuário"
+                      >
+                        <Edit className="w-4 h-4 text-muted-foreground" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30"
+                        onClick={() => setUserToDelete(user)}
+                        title="Eliminar Usuário"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -286,6 +367,32 @@ export default function AdminUsers() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!userToDelete} onOpenChange={(open) => !open && setUserToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Tem certeza que deseja eliminar este observador?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. O usuário{' '}
+              <strong>{userToDelete?.name || userToDelete?.email}</strong> e todos os seus dados
+              serão permanentemente apagados dos nossos servidores.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                handleDeleteConfirm()
+              }}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600 text-white"
+            >
+              {isDeleting ? 'Eliminando...' : 'Eliminar'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
