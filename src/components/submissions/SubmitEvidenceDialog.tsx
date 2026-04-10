@@ -11,14 +11,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
-import { UploadCloud } from 'lucide-react'
+import { UploadCloud, AlertCircle } from 'lucide-react'
 import { useState } from 'react'
 import useSubmissionsStore from '@/stores/useSubmissionsStore'
 
 interface Props {
   isOpen: boolean
   onClose: () => void
-  item: { title: string; points: number; axis: string } | null
+  item: { title: string; points: number; nivel: string } | null
 }
 
 export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
@@ -32,7 +32,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
     setTimeout(() => {
       setLoading(false)
       if (item) {
-        addSubmission({ title: item.title, axis: item.axis })
+        addSubmission({ title: item.title, nivel: item.nivel })
       }
       toast({
         title: 'Comprovação enviada com sucesso!',
@@ -52,11 +52,20 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
             <DialogTitle className="text-xl">Submeter Comprovação</DialogTitle>
             <DialogDescription className="mt-2">
               Envie documentos que comprovem sua atuação em <strong>{item.title}</strong> (
-              {item.axis}). Ao ser validado, você receberá até{' '}
+              {item.nivel}). Ao ser validado, você receberá até{' '}
               <strong className="text-accent">{item.points} pts</strong>.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-6 py-6">
+
+          <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-md p-3 mt-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-500 shrink-0 mt-0.5" />
+            <p className="text-sm text-amber-800 dark:text-amber-400">
+              <strong>Informação:</strong> A pontuação não é cumulativa. O envio da maior titulação
+              substitui automaticamente as pontuações anteriores.
+            </p>
+          </div>
+
+          <div className="grid gap-6 py-6 pt-4">
             <div className="space-y-2">
               <Label htmlFor="link">Link Externo (Opcional)</Label>
               <Input id="link" placeholder="Ex: https://meu-artigo-publicado.com" />

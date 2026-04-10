@@ -192,7 +192,8 @@ export const competencyMatrixData = [
   {
     pilar: 'Atuação',
     nivel1: 'Participação em ações e engajamento básico.',
-    nivel2: 'Execução de projetos estruturados e impacto local mensurável.',
+    nivel2:
+      'Foco em autonomia na implementação e diferenciação técnica/teórica em relação ao Nível I.',
     nivel3: 'Liderança de projetos em larga escala (Nacional/Internacional).',
   },
   {

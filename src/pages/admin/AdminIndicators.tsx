@@ -26,7 +26,7 @@ const mockObserversList = [
   {
     id: 1,
     name: 'Carlos Silva',
-    level: 'Nível III - Observador Certificado Mobilizador',
+    level: 'Nível III - Mobilizador',
     lastActivity: '14/03/2026',
   },
   {
@@ -44,31 +44,31 @@ const mockObserversList = [
   {
     id: 4,
     name: 'Mariana Costa',
-    level: 'Nível I - Observador Certificado',
+    level: 'Nível I - Observador Certificado (Iniciante)',
     lastActivity: '09/03/2026',
   },
   {
     id: 5,
     name: 'Fernando Lima',
-    level: 'Nível I - Observador Certificado',
+    level: 'Nível I - Observador Certificado (Iniciante)',
     lastActivity: '08/03/2026',
   },
   {
     id: 6,
     name: 'Camila Barros',
-    level: 'Nível III - Observador Certificado Mobilizador',
+    level: 'Nível III - Mobilizador',
     lastActivity: '05/03/2026',
   },
   {
     id: 7,
     name: 'José Mendes',
-    level: 'Nível I - Observador Certificado',
+    level: 'Nível I - Observador Certificado (Iniciante)',
     lastActivity: '01/03/2026',
   },
   {
     id: 8,
     name: 'Beatriz Santos',
-    level: 'Nível I - Observador Certificado',
+    level: 'Nível I - Observador Certificado (Iniciante)',
     lastActivity: '28/02/2026',
   },
   {
@@ -80,7 +80,7 @@ const mockObserversList = [
   {
     id: 10,
     name: 'Julia Martins',
-    level: 'Nível I - Observador Certificado',
+    level: 'Nível I - Observador Certificado (Iniciante)',
     lastActivity: '20/02/2026',
   },
 ]
@@ -179,7 +179,7 @@ export default function AdminIndicators() {
               {mockIndicatorsData.nivel1}
             </div>
             <p className="text-xs text-emerald-700/70 dark:text-emerald-400/70 mt-1">
-              Observador Certificado
+              Observador Certificado (Iniciante)
             </p>
           </CardContent>
         </Card>
@@ -210,9 +210,7 @@ export default function AdminIndicators() {
             <div className="text-3xl font-black text-amber-950 dark:text-amber-50">
               {mockIndicatorsData.nivel3}
             </div>
-            <p className="text-xs text-amber-700/70 dark:text-amber-400/70 mt-1">
-              Observador Certificado Mobilizador
-            </p>
+            <p className="text-xs text-amber-700/70 dark:text-amber-400/70 mt-1">Mobilizador</p>
           </CardContent>
         </Card>
       </div>

@@ -52,11 +52,6 @@ export function AxesBadges() {
                   >
                     Nível {nivel.id} - {nivel.name}
                   </p>
-                  {nivel.id === 'I' && (
-                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold tracking-wide truncate mt-0.5">
-                      (Estágio Iniciante)
-                    </span>
-                  )}
                   <p className="text-base md:text-lg font-black text-foreground mt-1 truncate">
                     {nivel.status}
                   </p>

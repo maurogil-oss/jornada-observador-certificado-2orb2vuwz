@@ -5,7 +5,7 @@ import { BookOpen, Upload } from 'lucide-react'
 import { eixo1Sections } from '@/lib/playbookData'
 
 interface Props {
-  onSelect: (item: { title: string; points: number; axis: string }) => void
+  onSelect: (item: { title: string; points: number; nivel: string }) => void
 }
 
 export function PlaybookEixo1({ onSelect }: Props) {
@@ -17,7 +17,7 @@ export function PlaybookEixo1({ onSelect }: Props) {
         </div>
         <div>
           <h2 className="text-2xl font-bold tracking-tight">
-            Playbook Nível I: Observador Certificado
+            Playbook Nível I: Observador Certificado (Iniciante)
           </h2>
           <p className="opacity-90 mt-2 text-lg">
             Construa sua base e autoridade técnica. Atividades estruturais (Titulação) não são
@@ -60,7 +60,7 @@ export function PlaybookEixo1({ onSelect }: Props) {
                         onSelect({
                           title: item.text,
                           points: item.points,
-                          axis: 'Nível I: Observador Certificado',
+                          nivel: 'Nível I: Observador Certificado (Iniciante)',
                         })
                       }
                     >

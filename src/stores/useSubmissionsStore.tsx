@@ -6,7 +6,8 @@ export interface Submission {
   date: string
   title: string
   user: string
-  axis: string
+  nivel: string
+  axis?: string
   status: string
   points: number | string
 }
@@ -18,6 +19,7 @@ const mockAdminSubmissions: Submission[] = [
     title: 'Titulação (Doutorado)',
     date: '12/03/2026',
     status: 'Em Análise',
+    nivel: 'Nível I',
     axis: 'Nível I',
     points: '-',
   },
@@ -27,6 +29,7 @@ const mockAdminSubmissions: Submission[] = [
     title: 'Artigo Científico',
     date: '11/03/2026',
     status: 'Em Análise',
+    nivel: 'Nível I',
     axis: 'Nível I',
     points: '-',
   },
@@ -36,6 +39,7 @@ const mockAdminSubmissions: Submission[] = [
     title: 'Mentoria: Atuação formal',
     date: '09/03/2026',
     status: 'Em Análise',
+    nivel: 'Nível III',
     axis: 'Nível III',
     points: '-',
   },
@@ -43,7 +47,7 @@ const mockAdminSubmissions: Submission[] = [
 
 interface SubmissionsState {
   submissions: Submission[]
-  addSubmission: (sub: { title: string; axis: string }) => void
+  addSubmission: (sub: { title: string; nivel: string }) => void
   updateSubmissionStatus: (id: string, status: string, points?: number) => void
 }
 
@@ -55,7 +59,7 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     ...mockAdminSubmissions,
   ])
 
-  const addSubmission = (sub: { title: string; axis: string }) => {
+  const addSubmission = (sub: { title: string; nivel: string }) => {
     const newSub: Submission = {
       ...sub,
       id: `SUB-${String(submissions.length + 1).padStart(3, '0')}`,

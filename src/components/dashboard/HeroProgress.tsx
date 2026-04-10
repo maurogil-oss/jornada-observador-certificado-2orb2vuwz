@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 
 export function HeroProgress() {
   const { levelName, points } = useGameStore()
-  const nextLevelPoints = 2000
+  const nextLevelPoints = 250
   const progressToNext = Math.min(100, Math.round((points / nextLevelPoints) * 100))
 
   return (
@@ -27,8 +27,12 @@ export function HeroProgress() {
             Maturidade: <span className="text-accent block mt-1">{levelName}</span>
           </h2>
           <p className="text-secondary-foreground/80 text-lg max-w-xl">
-            Você possui <strong>{points} pontos</strong> de impacto institucional. Faltam{' '}
-            {nextLevelPoints - points} pontos para desbloquear a próxima insígnia estratégica.
+            Você possui{' '}
+            <strong>
+              {points} / {nextLevelPoints} pts
+            </strong>{' '}
+            de impacto institucional no nível atual. Faltam {Math.max(0, nextLevelPoints - points)}{' '}
+            pontos para alcançar o teto de titulação.
           </p>
           <Button
             asChild

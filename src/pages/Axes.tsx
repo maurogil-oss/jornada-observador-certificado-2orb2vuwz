@@ -13,7 +13,7 @@ export default function Axes() {
   const [selectedItem, setSelectedItem] = useState<{
     title: string
     points: number
-    axis: string
+    nivel: string
   } | null>(null)
 
   return (
@@ -142,7 +142,7 @@ export default function Axes() {
                           setSelectedItem({
                             title: item.title,
                             points: item.points,
-                            axis: `Nível ${nivel.id}`,
+                            nivel: `Nível ${nivel.id}`,
                           })
                         }
                       >

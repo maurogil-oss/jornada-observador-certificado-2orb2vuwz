@@ -5,7 +5,7 @@ import { Activity, Upload } from 'lucide-react'
 import { eixo2Playbook } from '@/lib/playbookData'
 
 interface Props {
-  onSelect: (item: { title: string; points: number; axis: string }) => void
+  onSelect: (item: { title: string; points: number; nivel: string }) => void
 }
 
 export function PlaybookEixo2({ onSelect }: Props) {
@@ -69,7 +69,7 @@ export function PlaybookEixo2({ onSelect }: Props) {
                             onSelect({
                               title: item.text,
                               points: item.points,
-                              axis: `Nível II: Observador Certificado Pleno`,
+                              nivel: `Nível II: Observador Certificado Pleno`,
                             })
                           }
                         >

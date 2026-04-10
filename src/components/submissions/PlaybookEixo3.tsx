@@ -5,7 +5,7 @@ import { Flag, Upload } from 'lucide-react'
 import { eixo3Playbook } from '@/lib/playbookData'
 
 interface Props {
-  onSelect: (item: { title: string; points: number; axis: string }) => void
+  onSelect: (item: { title: string; points: number; nivel: string }) => void
 }
 
 export function PlaybookEixo3({ onSelect }: Props) {
@@ -17,7 +17,7 @@ export function PlaybookEixo3({ onSelect }: Props) {
         </div>
         <div>
           <h2 className="text-xl md:text-2xl font-bold tracking-tight">
-            Playbook Nível III: Observador Certificado Mobilizador
+            Playbook Nível III: Mobilizador
           </h2>
           <p className="opacity-90 mt-2 text-base md:text-lg">
             Ocupação de espaços estratégicos e formação de novas lideranças na segurança viária.
@@ -68,7 +68,7 @@ export function PlaybookEixo3({ onSelect }: Props) {
                             onSelect({
                               title: item.text,
                               points: item.points,
-                              axis: `Nível III: Observador Certificado Mobilizador`,
+                              nivel: `Nível III: Mobilizador`,
                             })
                           }
                         >
