@@ -19,13 +19,23 @@ import {
   LayoutDashboard,
   BarChart,
   Users,
+  Camera,
+  Loader2,
 } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { updateUser } from '@/services/users'
+import { toast } from 'sonner'
+import { useRef, useState } from 'react'
+import pb from '@/lib/pocketbase/client'
 
 export function AppSidebar() {
   const location = useLocation()
   const { user, logout } = useAuthStore()
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isUploading, setIsUploading] = useState(false)
 
   const observerNav = [
     { title: 'Dashboard', url: '/', icon: Home },
@@ -41,6 +51,44 @@ export function AppSidebar() {
   ]
 
   const navItems = user?.role === 'admin' ? adminNav : observerNav
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !user) return
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Por favor, selecione uma imagem válida.')
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('A imagem deve ter no máximo 5MB.')
+      return
+    }
+
+    setIsUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('avatar', file)
+      await updateUser(user.id, formData)
+
+      await pb.collection('users').authRefresh()
+
+      toast.success('Foto de perfil atualizada com sucesso!')
+    } catch (error) {
+      toast.error('Erro ao atualizar foto de perfil.')
+      console.error(error)
+    } finally {
+      setIsUploading(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  const getInitials = (name: string) => {
+    return name.substring(0, 2).toUpperCase()
+  }
 
   return (
     <Sidebar variant="sidebar" collapsible="icon" className="border-r border-border/50 shadow-sm">
@@ -79,7 +127,42 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-4 border-t border-border/50 bg-muted/10">
+      <SidebarFooter className="p-4 border-t border-border/50 bg-muted/10 flex flex-col gap-4">
+        {user && (
+          <div className="flex items-center gap-3 px-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+            <div className="relative group/avatar flex-shrink-0">
+              <Avatar className="h-10 w-10 border border-border/50">
+                <AvatarImage src={user.avatar} alt={user.name} className="object-cover" />
+                <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                  {getInitials(user.name)}
+                </AvatarFallback>
+              </Avatar>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="absolute inset-0 bg-black/50 text-white rounded-full opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity disabled:cursor-not-allowed"
+                title="Alterar foto"
+              >
+                {isUploading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Camera className="w-4 h-4" />
+                )}
+              </button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleFileChange}
+              />
+            </div>
+            <div className="flex flex-col overflow-hidden group-data-[collapsible=icon]:hidden">
+              <span className="text-sm font-medium truncate">{user.name}</span>
+              <span className="text-xs text-muted-foreground truncate">{user.email}</span>
+            </div>
+          </div>
+        )}
         <Button
           variant="ghost"
           className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-destructive/10 hover:text-destructive group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center transition-colors h-11"

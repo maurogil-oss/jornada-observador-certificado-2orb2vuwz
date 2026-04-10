@@ -10,6 +10,7 @@ interface User {
   role: Role
   points: number
   level: string
+  avatar: string
 }
 
 interface AuthState {
@@ -38,6 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           role: record.role || 'observer',
           points: record.points || 0,
           level: record.level || 'Nível I - Observador Certificado (Iniciante)',
+          avatar: record.avatar ? pb.files.getUrl(record, record.avatar) : '',
         })
       } else {
         setUser(null)
