@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import {
   Users,
@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import useSubmissionsStore, { Submission } from '@/stores/useSubmissionsStore'
+import useSubmissionsStore from '@/stores/useSubmissionsStore'
 import { ImportSpreadsheetDialog } from '@/components/admin/ImportSpreadsheetDialog'
 import {
   Dialog,
@@ -38,14 +38,67 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useToast } from '@/hooks/use-toast'
 import { exportToCSV } from '@/lib/utils'
+import pb from '@/lib/pocketbase/client'
+import { useRealtime } from '@/hooks/use-realtime'
 
 export default function AdminDashboard() {
-  const { submissions, updateSubmissionStatus } = useSubmissionsStore()
+  const { updateSubmissionStatus } = useSubmissionsStore()
   const { toast } = useToast()
-  const pendingSubmissions = submissions.filter((s) => s.status === 'Em Análise')
 
+  const [stats, setStats] = useState({
+    observers: 0,
+    totalSubmissions: 0,
+    pendingSubmissions: 0,
+    approvedSubmissions: 0,
+  })
+
+  const [pendingSubmissions, setPendingSubmissions] = useState<any[]>([])
   const [isImportOpen, setIsImportOpen] = useState(false)
-  const [selectedSub, setSelectedSub] = useState<Submission | null>(null)
+  const [selectedSub, setSelectedSub] = useState<any | null>(null)
+
+  const loadData = useCallback(async () => {
+    try {
+      const [usersRes, subsTotalRes, subsPendingRes, subsApprovedRes, pendingListRes] =
+        await Promise.all([
+          pb.collection('users').getList(1, 1, { filter: "role = 'observer'" }),
+          pb.collection('submissions').getList(1, 1),
+          pb.collection('submissions').getList(1, 1, { filter: "status = 'Em Análise'" }),
+          pb.collection('submissions').getList(1, 1, { filter: "status = 'Aprovado'" }),
+          pb.collection('submissions').getFullList({
+            filter: "status = 'Em Análise'",
+            expand: 'user_id',
+            sort: '-created',
+          }),
+        ])
+
+      setStats({
+        observers: usersRes.totalItems,
+        totalSubmissions: subsTotalRes.totalItems,
+        pendingSubmissions: subsPendingRes.totalItems,
+        approvedSubmissions: subsApprovedRes.totalItems,
+      })
+
+      setPendingSubmissions(
+        pendingListRes.map((r) => ({
+          id: r.id,
+          title: r.title,
+          status: r.status,
+          user: r.expand?.user_id?.name || 'Usuário Desconhecido',
+          axis: r.nivel || 'N/A',
+        })),
+      )
+    } catch (err) {
+      console.error('Failed to load dashboard data', err)
+    }
+  }, [])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
+
+  // Real-time updates for statistics and lists
+  useRealtime('users', loadData)
+  useRealtime('submissions', loadData)
 
   const handleExport = (format: 'excel' | 'pdf') => {
     if (format === 'excel') {
@@ -80,14 +133,24 @@ export default function AdminDashboard() {
     }
   }
 
-  const handleReview = (status: string) => {
+  const handleReview = async (status: string) => {
     if (selectedSub) {
-      updateSubmissionStatus(selectedSub.id, status)
-      toast({
-        title: `Evidência ${status}`,
-        description: `O observador foi notificado por e-mail.`,
-      })
-      setSelectedSub(null)
+      try {
+        await pb.collection('submissions').update(selectedSub.id, { status })
+        updateSubmissionStatus(selectedSub.id, status)
+
+        toast({
+          title: `Evidência ${status}`,
+          description: `O observador foi notificado por e-mail.`,
+        })
+        setSelectedSub(null)
+      } catch (err) {
+        toast({
+          title: 'Erro',
+          description: 'Não foi possível atualizar o status.',
+          variant: 'destructive',
+        })
+      }
     }
   }
 
@@ -147,7 +210,9 @@ export default function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-black text-emerald-950 dark:text-emerald-50">800</div>
+            <div className="text-3xl font-black text-emerald-950 dark:text-emerald-50">
+              {stats.observers}
+            </div>
           </CardContent>
         </Card>
         <Card className="border-blue-200 shadow-sm bg-blue-50/50 dark:bg-blue-950/20 dark:border-blue-900/50">
@@ -157,7 +222,9 @@ export default function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-black text-blue-950 dark:text-blue-50">8,432</div>
+            <div className="text-3xl font-black text-blue-950 dark:text-blue-50">
+              {stats.totalSubmissions}
+            </div>
           </CardContent>
         </Card>
         <Card className="border-amber-200 shadow-sm bg-amber-50/50 dark:bg-amber-950/20 dark:border-amber-900/50">
@@ -168,7 +235,7 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-black text-amber-950 dark:text-amber-50">
-              {pendingSubmissions.length}
+              {stats.pendingSubmissions}
             </div>
           </CardContent>
         </Card>
@@ -179,7 +246,7 @@ export default function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-black text-foreground">312</div>
+            <div className="text-3xl font-black text-foreground">{stats.approvedSubmissions}</div>
           </CardContent>
         </Card>
       </div>
