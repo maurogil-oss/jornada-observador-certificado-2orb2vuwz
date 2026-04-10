@@ -42,9 +42,11 @@ const ProtectedRoute = ({
 
   if (user && user.is_active === false) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background">
+      <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background text-center px-4">
         <h1 className="text-2xl font-bold text-foreground mb-2">Conta Suspensa</h1>
-        <p className="mb-6">Sua conta foi suspensa por um administrador.</p>
+        <p className="mb-6 max-w-md">
+          Sua conta está suspensa pelo administrador. Por favor, entre em contato com o suporte.
+        </p>
         <button
           className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
           onClick={logout}

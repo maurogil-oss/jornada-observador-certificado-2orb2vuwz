@@ -59,15 +59,25 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { login, register, isAuthenticated, user } = useAuthStore()
+  const { login, register, isAuthenticated, user, logout } = useAuthStore()
   const navigate = useNavigate()
   const { toast } = useToast()
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      navigate(user.role === 'admin' ? '/admin' : '/')
+      if (user.is_active === false) {
+        logout()
+        toast({
+          title: 'Acesso Negado',
+          description:
+            'Sua conta está suspensa pelo administrador. Por favor, entre em contato com o suporte.',
+          variant: 'destructive',
+        })
+      } else {
+        navigate(user.role === 'admin' ? '/admin' : '/')
+      }
     }
-  }, [isAuthenticated, user, navigate])
+  }, [isAuthenticated, user, navigate, logout, toast])
 
   const loginForm = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -93,8 +103,18 @@ export default function Login() {
     setIsLoading(true)
     try {
       await login(data.email, data.password)
-      const isAdmin =
-        pb.authStore.record?.role === 'admin' || data.email.toLowerCase() === 'maurog1@hotmail.com'
+      const record = pb.authStore.record
+      if (record && record.is_active === false) {
+        logout()
+        toast({
+          title: 'Acesso Negado',
+          description:
+            'Sua conta está suspensa pelo administrador. Por favor, entre em contato com o suporte.',
+          variant: 'destructive',
+        })
+        return
+      }
+      const isAdmin = record?.role === 'admin' || data.email.toLowerCase() === 'maurog1@hotmail.com'
       navigate(isAdmin ? '/admin' : '/')
     } catch (err: any) {
       toast({
@@ -115,7 +135,14 @@ export default function Login() {
     } catch (err: any) {
       const fieldErrors = extractFieldErrors(err)
 
-      if (Object.keys(fieldErrors).length > 0) {
+      if (fieldErrors.email) {
+        toast({
+          title: 'Erro ao registrar',
+          description: 'Este e-mail já está em uso. Por favor, faça login ou recupere sua senha.',
+          variant: 'destructive',
+        })
+        registerForm.setError('email', { type: 'manual', message: 'E-mail já está em uso.' })
+      } else if (Object.keys(fieldErrors).length > 0) {
         Object.entries(fieldErrors).forEach(([field, message]) => {
           registerForm.setError(field as any, { type: 'manual', message })
         })
