@@ -86,6 +86,7 @@ export default function Login() {
 
   const registerForm = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
+    mode: 'onChange',
     defaultValues: {
       name: '',
       email: '',
@@ -129,13 +130,28 @@ export default function Login() {
 
   const onRegister = async (data: RegisterForm) => {
     setIsLoading(true)
+    toast({
+      title: 'Conectando...',
+      description: 'Estabelecendo conexão com os serviços em nuvem.',
+    })
     try {
       await register(data)
+      toast({
+        title: 'Sucesso',
+        description: 'Conta criada com sucesso. Você já está logado.',
+      })
       navigate('/')
     } catch (err: any) {
       const fieldErrors = extractFieldErrors(err)
 
-      if (fieldErrors.email) {
+      if (err.status === 0) {
+        toast({
+          title: 'Erro de Conexão',
+          description:
+            'Não foi possível conectar ao servidor. Verifique sua internet e tente novamente.',
+          variant: 'destructive',
+        })
+      } else if (fieldErrors.email) {
         toast({
           title: 'Erro ao registrar',
           description: 'Este e-mail já está em uso. Por favor, faça login ou recupere sua senha.',
@@ -445,7 +461,11 @@ export default function Login() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full h-11 font-bold mt-4" disabled={isLoading}>
+                  <Button
+                    type="submit"
+                    className="w-full h-11 font-bold mt-4"
+                    disabled={isLoading || !registerForm.formState.isValid}
+                  >
                     {isLoading ? 'Cadastrando...' : 'Criar Conta'}
                   </Button>
                 </form>
