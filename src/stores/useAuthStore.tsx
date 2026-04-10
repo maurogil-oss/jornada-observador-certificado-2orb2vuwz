@@ -19,10 +19,22 @@ interface User {
   workplace?: string
 }
 
+interface RegisterData {
+  name: string
+  email: string
+  password: string
+  passwordConfirm: string
+  birth_date?: string
+  city?: string
+  state?: string
+  country?: string
+  workplace?: string
+}
+
 interface AuthState {
   user: User | null
   login: (email: string, pass: string) => Promise<void>
-  register: (name: string, email: string, pass: string) => Promise<void>
+  register: (data: RegisterData) => Promise<void>
   logout: () => void
   isAuthenticated: boolean
   isLoading: boolean
@@ -74,17 +86,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await pb.collection('users').authWithPassword(email, pass)
   }
 
-  const register = async (name: string, email: string, pass: string) => {
+  const register = async (data: RegisterData) => {
     await pb.collection('users').create({
-      email,
-      password: pass,
-      passwordConfirm: pass,
-      name,
+      ...data,
       role: 'observer',
       points: 0,
       level: 'Nível I - Observador Certificado (Iniciante)',
     })
-    await login(email, pass)
+    await login(data.email, data.password)
   }
 
   const logout = () => {
