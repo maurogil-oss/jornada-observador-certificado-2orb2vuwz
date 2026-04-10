@@ -12,6 +12,11 @@ interface User {
   level: string
   avatar: string
   is_active: boolean
+  birth_date?: string
+  city?: string
+  state?: string
+  country?: string
+  workplace?: string
 }
 
 interface AuthState {
@@ -42,6 +47,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           level: record.level || 'Nível I - Observador Certificado (Iniciante)',
           avatar: record.avatar ? pb.files.getUrl(record, record.avatar) : '',
           is_active: record.is_active !== false,
+          birth_date: record.birth_date || '',
+          city: record.city || '',
+          state: record.state || '',
+          country: record.country || '',
+          workplace: record.workplace || '',
         })
       } else {
         setUser(null)

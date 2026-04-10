@@ -40,6 +40,7 @@ export function AppSidebar() {
 
   const observerNav = [
     { title: 'Dashboard', url: '/', icon: Home },
+    { title: 'Meu Perfil', url: '/perfil', icon: Users },
     { title: 'Níveis de Evolução', url: '/niveis', icon: Compass },
     { title: 'Cofre de Evidências', url: '/submissoes', icon: FileCheck },
     { title: 'Ranking / Mérito', url: '/ranking', icon: Trophy },
@@ -49,6 +50,7 @@ export function AppSidebar() {
     { title: 'Painel de Gestão', url: '/admin', icon: LayoutDashboard },
     { title: 'Gestão de Usuários', url: '/admin/users', icon: Users },
     { title: 'Indicadores', url: '/admin/indicadores', icon: BarChart },
+    { title: 'Demografia', url: '/admin/estatisticas', icon: BarChart },
   ]
 
   const isAdminArea = location.pathname.startsWith('/admin')

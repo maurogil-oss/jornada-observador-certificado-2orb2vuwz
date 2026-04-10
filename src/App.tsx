@@ -14,6 +14,8 @@ import Login from './pages/Login'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminIndicators from './pages/admin/AdminIndicators'
 import AdminUsers from './pages/admin/AdminUsers'
+import AdminStatistics from './pages/admin/AdminStatistics'
+import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
 
@@ -105,6 +107,14 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="/perfil"
+          element={
+            <ProtectedRoute allowedRoles={['observer', 'admin']}>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin"
           element={
             <ProtectedRoute allowedRoles={['admin']}>
@@ -125,6 +135,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminIndicators />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/estatisticas"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminStatistics />
             </ProtectedRoute>
           }
         />

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-10T11:05:19.505Z",
+  "generatedAt": "2026-04-10T11:48:44.316Z",
   "collections": [
     {
       "name": "users",
@@ -62,11 +62,44 @@
           "type": "bool",
           "required": false,
           "system": false
+        },
+        {
+          "name": "birth_date",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "city",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "state",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "country",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "workplace",
+          "type": "text",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [
         "CREATE UNIQUE INDEX `idx_tokenKey__pb_users_auth_` ON `users` (`tokenKey`)",
-        "CREATE UNIQUE INDEX `idx_email__pb_users_auth_` ON `users` (`email`) WHERE `email` != ''"
+        "CREATE UNIQUE INDEX `idx_email__pb_users_auth_` ON `users` (`email`) WHERE `email` != ''",
+        "CREATE INDEX `idx_users_city` ON `users` (city)",
+        "CREATE INDEX `idx_users_state` ON `users` (state)",
+        "CREATE INDEX `idx_users_country` ON `users` (country)"
       ]
     },
     {
