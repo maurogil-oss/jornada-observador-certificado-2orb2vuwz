@@ -58,8 +58,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     {
       id: 'III',
       name: 'Mobilizador',
-      points: Math.max(0, points - 500),
-      status: points >= 500 ? 'Em Andamento' : 'Pendente',
+      points: Math.max(0, Math.min(500, points - 500)),
+      status: points >= 1000 ? 'Concluído' : points >= 500 ? 'Em Andamento' : 'Pendente',
     },
   ]
 

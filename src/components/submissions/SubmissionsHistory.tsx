@@ -64,31 +64,43 @@ export function SubmissionsHistory() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mySubmissions.map((sub) => (
-              <TableRow key={sub.id} className="hover:bg-muted/30 transition-colors">
-                <TableCell className="font-medium text-muted-foreground pl-6">{sub.date}</TableCell>
-                <TableCell className="font-mono text-xs uppercase">
-                  {sub.id.substring(0, 8)}
-                </TableCell>
-                <TableCell className="font-semibold">{sub.title}</TableCell>
-                <TableCell>
-                  <span
-                    className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground line-clamp-1"
-                    title={sub.axis}
-                  >
-                    {sub.axis}
-                  </span>
-                </TableCell>
-                <TableCell>{getStatusBadge(sub.status)}</TableCell>
-                <TableCell className="text-right pr-6 font-bold text-lg text-accent">
-                  {sub.points !== '-' ? (
-                    `+${sub.points}`
-                  ) : (
-                    <span className="text-muted-foreground/50">-</span>
-                  )}
+            {mySubmissions.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="h-24 text-center">
+                  <div className="flex flex-col items-center justify-center text-muted-foreground">
+                    <p>Nenhuma submissão encontrada.</p>
+                  </div>
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              mySubmissions.map((sub) => (
+                <TableRow key={sub.id} className="hover:bg-muted/30 transition-colors">
+                  <TableCell className="font-medium text-muted-foreground pl-6">
+                    {sub.date}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs uppercase">
+                    {sub.id.substring(0, 8)}
+                  </TableCell>
+                  <TableCell className="font-semibold">{sub.title}</TableCell>
+                  <TableCell>
+                    <span
+                      className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground line-clamp-1"
+                      title={sub.axis}
+                    >
+                      {sub.axis}
+                    </span>
+                  </TableCell>
+                  <TableCell>{getStatusBadge(sub.status)}</TableCell>
+                  <TableCell className="text-right pr-6 font-bold text-lg text-accent">
+                    {sub.points !== '-' ? (
+                      `+${sub.points}`
+                    ) : (
+                      <span className="text-muted-foreground/50">-</span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </CardContent>

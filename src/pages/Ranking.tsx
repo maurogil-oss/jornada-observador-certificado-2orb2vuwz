@@ -1,4 +1,6 @@
-import { rankingData } from '@/lib/data'
+import { useEffect, useState } from 'react'
+import pb from '@/lib/pocketbase/client'
+import { useRealtime } from '@/hooks/use-realtime'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -12,8 +14,33 @@ import {
 import { cn } from '@/lib/utils'
 
 export default function Ranking() {
-  const top3 = rankingData.slice(0, 3)
-  const rest = rankingData.slice(3)
+  const [users, setUsers] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const loadUsers = async () => {
+    try {
+      const records = await pb.collection('users').getFullList({
+        filter: 'is_active = true && role != "admin"',
+        sort: '-points',
+      })
+      setUsers(records)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadUsers()
+  }, [])
+
+  useRealtime('users', () => {
+    loadUsers()
+  })
+
+  const top3 = users.slice(0, 3)
+  const rest = users.slice(3)
 
   return (
     <div className="max-w-5xl mx-auto space-y-12 animate-fade-in-up pb-10">
@@ -24,148 +51,170 @@ export default function Ranking() {
         </p>
       </div>
 
-      {/* Podium */}
-      <div className="flex justify-center items-end gap-2 md:gap-6 pt-10 pb-6 px-2 sm:px-4">
-        {[top3[1], top3[0], top3[2]].map((user, idx) => {
-          const isFirst = idx === 1
-          const position = isFirst ? 1 : idx === 0 ? 2 : 3
-          const heightClass = position === 1 ? 'h-56' : position === 2 ? 'h-44' : 'h-36'
-          const colorClass =
-            position === 1
-              ? 'bg-amber-500 text-amber-950 shadow-amber-500/20'
-              : position === 2
-                ? 'bg-zinc-300 text-zinc-800 shadow-zinc-400/20'
-                : 'bg-orange-300/90 text-orange-900 shadow-orange-500/20'
+      {loading ? (
+        <div className="text-center py-20 text-muted-foreground animate-pulse">
+          Carregando Quadro de Honra...
+        </div>
+      ) : users.length === 0 ? (
+        <div className="text-center py-20 text-muted-foreground bg-muted/20 rounded-xl border border-border/50">
+          Nenhum dado disponível no momento
+        </div>
+      ) : (
+        <>
+          {/* Podium */}
+          <div className="flex justify-center items-end gap-2 md:gap-6 pt-10 pb-6 px-2 sm:px-4">
+            {[top3[1], top3[0], top3[2]].filter(Boolean).map((user, idx) => {
+              const isFirst = idx === 1
+              const position = isFirst ? 1 : idx === 0 ? 2 : 3
+              const heightClass = position === 1 ? 'h-56' : position === 2 ? 'h-44' : 'h-36'
+              const colorClass =
+                position === 1
+                  ? 'bg-amber-500 text-amber-950 shadow-amber-500/20'
+                  : position === 2
+                    ? 'bg-zinc-300 text-zinc-800 shadow-zinc-400/20'
+                    : 'bg-orange-300/90 text-orange-900 shadow-orange-500/20'
 
-          return (
-            <div
-              key={user.rank}
-              className="flex flex-col items-center relative animate-slide-up flex-1 max-w-[160px]"
-              style={{ animationDelay: `${(3 - position) * 150}ms` }}
-            >
-              <Avatar
-                className={cn(
-                  'border-4 shadow-xl mb-3 sm:mb-5 z-10 bg-background',
-                  position === 1
-                    ? 'w-20 h-20 sm:w-28 sm:h-28 border-amber-500'
-                    : 'w-16 h-16 sm:w-24 sm:h-24 border-background',
-                )}
-              >
-                <AvatarImage src={user.avatar} />
-                <AvatarFallback className="font-bold text-lg sm:text-2xl text-muted-foreground">
-                  {user.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="text-center mb-3 sm:mb-5 px-1 sm:px-2 flex flex-col items-center">
-                <p
-                  className="text-[9px] sm:text-[10px] uppercase font-bold text-secondary line-clamp-1 w-full"
-                  title={user.level}
+              return (
+                <div
+                  key={user.id}
+                  className="flex flex-col items-center relative animate-slide-up flex-1 max-w-[160px]"
+                  style={{ animationDelay: `${(3 - position) * 150}ms` }}
                 >
-                  {user.level.split(' - ')[0]}
-                </p>
-                <p className="font-bold text-xs sm:text-base leading-tight truncate w-full max-w-[100px] sm:max-w-[140px] mt-0.5">
-                  {user.name}
-                </p>
-                <p className="text-[10px] sm:text-sm font-semibold text-muted-foreground">
-                  {user.points} pts
-                </p>
-              </div>
-              <div
-                className={cn(
-                  'w-full rounded-t-xl flex flex-col items-center justify-start pt-4 sm:pt-6 shadow-lg relative overflow-hidden',
-                  heightClass,
-                  colorClass,
-                )}
+                  <Avatar
+                    className={cn(
+                      'border-4 shadow-xl mb-3 sm:mb-5 z-10 bg-background',
+                      position === 1
+                        ? 'w-20 h-20 sm:w-28 sm:h-28 border-amber-500'
+                        : 'w-16 h-16 sm:w-24 sm:h-24 border-background',
+                    )}
+                  >
+                    <AvatarImage
+                      src={user.avatar ? pb.files.getUrl(user, user.avatar) : undefined}
+                    />
+                    <AvatarFallback className="font-bold text-lg sm:text-2xl text-muted-foreground">
+                      {user.name?.charAt(0) || '?'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="text-center mb-3 sm:mb-5 px-1 sm:px-2 flex flex-col items-center">
+                    <p
+                      className="text-[9px] sm:text-[10px] uppercase font-bold text-secondary line-clamp-1 w-full"
+                      title={user.level || 'Nível I'}
+                    >
+                      {(user.level || 'Nível I').split(' - ')[0]}
+                    </p>
+                    <p className="font-bold text-xs sm:text-base leading-tight truncate w-full max-w-[100px] sm:max-w-[140px] mt-0.5">
+                      {user.name}
+                    </p>
+                    <p className="text-[10px] sm:text-sm font-semibold text-muted-foreground">
+                      {user.points || 0} pts
+                    </p>
+                  </div>
+                  <div
+                    className={cn(
+                      'w-full rounded-t-xl flex flex-col items-center justify-start pt-4 sm:pt-6 shadow-lg relative overflow-hidden',
+                      heightClass,
+                      colorClass,
+                    )}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent"></div>
+                    <span className="text-3xl sm:text-4xl font-black relative z-10 opacity-80">
+                      {position}
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block">
+            <Card className="border-border/60 shadow-elevation overflow-hidden">
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader className="bg-muted/40 border-b border-border/50">
+                    <TableRow className="hover:bg-transparent">
+                      <TableHead className="w-20 text-center py-4">Posição</TableHead>
+                      <TableHead>Observador Certificado</TableHead>
+                      <TableHead>Nível de Certificação</TableHead>
+                      <TableHead className="text-right pr-6">Pontuação Geral</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {rest.map((user, idx) => (
+                      <TableRow key={user.id} className="hover:bg-muted/30 transition-colors">
+                        <TableCell className="text-center py-4">
+                          <span className="font-bold text-muted-foreground text-lg">
+                            {idx + 4}º
+                          </span>
+                        </TableCell>
+                        <TableCell className="py-4">
+                          <div className="flex items-center gap-4">
+                            <Avatar className="w-10 h-10 border-2 border-background shadow-sm shrink-0">
+                              <AvatarImage
+                                src={user.avatar ? pb.files.getUrl(user, user.avatar) : undefined}
+                              />
+                              <AvatarFallback className="font-semibold text-muted-foreground">
+                                {user.name?.charAt(0) || '?'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="font-bold text-base">{user.name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-4">
+                          <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary/10 text-secondary border border-secondary/20">
+                            {user.level || 'Nível I - Observador Certificado (Iniciante)'}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right pr-6 font-black text-lg text-foreground/80 py-4">
+                          {user.points || 0}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-3 px-2">
+            {rest.map((user, idx) => (
+              <Card
+                key={user.id}
+                className="p-4 flex items-center justify-between border-border/60 shadow-sm bg-card hover:bg-muted/10 transition-colors gap-3"
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent"></div>
-                <span className="text-3xl sm:text-4xl font-black relative z-10 opacity-80">
-                  {position}
-                </span>
-              </div>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Desktop Table View */}
-      <div className="hidden md:block">
-        <Card className="border-border/60 shadow-elevation overflow-hidden">
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader className="bg-muted/40 border-b border-border/50">
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-20 text-center py-4">Posição</TableHead>
-                  <TableHead>Observador Certificado</TableHead>
-                  <TableHead>Nível de Certificação</TableHead>
-                  <TableHead className="text-right pr-6">Pontuação Geral</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rest.map((user) => (
-                  <TableRow key={user.rank} className="hover:bg-muted/30 transition-colors">
-                    <TableCell className="text-center py-4">
-                      <span className="font-bold text-muted-foreground text-lg">{user.rank}º</span>
-                    </TableCell>
-                    <TableCell className="py-4">
-                      <div className="flex items-center gap-4">
-                        <Avatar className="w-10 h-10 border-2 border-background shadow-sm shrink-0">
-                          <AvatarImage src={user.avatar} />
-                          <AvatarFallback className="font-semibold text-muted-foreground">
-                            {user.name.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="font-bold text-base">{user.name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-4">
-                      <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary/10 text-secondary border border-secondary/20">
-                        {user.level}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right pr-6 font-black text-lg text-foreground/80 py-4">
-                      {user.points}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Mobile Card View */}
-      <div className="md:hidden space-y-3 px-2">
-        {rest.map((user) => (
-          <Card
-            key={user.rank}
-            className="p-4 flex items-center justify-between border-border/60 shadow-sm bg-card hover:bg-muted/10 transition-colors gap-3"
-          >
-            <div className="flex items-center gap-3 overflow-hidden">
-              <span className="font-bold text-muted-foreground text-base w-6 text-center shrink-0">
-                {user.rank}º
-              </span>
-              <Avatar className="w-11 h-11 border-2 border-background shadow-sm shrink-0">
-                <AvatarImage src={user.avatar} />
-                <AvatarFallback className="font-semibold text-muted-foreground">
-                  {user.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col min-w-0">
-                <span className="font-bold text-sm leading-tight text-foreground truncate">
-                  {user.name}
-                </span>
-                <span
-                  className="text-[10px] font-semibold text-secondary mt-0.5 uppercase tracking-wider line-clamp-1"
-                  title={user.level}
-                >
-                  {user.level}
-                </span>
-              </div>
-            </div>
-            <div className="font-black text-foreground/80 text-base shrink-0">{user.points}</div>
-          </Card>
-        ))}
-      </div>
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <span className="font-bold text-muted-foreground text-base w-6 text-center shrink-0">
+                    {idx + 4}º
+                  </span>
+                  <Avatar className="w-11 h-11 border-2 border-background shadow-sm shrink-0">
+                    <AvatarImage
+                      src={user.avatar ? pb.files.getUrl(user, user.avatar) : undefined}
+                    />
+                    <AvatarFallback className="font-semibold text-muted-foreground">
+                      {user.name?.charAt(0) || '?'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-bold text-sm leading-tight text-foreground truncate">
+                      {user.name}
+                    </span>
+                    <span
+                      className="text-[10px] font-semibold text-secondary mt-0.5 uppercase tracking-wider line-clamp-1"
+                      title={user.level || 'Nível I'}
+                    >
+                      {user.level || 'Nível I'}
+                    </span>
+                  </div>
+                </div>
+                <div className="font-black text-foreground/80 text-base shrink-0">
+                  {user.points || 0}
+                </div>
+              </Card>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   )
 }
