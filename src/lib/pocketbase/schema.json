@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-10T10:54:05.992Z",
+  "generatedAt": "2026-04-10T10:57:40.427Z",
   "collections": [
     {
       "name": "users",
@@ -138,6 +138,66 @@
         "CREATE INDEX `idx_submissions_status` ON `submissions` (status)",
         "CREATE INDEX `idx_submissions_user_id` ON `submissions` (user_id)"
       ]
+    },
+    {
+      "name": "import_logs",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.role = 'admin'",
+        "view": "@request.auth.role = 'admin'",
+        "create": "@request.auth.role = 'admin'",
+        "update": "@request.auth.role = 'admin'",
+        "delete": "@request.auth.role = 'admin'"
+      },
+      "fields": [
+        {
+          "name": "file_name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "row_count",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["Success", "Error"]
+        },
+        {
+          "name": "details",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "user_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": []
     }
   ]
 }

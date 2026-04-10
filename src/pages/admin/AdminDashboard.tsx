@@ -53,12 +53,13 @@ export default function AdminDashboard() {
   })
 
   const [pendingSubmissions, setPendingSubmissions] = useState<any[]>([])
+  const [importLogs, setImportLogs] = useState<any[]>([])
   const [isImportOpen, setIsImportOpen] = useState(false)
   const [selectedSub, setSelectedSub] = useState<any | null>(null)
 
   const loadData = useCallback(async () => {
     try {
-      const [usersRes, subsTotalRes, subsPendingRes, subsApprovedRes, pendingListRes] =
+      const [usersRes, subsTotalRes, subsPendingRes, subsApprovedRes, pendingListRes, logsRes] =
         await Promise.all([
           pb.collection('users').getList(1, 1, { filter: "role = 'observer'" }),
           pb.collection('submissions').getList(1, 1),
@@ -69,6 +70,7 @@ export default function AdminDashboard() {
             expand: 'user_id',
             sort: '-created',
           }),
+          pb.collection('import_logs').getList(1, 10, { sort: '-created' }),
         ])
 
       setStats({
@@ -87,6 +89,8 @@ export default function AdminDashboard() {
           axis: r.nivel || 'N/A',
         })),
       )
+
+      setImportLogs(logsRes.items)
     } catch (err) {
       console.error('Failed to load dashboard data', err)
     }
@@ -99,6 +103,7 @@ export default function AdminDashboard() {
   // Real-time updates for statistics and lists
   useRealtime('users', loadData)
   useRealtime('submissions', loadData)
+  useRealtime('import_logs', loadData)
 
   const handleExport = (format: 'excel' | 'pdf') => {
     if (format === 'excel') {
@@ -264,39 +269,49 @@ export default function AdminDashboard() {
               <Table>
                 <TableHeader className="bg-muted/10">
                   <TableRow>
-                    <TableHead className="pl-6 whitespace-nowrap">Data / Hora</TableHead>
+                    <TableHead className="pl-6 whitespace-nowrap">Data</TableHead>
+                    <TableHead>Nome do Arquivo</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="whitespace-nowrap">Linhas Afetadas</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow className="hover:bg-muted/30 transition-colors">
-                    <TableCell className="text-muted-foreground pl-6 whitespace-nowrap">
-                      12/03/2026 14:30
-                    </TableCell>
-                    <TableCell>
-                      <Badge className="bg-emerald-500 text-white">Sucesso</Badge>
-                    </TableCell>
-                    <TableCell>795 registros (0 Erros)</TableCell>
-                  </TableRow>
-                  <TableRow className="hover:bg-muted/30 transition-colors">
-                    <TableCell className="text-muted-foreground pl-6 whitespace-nowrap">
-                      10/03/2026 09:15
-                    </TableCell>
-                    <TableCell>
-                      <Badge className="bg-amber-500 text-white">Atenção</Badge>
-                    </TableCell>
-                    <TableCell>450 registros (3 Erros)</TableCell>
-                  </TableRow>
-                  <TableRow className="hover:bg-muted/30 transition-colors">
-                    <TableCell className="text-muted-foreground pl-6 whitespace-nowrap">
-                      01/03/2026 18:00
-                    </TableCell>
-                    <TableCell>
-                      <Badge className="bg-emerald-500 text-white">Sucesso</Badge>
-                    </TableCell>
-                    <TableCell>800 registros (0 Erros)</TableCell>
-                  </TableRow>
+                  {importLogs.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                        Nenhum log de importação encontrado
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    importLogs.map((log) => (
+                      <TableRow key={log.id} className="hover:bg-muted/30 transition-colors">
+                        <TableCell className="text-muted-foreground pl-6 whitespace-nowrap">
+                          {new Date(log.created).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </TableCell>
+                        <TableCell className="font-medium">{log.file_name}</TableCell>
+                        <TableCell>
+                          {log.status === 'Success' ? (
+                            <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm">
+                              Sucesso
+                            </Badge>
+                          ) : (
+                            <Badge variant="destructive" className="shadow-sm">
+                              Erro
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {log.row_count || 0} registros
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
