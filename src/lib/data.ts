@@ -159,41 +159,4 @@ export const rankingData = [
   },
 ]
 
-export const submissionsData = [
-  {
-    id: 'SUB-001',
-    date: '12/03/2026',
-    title: 'Certificado Curso ABNT',
-    nivel: 'Nível I',
-    axis: 'Nível I',
-    status: 'Aprovado',
-    points: 50,
-  },
-  {
-    id: 'SUB-002',
-    date: '10/03/2026',
-    title: 'Relatório de Palestra na Escola',
-    nivel: 'Nível II',
-    axis: 'Nível II',
-    status: 'Em Análise',
-    points: '-',
-  },
-  {
-    id: 'SUB-003',
-    date: '05/03/2026',
-    title: 'Artigo Revista Trânsito Seguro',
-    nivel: 'Nível I',
-    axis: 'Nível I',
-    status: 'Aprovado',
-    points: 100,
-  },
-  {
-    id: 'SUB-004',
-    date: '01/03/2026',
-    title: 'Representação JARI',
-    nivel: 'Nível III',
-    axis: 'Nível III',
-    status: 'Ajuste Necessário',
-    points: '-',
-  },
-]
+export const submissionsData: any[] = []

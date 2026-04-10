@@ -1,5 +1,15 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react'
-import { submissionsData as initialData } from '@/lib/data'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+  useCallback,
+} from 'react'
+import pb from '@/lib/pocketbase/client'
+import useAuthStore from '@/stores/useAuthStore'
+import { useRealtime } from '@/hooks/use-realtime'
+import { toast } from '@/hooks/use-toast'
 
 export interface Submission {
   id: string
@@ -12,69 +22,93 @@ export interface Submission {
   points: number | string
 }
 
-const mockAdminSubmissions: Submission[] = [
-  {
-    id: 'SUB-101',
-    user: 'Ana Souza',
-    title: 'Titulação (Doutorado)',
-    date: '12/03/2026',
-    status: 'Em Análise',
-    nivel: 'Nível I',
-    axis: 'Nível I',
-    points: '-',
-  },
-  {
-    id: 'SUB-102',
-    user: 'Carlos Silva',
-    title: 'Artigo Científico',
-    date: '11/03/2026',
-    status: 'Em Análise',
-    nivel: 'Nível I',
-    axis: 'Nível I',
-    points: '-',
-  },
-  {
-    id: 'SUB-104',
-    user: 'Camila Barros',
-    title: 'Mentoria: Atuação formal',
-    date: '09/03/2026',
-    status: 'Em Análise',
-    nivel: 'Nível III',
-    axis: 'Nível III',
-    points: '-',
-  },
-]
-
 interface SubmissionsState {
   submissions: Submission[]
-  addSubmission: (sub: { title: string; nivel: string }) => void
-  updateSubmissionStatus: (id: string, status: string, points?: number) => void
+  addSubmission: (sub: {
+    title: string
+    nivel: string
+    points?: number
+    type?: string
+  }) => Promise<void>
+  updateSubmissionStatus: (id: string, status: string, points?: number) => Promise<void>
 }
 
 const SubmissionsContext = createContext<SubmissionsState | undefined>(undefined)
 
 export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
-  const [submissions, setSubmissions] = useState<Submission[]>([
-    ...initialData.map((s) => ({ ...s, user: 'Você' })),
-    ...mockAdminSubmissions,
-  ])
+  const [submissions, setSubmissions] = useState<Submission[]>([])
+  const { user, isAuthenticated } = useAuthStore()
 
-  const addSubmission = (sub: { title: string; nivel: string }) => {
-    const newSub: Submission = {
-      ...sub,
-      id: `SUB-${String(submissions.length + 1).padStart(3, '0')}`,
-      user: 'Você',
-      date: new Date().toLocaleDateString('pt-BR'),
-      status: 'Em Análise',
-      points: '-',
+  const loadSubmissions = useCallback(async () => {
+    if (!isAuthenticated || !user) {
+      setSubmissions([])
+      return
     }
-    setSubmissions([newSub, ...submissions])
+    try {
+      const filter = user.role === 'admin' ? '' : `user_id = "${user.id}"`
+      const res = await pb.collection('submissions').getFullList({
+        filter,
+        sort: '-created',
+        expand: 'user_id',
+      })
+      setSubmissions(
+        res.map((r) => ({
+          id: r.id,
+          title: r.title,
+          nivel: r.nivel,
+          status: r.status,
+          points: r.score || '-',
+          date: new Date(r.created).toLocaleDateString('pt-BR'),
+          user: r.expand?.user_id?.name || 'Desconhecido',
+          axis: r.nivel,
+          type: r.type,
+        })),
+      )
+    } catch (err) {
+      console.error('Error loading submissions:', err)
+    }
+  }, [user, isAuthenticated])
+
+  useEffect(() => {
+    loadSubmissions()
+  }, [loadSubmissions])
+
+  useRealtime(
+    'submissions',
+    (e) => {
+      loadSubmissions()
+      if (e.action === 'update' && e.record.user_id === user?.id) {
+        toast({
+          title: 'Atualização de Submissão',
+          description: `Sua submissão "${e.record.title}" agora está: ${e.record.status}`,
+        })
+      }
+    },
+    isAuthenticated,
+  )
+
+  const addSubmission = async (sub: {
+    title: string
+    nivel: string
+    points?: number
+    type?: string
+  }) => {
+    if (!user) return
+    await pb.collection('submissions').create({
+      title: sub.title,
+      nivel: sub.nivel,
+      status: 'Em Análise',
+      score: sub.points || 0,
+      user_id: user.id,
+      type: sub.type || 'competency',
+    })
   }
 
-  const updateSubmissionStatus = (id: string, status: string, points?: number) => {
-    setSubmissions((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, status, points: points ?? s.points } : s)),
-    )
+  const updateSubmissionStatus = async (id: string, status: string, points?: number) => {
+    await pb.collection('submissions').update(id, {
+      status,
+      ...(points !== undefined && { score: points }),
+    })
   }
 
   return (

@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import React, { createContext, useContext, ReactNode, useEffect, useState } from 'react'
+import useAuthStore from './useAuthStore'
+import { toast } from '@/hooks/use-toast'
 
 export interface NivelProgress {
   id: string
@@ -18,24 +20,47 @@ interface GameState {
 const GameContext = createContext<GameState | undefined>(undefined)
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
-  const [points, setPoints] = useState(150)
+  const { user } = useAuthStore()
+  const [prevLevel, setPrevLevel] = useState<string | null>(null)
 
-  // Calculate level based on mock thresholds
-  const level = Math.floor(points / 1000) + 1
-  const levelNames = [
-    'Nível I - Observador Certificado (Iniciante)',
-    'Nível II - Observador Certificado Pleno',
-    'Nível III - Mobilizador',
-  ]
-  const levelName = levelNames[Math.min(level - 1, levelNames.length - 1)]
+  const points = user?.points || 0
+  const levelName = user?.level || 'Nível I - Observador Certificado (Iniciante)'
+  const level = levelName.includes('III') ? 3 : levelName.includes('II') ? 2 : 1
 
-  const addPoints = (pts: number) => setPoints((p) => p + pts)
+  useEffect(() => {
+    if (user && prevLevel && prevLevel !== user.level) {
+      toast({
+        title: '🎉 Subiu de Nível!',
+        description: `Parabéns! Você alcançou o ${user.level}`,
+      })
+    }
+    if (user) {
+      setPrevLevel(user.level)
+    }
+  }, [user?.level])
 
-  // Gamification Logic: Pleno >= 200, Mobilizador >= 500
+  // Fake add points for local optimistic UI if needed
+  const addPoints = (pts: number) => {}
+
   const niveisProgress: NivelProgress[] = [
-    { id: 'I', name: 'Observador Certificado (Iniciante)', points: 350, status: 'Concluído' },
-    { id: 'II', name: 'Observador Certificado Pleno', points: 150, status: 'Em Andamento' },
-    { id: 'III', name: 'Mobilizador', points: 750, status: 'Pendente' },
+    {
+      id: 'I',
+      name: 'Observador Certificado (Iniciante)',
+      points: Math.min(200, points),
+      status: points >= 200 ? 'Concluído' : 'Em Andamento',
+    },
+    {
+      id: 'II',
+      name: 'Observador Certificado Pleno',
+      points: Math.max(0, Math.min(300, points - 200)),
+      status: points >= 500 ? 'Concluído' : points >= 200 ? 'Em Andamento' : 'Pendente',
+    },
+    {
+      id: 'III',
+      name: 'Mobilizador',
+      points: Math.max(0, points - 500),
+      status: points >= 500 ? 'Em Andamento' : 'Pendente',
+    },
   ]
 
   return (

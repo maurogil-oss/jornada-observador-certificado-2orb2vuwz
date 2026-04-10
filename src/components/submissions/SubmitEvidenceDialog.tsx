@@ -26,20 +26,37 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
   const [loading, setLoading] = useState(false)
   const { addSubmission } = useSubmissionsStore()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
+    try {
       if (item) {
-        addSubmission({ title: item.title, nivel: item.nivel })
+        const isTitulation =
+          item.title.toLowerCase().includes('graduação') ||
+          item.title.toLowerCase().includes('mestrado') ||
+          item.title.toLowerCase().includes('doutorado')
+
+        await addSubmission({
+          title: item.title,
+          nivel: item.nivel,
+          points: item.points,
+          type: isTitulation ? 'titulation' : 'competency',
+        })
       }
       toast({
         title: 'Comprovação enviada com sucesso!',
         description: `A equipe de avaliação analisará sua submissão para "${item?.title}".`,
       })
       onClose()
-    }, 1200)
+    } catch (err) {
+      toast({
+        title: 'Erro ao enviar',
+        description: 'Tente novamente mais tarde.',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (!item) return null

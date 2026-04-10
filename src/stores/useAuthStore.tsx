@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
+import pb from '@/lib/pocketbase/client'
 
 type Role = 'observer' | 'admin' | null
 
@@ -7,48 +8,79 @@ interface User {
   name: string
   email: string
   role: Role
+  points: number
+  level: string
 }
 
 interface AuthState {
   user: User | null
-  login: (email: string, role: Role) => void
+  login: (email: string, pass: string) => Promise<void>
+  register: (name: string, email: string, pass: string) => Promise<void>
   logout: () => void
   isAuthenticated: boolean
+  isLoading: boolean
 }
 
 const AuthContext = createContext<AuthState | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(() => {
-    try {
-      const saved = localStorage.getItem('auth_user')
-      return saved ? JSON.parse(saved) : null
-    } catch {
-      return null
-    }
-  })
+  const [user, setUser] = useState<User | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (user) {
-      localStorage.setItem('auth_user', JSON.stringify(user))
-    } else {
-      localStorage.removeItem('auth_user')
+    const updateUserData = () => {
+      const record = pb.authStore.record
+      if (record) {
+        setUser({
+          id: record.id,
+          name: record.name || record.email.split('@')[0],
+          email: record.email,
+          role: record.role || 'observer',
+          points: record.points || 0,
+          level: record.level || 'Nível I - Observador Certificado (Iniciante)',
+        })
+      } else {
+        setUser(null)
+      }
     }
-  }, [user])
 
-  const login = (email: string, role: Role) => {
-    setUser({
-      id: Math.random().toString(36).substring(2, 9),
-      name: email.split('@')[0],
-      email,
-      role,
+    updateUserData()
+    setIsLoading(false)
+
+    const unsub = pb.authStore.onChange(() => {
+      updateUserData()
     })
+
+    return () => {
+      unsub()
+    }
+  }, [])
+
+  const login = async (email: string, pass: string) => {
+    await pb.collection('users').authWithPassword(email, pass)
   }
 
-  const logout = () => setUser(null)
+  const register = async (name: string, email: string, pass: string) => {
+    await pb.collection('users').create({
+      email,
+      password: pass,
+      passwordConfirm: pass,
+      name,
+      role: 'observer',
+      points: 0,
+      level: 'Nível I - Observador Certificado (Iniciante)',
+    })
+    await login(email, pass)
+  }
+
+  const logout = () => {
+    pb.authStore.clear()
+  }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider
+      value={{ user, login, register, logout, isAuthenticated: pb.authStore.isValid, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   )

@@ -13,7 +13,7 @@ import useSubmissionsStore from '@/stores/useSubmissionsStore'
 
 export function SubmissionsHistory() {
   const { submissions } = useSubmissionsStore()
-  const mySubmissions = submissions.filter((s) => s.user === 'Você')
+  const mySubmissions = submissions
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -67,7 +67,9 @@ export function SubmissionsHistory() {
             {mySubmissions.map((sub) => (
               <TableRow key={sub.id} className="hover:bg-muted/30 transition-colors">
                 <TableCell className="font-medium text-muted-foreground pl-6">{sub.date}</TableCell>
-                <TableCell className="font-mono text-xs">{sub.id}</TableCell>
+                <TableCell className="font-mono text-xs uppercase">
+                  {sub.id.substring(0, 8)}
+                </TableCell>
                 <TableCell className="font-semibold">{sub.title}</TableCell>
                 <TableCell>
                   <span
