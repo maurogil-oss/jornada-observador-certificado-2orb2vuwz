@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import useAuthStore from '@/stores/useAuthStore'
 import useGameStore from '@/stores/useGameStore'
 import { Badge } from '@/components/ui/badge'
+import pb from '@/lib/pocketbase/client'
 
 export function TopHeader() {
   const { user } = useAuthStore()
@@ -63,9 +64,11 @@ export function TopHeader() {
               </p>
             </div>
             <Avatar className="h-9 w-9 border-2 border-primary/20 shadow-sm">
-              <AvatarImage src={`https://img.usecurling.com/ppl/thumbnail?seed=${user.email}`} />
+              <AvatarImage
+                src={user.avatar ? pb.files.getUrl(user as any, user.avatar) : undefined}
+              />
               <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                {user.name.charAt(0).toUpperCase()}
+                {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </AvatarFallback>
             </Avatar>
           </div>

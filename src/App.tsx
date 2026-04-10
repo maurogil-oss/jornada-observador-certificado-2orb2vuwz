@@ -75,7 +75,7 @@ const AppRoutes = () => {
         <Route
           path="/"
           element={
-            <ProtectedRoute allowedRoles={['observer']}>
+            <ProtectedRoute allowedRoles={['observer', 'admin']}>
               <Index />
             </ProtectedRoute>
           }
@@ -83,7 +83,7 @@ const AppRoutes = () => {
         <Route
           path="/niveis"
           element={
-            <ProtectedRoute allowedRoles={['observer']}>
+            <ProtectedRoute allowedRoles={['observer', 'admin']}>
               <Axes />
             </ProtectedRoute>
           }
@@ -91,7 +91,7 @@ const AppRoutes = () => {
         <Route
           path="/submissoes"
           element={
-            <ProtectedRoute allowedRoles={['observer']}>
+            <ProtectedRoute allowedRoles={['observer', 'admin']}>
               <Submissions />
             </ProtectedRoute>
           }
@@ -99,7 +99,7 @@ const AppRoutes = () => {
         <Route
           path="/ranking"
           element={
-            <ProtectedRoute allowedRoles={['observer']}>
+            <ProtectedRoute allowedRoles={['observer', 'admin']}>
               <Ranking />
             </ProtectedRoute>
           }

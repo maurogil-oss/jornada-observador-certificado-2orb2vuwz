@@ -21,6 +21,7 @@ import {
   Users,
   Camera,
   Loader2,
+  Eye,
 } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
@@ -50,7 +51,14 @@ export function AppSidebar() {
     { title: 'Indicadores', url: '/admin/indicadores', icon: BarChart },
   ]
 
-  const navItems = user?.role === 'admin' ? adminNav : observerNav
+  const isAdminArea = location.pathname.startsWith('/admin')
+
+  const navItems =
+    user?.role === 'admin'
+      ? isAdminArea
+        ? [...adminNav, { title: 'Ver como Observador', url: '/', icon: Eye }]
+        : [...observerNav, { title: 'Voltar para Admin', url: '/admin', icon: LayoutDashboard }]
+      : observerNav
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -132,7 +140,11 @@ export function AppSidebar() {
           <div className="flex items-center gap-3 px-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
             <div className="relative group/avatar flex-shrink-0">
               <Avatar className="h-10 w-10 border border-border/50">
-                <AvatarImage src={user.avatar} alt={user.name} className="object-cover" />
+                <AvatarImage
+                  src={user.avatar ? pb.files.getUrl(user as any, user.avatar) : undefined}
+                  alt={user.name}
+                  className="object-cover"
+                />
                 <AvatarFallback className="bg-primary/10 text-primary font-medium">
                   {getInitials(user.name)}
                 </AvatarFallback>
