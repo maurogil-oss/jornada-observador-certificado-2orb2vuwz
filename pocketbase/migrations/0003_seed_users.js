@@ -21,7 +21,7 @@ migrate(
     } catch (_) {
       const obs = new Record(users)
       obs.setEmail('user@onsv.org')
-      obs.setPassword('123456')
+      obs.setPassword('Skip@2026')
       obs.setVerified(true)
       obs.set('name', 'Observador Teste')
       obs.set('role', 'observer')

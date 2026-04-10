@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-10T10:12:01.135Z",
+  "generatedAt": "2026-04-10T10:15:46.258Z",
   "collections": [
     {
       "name": "users",
@@ -49,6 +49,13 @@
           "type": "text",
           "required": false,
           "system": false
+        },
+        {
+          "name": "role",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["admin", "observer"]
         }
       ],
       "indexes": [
@@ -121,7 +128,10 @@
           "autodateTriggers": ["onCreate", "onUpdate"]
         }
       ],
-      "indexes": []
+      "indexes": [
+        "CREATE INDEX `idx_submissions_status` ON `submissions` (status)",
+        "CREATE INDEX `idx_submissions_user_id` ON `submissions` (user_id)"
+      ]
     }
   ]
 }
