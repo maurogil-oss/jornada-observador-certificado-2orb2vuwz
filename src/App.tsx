@@ -13,6 +13,7 @@ import Ranking from './pages/Ranking'
 import Login from './pages/Login'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminIndicators from './pages/admin/AdminIndicators'
+import AdminUsers from './pages/admin/AdminUsers'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
 
@@ -93,6 +94,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminUsers />
             </ProtectedRoute>
           }
         />

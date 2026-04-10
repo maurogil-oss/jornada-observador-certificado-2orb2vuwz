@@ -10,7 +10,16 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from '@/components/ui/sidebar'
-import { Home, Compass, FileCheck, Trophy, LogOut, LayoutDashboard, BarChart } from 'lucide-react'
+import {
+  Home,
+  Compass,
+  FileCheck,
+  Trophy,
+  LogOut,
+  LayoutDashboard,
+  BarChart,
+  Users,
+} from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
 
@@ -27,6 +36,7 @@ export function AppSidebar() {
 
   const adminNav = [
     { title: 'Painel de Gestão', url: '/admin', icon: LayoutDashboard },
+    { title: 'Gestão de Usuários', url: '/admin/users', icon: Users },
     { title: 'Indicadores', url: '/admin/indicadores', icon: BarChart },
   ]
 
