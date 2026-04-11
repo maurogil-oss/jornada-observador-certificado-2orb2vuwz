@@ -44,7 +44,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
         })
       }
       toast({
-        title: 'Comprovação enviada com sucesso!',
+        title: 'Evidência enviada com sucesso!',
         description: `A equipe de avaliação analisará sua submissão para "${item?.title}".`,
       })
       onClose()
@@ -66,10 +66,10 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
       <DialogContent className="sm:max-w-[550px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle className="text-xl">Submeter Comprovação</DialogTitle>
+            <DialogTitle className="text-xl">Submeter Evidência</DialogTitle>
             <DialogDescription className="mt-2">
-              Envie documentos que comprovem sua atuação em <strong>{item.title}</strong> (
-              {item.nivel}). Ao ser validado, você receberá até{' '}
+              Envie documentos que evidenciem sua atuação em <strong>{item.title}</strong> (Eixo de
+              Referência: {item.nivel}). Ao ser validado, você receberá até{' '}
               <strong className="text-accent">{item.points} pts</strong>.
             </DialogDescription>
           </DialogHeader>
@@ -117,7 +117,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
               Cancelar
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Enviando...' : 'Enviar para Análise'}
+              {loading ? 'Enviando...' : 'Submeter Evidência'}
             </Button>
           </DialogFooter>
         </form>

@@ -32,7 +32,7 @@ export function AxesBadges() {
   return (
     <Card className="shadow-subtle border-border/60">
       <CardHeader>
-        <CardTitle className="text-lg">Progresso por Eixos (Submissões Aprovadas)</CardTitle>
+        <CardTitle className="text-lg">Perfil Curricular</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">

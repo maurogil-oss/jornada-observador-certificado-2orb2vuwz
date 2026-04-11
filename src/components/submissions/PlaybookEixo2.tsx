@@ -74,7 +74,7 @@ export function PlaybookEixo2({ onSelect }: Props) {
                           }
                         >
                           <Upload className="w-4 h-4 mr-2" />
-                          Upload
+                          Submeter Evidência
                         </Button>
                       </div>
                     ))}
