@@ -66,7 +66,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
       <DialogContent className="sm:max-w-[550px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle className="text-xl">Submeter Evidência</DialogTitle>
+            <DialogTitle className="text-xl">Submeter Evidências</DialogTitle>
             <DialogDescription className="mt-2">
               Envie documentos que evidenciem sua atuação em <strong>{item.title}</strong> (Eixo de
               Referência: {item.nivel}). Ao ser validado, você receberá até{' '}
@@ -117,7 +117,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
               Cancelar
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Enviando...' : 'Submeter Evidência'}
+              {loading ? 'Enviando...' : 'Submeter Evidências'}
             </Button>
           </DialogFooter>
         </form>

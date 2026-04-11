@@ -150,7 +150,7 @@ export default function Axes() {
                           'Missão Concluída'
                         ) : (
                           <>
-                            <PlusCircle className="w-4 h-4 mr-2" /> Submeter Prova
+                            <PlusCircle className="w-4 h-4 mr-2" /> Submeter Evidências
                           </>
                         )}
                       </Button>

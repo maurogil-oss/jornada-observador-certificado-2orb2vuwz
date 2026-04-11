@@ -73,7 +73,7 @@ export function PlaybookEixo3({ onSelect }: Props) {
                           }
                         >
                           <Upload className="w-4 h-4 mr-2" />
-                          Submeter Evidência
+                          Submeter Evidências
                         </Button>
                       </div>
                     ))}
