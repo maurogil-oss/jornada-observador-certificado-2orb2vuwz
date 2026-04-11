@@ -24,6 +24,7 @@ import {
   Calendar,
   MapPin,
   Briefcase,
+  IdCard,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
@@ -37,11 +38,17 @@ const loginSchema = z.object({
 
 const registerSchema = z
   .object({
-    name: z.string().min(3, 'Nome muito curto.'),
+    turma: z.coerce.number().min(0, 'Inválido').max(16, 'Máximo 16'),
+    full_name: z.string().min(3, 'Nome muito curto.'),
+    nickname: z.string().optional(),
+    cpf_document: z.string().min(1, 'Obrigatório'),
+    rg: z.string().min(1, 'Obrigatório'),
+    rg_issuer: z.string().min(1, 'Obrigatório'),
+    rg_state: z.string().min(1, 'Obrigatório'),
+    birth_date: z.string().min(1, 'Obrigatório'),
     email: z.string().email('E-mail inválido.'),
     password: z.string().min(8, 'A senha deve ter pelo menos 8 caracteres'),
     passwordConfirm: z.string().min(8, 'A confirmação de senha deve ter pelo menos 8 caracteres'),
-    birth_date: z.string().optional(),
     city: z.string().optional(),
     state: z.string().optional(),
     country: z.string().optional(),
@@ -70,7 +77,7 @@ export default function Login() {
         toast({
           title: 'Acesso Negado',
           description:
-            'Sua conta está suspensa pelo administrador. Por favor, entre em contato com o suporte.',
+            'Sua conta está aguardando aprovação do administrador ou foi suspensa. Por favor, aguarde.',
           variant: 'destructive',
         })
       } else {
@@ -88,11 +95,17 @@ export default function Login() {
     resolver: zodResolver(registerSchema),
     mode: 'onChange',
     defaultValues: {
-      name: '',
+      turma: '' as any,
+      full_name: '',
+      nickname: '',
+      cpf_document: '',
+      rg: '',
+      rg_issuer: '',
+      rg_state: '',
+      birth_date: '',
       email: '',
       password: '',
       passwordConfirm: '',
-      birth_date: '',
       city: '',
       state: '',
       country: '',
@@ -110,7 +123,7 @@ export default function Login() {
         toast({
           title: 'Acesso Negado',
           description:
-            'Sua conta está suspensa pelo administrador. Por favor, entre em contato com o suporte.',
+            'Sua conta está aguardando aprovação do administrador ou foi suspensa. Por favor, aguarde.',
           variant: 'destructive',
         })
         return
@@ -136,11 +149,13 @@ export default function Login() {
     })
     try {
       await register(data)
+      logout() // Force logout so they stay out until approved
       toast({
-        title: 'Sucesso',
-        description: 'Conta criada com sucesso. Você já está logado.',
+        title: 'Cadastro Recebido',
+        description:
+          'Sua conta foi criada com sucesso e está pendente de aprovação pelo administrador.',
       })
-      navigate('/')
+      navigate('/login')
     } catch (err: any) {
       const fieldErrors = extractFieldErrors(err)
 
@@ -185,8 +200,8 @@ export default function Login() {
           <CardTitle className="text-2xl font-bold tracking-tight">
             Portal Estratégico ONSV
           </CardTitle>
-          <CardDescription className="text-base font-medium">
-            Jornada de Evolução do Observador Certificado
+          <CardDescription className="text-base font-medium uppercase text-primary">
+            MAPEAMENTO E JORNADA DO OBSERVADOR CERTIFICADO
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -262,14 +277,41 @@ export default function Login() {
               <Form {...registerForm}>
                 <form
                   onSubmit={registerForm.handleSubmit(onRegister)}
-                  className="space-y-4 max-h-[60vh] overflow-y-auto px-1 pb-2"
+                  className="space-y-4 max-h-[65vh] overflow-y-auto px-1 pb-2"
                 >
+                  <div className="mb-4 pt-2">
+                    <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider border-b pb-2">
+                      BLOCO 1 - IDENTIFICAÇÃO GERAL
+                    </h3>
+                  </div>
+
                   <FormField
                     control={registerForm.control}
-                    name="name"
+                    name="turma"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Nome Completo *</FormLabel>
+                        <FormLabel>Turma do Curso de Formação *</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={0}
+                            max={16}
+                            placeholder="Ex: 10"
+                            className="h-11"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={registerForm.control}
+                    name="full_name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nome Completo (sem abreviar) *</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <UserIcon className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
@@ -285,7 +327,105 @@ export default function Login() {
                     )}
                   />
 
+                  <FormField
+                    control={registerForm.control}
+                    name="nickname"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Como você prefere ser chamado (a)? (Ex.: Ramalho, Ju)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Apelido/Nome Social" className="h-11" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={registerForm.control}
+                      name="cpf_document"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>CPF / Documento estrangeiro *</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <IdCard className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                              <Input
+                                placeholder="Apenas números"
+                                className="pl-10 h-11"
+                                {...field}
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={registerForm.control}
+                      name="rg"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>RG (XX.XXX.XXX-X) *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Número do RG" className="h-11" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={registerForm.control}
+                      name="rg_issuer"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Órgão emissor *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Ex: SSP" className="h-11" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={registerForm.control}
+                      name="rg_state"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Estado do órgão emissor *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="UF" className="h-11" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={registerForm.control}
+                      name="birth_date"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Data de Nascimento *</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Calendar className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                              <Input type="date" className="pl-10 h-11" {...field} />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
                     <FormField
                       control={registerForm.control}
                       name="email"
@@ -300,23 +440,6 @@ export default function Login() {
                                 className="pl-10 h-11"
                                 {...field}
                               />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="birth_date"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Data de Nascimento</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Calendar className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                              <Input type="date" className="pl-10 h-11" {...field} />
                             </div>
                           </FormControl>
                           <FormMessage />

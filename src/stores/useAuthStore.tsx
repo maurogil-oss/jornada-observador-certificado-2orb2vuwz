@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react'
 import pb from '@/lib/pocketbase/client'
 
 type Role = 'observer' | 'admin' | null
@@ -6,6 +6,8 @@ type Role = 'observer' | 'admin' | null
 interface User {
   id: string
   name: string
+  full_name?: string
+  nickname?: string
   email: string
   role: Role
   points: number
@@ -17,10 +19,21 @@ interface User {
   state?: string
   country?: string
   workplace?: string
+  turma?: number
+  cpf_document?: string
+  rg?: string
+  rg_issuer?: string
+  rg_state?: string
 }
 
 interface RegisterData {
-  name: string
+  turma: number
+  full_name: string
+  nickname?: string
+  cpf_document: string
+  rg: string
+  rg_issuer: string
+  rg_state: string
   email: string
   password: string
   passwordConfirm: string
@@ -53,6 +66,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser({
           id: record.id,
           name: record.name || record.email.split('@')[0],
+          full_name: record.full_name || '',
+          nickname: record.nickname || '',
           email: record.email,
           role: record.role || 'observer',
           points: record.points || 0,
@@ -64,6 +79,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           state: record.state || '',
           country: record.country || '',
           workplace: record.workplace || '',
+          turma: record.turma,
+          cpf_document: record.cpf_document,
+          rg: record.rg,
+          rg_issuer: record.rg_issuer,
+          rg_state: record.rg_state,
         })
       } else {
         setUser(null)
@@ -89,10 +109,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (data: RegisterData) => {
     await pb.collection('users').create({
       ...data,
+      name: data.nickname || data.full_name.split(' ')[0],
       role: 'observer',
       points: 0,
       level: 'Nível I - Observador Certificado (Iniciante)',
-      is_active: true,
+      is_active: false, // Pending admin approval
     })
     await login(data.email, data.password)
   }

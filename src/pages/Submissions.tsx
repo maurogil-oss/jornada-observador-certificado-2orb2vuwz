@@ -33,43 +33,43 @@ export default function Submissions() {
       </div>
 
       <Tabs defaultValue="nivel1" className="w-full">
-        <TabsList className="mb-6 grid w-full grid-cols-2 md:grid-cols-4 bg-muted/60 p-1.5 rounded-lg h-auto">
+        <TabsList className="mb-6 grid w-full grid-cols-1 md:grid-cols-4 bg-muted/60 p-1.5 rounded-lg h-auto gap-2">
           <TabsTrigger
             value="nivel1"
-            className="text-sm py-2.5 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-nowrap overflow-hidden text-ellipsis"
+            className="text-xs md:text-sm py-2.5 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-normal h-full text-center"
           >
-            Playbook Nível I
+            Playbook Eixo I – Formação e Conhecimento
           </TabsTrigger>
           <TabsTrigger
             value="nivel2"
-            className="text-sm py-2.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-nowrap overflow-hidden text-ellipsis"
+            className="text-xs md:text-sm py-2.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-normal h-full text-center"
           >
-            Playbook Nível II
+            Playbook Eixo II – Atuação e Impacto Social
           </TabsTrigger>
           <TabsTrigger
             value="nivel3"
-            className="text-sm py-2.5 data-[state=active]:bg-amber-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-nowrap overflow-hidden text-ellipsis"
+            className="text-xs md:text-sm py-2.5 data-[state=active]:bg-amber-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-normal h-full text-center"
           >
-            Playbook Nível III
+            Playbook Eixo III – Representatividade e Liderança
           </TabsTrigger>
           <TabsTrigger
             value="history"
-            className="text-sm py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all"
+            className="text-xs md:text-sm py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all h-full"
           >
             Histórico
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="nivel1" className="animate-slide-up outline-none">
-          <PlaybookEixo1 onSelect={setSelectedItem} />
+          <PlaybookEixo1 onSelect={setSelectedItem as any} />
         </TabsContent>
 
         <TabsContent value="nivel2" className="animate-slide-up outline-none">
-          <PlaybookEixo2 onSelect={setSelectedItem} />
+          <PlaybookEixo2 onSelect={setSelectedItem as any} />
         </TabsContent>
 
         <TabsContent value="nivel3" className="animate-slide-up outline-none">
-          <PlaybookEixo3 onSelect={setSelectedItem} />
+          <PlaybookEixo3 onSelect={setSelectedItem as any} />
         </TabsContent>
 
         <TabsContent value="history" className="animate-slide-up outline-none">
@@ -80,7 +80,7 @@ export default function Submissions() {
       <SubmitEvidenceDialog
         isOpen={!!selectedItem}
         onClose={() => setSelectedItem(null)}
-        item={selectedItem}
+        item={selectedItem as any}
       />
     </div>
   )

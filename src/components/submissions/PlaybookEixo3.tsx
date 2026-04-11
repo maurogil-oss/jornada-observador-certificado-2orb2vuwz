@@ -17,7 +17,7 @@ export function PlaybookEixo3({ onSelect }: Props) {
         </div>
         <div>
           <h2 className="text-xl md:text-2xl font-bold tracking-tight">
-            Playbook Nível III: Mobilizador
+            Playbook Eixo III – Representatividade e Liderança
           </h2>
           <p className="opacity-90 mt-2 text-base md:text-lg">
             Ocupação de espaços estratégicos e formação de novas lideranças na segurança viária.
@@ -68,7 +68,7 @@ export function PlaybookEixo3({ onSelect }: Props) {
                             onSelect({
                               title: item.text,
                               points: item.points,
-                              nivel: `Nível III: Mobilizador`,
+                              nivel: `Eixo III`,
                             })
                           }
                         >

@@ -17,7 +17,7 @@ export function PlaybookEixo2({ onSelect }: Props) {
         </div>
         <div>
           <h2 className="text-xl md:text-2xl font-bold tracking-tight">
-            Playbook Nível II: Observador Certificado Pleno
+            Playbook Eixo II – Atuação e Impacto Social
           </h2>
           <p className="opacity-90 mt-2 text-base md:text-lg">
             Expanda o alcance da segurança viária através de ações estruturantes, educação e
@@ -69,7 +69,7 @@ export function PlaybookEixo2({ onSelect }: Props) {
                             onSelect({
                               title: item.text,
                               points: item.points,
-                              nivel: `Nível II: Observador Certificado Pleno`,
+                              nivel: `Eixo II`,
                             })
                           }
                         >
