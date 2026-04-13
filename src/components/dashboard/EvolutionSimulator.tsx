@@ -5,6 +5,21 @@ import useGameStore from '@/stores/useGameStore'
 export function EvolutionSimulator() {
   const { niveisProgress } = useGameStore()
 
+  const getLevelFullName = (id: string | number, name: string) => {
+    if (id === 'III' || id === 3 || name.includes('Mobilizador'))
+      return 'Nível III - Observador Certificado Mobilizador'
+    if (id === 'II' || id === 2 || name.includes('Pleno'))
+      return 'Nível II - Observador Certificado Pleno'
+    if (
+      id === 'I' ||
+      id === 1 ||
+      name.includes('Iniciante') ||
+      name.includes('Observador Certificado')
+    )
+      return 'Nível I - Observador Certificado'
+    return name
+  }
+
   return (
     <Card className="shadow-subtle border-border/60">
       <CardHeader>
@@ -14,11 +29,13 @@ export function EvolutionSimulator() {
         {niveisProgress.map((nivel) => (
           <div
             key={nivel.id}
-            className="flex items-center justify-between p-4 rounded-lg border border-border/50 bg-card hover:bg-muted/10 transition-colors"
+            className="flex items-center justify-between p-4 rounded-lg border border-border/50 bg-card hover:bg-muted/10 transition-colors gap-4"
           >
-            <div>
-              <p className="font-bold text-base text-foreground">{nivel.name}</p>
-              <p className="text-sm text-muted-foreground mt-0.5 font-medium">
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-sm md:text-base text-foreground leading-tight break-words">
+                {getLevelFullName(nivel.id, nivel.name)}
+              </p>
+              <p className="text-xs md:text-sm text-muted-foreground mt-1 font-medium">
                 {nivel.points} pontos acumulados
               </p>
             </div>

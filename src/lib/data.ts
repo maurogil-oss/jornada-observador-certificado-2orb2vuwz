@@ -11,7 +11,7 @@ export const principles = [
 export const niveisData = [
   {
     id: 'I',
-    title: 'Observador Certificado (Iniciante)',
+    title: 'Nível I - Observador Certificado',
     purpose: 'Construir autoridade técnica.',
     progress: 75,
     icon: BookOpen,
@@ -35,7 +35,7 @@ export const niveisData = [
   },
   {
     id: 'II',
-    title: 'Observador Certificado Pleno',
+    title: 'Nível II - Observador Certificado Pleno',
     purpose: 'Gerar transformação prática.',
     progress: 40,
     icon: Activity,
@@ -59,7 +59,7 @@ export const niveisData = [
   },
   {
     id: 'III',
-    title: 'Mobilizador',
+    title: 'Nível III - Observador Certificado Mobilizador',
     purpose: 'Ocupação de espaços estratégicos e formação de novas lideranças.',
     progress: 15,
     icon: Users,

@@ -7,14 +7,22 @@ import pb from '@/lib/pocketbase/client'
 
 export function TopHeader() {
   const { user } = useAuthStore()
-  const { levelName } = useGameStore()
+  const { level } = useGameStore()
+
+  const levelName =
+    level === 3
+      ? 'Nível III - Observador Certificado Mobilizador'
+      : level === 2
+        ? 'Nível II - Observador Certificado Pleno'
+        : 'Nível I - Observador Certificado'
 
   const shortLevelName = levelName.split(' - ')[0]
-  const badgeColor = levelName.includes('Mobilizador')
-    ? 'bg-amber-500 text-amber-950 hover:bg-amber-600'
-    : levelName.includes('Pleno')
-      ? 'bg-blue-500 text-white hover:bg-blue-600'
-      : 'bg-emerald-500 text-white hover:bg-emerald-600'
+  const badgeColor =
+    level === 3
+      ? 'bg-amber-500 text-amber-950 hover:bg-amber-600'
+      : level === 2
+        ? 'bg-blue-500 text-white hover:bg-blue-600'
+        : 'bg-emerald-500 text-white hover:bg-emerald-600'
 
   return (
     <header className="h-16 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 shadow-sm">
@@ -37,7 +45,7 @@ export function TopHeader() {
           <div className="flex items-center gap-2">
             <Badge
               variant="outline"
-              className={`hidden sm:inline-flex border-opacity-50 font-semibold ${
+              className={`hidden md:inline-flex border-opacity-50 font-semibold ${
                 user.role === 'admin'
                   ? 'bg-amber-500/10 text-amber-700 border-amber-500/30 dark:text-amber-400'
                   : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30 dark:text-emerald-400'
@@ -48,7 +56,7 @@ export function TopHeader() {
 
             {user.role !== 'admin' && (
               <Badge
-                className={`hidden sm:inline-flex font-bold shadow-sm ${badgeColor}`}
+                className={`hidden sm:inline-flex font-bold shadow-sm text-xs truncate max-w-[120px] md:max-w-[200px] lg:max-w-none ${badgeColor}`}
                 title={levelName}
               >
                 {shortLevelName}

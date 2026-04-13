@@ -61,6 +61,17 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
 
   if (!item) return null
 
+  const getLevelFullName = (nivel: string) => {
+    const n = nivel.toUpperCase()
+    if (n.includes('3') || n.includes('III'))
+      return 'Nível III - Observador Certificado Mobilizador'
+    if (n.includes('2') || n.includes('II')) return 'Nível II - Observador Certificado Pleno'
+    if (n.includes('1') || n.includes('I')) return 'Nível I - Observador Certificado'
+    return nivel
+  }
+
+  const levelFullName = getLevelFullName(item.nivel)
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[550px]">
@@ -68,8 +79,8 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
           <DialogHeader>
             <DialogTitle className="text-xl">Submeter Evidências</DialogTitle>
             <DialogDescription className="mt-2">
-              Envie documentos que evidenciem sua atuação em <strong>{item.title}</strong> (Eixo de
-              Referência: {item.nivel}). Ao ser validado, você receberá até{' '}
+              Envie documentos que evidenciem sua atuação em <strong>{item.title}</strong>{' '}
+              (Certificação: {levelFullName}). Ao ser validado, você receberá até{' '}
               <strong className="text-accent">{item.points} pts</strong>.
             </DialogDescription>
           </DialogHeader>

@@ -7,8 +7,16 @@ import { Link } from 'react-router-dom'
 import useAuthStore from '@/stores/useAuthStore'
 
 export function HeroProgress() {
-  const { levelName, points, level } = useGameStore()
+  const { points, level } = useGameStore()
   const { user } = useAuthStore()
+
+  const levelName =
+    level === 3
+      ? 'Nível III - Observador Certificado Mobilizador'
+      : level === 2
+        ? 'Nível II - Observador Certificado Pleno'
+        : 'Nível I - Observador Certificado'
+
   const nextLevelPoints = level === 1 ? 200 : level === 2 ? 500 : 1000
   const progressToNext = Math.min(100, Math.round((points / nextLevelPoints) * 100))
 
@@ -92,9 +100,12 @@ export function HeroProgress() {
           strokeWidth={12}
           className="text-primary-foreground drop-shadow-lg shrink-0"
         />
-        <div className="space-y-4 text-center md:text-left">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-            Maturidade: <span className="text-accent block mt-1">{levelName}</span>
+        <div className="space-y-4 text-center md:text-left flex-1 min-w-0">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight break-words">
+            Maturidade:{' '}
+            <span className="text-accent block mt-1 leading-tight text-2xl md:text-3xl lg:text-4xl">
+              {levelName}
+            </span>
           </h2>
           <p className="text-secondary-foreground/80 text-lg max-w-xl">
             Você possui{' '}
