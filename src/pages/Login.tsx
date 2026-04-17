@@ -25,6 +25,7 @@ import {
   MapPin,
   Briefcase,
   IdCard,
+  Loader2,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
@@ -131,11 +132,20 @@ export default function Login() {
       const isAdmin = record?.role === 'admin' || data.email.toLowerCase() === 'maurog1@hotmail.com'
       navigate(isAdmin ? '/admin' : '/')
     } catch (err: any) {
-      toast({
-        title: 'Erro ao entrar',
-        description: 'E-mail ou senha inválidos.',
-        variant: 'destructive',
-      })
+      if (err.status === 0) {
+        toast({
+          title: 'Erro de Conexão',
+          description:
+            'Não foi possível conectar ao servidor. Verifique sua conexão com a internet ou se há bloqueios de firewall em sua rede.',
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Erro ao entrar',
+          description: 'E-mail ou senha inválidos.',
+          variant: 'destructive',
+        })
+      }
     } finally {
       setIsLoading(false)
     }
@@ -149,13 +159,11 @@ export default function Login() {
     })
     try {
       await register(data)
-      logout() // Force logout so they stay out until approved
       toast({
-        title: 'Cadastro Recebido',
-        description:
-          'Sua conta foi criada com sucesso e está pendente de aprovação pelo administrador.',
+        title: 'Cadastro Realizado',
+        description: 'Sua conta foi criada com sucesso! Bem-vindo.',
       })
-      navigate('/login')
+      // The useEffect will handle the redirect to the dashboard
     } catch (err: any) {
       const fieldErrors = extractFieldErrors(err)
 
@@ -163,7 +171,7 @@ export default function Login() {
         toast({
           title: 'Erro de Conexão',
           description:
-            'Não foi possível conectar ao servidor. Verifique sua internet e tente novamente.',
+            'Não foi possível conectar ao servidor. Verifique sua conexão com a internet ou se há bloqueios de firewall em sua rede.',
           variant: 'destructive',
         })
       } else if (fieldErrors.email) {
@@ -267,7 +275,14 @@ export default function Login() {
                     )}
                   />
                   <Button type="submit" className="w-full h-11 font-bold mt-2" disabled={isLoading}>
-                    {isLoading ? 'Autenticando...' : 'Acessar'}
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Autenticando...
+                      </>
+                    ) : (
+                      'Acessar'
+                    )}
                   </Button>
                 </form>
               </Form>
@@ -589,7 +604,14 @@ export default function Login() {
                     className="w-full h-11 font-bold mt-4"
                     disabled={isLoading || !registerForm.formState.isValid}
                   >
-                    {isLoading ? 'Cadastrando...' : 'Criar Conta'}
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Cadastrando...
+                      </>
+                    ) : (
+                      'Criar Conta'
+                    )}
                   </Button>
                 </form>
               </Form>

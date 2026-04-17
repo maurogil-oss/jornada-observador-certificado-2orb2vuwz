@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       role: 'observer',
       points: 0,
       level: 'Nível I - Observador Certificado (Iniciante)',
-      is_active: false, // Pending admin approval
+      is_active: true, // Auto-activate new users
     })
     await login(data.email, data.password)
   }
