@@ -53,12 +53,12 @@ export default function Profile() {
 
   const [formData, setFormData] = useState({
     full_name: '',
-    name: '',
+    cpf_document: '',
     birth_date: '',
+    workplace: '',
     city: '',
     state: '',
     country: 'Brasil',
-    workplace: '',
   })
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
@@ -69,12 +69,12 @@ export default function Profile() {
     if (user) {
       setFormData({
         full_name: user.full_name || '',
-        name: user.name || '',
+        cpf_document: user.cpf_document || '',
         birth_date: user.birth_date || '',
+        workplace: user.workplace || '',
         city: user.city || '',
         state: user.state || '',
         country: user.country || 'Brasil',
-        workplace: user.workplace || '',
       })
       if (user.avatar) {
         setAvatarPreview(`${pb.baseURL}/api/files/users/${user.id}/${user.avatar}`)
@@ -105,9 +105,13 @@ export default function Profile() {
     setLoading(true)
     try {
       const data = new FormData()
+
+      // Append all text fields correctly
       Object.entries(formData).forEach(([key, value]) => {
         data.append(key, value)
       })
+
+      // Append avatar if a new one was selected
       if (avatarFile) {
         data.append('avatar', avatarFile)
       }
@@ -124,45 +128,54 @@ export default function Profile() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-8 animate-fade-in">
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Meu Perfil</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">Meu Perfil</h1>
+        <p className="text-muted-foreground mt-2 text-sm sm:text-base">
           Atualize suas informações pessoais e profissionais para nos ajudar a conhecer melhor nossa
           rede.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-card p-6 rounded-lg border shadow-sm">
-        <div className="flex flex-col items-center space-y-4 mb-6">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-card rounded-xl border border-border/40 shadow-sm p-6 sm:p-8"
+      >
+        {/* Avatar Section */}
+        <div className="flex flex-col items-center space-y-3 mb-8">
           <div
             className="relative group cursor-pointer"
             onClick={() => fileInputRef.current?.click()}
           >
-            <Avatar className="w-24 h-24 border-2 border-border">
+            <Avatar className="w-24 h-24 sm:w-28 sm:h-28 border border-border/50 shadow-sm bg-slate-100">
               <AvatarImage src={avatarPreview || undefined} alt="Avatar" className="object-cover" />
-              <AvatarFallback className="text-2xl">{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+              <AvatarFallback className="text-3xl font-medium text-slate-500">
+                {user?.full_name?.charAt(0)?.toUpperCase() ||
+                  user?.email?.charAt(0)?.toUpperCase() ||
+                  'U'}
+              </AvatarFallback>
             </Avatar>
-            <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Camera className="w-6 h-6 text-white" />
+            <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <Camera className="w-8 h-8 text-white" />
             </div>
           </div>
-          <div className="text-center">
-            <p className="text-sm font-medium">Foto de Perfil</p>
-            <p className="text-xs text-muted-foreground mt-1">Qualquer imagem</p>
+          <div className="text-center space-y-1">
+            <p className="text-sm font-semibold text-foreground">Foto de Perfil</p>
+            <p className="text-xs text-muted-foreground">PNG ou JPG (Max. 5MB)</p>
           </div>
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/png, image/jpeg, image/jpg"
             className="hidden"
             onChange={handleAvatarChange}
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Fields Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
           <div className="space-y-2">
-            <Label htmlFor="full_name">Nome Completo (Legal)</Label>
+            <Label htmlFor="full_name">Nome Completo</Label>
             <Input
               id="full_name"
               name="full_name"
@@ -173,18 +186,13 @@ export default function Profile() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name">Nome de Exibição / Apelido</Label>
-            <Input id="name" name="name" value={formData.name} onChange={handleChange} required />
-          </div>
-
-          <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
             <Input
               id="email"
               type="email"
               value={user?.email || ''}
               disabled
-              className="bg-muted"
+              className="bg-muted text-muted-foreground cursor-not-allowed"
             />
             <p className="text-xs text-muted-foreground">O e-mail não pode ser alterado.</p>
           </div>
@@ -207,25 +215,17 @@ export default function Profile() {
               name="workplace"
               value={formData.workplace}
               onChange={handleChange}
-              placeholder="Empresa, Instituição ou Entidade..."
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="city">Cidade</Label>
-            <Input
-              id="city"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              placeholder="Ex: São Paulo"
-              required
-            />
+            <Input id="city" name="city" value={formData.city} onChange={handleChange} />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="state">Estado</Label>
-            <Select value={formData.state || undefined} onValueChange={handleStateChange} required>
+            <Select value={formData.state || undefined} onValueChange={handleStateChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Selecione um estado" />
               </SelectTrigger>
@@ -241,18 +241,27 @@ export default function Profile() {
 
           <div className="space-y-2">
             <Label htmlFor="country">País</Label>
+            <Input id="country" name="country" value={formData.country} onChange={handleChange} />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="cpf_document">CPF</Label>
             <Input
-              id="country"
-              name="country"
-              value={formData.country}
+              id="cpf_document"
+              name="cpf_document"
+              value={formData.cpf_document}
               onChange={handleChange}
-              required
+              placeholder="000.000.000-00"
             />
           </div>
         </div>
 
-        <div className="flex justify-end pt-4 border-t border-border/50">
-          <Button type="submit" disabled={loading} className="w-full sm:w-auto">
+        <div className="mt-8 pt-6 border-t border-border/50 flex justify-end">
+          <Button
+            type="submit"
+            disabled={loading}
+            className="bg-green-700 hover:bg-green-800 text-white w-full sm:w-auto min-w-[160px]"
+          >
             {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             Salvar Alterações
           </Button>
