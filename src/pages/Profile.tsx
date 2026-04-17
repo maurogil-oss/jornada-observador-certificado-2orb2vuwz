@@ -52,6 +52,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState({
+    full_name: '',
     name: '',
     birth_date: '',
     city: '',
@@ -67,6 +68,7 @@ export default function Profile() {
   useEffect(() => {
     if (user) {
       setFormData({
+        full_name: user.full_name || '',
         name: user.name || '',
         birth_date: user.birth_date || '',
         city: user.city || '',
@@ -160,7 +162,18 @@ export default function Profile() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Nome Completo</Label>
+            <Label htmlFor="full_name">Nome Completo (Legal)</Label>
+            <Input
+              id="full_name"
+              name="full_name"
+              value={formData.full_name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="name">Nome de Exibição / Apelido</Label>
             <Input id="name" name="name" value={formData.name} onChange={handleChange} required />
           </div>
 
@@ -206,12 +219,13 @@ export default function Profile() {
               value={formData.city}
               onChange={handleChange}
               placeholder="Ex: São Paulo"
+              required
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="state">Estado</Label>
-            <Select value={formData.state || undefined} onValueChange={handleStateChange}>
+            <Select value={formData.state || undefined} onValueChange={handleStateChange} required>
               <SelectTrigger>
                 <SelectValue placeholder="Selecione um estado" />
               </SelectTrigger>
@@ -227,7 +241,13 @@ export default function Profile() {
 
           <div className="space-y-2">
             <Label htmlFor="country">País</Label>
-            <Input id="country" name="country" value={formData.country} onChange={handleChange} />
+            <Input
+              id="country"
+              name="country"
+              value={formData.country}
+              onChange={handleChange}
+              required
+            />
           </div>
         </div>
 

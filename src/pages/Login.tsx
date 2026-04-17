@@ -38,22 +38,51 @@ const loginSchema = z.object({
   password: z.string().min(1, 'A senha é obrigatória'),
 })
 
+function isValidCPF(cpf: string) {
+  cpf = cpf.replace(/[^\d]+/g, '')
+  if (cpf.length !== 11 || !!cpf.match(/(\d)\1{10}/)) return false
+  let sum = 0
+  let remainder
+  for (let i = 1; i <= 9; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (11 - i)
+  remainder = (sum * 10) % 11
+  if (remainder === 10 || remainder === 11) remainder = 0
+  if (remainder !== parseInt(cpf.substring(9, 10))) return false
+  sum = 0
+  for (let i = 1; i <= 10; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (12 - i)
+  remainder = (sum * 10) % 11
+  if (remainder === 10 || remainder === 11) remainder = 0
+  if (remainder !== parseInt(cpf.substring(10, 11))) return false
+  return true
+}
+
 const registerSchema = z
   .object({
     turma: z.coerce.number().min(0, 'Inválido').max(16, 'Máximo 16'),
     full_name: z.string().min(3, 'Nome muito curto.'),
     nickname: z.string().optional(),
-    cpf_document: z.string().min(1, 'Obrigatório'),
+    cpf_document: z.string().min(1, 'Obrigatório').refine(isValidCPF, { message: 'CPF inválido.' }),
     rg: z.string().min(1, 'Obrigatório'),
     rg_issuer: z.string().min(1, 'Obrigatório'),
     rg_state: z.string().min(1, 'Obrigatório'),
-    birth_date: z.string().min(1, 'Obrigatório'),
+    birth_date: z
+      .string()
+      .min(1, 'Obrigatório')
+      .refine(
+        (val) => {
+          const date = new Date(val)
+          if (isNaN(date.getTime())) return false
+          const year = date.getFullYear()
+          const currentYear = new Date().getFullYear()
+          return year > 1900 && year <= currentYear
+        },
+        { message: 'Ano deve ser entre 1900 e o atual.' },
+      ),
     email: z.string().email('E-mail inválido.'),
     password: z.string().min(8, 'A senha deve ter pelo menos 8 caracteres'),
     passwordConfirm: z.string().min(8, 'A confirmação de senha deve ter pelo menos 8 caracteres'),
-    city: z.string().optional(),
-    state: z.string().optional(),
-    country: z.string().optional(),
+    city: z.string().min(1, 'Obrigatório'),
+    state: z.string().min(1, 'Obrigatório'),
+    country: z.string().min(1, 'Obrigatório'),
     workplace: z.string().optional(),
     lgpd_consent: z.boolean().refine((val) => val === true, {
       message: 'Você deve aceitar os termos de uso e política de privacidade.',
@@ -484,7 +513,7 @@ export default function Login() {
                       name="city"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Cidade</FormLabel>
+                          <FormLabel>Cidade *</FormLabel>
                           <FormControl>
                             <div className="relative">
                               <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
@@ -501,7 +530,7 @@ export default function Login() {
                       name="state"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Estado</FormLabel>
+                          <FormLabel>Estado *</FormLabel>
                           <FormControl>
                             <Input placeholder="UF" className="h-11" {...field} />
                           </FormControl>
@@ -515,7 +544,7 @@ export default function Login() {
                       name="country"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>País</FormLabel>
+                          <FormLabel>País *</FormLabel>
                           <FormControl>
                             <Input placeholder="Brasil" className="h-11" {...field} />
                           </FormControl>

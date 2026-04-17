@@ -21,14 +21,15 @@ export function HeroProgress() {
   const progressToNext = Math.min(100, Math.round((points / nextLevelPoints) * 100))
 
   const downloadCertificate = () => {
-    if (!user) return
+    if (!user || !user.is_active) return
     const date = new Date().toLocaleDateString('pt-BR')
+    const userName = user.full_name || user.name || 'Observador'
     const win = window.open('', '_blank')
     if (!win) return
     win.document.write(`
       <html>
         <head>
-          <title>Certificado - ${user.name}</title>
+          <title>Certificado - ${userName}</title>
           <style>
             @media print {
               @page { size: A4 landscape; margin: 0; }
@@ -70,7 +71,7 @@ export function HeroProgress() {
               <h1>Certificado de Reconhecimento</h1>
               <h2>Jornada de Evolução do Observador Certificado</h2>
               <p class="text">Certificamos que</p>
-              <div class="name">${user.name}</div>
+              <div class="name">${userName}</div>
               <p class="text">atingiu os requisitos necessários e obteve a titulação de</p>
               <div class="level">${levelName}</div>
               <div class="footer">
@@ -135,7 +136,8 @@ export function HeroProgress() {
             </Button>
             <Button
               onClick={downloadCertificate}
-              className="bg-primary hover:bg-primary/90 text-white font-bold h-11 px-6 shadow-sm"
+              disabled={!user?.is_active}
+              className="bg-primary hover:bg-primary/90 text-white font-bold h-11 px-6 shadow-sm disabled:opacity-50"
             >
               <Download className="mr-2 w-4 h-4" /> Baixar Certificado
             </Button>
