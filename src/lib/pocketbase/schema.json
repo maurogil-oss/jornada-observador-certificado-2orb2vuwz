@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-17T14:52:07.946Z",
+  "generatedAt": "2026-04-17T15:26:04.894Z",
   "collections": [
     {
       "name": "users",
@@ -211,6 +211,18 @@
         {
           "name": "file",
           "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "link",
+          "type": "url",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "description",
+          "type": "text",
           "required": false,
           "system": false
         }

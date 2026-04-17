@@ -31,6 +31,8 @@ interface SubmissionsState {
     points?: number
     type?: string
     file?: File
+    link?: string
+    description?: string
   }) => Promise<void>
   updateSubmissionStatus: (id: string, status: string, points?: number) => Promise<void>
   editSubmission: (id: string, data: { title?: string; file?: File }) => Promise<void>
@@ -100,6 +102,8 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     points?: number
     type?: string
     file?: File
+    link?: string
+    description?: string
   }) => {
     if (!user) return
     const formData = new FormData()
@@ -110,6 +114,8 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     formData.append('user_id', user.id)
     formData.append('type', sub.type || 'competency')
     if (sub.file) formData.append('file', sub.file)
+    if (sub.link) formData.append('link', sub.link)
+    if (sub.description) formData.append('description', sub.description)
 
     await pb.collection('submissions').create(formData)
   }

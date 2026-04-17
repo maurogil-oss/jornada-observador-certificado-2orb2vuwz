@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { UploadCloud, AlertCircle } from 'lucide-react'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import useSubmissionsStore from '@/stores/useSubmissionsStore'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
 
@@ -26,26 +26,33 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [file, setFile] = useState<File | null>(null)
+  const [link, setLink] = useState('')
+  const [desc, setDesc] = useState('')
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { addSubmission } = useSubmissionsStore()
+
+  useEffect(() => {
+    if (isOpen) {
+      setFile(null)
+      setLink('')
+      setDesc('')
+    }
+  }, [isOpen])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     try {
       if (item) {
-        const isTitulation =
-          item.title.toLowerCase().includes('graduação') ||
-          item.title.toLowerCase().includes('mestrado') ||
-          item.title.toLowerCase().includes('doutorado')
-
         await addSubmission({
           title: item.title,
           nivel: item.nivel,
           points: item.points,
           type: isTitulation ? 'titulation' : 'competency',
           file: file || undefined,
+          link: link || undefined,
+          description: desc || undefined,
         })
       }
       toast({
@@ -77,6 +84,12 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
 
   const levelFullName = getLevelFullName(item.nivel)
 
+  const isTitulation =
+    item.title.toLowerCase().includes('graduação') ||
+    item.title.toLowerCase().includes('mestrado') ||
+    item.title.toLowerCase().includes('doutorado') ||
+    item.title.toLowerCase().includes('pós')
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[550px]">
@@ -90,18 +103,33 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-md p-3 mt-4 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-500 shrink-0 mt-0.5" />
-            <p className="text-sm text-amber-800 dark:text-amber-400">
-              <strong>Informação:</strong> A pontuação não é cumulativa. O envio da maior titulação
-              substitui automaticamente as pontuações anteriores.
-            </p>
-          </div>
+          {isTitulation ? (
+            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-md p-3 mt-4 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-500 shrink-0 mt-0.5" />
+              <p className="text-sm text-amber-800 dark:text-amber-400">
+                <strong>Informação:</strong> A pontuação não é cumulativa. O envio da maior
+                titulação substitui automaticamente as pontuações anteriores.
+              </p>
+            </div>
+          ) : (
+            <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-md p-3 mt-4 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
+              <p className="text-sm text-blue-800 dark:text-blue-400">
+                <strong>Informação:</strong> Certifique-se de enviar evidências claras e legíveis
+                para facilitar a validação pela equipe.
+              </p>
+            </div>
+          )}
 
           <div className="grid gap-6 py-6 pt-4">
             <div className="space-y-2">
               <Label htmlFor="link">Link Externo (Opcional)</Label>
-              <Input id="link" placeholder="Ex: https://meu-artigo-publicado.com" />
+              <Input
+                id="link"
+                placeholder="Ex: https://meu-artigo-publicado.com"
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label className="block text-sm font-medium mb-2">Arquivo de Evidência</Label>
@@ -160,6 +188,8 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                 id="desc"
                 placeholder="Descreva brevemente o impacto gerado por esta atividade..."
                 className="resize-none h-24"
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
               />
             </div>
           </div>
