@@ -17,6 +17,37 @@ import pb from '@/lib/pocketbase/client'
 import { Loader2, Camera } from 'lucide-react'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
 
+const formatCPF = (value: string) => {
+  return value
+    .replace(/\D/g, '')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+    .replace(/(-\d{2})\d+?$/, '$1')
+}
+
+const isValidCPF = (cpf: string) => {
+  cpf = cpf.replace(/[^\d]+/g, '')
+  if (cpf.length !== 11 || !!cpf.match(/(\d)\1{10}/)) return false
+  const cpfDigits = cpf.split('').map((el) => +el)
+  const rest = (count: number) =>
+    ((cpfDigits.slice(0, count - 12).reduce((soma, el, index) => soma + el * (count - index), 0) *
+      10) %
+      11) %
+    10
+  return rest(10) === cpfDigits[9] && rest(11) === cpfDigits[10]
+}
+
+const isValidDate = (dateString: string) => {
+  if (!dateString) return true
+  const date = new Date(dateString)
+  if (isNaN(date.getTime())) return false
+  const now = new Date()
+  if (date > now) return false
+  if (date.getFullYear() < 1900) return false
+  return true
+}
+
 const BRAZILIAN_STATES = [
   'AC',
   'AL',
@@ -69,7 +100,7 @@ export default function Profile() {
     if (user) {
       setFormData({
         full_name: user.full_name || '',
-        cpf_document: user.cpf_document || '',
+        cpf_document: formatCPF(user.cpf_document || ''),
         birth_date: user.birth_date || '',
         workplace: user.workplace || '',
         city: user.city || '',
@@ -77,13 +108,17 @@ export default function Profile() {
         country: user.country || 'Brasil',
       })
       if (user.avatar) {
-        setAvatarPreview(`${pb.baseURL}/api/files/users/${user.id}/${user.avatar}`)
+        setAvatarPreview(user.avatar)
       }
     }
   }, [user])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    let value = e.target.value
+    if (e.target.name === 'cpf_document') {
+      value = formatCPF(value)
+    }
+    setFormData((prev) => ({ ...prev, [e.target.name]: value }))
   }
 
   const handleStateChange = (val: string) => {
@@ -102,6 +137,19 @@ export default function Profile() {
     e.preventDefault()
     if (!user) return
 
+    if (formData.cpf_document) {
+      const cleanCPF = formData.cpf_document.replace(/[^\d]+/g, '')
+      if (cleanCPF.length > 0 && !isValidCPF(cleanCPF)) {
+        toast.error('CPF inválido. Verifique o número digitado.')
+        return
+      }
+    }
+
+    if (formData.birth_date && !isValidDate(formData.birth_date)) {
+      toast.error('Data de nascimento inválida.')
+      return
+    }
+
     setLoading(true)
     try {
       const data = new FormData()
@@ -118,6 +166,9 @@ export default function Profile() {
 
       await updateUser(user.id, data)
       await pb.collection('users').authRefresh()
+
+      // Clear avatar file from state after successfully uploading
+      setAvatarFile(null)
       toast.success('Perfil atualizado com sucesso!')
     } catch (error) {
       toast.error(getErrorMessage(error) || 'Erro ao atualizar perfil.')
