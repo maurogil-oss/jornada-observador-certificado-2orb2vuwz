@@ -31,15 +31,23 @@ export function HeroProgress() {
           <title>Certificado - ${user.name}</title>
           <style>
             @media print {
-              @page { size: landscape; margin: 0; }
-              body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+              @page { size: A4 landscape; margin: 0; }
+              body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: white; }
+              .certificate {
+                box-shadow: none !important;
+                margin: 0 auto;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                width: 297mm;
+                height: 210mm;
+              }
             }
             body {
               margin: 0; padding: 0; display: flex; align-items: center; justify-content: center;
               height: 100vh; font-family: 'Arial', sans-serif; background: #f0f0f0;
             }
             .certificate {
-              width: 1000px; height: 700px; background: white; padding: 40px; box-sizing: border-box;
+              width: 297mm; height: 210mm; max-width: 100%; max-height: 100%; background: white; padding: 40px; box-sizing: border-box;
               border: 20px solid #059669; position: relative; text-align: center;
               box-shadow: 0 0 20px rgba(0,0,0,0.2);
             }

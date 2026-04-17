@@ -160,7 +160,7 @@ export default function Profile() {
 
           <div className="space-y-2">
             <Label htmlFor="state">Estado</Label>
-            <Select value={formData.state} onValueChange={handleStateChange}>
+            <Select value={formData.state || undefined} onValueChange={handleStateChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Selecione um estado" />
               </SelectTrigger>

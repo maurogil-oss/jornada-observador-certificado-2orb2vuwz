@@ -29,8 +29,11 @@ interface SubmissionsState {
     nivel: string
     points?: number
     type?: string
+    file?: File
   }) => Promise<void>
   updateSubmissionStatus: (id: string, status: string, points?: number) => Promise<void>
+  editSubmission: (id: string, data: { title?: string; file?: File }) => Promise<void>
+  deleteSubmission: (id: string) => Promise<void>
 }
 
 const SubmissionsContext = createContext<SubmissionsState | undefined>(undefined)
@@ -92,16 +95,19 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     nivel: string
     points?: number
     type?: string
+    file?: File
   }) => {
     if (!user) return
-    await pb.collection('submissions').create({
-      title: sub.title,
-      nivel: sub.nivel,
-      status: 'Em Análise',
-      score: sub.points || 0,
-      user_id: user.id,
-      type: sub.type || 'competency',
-    })
+    const formData = new FormData()
+    formData.append('title', sub.title)
+    formData.append('nivel', sub.nivel)
+    formData.append('status', 'Em Análise')
+    formData.append('score', String(sub.points || 0))
+    formData.append('user_id', user.id)
+    formData.append('type', sub.type || 'competency')
+    if (sub.file) formData.append('file', sub.file)
+
+    await pb.collection('submissions').create(formData)
   }
 
   const updateSubmissionStatus = async (id: string, status: string, points?: number) => {
@@ -111,8 +117,27 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     })
   }
 
+  const editSubmission = async (id: string, data: { title?: string; file?: File }) => {
+    const formData = new FormData()
+    if (data.title) formData.append('title', data.title)
+    if (data.file) formData.append('file', data.file)
+    await pb.collection('submissions').update(id, formData)
+  }
+
+  const deleteSubmission = async (id: string) => {
+    await pb.collection('submissions').delete(id)
+  }
+
   return (
-    <SubmissionsContext.Provider value={{ submissions, addSubmission, updateSubmissionStatus }}>
+    <SubmissionsContext.Provider
+      value={{
+        submissions,
+        addSubmission,
+        updateSubmissionStatus,
+        editSubmission,
+        deleteSubmission,
+      }}
+    >
       {children}
     </SubmissionsContext.Provider>
   )

@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Checkbox } from '@/components/ui/checkbox'
 import useAuthStore from '@/stores/useAuthStore'
 import {
   Lock,
@@ -54,6 +55,9 @@ const registerSchema = z
     state: z.string().optional(),
     country: z.string().optional(),
     workplace: z.string().optional(),
+    lgpd_consent: z.boolean().refine((val) => val === true, {
+      message: 'Você deve aceitar os termos de uso e política de privacidade.',
+    }),
   })
   .refine((data) => data.password === data.passwordConfirm, {
     message: 'As senhas não coincidem',
@@ -111,6 +115,7 @@ export default function Login() {
       state: '',
       country: '',
       workplace: '',
+      lgpd_consent: false,
     },
   })
 
@@ -527,6 +532,28 @@ export default function Login() {
                           </div>
                         </FormControl>
                         <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={registerForm.control}
+                    name="lgpd_consent"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-muted/10 mt-2 mb-4">
+                        <FormControl>
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                        <div className="space-y-1.5 leading-none">
+                          <FormLabel className="text-sm font-semibold leading-none">
+                            Li e concordo com os termos de uso e política de privacidade *
+                          </FormLabel>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Seus dados pessoais (Nome, CPF, RG, Localização) serão armazenados e
+                            utilizados exclusivamente para fins de certificação, e utilizamos
+                            cookies essenciais para autenticação e segurança.
+                          </p>
+                        </div>
                       </FormItem>
                     )}
                   />

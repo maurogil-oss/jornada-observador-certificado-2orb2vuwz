@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-17T13:54:48.738Z",
+  "generatedAt": "2026-04-17T14:10:55.364Z",
   "collections": [
     {
       "name": "users",
@@ -151,8 +151,8 @@
         "list": "@request.auth.id != ''",
         "view": "@request.auth.id != ''",
         "create": "@request.auth.id != ''",
-        "update": "@request.auth.id != ''",
-        "delete": "@request.auth.id != ''"
+        "update": "@request.auth.role = 'admin' || (user_id = @request.auth.id && status != 'Aprovado')",
+        "delete": "@request.auth.role = 'admin' || (user_id = @request.auth.id && status != 'Aprovado')"
       },
       "fields": [
         {
@@ -207,6 +207,12 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "file",
+          "type": "file",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [

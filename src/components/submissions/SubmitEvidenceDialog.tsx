@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { UploadCloud, AlertCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import useSubmissionsStore from '@/stores/useSubmissionsStore'
 
 interface Props {
@@ -24,6 +24,9 @@ interface Props {
 export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+  const [file, setFile] = useState<File | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const { addSubmission } = useSubmissionsStore()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,6 +44,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
           nivel: item.nivel,
           points: item.points,
           type: isTitulation ? 'titulation' : 'competency',
+          file: file || undefined,
         })
       }
       toast({
@@ -99,20 +103,54 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
               <Input id="link" placeholder="Ex: https://meu-artigo-publicado.com" />
             </div>
             <div className="space-y-2">
-              <Label
-                htmlFor="file"
-                className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-muted/20 hover:bg-muted/40 transition-all border-muted-foreground/30 hover:border-primary/50 group"
+              <Label className="block text-sm font-medium mb-2">Arquivo de Evidência</Label>
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault()
+                  setIsDragging(true)
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault()
+                  setIsDragging(false)
+                  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    setFile(e.dataTransfer.files[0])
+                  }
+                }}
+                onClick={() => fileInputRef.current?.click()}
+                className={`flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer transition-all ${isDragging ? 'border-primary bg-primary/10' : 'bg-muted/20 hover:bg-muted/40 border-muted-foreground/30 hover:border-primary/50'} group`}
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <UploadCloud className="w-10 h-10 mb-3 text-muted-foreground group-hover:text-primary transition-colors" />
-                  <p className="mb-2 text-sm text-muted-foreground">
-                    <span className="font-semibold text-foreground">Clique para anexar</span> ou
-                    arraste e solte
+                  <UploadCloud
+                    className={`w-10 h-10 mb-3 transition-colors ${isDragging ? 'text-primary' : 'text-muted-foreground group-hover:text-primary'}`}
+                  />
+                  <p className="mb-2 text-sm text-muted-foreground text-center px-4">
+                    {file ? (
+                      <span className="font-semibold text-foreground">{file.name}</span>
+                    ) : (
+                      <>
+                        <span className="font-semibold text-foreground">Clique para anexar</span> ou
+                        arraste e solte
+                      </>
+                    )}
                   </p>
-                  <p className="text-xs text-muted-foreground/80">PDF, PNG, JPG (Max. 10MB)</p>
+                  {!file && (
+                    <p className="text-xs text-muted-foreground/80">PDF, PNG, JPG (Max. 10MB)</p>
+                  )}
                 </div>
-                <Input id="file" type="file" className="hidden" accept=".pdf,.png,.jpg" />
-              </Label>
+                <Input
+                  ref={fileInputRef}
+                  id="file"
+                  type="file"
+                  className="hidden"
+                  accept=".pdf,.png,.jpg"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      setFile(e.target.files[0])
+                    }
+                  }}
+                />
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="desc">Detalhes da Atuação</Label>
