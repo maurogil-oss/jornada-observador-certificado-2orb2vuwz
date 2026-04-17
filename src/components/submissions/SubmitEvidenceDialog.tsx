@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast'
 import { UploadCloud, AlertCircle } from 'lucide-react'
 import { useState, useRef } from 'react'
 import useSubmissionsStore from '@/stores/useSubmissionsStore'
+import { getErrorMessage } from '@/lib/pocketbase/errors'
 
 interface Props {
   isOpen: boolean
@@ -55,7 +56,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
     } catch (err) {
       toast({
         title: 'Erro ao enviar',
-        description: 'Tente novamente mais tarde.',
+        description: getErrorMessage(err) || 'Tente novamente mais tarde.',
         variant: 'destructive',
       })
     } finally {
@@ -114,7 +115,25 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                   e.preventDefault()
                   setIsDragging(false)
                   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                    setFile(e.dataTransfer.files[0])
+                    const droppedFile = e.dataTransfer.files[0]
+                    const validTypes = ['application/pdf', 'image/jpeg', 'image/png']
+                    if (!validTypes.includes(droppedFile.type)) {
+                      toast({
+                        title: 'Tipo de arquivo inválido',
+                        description: 'Apenas PDF, PNG e JPG são aceitos.',
+                        variant: 'destructive',
+                      })
+                      return
+                    }
+                    if (droppedFile.size > 5 * 1024 * 1024) {
+                      toast({
+                        title: 'Arquivo muito grande',
+                        description: 'O arquivo deve ter no máximo 5MB.',
+                        variant: 'destructive',
+                      })
+                      return
+                    }
+                    setFile(droppedFile)
                   }
                 }}
                 onClick={() => fileInputRef.current?.click()}
@@ -146,7 +165,16 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                   accept=".pdf,.png,.jpg"
                   onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
-                      setFile(e.target.files[0])
+                      const selectedFile = e.target.files[0]
+                      if (selectedFile.size > 5 * 1024 * 1024) {
+                        toast({
+                          title: 'Arquivo muito grande',
+                          description: 'O arquivo deve ter no máximo 5MB.',
+                          variant: 'destructive',
+                        })
+                        return
+                      }
+                      setFile(selectedFile)
                     }
                   }}
                 />

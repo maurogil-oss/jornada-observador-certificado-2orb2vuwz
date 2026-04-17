@@ -20,6 +20,7 @@ export interface Submission {
   axis?: string
   status: string
   points: number | string
+  fileUrl?: string
 }
 
 interface SubmissionsState {
@@ -65,6 +66,9 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
           user: r.expand?.user_id?.name || 'Desconhecido',
           axis: r.nivel,
           type: r.type,
+          fileUrl: r.file
+            ? `${pb.baseURL}/api/files/${r.collectionId}/${r.id}/${r.file}`
+            : undefined,
         })),
       )
     } catch (err) {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import useAuthStore from '@/stores/useAuthStore'
 import { updateUser } from '@/services/users'
 import { Button } from '@/components/ui/button'
@@ -11,9 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { toast } from 'sonner'
 import pb from '@/lib/pocketbase/client'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Camera } from 'lucide-react'
+import { getErrorMessage } from '@/lib/pocketbase/errors'
 
 const BRAZILIAN_STATES = [
   'AC',
@@ -58,6 +60,10 @@ export default function Profile() {
     workplace: '',
   })
 
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   useEffect(() => {
     if (user) {
       setFormData({
@@ -68,6 +74,9 @@ export default function Profile() {
         country: user.country || 'Brasil',
         workplace: user.workplace || '',
       })
+      if (user.avatar) {
+        setAvatarPreview(`${pb.baseURL}/api/files/users/${user.id}/${user.avatar}`)
+      }
     }
   }, [user])
 
@@ -79,17 +88,41 @@ export default function Profile() {
     setFormData((prev) => ({ ...prev, state: val }))
   }
 
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('A imagem deve ter no máximo 5MB.')
+        return
+      }
+      if (!['image/jpeg', 'image/png'].includes(file.type)) {
+        toast.error('Formato não suportado. Use JPG ou PNG.')
+        return
+      }
+      setAvatarFile(file)
+      setAvatarPreview(URL.createObjectURL(file))
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user) return
 
     setLoading(true)
     try {
-      await updateUser(user.id, formData)
+      const data = new FormData()
+      Object.entries(formData).forEach(([key, value]) => {
+        data.append(key, value)
+      })
+      if (avatarFile) {
+        data.append('avatar', avatarFile)
+      }
+
+      await updateUser(user.id, data)
       await pb.collection('users').authRefresh()
       toast.success('Perfil atualizado com sucesso!')
     } catch (error) {
-      toast.error('Erro ao atualizar perfil.')
+      toast.error(getErrorMessage(error) || 'Erro ao atualizar perfil.')
       console.error(error)
     } finally {
       setLoading(false)
@@ -107,6 +140,32 @@ export default function Profile() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 bg-card p-6 rounded-lg border shadow-sm">
+        <div className="flex flex-col items-center space-y-4 mb-6">
+          <div
+            className="relative group cursor-pointer"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Avatar className="w-24 h-24 border-2 border-border">
+              <AvatarImage src={avatarPreview || undefined} alt="Avatar" className="object-cover" />
+              <AvatarFallback className="text-2xl">{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+            </Avatar>
+            <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Camera className="w-6 h-6 text-white" />
+            </div>
+          </div>
+          <div className="text-center">
+            <p className="text-sm font-medium">Foto de Perfil</p>
+            <p className="text-xs text-muted-foreground mt-1">PNG ou JPG (Max. 5MB)</p>
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/png, image/jpeg"
+            className="hidden"
+            onChange={handleAvatarChange}
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="name">Nome Completo</Label>
