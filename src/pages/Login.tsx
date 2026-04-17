@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -252,7 +252,9 @@ export default function Login() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Senha</FormLabel>
+                        <div className="flex items-center justify-between">
+                          <FormLabel>Senha</FormLabel>
+                        </div>
                         <FormControl>
                           <div className="relative">
                             <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
@@ -275,6 +277,14 @@ export default function Login() {
                             </button>
                           </div>
                         </FormControl>
+                        <div className="flex justify-end mt-1">
+                          <Link
+                            to="/forgot-password"
+                            className="text-xs text-primary hover:underline font-medium"
+                          >
+                            Esqueci minha senha
+                          </Link>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}

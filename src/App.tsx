@@ -11,6 +11,8 @@ import Axes from './pages/Axes'
 import Submissions from './pages/Submissions'
 import Ranking from './pages/Ranking'
 import Login from './pages/Login'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminIndicators from './pages/admin/AdminIndicators'
 import AdminUsers from './pages/admin/AdminUsers'
@@ -69,6 +71,8 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route
         element={
