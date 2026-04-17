@@ -91,14 +91,6 @@ export default function Profile() {
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('A imagem deve ter no máximo 5MB.')
-        return
-      }
-      if (!['image/jpeg', 'image/png'].includes(file.type)) {
-        toast.error('Formato não suportado. Use JPG ou PNG.')
-        return
-      }
       setAvatarFile(file)
       setAvatarPreview(URL.createObjectURL(file))
     }
@@ -155,12 +147,12 @@ export default function Profile() {
           </div>
           <div className="text-center">
             <p className="text-sm font-medium">Foto de Perfil</p>
-            <p className="text-xs text-muted-foreground mt-1">PNG ou JPG (Max. 5MB)</p>
+            <p className="text-xs text-muted-foreground mt-1">Qualquer imagem</p>
           </div>
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/png, image/jpeg"
+            accept="image/*"
             className="hidden"
             onChange={handleAvatarChange}
           />

@@ -116,23 +116,6 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                   setIsDragging(false)
                   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
                     const droppedFile = e.dataTransfer.files[0]
-                    const validTypes = ['application/pdf', 'image/jpeg', 'image/png']
-                    if (!validTypes.includes(droppedFile.type)) {
-                      toast({
-                        title: 'Tipo de arquivo inválido',
-                        description: 'Apenas PDF, PNG e JPG são aceitos.',
-                        variant: 'destructive',
-                      })
-                      return
-                    }
-                    if (droppedFile.size > 5 * 1024 * 1024) {
-                      toast({
-                        title: 'Arquivo muito grande',
-                        description: 'O arquivo deve ter no máximo 5MB.',
-                        variant: 'destructive',
-                      })
-                      return
-                    }
                     setFile(droppedFile)
                   }
                 }}
@@ -154,7 +137,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                     )}
                   </p>
                   {!file && (
-                    <p className="text-xs text-muted-foreground/80">PDF, PNG, JPG (Max. 10MB)</p>
+                    <p className="text-xs text-muted-foreground/80">Qualquer formato de arquivo</p>
                   )}
                 </div>
                 <Input
@@ -162,18 +145,9 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                   id="file"
                   type="file"
                   className="hidden"
-                  accept=".pdf,.png,.jpg"
                   onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
                       const selectedFile = e.target.files[0]
-                      if (selectedFile.size > 5 * 1024 * 1024) {
-                        toast({
-                          title: 'Arquivo muito grande',
-                          description: 'O arquivo deve ter no máximo 5MB.',
-                          variant: 'destructive',
-                        })
-                        return
-                      }
                       setFile(selectedFile)
                     }
                   }}
