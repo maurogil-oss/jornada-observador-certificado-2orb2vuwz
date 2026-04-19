@@ -7,9 +7,18 @@ import { HeroProgress } from '@/components/dashboard/HeroProgress'
 import useAuthStore from '@/stores/useAuthStore'
 import { useRealtime } from '@/hooks/use-realtime'
 import pb from '@/lib/pocketbase/client'
+import { useState, useEffect } from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function Index() {
   const { user } = useAuthStore()
+  const [isDataLoading, setIsDataLoading] = useState(true)
+
+  useEffect(() => {
+    // Simulate data fetching for skeletons
+    const t = setTimeout(() => setIsDataLoading(false), 800)
+    return () => clearTimeout(t)
+  }, [])
 
   useRealtime(
     'users',
@@ -22,6 +31,28 @@ export default function Index() {
     },
     !!user?.id,
   )
+
+  if (isDataLoading) {
+    return (
+      <div className="max-w-6xl mx-auto space-y-8 pb-10">
+        <div className="space-y-2">
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-6 w-96" />
+        </div>
+        <Skeleton className="h-48 w-full rounded-xl" />
+        <Skeleton className="h-32 w-full rounded-xl" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            <Skeleton className="h-64 w-full rounded-xl" />
+            <Skeleton className="h-64 w-full rounded-xl" />
+          </div>
+          <div className="space-y-8">
+            <Skeleton className="h-96 w-full rounded-xl" />
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in-up pb-10">

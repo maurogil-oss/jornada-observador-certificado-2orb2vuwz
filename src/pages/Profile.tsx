@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import useAuthStore from '@/stores/useAuthStore'
 import { updateUser } from '@/services/users'
+import { useRealtime } from '@/hooks/use-realtime'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -83,6 +85,19 @@ const BRAZILIAN_STATES = [
 export default function Profile() {
   const { user } = useAuthStore()
   const [loading, setLoading] = useState(false)
+  const [isFetching, setIsFetching] = useState(true)
+
+  useRealtime(
+    'users',
+    async (e) => {
+      if (e.record.id === user?.id && e.action === 'update') {
+        if (pb.authStore.model) {
+          pb.authStore.save(e.record, pb.authStore.token)
+        }
+      }
+    },
+    !!user?.id,
+  )
 
   const [formData, setFormData] = useState({
     full_name: '',
@@ -112,6 +127,7 @@ export default function Profile() {
       if (user.avatar) {
         setAvatarPreview(user.avatar)
       }
+      setTimeout(() => setIsFetching(false), 800)
     }
   }, [user])
 
@@ -180,6 +196,34 @@ export default function Profile() {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (isFetching) {
+    return (
+      <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-96" />
+        </div>
+        <div className="bg-card rounded-xl border border-border/40 shadow-sm p-6 sm:p-8 space-y-8">
+          <div className="flex flex-col items-center space-y-3">
+            <Skeleton className="w-24 h-24 sm:w-28 sm:h-28 rounded-full" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 pt-6 border-t border-border/50 flex justify-end">
+            <Skeleton className="h-10 w-40" />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
