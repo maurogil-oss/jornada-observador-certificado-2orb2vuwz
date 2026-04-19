@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { AxesBadges } from '@/components/dashboard/AxesBadges'
 import { EvolutionSimulator } from '@/components/dashboard/EvolutionSimulator'
 import { HighlightsMural } from '@/components/dashboard/HighlightsMural'
