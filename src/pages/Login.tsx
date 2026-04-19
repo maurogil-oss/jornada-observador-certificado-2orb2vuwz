@@ -27,6 +27,8 @@ import {
   Briefcase,
   IdCard,
   Loader2,
+  ChevronRight,
+  ChevronLeft,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
@@ -61,7 +63,10 @@ const registerSchema = z
     full_name: z.string().min(3, 'Nome muito curto.'),
     nickname: z.string().optional(),
     cpf_document: z.string().min(1, 'Obrigatório').refine(isValidCPF, { message: 'CPF inválido.' }),
-    rg: z.string().min(1, 'Obrigatório'),
+    rg: z
+      .string()
+      .min(1, 'Obrigatório')
+      .regex(/^[a-zA-Z0-9.-]+$/, 'RG inválido (apenas letras, números e pontuação)'),
     rg_issuer: z.string().min(1, 'Obrigatório'),
     rg_state: z.string().min(1, 'Obrigatório'),
     birth_date: z
@@ -73,9 +78,10 @@ const registerSchema = z
           if (isNaN(date.getTime())) return false
           const year = date.getFullYear()
           const currentYear = new Date().getFullYear()
-          return year > 1900 && year <= currentYear
+          const age = currentYear - year
+          return year > 1900 && age <= 110 && date <= new Date()
         },
-        { message: 'Ano deve ser entre 1900 e o atual.' },
+        { message: 'Data inválida ou idade superior a 110 anos.' },
       ),
     email: z.string().email('E-mail inválido.'),
     password: z.string().min(8, 'A senha deve ter pelo menos 8 caracteres'),
@@ -96,7 +102,32 @@ const registerSchema = z
 type LoginForm = z.infer<typeof loginSchema>
 type RegisterForm = z.infer<typeof registerSchema>
 
+const STEPS = [
+  {
+    id: 'identificacao',
+    title: 'Identificação',
+    fields: ['turma', 'full_name', 'nickname', 'birth_date'],
+  },
+  {
+    id: 'documentos',
+    title: 'Documentos',
+    fields: ['cpf_document', 'rg', 'rg_issuer', 'rg_state'],
+  },
+  {
+    id: 'localizacao',
+    title: 'Localização',
+    fields: ['city', 'state', 'country', 'workplace'],
+  },
+  {
+    id: 'conta',
+    title: 'Conta & Segurança',
+    fields: ['email', 'password', 'passwordConfirm', 'lgpd_consent'],
+  },
+]
+
 export default function Login() {
+  const [activeTab, setActiveTab] = useState('login')
+  const [step, setStep] = useState(0)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -170,7 +201,7 @@ export default function Login() {
         toast({
           title: 'Erro de Conexão',
           description:
-            'Não foi possível conectar ao servidor. Verifique sua conexão com a internet ou se há bloqueios de firewall em sua rede.',
+            'Não foi possível conectar ao servidor. Verifique sua conexão com a internet.',
           variant: 'destructive',
         })
       } else {
@@ -185,6 +216,18 @@ export default function Login() {
     }
   }
 
+  const handleNextStep = async () => {
+    const fields = STEPS[step].fields as any[]
+    const isValid = await registerForm.trigger(fields)
+    if (isValid) {
+      setStep((s) => s + 1)
+    }
+  }
+
+  const handlePrevStep = () => {
+    setStep((s) => s - 1)
+  }
+
   const onRegister = async (data: RegisterForm) => {
     setIsLoading(true)
     toast({
@@ -195,9 +238,11 @@ export default function Login() {
       await register(data)
       toast({
         title: 'Cadastro Realizado',
-        description: 'Sua conta foi criada com sucesso! Bem-vindo.',
+        description: 'Sua conta foi criada! Aguarde a aprovação do administrador para acessar.',
       })
-      // The useEffect will handle the redirect to the dashboard
+      registerForm.reset()
+      setStep(0)
+      setActiveTab('login')
     } catch (err: any) {
       const fieldErrors = extractFieldErrors(err)
 
@@ -205,13 +250,13 @@ export default function Login() {
         toast({
           title: 'Erro de Conexão',
           description:
-            'Não foi possível conectar ao servidor. Verifique sua conexão com a internet ou se há bloqueios de firewall em sua rede.',
+            'Não foi possível conectar ao servidor. Verifique sua conexão com a internet.',
           variant: 'destructive',
         })
       } else if (fieldErrors.email) {
         toast({
           title: 'Erro ao registrar',
-          description: 'Este e-mail já está em uso. Por favor, faça login ou recupere sua senha.',
+          description: 'Este e-mail já está em uso.',
           variant: 'destructive',
         })
         registerForm.setError('email', { type: 'manual', message: 'E-mail já está em uso.' })
@@ -222,7 +267,7 @@ export default function Login() {
       } else {
         toast({
           title: 'Erro ao registrar',
-          description: 'Verifique os dados informados ou se o e-mail já está em uso.',
+          description: 'Verifique os dados informados.',
           variant: 'destructive',
         })
       }
@@ -247,7 +292,7 @@ export default function Login() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="login" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="login">Entrar</TabsTrigger>
               <TabsTrigger value="register">Cadastrar</TabsTrigger>
@@ -338,347 +383,388 @@ export default function Login() {
                   onSubmit={registerForm.handleSubmit(onRegister)}
                   className="space-y-4 max-h-[65vh] overflow-y-auto px-1 pb-2"
                 >
-                  <div className="mb-4 pt-2">
-                    <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider border-b pb-2">
-                      BLOCO 1 - IDENTIFICAÇÃO GERAL
+                  <div className="mb-4 pt-2 flex items-center justify-between border-b pb-2">
+                    <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+                      {STEPS[step].title}
                     </h3>
+                    <span className="text-xs font-semibold bg-primary/10 text-primary px-2 py-1 rounded-full">
+                      Passo {step + 1} de {STEPS.length}
+                    </span>
                   </div>
 
-                  <FormField
-                    control={registerForm.control}
-                    name="turma"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Turma do Curso de Formação *</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            min={0}
-                            max={16}
-                            placeholder="Ex: 10"
-                            className="h-11"
-                            {...field}
+                  <div className="space-y-4 min-h-[300px]">
+                    {step === 0 && (
+                      <div className="animate-fade-in-right space-y-4">
+                        <FormField
+                          control={registerForm.control}
+                          name="turma"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Turma do Curso de Formação *</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  min={0}
+                                  max={16}
+                                  placeholder="Ex: 10"
+                                  className="h-11"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={registerForm.control}
+                          name="full_name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Nome Completo (sem abreviar) *</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <UserIcon className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                  <Input
+                                    placeholder="Seu Nome Completo"
+                                    className="pl-10 h-11"
+                                    {...field}
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={registerForm.control}
+                          name="nickname"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Como você prefere ser chamado (a)?</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Apelido/Nome Social"
+                                  className="h-11"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={registerForm.control}
+                          name="birth_date"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Data de Nascimento *</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Calendar className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                  <Input type="date" className="pl-10 h-11" {...field} />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
+
+                    {step === 1 && (
+                      <div className="animate-fade-in-right space-y-4">
+                        <FormField
+                          control={registerForm.control}
+                          name="cpf_document"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>CPF / Documento estrangeiro *</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <IdCard className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                  <Input
+                                    placeholder="Apenas números"
+                                    className="pl-10 h-11"
+                                    {...field}
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={registerForm.control}
+                          name="rg"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>RG *</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Número do RG" className="h-11" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <FormField
+                            control={registerForm.control}
+                            name="rg_issuer"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Órgão emissor *</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Ex: SSP" className="h-11" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
                           />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
 
-                  <FormField
-                    control={registerForm.control}
-                    name="full_name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nome Completo (sem abreviar) *</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <UserIcon className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                            <Input
-                              placeholder="Seu Nome Completo"
-                              className="pl-10 h-11"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={registerForm.control}
-                    name="nickname"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Como você prefere ser chamado (a)? (Ex.: Ramalho, Ju)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Apelido/Nome Social" className="h-11" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={registerForm.control}
-                      name="cpf_document"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>CPF / Documento estrangeiro *</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <IdCard className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                              <Input
-                                placeholder="Apenas números"
-                                className="pl-10 h-11"
-                                {...field}
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="rg"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>RG (XX.XXX.XXX-X) *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Número do RG" className="h-11" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={registerForm.control}
-                      name="rg_issuer"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Órgão emissor *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Ex: SSP" className="h-11" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="rg_state"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Estado do órgão emissor *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="UF" className="h-11" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={registerForm.control}
-                      name="birth_date"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Data de Nascimento *</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Calendar className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                              <Input type="date" className="pl-10 h-11" {...field} />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>E-mail *</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                              <Input
-                                placeholder="seu.nome@onsv.org"
-                                className="pl-10 h-11"
-                                {...field}
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <FormField
-                      control={registerForm.control}
-                      name="city"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Cidade *</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                              <Input placeholder="Cidade" className="pl-10 h-11" {...field} />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="state"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Estado *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="UF" className="h-11" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="country"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>País *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Brasil" className="h-11" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={registerForm.control}
-                    name="workplace"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Local de Trabalho</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Briefcase className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                            <Input
-                              placeholder="Empresa / Organização"
-                              className="pl-10 h-11"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={registerForm.control}
-                    name="lgpd_consent"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-muted/10 mt-2 mb-4">
-                        <FormControl>
-                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                        </FormControl>
-                        <div className="space-y-1.5 leading-none">
-                          <FormLabel className="text-sm font-semibold leading-none">
-                            Li e concordo com os termos de uso e política de privacidade *
-                          </FormLabel>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Seus dados pessoais (Nome, CPF, RG, Localização) serão armazenados e
-                            utilizados exclusivamente para fins de certificação, e utilizamos
-                            cookies essenciais para autenticação e segurança.
-                          </p>
+                          <FormField
+                            control={registerForm.control}
+                            name="rg_state"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Estado *</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="UF" className="h-11" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
                         </div>
-                      </FormItem>
+                      </div>
                     )}
-                  />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={registerForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Senha *</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                              <Input
-                                type={showPassword ? 'text' : 'password'}
-                                placeholder="••••••••"
-                                className="pl-10 pr-10 h-11"
-                                {...field}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground flex items-center justify-center h-full min-w-[30px] -translate-y-2.5"
-                              >
-                                {showPassword ? (
-                                  <EyeOff className="h-5 w-5" />
-                                ) : (
-                                  <Eye className="h-5 w-5" />
-                                )}
-                              </button>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    {step === 2 && (
+                      <div className="animate-fade-in-right space-y-4">
+                        <FormField
+                          control={registerForm.control}
+                          name="city"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Cidade *</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                  <Input placeholder="Cidade" className="pl-10 h-11" {...field} />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                    <FormField
-                      control={registerForm.control}
-                      name="passwordConfirm"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Confirmar Senha *</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                              <Input
-                                type={showConfirmPassword ? 'text' : 'password'}
-                                placeholder="••••••••"
-                                className="pl-10 pr-10 h-11"
-                                {...field}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground flex items-center justify-center h-full min-w-[30px] -translate-y-2.5"
-                              >
-                                {showConfirmPassword ? (
-                                  <EyeOff className="h-5 w-5" />
-                                ) : (
-                                  <Eye className="h-5 w-5" />
-                                )}
-                              </button>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <FormField
+                            control={registerForm.control}
+                            name="state"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Estado *</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="UF" className="h-11" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={registerForm.control}
+                            name="country"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>País *</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Brasil" className="h-11" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <FormField
+                          control={registerForm.control}
+                          name="workplace"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Local de Trabalho</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Briefcase className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                  <Input
+                                    placeholder="Empresa / Organização"
+                                    className="pl-10 h-11"
+                                    {...field}
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
+
+                    {step === 3 && (
+                      <div className="animate-fade-in-right space-y-4">
+                        <FormField
+                          control={registerForm.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>E-mail *</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                  <Input
+                                    placeholder="seu.nome@onsv.org"
+                                    className="pl-10 h-11"
+                                    {...field}
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <FormField
+                            control={registerForm.control}
+                            name="password"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Senha *</FormLabel>
+                                <FormControl>
+                                  <div className="relative">
+                                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                    <Input
+                                      type={showPassword ? 'text' : 'password'}
+                                      placeholder="••••••••"
+                                      className="pl-10 pr-10 h-11"
+                                      {...field}
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => setShowPassword(!showPassword)}
+                                      className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground flex items-center justify-center h-full min-w-[30px] -translate-y-2.5"
+                                    >
+                                      {showPassword ? (
+                                        <EyeOff className="h-5 w-5" />
+                                      ) : (
+                                        <Eye className="h-5 w-5" />
+                                      )}
+                                    </button>
+                                  </div>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={registerForm.control}
+                            name="passwordConfirm"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Confirmar Senha *</FormLabel>
+                                <FormControl>
+                                  <div className="relative">
+                                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                    <Input
+                                      type={showConfirmPassword ? 'text' : 'password'}
+                                      placeholder="••••••••"
+                                      className="pl-10 pr-10 h-11"
+                                      {...field}
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                      className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground flex items-center justify-center h-full min-w-[30px] -translate-y-2.5"
+                                    >
+                                      {showConfirmPassword ? (
+                                        <EyeOff className="h-5 w-5" />
+                                      ) : (
+                                        <Eye className="h-5 w-5" />
+                                      )}
+                                    </button>
+                                  </div>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <FormField
+                          control={registerForm.control}
+                          name="lgpd_consent"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-muted/10 mt-2 mb-4">
+                              <FormControl>
+                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                              </FormControl>
+                              <div className="space-y-1.5 leading-none">
+                                <FormLabel className="text-sm font-semibold leading-none">
+                                  Li e concordo com os termos de uso e política de privacidade *
+                                </FormLabel>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Seus dados pessoais serão armazenados e utilizados exclusivamente
+                                  para fins de certificação.
+                                </p>
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
                   </div>
 
-                  <Button
-                    type="submit"
-                    className="w-full h-11 font-bold mt-4"
-                    disabled={isLoading || !registerForm.formState.isValid}
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Cadastrando...
-                      </>
-                    ) : (
-                      'Criar Conta'
+                  <div className="flex gap-3 pt-4 border-t mt-4">
+                    {step > 0 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handlePrevStep}
+                        className="flex-1 h-11"
+                      >
+                        <ChevronLeft className="w-4 h-4 mr-2" />
+                        Voltar
+                      </Button>
                     )}
-                  </Button>
+
+                    {step < STEPS.length - 1 ? (
+                      <Button type="button" onClick={handleNextStep} className="flex-1 h-11">
+                        Continuar
+                        <ChevronRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    ) : (
+                      <Button
+                        type="submit"
+                        className="flex-1 h-11 font-bold bg-green-600 hover:bg-green-700 text-white"
+                        disabled={isLoading || !registerForm.formState.isValid}
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Cadastrando...
+                          </>
+                        ) : (
+                          'Criar Conta'
+                        )}
+                      </Button>
+                    )}
+                  </div>
                 </form>
               </Form>
             </TabsContent>

@@ -45,6 +45,8 @@ const isValidDate = (dateString: string) => {
   const now = new Date()
   if (date > now) return false
   if (date.getFullYear() < 1900) return false
+  const age = now.getFullYear() - date.getFullYear()
+  if (age > 110) return false
   return true
 }
 
@@ -156,7 +158,9 @@ export default function Profile() {
 
       // Append all text fields correctly
       Object.entries(formData).forEach(([key, value]) => {
-        data.append(key, value)
+        if (value !== undefined && value !== null && value !== '') {
+          data.append(key, value)
+        }
       })
 
       // Append avatar if a new one was selected
