@@ -43,6 +43,7 @@ import { getUsers, updateUser, deleteUser } from '@/services/users'
 import { useRealtime } from '@/hooks/use-realtime'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
 import pb from '@/lib/pocketbase/client'
+import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 
 export default function AdminUsers() {
@@ -88,7 +89,9 @@ export default function AdminUsers() {
     const lowerSearch = search.toLowerCase()
     return users.filter(
       (u) =>
-        u.name?.toLowerCase().includes(lowerSearch) || u.email?.toLowerCase().includes(lowerSearch),
+        u.name?.toLowerCase().includes(lowerSearch) ||
+        u.full_name?.toLowerCase().includes(lowerSearch) ||
+        u.email?.toLowerCase().includes(lowerSearch),
     )
   }, [users, search])
 
@@ -127,9 +130,9 @@ export default function AdminUsers() {
     try {
       await updateUser(user.id, { is_active: isActive })
       toast({
-        title: isActive ? 'Usuário ativado' : 'Usuário suspenso',
+        title: isActive ? 'Usuário aprovado/ativado' : 'Usuário inativado',
         description: isActive
-          ? 'O usuário agora tem acesso ao sistema.'
+          ? 'O usuário agora tem acesso ao sistema e foi notificado.'
           : 'O usuário foi bloqueado de acessar o sistema.',
       })
     } catch (error) {
@@ -205,6 +208,7 @@ export default function AdminUsers() {
             <TableRow>
               <TableHead>Usuário</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Data de Cadastro</TableHead>
               <TableHead>Nível Atual</TableHead>
               <TableHead className="text-right">Pontos</TableHead>
               <TableHead>Função</TableHead>
@@ -214,13 +218,16 @@ export default function AdminUsers() {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
-                  Carregando usuários...
+                <TableCell colSpan={7} className="h-24 text-center">
+                  <div className="flex justify-center items-center gap-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                    <span>Carregando usuários...</span>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : filteredUsers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                   Nenhum usuário encontrado.
                 </TableCell>
               </TableRow>
@@ -234,10 +241,14 @@ export default function AdminUsers() {
                     <div className="flex items-center gap-3">
                       <Avatar className="h-9 w-9">
                         <AvatarImage src={getAvatarUrl(user)} />
-                        <AvatarFallback>{getInitials(user.name, user.email)}</AvatarFallback>
+                        <AvatarFallback>
+                          {getInitials(user.full_name || user.name, user.email)}
+                        </AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col">
-                        <span className="font-medium">{user.name || 'Sem nome'}</span>
+                        <span className="font-medium">
+                          {user.full_name || user.name || 'Sem nome'}
+                        </span>
                         <span className="text-xs text-muted-foreground">{user.email}</span>
                       </div>
                     </div>
@@ -247,12 +258,17 @@ export default function AdminUsers() {
                       <Switch
                         checked={user.is_active !== false}
                         onCheckedChange={(checked) => handleToggleActive(user, checked)}
-                        title={user.is_active !== false ? 'Suspender Usuário' : 'Ativar Usuário'}
+                        title={
+                          user.is_active !== false ? 'Inativar Usuário' : 'Aprovar/Ativar Usuário'
+                        }
                       />
                       <span className="text-xs text-muted-foreground whitespace-nowrap">
-                        {user.is_active !== false ? 'Ativo' : 'Suspenso'}
+                        {user.is_active !== false ? 'Ativo' : 'Pendente'}
                       </span>
                     </div>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-sm">
+                    {user.created ? format(new Date(user.created), 'dd/MM/yyyy HH:mm') : '-'}
                   </TableCell>
                   <TableCell>
                     <div className="max-w-[150px] truncate" title={user.level || 'Não definido'}>

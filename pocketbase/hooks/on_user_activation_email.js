@@ -15,11 +15,12 @@ onRecordAfterUpdateSuccess((e) => {
           name: $app.settings().meta.senderName || 'Jornada do Observador Certificado',
         },
         to: [{ address: email }],
-        subject: 'Sua conta foi aprovada - Jornada do Observador Certificado',
+        subject: 'Cadastro Aprovado - Jornada Observador Certificado',
         html: `
           <div style="font-family: sans-serif; color: #333; line-height: 1.6; max-w-xl: 600px; margin: 0 auto; padding: 20px;">
             <p>Olá ${name}, temos boas notícias!</p>
-            <p>Sua conta foi validada pelos nossos administradores. Agora você já pode acessar a plataforma utilizando seu e-mail e senha cadastrados para visualizar seu progresso e certificados.</p>
+            <p>Obrigado por se cadastrar. Sua conta foi validada pelos nossos administradores.</p>
+            <p>Agora você já pode acessar a plataforma utilizando seu e-mail e senha cadastrados para visualizar seu progresso e certificados.</p>
             <p style="margin-top: 30px;">
               <a href="${appUrl}/login" style="background-color: #059669; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">Acessar a Plataforma</a>
             </p>
