@@ -45,10 +45,10 @@ const ProtectedRoute = ({
   if (user && user.is_active === false) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background text-center px-4">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Conta Pendente/Suspensa</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-2">Conta Pendente de Validação</h1>
         <p className="mb-6 max-w-md">
-          Sua conta está aguardando aprovação do administrador ou foi suspensa. Por favor, aguarde
-          ou entre em contato com o suporte.
+          Sua conta está em processo de validação. Por favor, aguarde o e-mail de aprovação dos
+          administradores antes de acessar.
         </p>
         <button
           className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"

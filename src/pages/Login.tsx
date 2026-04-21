@@ -116,17 +116,17 @@ type RegisterForm = z.infer<typeof registerSchema>
 const STEPS = [
   {
     id: 'account',
-    title: 'Account Setup',
+    title: 'Configuração da Conta',
     fields: ['email', 'password', 'passwordConfirm'],
   },
   {
     id: 'identity',
-    title: 'Personal Identity',
+    title: 'Identidade Pessoal',
     fields: ['full_name', 'nickname', 'cpf_document', 'rg', 'rg_issuer', 'rg_state', 'birth_date'],
   },
   {
     id: 'professional',
-    title: 'Professional Context',
+    title: 'Contexto Profissional',
     fields: ['workplace', 'turma', 'city', 'state', 'country', 'lgpd_consent'],
   },
 ]
@@ -149,7 +149,7 @@ export default function Login() {
         toast({
           title: 'Acesso Negado',
           description:
-            'Sua conta está aguardando aprovação do administrador ou foi suspensa. Por favor, aguarde.',
+            'Sua conta está em processo de validação. Por favor, aguarde o e-mail de aprovação dos administradores antes de acessar.',
           variant: 'destructive',
         })
       } else {
@@ -196,7 +196,7 @@ export default function Login() {
         toast({
           title: 'Acesso Negado',
           description:
-            'Sua conta está aguardando aprovação do administrador ou foi suspensa. Por favor, aguarde.',
+            'Sua conta está em processo de validação. Por favor, aguarde o e-mail de aprovação dos administradores antes de acessar.',
           variant: 'destructive',
         })
         return
@@ -386,10 +386,14 @@ export default function Login() {
                   <div className="flex justify-center mb-4">
                     <CheckCircle2 className="w-16 h-16 text-green-500" />
                   </div>
-                  <h3 className="text-2xl font-bold text-foreground">Registration Received!</h3>
+                  <h3 className="text-2xl font-bold text-foreground">
+                    Cadastro Realizado com Sucesso!
+                  </h3>
                   <p className="text-muted-foreground max-w-sm mx-auto">
-                    Sua conta foi criada com sucesso e está aguardando aprovação do administrador.
-                    Você poderá acessar assim que for ativada.
+                    Obrigado por se cadastrar na Jornada do Observador Certificado. Suas informações
+                    foram recebidas e agora serão validadas pelos nossos administradores. Você
+                    receberá uma notificação por e-mail assim que seu acesso for liberado para
+                    acessar a plataforma e seus certificados.
                   </p>
                   <Button
                     className="mt-6"
