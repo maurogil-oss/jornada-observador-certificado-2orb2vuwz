@@ -254,7 +254,7 @@ export default function AdminUsers() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-muted-foreground">{user.email}</span>
+                    <span className="text-sm text-muted-foreground">{user.email || '-'}</span>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
@@ -338,7 +338,7 @@ export default function AdminUsers() {
                 </Avatar>
                 <div className="flex flex-col">
                   <span className="font-semibold">{editingUser.name || 'Sem nome'}</span>
-                  <span className="text-sm text-muted-foreground">{editingUser.email}</span>
+                  <span className="text-sm text-muted-foreground">{editingUser.email || '-'}</span>
                 </div>
               </div>
 
