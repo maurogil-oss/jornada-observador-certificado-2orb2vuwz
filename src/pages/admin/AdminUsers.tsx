@@ -207,6 +207,7 @@ export default function AdminUsers() {
           <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead>Usuário</TableHead>
+              <TableHead>E-mail</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Data de Cadastro</TableHead>
               <TableHead>Nível Atual</TableHead>
@@ -218,7 +219,7 @@ export default function AdminUsers() {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
+                <TableCell colSpan={8} className="h-24 text-center">
                   <div className="flex justify-center items-center gap-2">
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
                     <span>Carregando usuários...</span>
@@ -227,7 +228,7 @@ export default function AdminUsers() {
               </TableRow>
             ) : filteredUsers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
                   Nenhum usuário encontrado.
                 </TableCell>
               </TableRow>
@@ -249,9 +250,11 @@ export default function AdminUsers() {
                         <span className="font-medium">
                           {user.full_name || user.name || 'Sem nome'}
                         </span>
-                        <span className="text-xs text-muted-foreground">{user.email}</span>
                       </div>
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm text-muted-foreground">{user.email}</span>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
@@ -268,7 +271,7 @@ export default function AdminUsers() {
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
-                    {user.created ? format(new Date(user.created), 'dd/MM/yyyy HH:mm') : '-'}
+                    {user.created ? format(new Date(user.created), 'dd/MM/yyyy') : '-'}
                   </TableCell>
                   <TableCell>
                     <div className="max-w-[150px] truncate" title={user.level || 'Não definido'}>
