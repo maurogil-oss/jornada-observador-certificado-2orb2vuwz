@@ -26,7 +26,6 @@ type FormValues = z.infer<typeof schema>
 export default function ForgotPassword() {
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
-  const [submittedEmail, setSubmittedEmail] = useState('')
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -37,11 +36,9 @@ export default function ForgotPassword() {
     setIsLoading(true)
     try {
       await pb.collection('users').requestPasswordReset(data.email)
-      setSubmittedEmail(data.email)
       setIsSuccess(true)
     } catch (err) {
       // Regardless of success/failure, show success to prevent email enumeration
-      setSubmittedEmail(data.email)
       setIsSuccess(true)
     } finally {
       setIsLoading(false)
@@ -66,8 +63,7 @@ export default function ForgotPassword() {
             <div className="text-center space-y-6">
               <div className="bg-emerald-500/10 p-4 rounded-lg border border-emerald-500/20">
                 <p className="text-sm text-foreground">
-                  Se o e-mail <span className="font-semibold">{submittedEmail}</span> estiver em
-                  nossa base, você receberá as instruções para redefinir sua senha em instantes.
+                  Se o e-mail estiver cadastrado, você receberá um link de redefinição em instantes.
                 </p>
               </div>
               <Button asChild variant="outline" className="w-full h-11">

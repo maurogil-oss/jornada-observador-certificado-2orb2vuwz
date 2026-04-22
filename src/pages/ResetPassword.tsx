@@ -50,7 +50,8 @@ export default function ResetPassword() {
     if (!token) {
       toast({
         title: 'Token ausente',
-        description: 'O link de recuperação não contém um token válido.',
+        description:
+          'Este link de redefinição é inválido ou expirou. Por favor, solicite um novo link.',
         variant: 'destructive',
       })
     }
@@ -63,14 +64,15 @@ export default function ResetPassword() {
     try {
       await pb.collection('users').confirmPasswordReset(token, data.password, data.passwordConfirm)
       toast({
-        title: 'Senha alterada com sucesso!',
-        description: 'Faça login com sua nova senha.',
+        title: 'Senha redefinida',
+        description: 'Sua senha foi redefinida com sucesso! Agora você pode acessar sua conta.',
       })
       navigate('/login')
     } catch (err: any) {
       toast({
         title: 'Erro ao redefinir senha',
-        description: 'O link de recuperação é inválido ou expirou. Por favor, solicite um novo.',
+        description:
+          'Este link de redefinição é inválido ou expirou. Por favor, solicite um novo link.',
         variant: 'destructive',
       })
     } finally {
@@ -89,7 +91,7 @@ export default function ResetPassword() {
           <CardHeader className="space-y-3 pb-6 text-center">
             <CardTitle className="text-2xl font-bold tracking-tight">Link Inválido</CardTitle>
             <CardDescription className="text-base font-medium text-destructive">
-              O token de redefinição não foi encontrado ou é inválido.
+              Este link de redefinição é inválido ou expirou. Por favor, solicite um novo link.
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
