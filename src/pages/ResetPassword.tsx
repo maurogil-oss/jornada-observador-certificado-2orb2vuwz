@@ -65,7 +65,7 @@ export default function ResetPassword() {
       await pb.collection('users').confirmPasswordReset(token, data.password, data.passwordConfirm)
       toast({
         title: 'Senha redefinida',
-        description: 'Sua senha foi redefinida com sucesso! Agora você pode acessar sua conta.',
+        description: 'Senha redefinida com sucesso! Agora você pode fazer login.',
       })
       navigate('/login')
     } catch (err: any) {

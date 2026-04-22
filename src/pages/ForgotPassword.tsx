@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Mail, Loader2, ArrowLeft } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 import pb from '@/lib/pocketbase/client'
 
 const schema = z.object({
@@ -27,6 +28,8 @@ export default function ForgotPassword() {
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
+  const { toast } = useToast()
+
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { email: '' },
@@ -37,9 +40,12 @@ export default function ForgotPassword() {
     try {
       await pb.collection('users').requestPasswordReset(data.email)
       setIsSuccess(true)
-    } catch (err) {
-      // Regardless of success/failure, show success to prevent email enumeration
-      setIsSuccess(true)
+    } catch (err: any) {
+      toast({
+        title: 'Erro ao solicitar redefinição',
+        description: 'O e-mail não foi encontrado ou ocorreu um erro no envio.',
+        variant: 'destructive',
+      })
     } finally {
       setIsLoading(false)
     }
