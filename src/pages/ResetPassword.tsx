@@ -69,10 +69,13 @@ export default function ResetPassword() {
       })
       navigate('/login')
     } catch (err: any) {
+      console.error('Confirm password reset error:', err)
       toast({
         title: 'Erro ao redefinir senha',
         description:
-          'Este link de redefinição é inválido ou expirou. Por favor, solicite um novo link.',
+          err.status === 500
+            ? 'Erro interno no servidor. Por favor, contate o administrador.'
+            : 'Este link de redefinição é inválido ou expirou. Por favor, solicite um novo link.',
         variant: 'destructive',
       })
     } finally {

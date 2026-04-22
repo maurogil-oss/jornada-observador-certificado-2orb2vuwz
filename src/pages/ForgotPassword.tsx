@@ -41,9 +41,13 @@ export default function ForgotPassword() {
       await pb.collection('users').requestPasswordReset(data.email)
       setIsSuccess(true)
     } catch (err: any) {
+      console.error('Password reset error:', err)
       toast({
         title: 'Erro ao solicitar redefinição',
-        description: 'O e-mail não foi encontrado ou ocorreu um erro no envio.',
+        description:
+          err.status === 500
+            ? 'Erro interno no servidor de e-mail. Por favor, contate o administrador.'
+            : 'Ocorreu um erro no processamento. Verifique o e-mail informado.',
         variant: 'destructive',
       })
     } finally {
