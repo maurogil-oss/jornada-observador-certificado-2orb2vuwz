@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -27,6 +27,9 @@ type FormValues = z.infer<typeof schema>
 export default function ForgotPassword() {
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [cooldown, setCooldown] = useState(0)
+  const [submittedEmail, setSubmittedEmail] = useState('')
+  const [isResending, setIsResending] = useState(false)
 
   const { toast } = useToast()
 
@@ -35,11 +38,21 @@ export default function ForgotPassword() {
     defaultValues: { email: '' },
   })
 
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const interval = setInterval(() => {
+      setCooldown((c) => c - 1)
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [cooldown])
+
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true)
     try {
       await pb.collection('users').requestPasswordReset(data.email)
+      setSubmittedEmail(data.email)
       setIsSuccess(true)
+      setCooldown(60)
     } catch (err: any) {
       console.error('Password reset error:', err)
       toast({
@@ -52,6 +65,28 @@ export default function ForgotPassword() {
       })
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleResend = async () => {
+    if (cooldown > 0 || isResending) return
+    setIsResending(true)
+    try {
+      await pb.collection('users').requestPasswordReset(submittedEmail)
+      setCooldown(60)
+      toast({
+        title: 'E-mail reenviado com sucesso',
+        description: 'Um novo link de recuperação foi enviado para seu e-mail.',
+      })
+    } catch (err: any) {
+      console.error('Password resend error:', err)
+      toast({
+        title: 'Erro ao reenviar',
+        description: 'Não foi possível reenviar o e-mail. Tente novamente mais tarde.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsResending(false)
     }
   }
 
@@ -76,7 +111,29 @@ export default function ForgotPassword() {
                   Se o e-mail estiver cadastrado, você receberá um link de redefinição em instantes.
                 </p>
               </div>
-              <Button asChild variant="outline" className="w-full h-11">
+
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">Não recebeu o e-mail?</p>
+                <Button
+                  variant="outline"
+                  className="w-full h-11"
+                  onClick={handleResend}
+                  disabled={cooldown > 0 || isResending}
+                >
+                  {isResending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Reenviando...
+                    </>
+                  ) : cooldown > 0 ? (
+                    `Reenviar em ${cooldown}s`
+                  ) : (
+                    'Reenviar e-mail'
+                  )}
+                </Button>
+              </div>
+
+              <Button asChild variant="ghost" className="w-full h-11">
                 <Link to="/login">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Voltar para o login
