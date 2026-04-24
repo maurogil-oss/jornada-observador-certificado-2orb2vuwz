@@ -17,6 +17,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminIndicators from './pages/admin/AdminIndicators'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminStatistics from './pages/admin/AdminStatistics'
+import AdminSubmissions from './pages/admin/AdminSubmissions'
 import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
@@ -150,6 +151,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminStatistics />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/submissions"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminSubmissions />
             </ProtectedRoute>
           }
         />

@@ -49,6 +49,7 @@ export function AppSidebar() {
   const adminNav = [
     { title: 'Painel de Gestão', url: '/admin', icon: LayoutDashboard },
     { title: 'Gestão de Usuários', url: '/admin/users', icon: Users },
+    { title: 'Validação de Docs', url: '/admin/submissions', icon: FileCheck },
     { title: 'Indicadores', url: '/admin/indicadores', icon: BarChart },
     { title: 'Demografia', url: '/admin/estatisticas', icon: BarChart },
   ]

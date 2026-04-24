@@ -14,13 +14,20 @@ import { toast } from '@/hooks/use-toast'
 export interface Submission {
   id: string
   date: string
+  created: string
   title: string
   user: string
+  userId: string
+  fullName?: string
+  nickname?: string
   nivel: string
   axis?: string
   status: string
   points: number | string
   fileUrl?: string
+  link?: string
+  description?: string
+  type?: string
 }
 
 interface SubmissionsState {
@@ -65,9 +72,15 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
           status: r.status,
           points: r.score || '-',
           date: new Date(r.created).toLocaleDateString('pt-BR'),
+          created: r.created,
           user: r.expand?.user_id?.name || 'Desconhecido',
+          userId: r.expand?.user_id?.id || '',
+          fullName: r.expand?.user_id?.full_name,
+          nickname: r.expand?.user_id?.nickname,
           axis: r.nivel,
           type: r.type,
+          description: r.description,
+          link: r.link,
           fileUrl: r.file
             ? `${pb.baseURL}/api/files/${r.collectionId}/${r.id}/${r.file}`
             : undefined,
