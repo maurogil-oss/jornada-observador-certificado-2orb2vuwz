@@ -52,7 +52,14 @@ interface SubmissionsState {
   ) => Promise<void>
   editSubmission: (
     id: string,
-    data: { title?: string; type?: string; link?: string; file?: File },
+    data: {
+      title?: string
+      type?: string
+      link?: string
+      file?: File
+      description?: string
+      nivel?: string
+    },
   ) => Promise<void>
   deleteSubmission: (id: string) => Promise<void>
 }
@@ -163,12 +170,21 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
 
   const editSubmission = async (
     id: string,
-    data: { title?: string; type?: string; link?: string; file?: File },
+    data: {
+      title?: string
+      type?: string
+      link?: string
+      file?: File
+      description?: string
+      nivel?: string
+    },
   ) => {
     const formData = new FormData()
     if (data.title !== undefined) formData.append('title', data.title)
     if (data.type !== undefined) formData.append('type', data.type)
     if (data.link !== undefined) formData.append('link', data.link)
+    if (data.description !== undefined) formData.append('description', data.description)
+    if (data.nivel !== undefined) formData.append('nivel', data.nivel)
     if (data.file) formData.append('file', data.file)
     await pb.collection('submissions').update(id, formData)
   }

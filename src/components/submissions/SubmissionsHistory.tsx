@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Dialog,
   DialogContent,
@@ -39,6 +40,7 @@ import {
 import { CheckCircle2, Clock, AlertCircle, Edit2, Trash2, UploadCloud } from 'lucide-react'
 import useSubmissionsStore, { Submission } from '@/stores/useSubmissionsStore'
 import { useToast } from '@/hooks/use-toast'
+import { extractFieldErrors } from '@/lib/pocketbase/errors'
 
 export function SubmissionsHistory() {
   const { submissions, editSubmission, deleteSubmission } = useSubmissionsStore()
@@ -50,9 +52,12 @@ export function SubmissionsHistory() {
   const [editTitle, setEditTitle] = useState('')
   const [editType, setEditType] = useState('competency')
   const [editLink, setEditLink] = useState('')
+  const [editDesc, setEditDesc] = useState('')
+  const [editNivel, setEditNivel] = useState('')
   const [editFile, setEditFile] = useState<File | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const openEdit = (sub: Submission) => {
@@ -60,24 +65,40 @@ export function SubmissionsHistory() {
     setEditTitle(sub.title)
     setEditType(sub.type || 'competency')
     setEditLink(sub.link || '')
+    setEditDesc(sub.description || '')
+    setEditNivel(sub.nivel || '')
     setEditFile(null)
+    setFieldErrors({})
   }
 
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!editingSub) return
     setIsSubmitting(true)
+    setFieldErrors({})
     try {
       await editSubmission(editingSub.id, {
         title: editTitle !== editingSub.title ? editTitle : undefined,
         type: editType !== editingSub.type ? editType : undefined,
         link: editLink !== editingSub.link ? editLink : undefined,
+        description: editDesc !== editingSub.description ? editDesc : undefined,
+        nivel: editNivel !== editingSub.nivel ? editNivel : undefined,
         file: editFile || undefined,
       })
       toast({ title: 'Submissão atualizada com sucesso!' })
       setEditingSub(null)
     } catch (error) {
-      toast({ title: 'Erro ao atualizar', variant: 'destructive' })
+      const errs = extractFieldErrors(error)
+      if (Object.keys(errs).length > 0) {
+        setFieldErrors(errs)
+        toast({
+          title: 'Erro de validação',
+          description: 'Verifique os campos preenchidos',
+          variant: 'destructive',
+        })
+      } else {
+        toast({ title: 'Erro ao atualizar', variant: 'destructive' })
+      }
     } finally {
       setIsSubmitting(false)
     }
@@ -101,7 +122,7 @@ export function SubmissionsHistory() {
     switch (status) {
       case 'Aprovado':
         return (
-          <Badge className="bg-primary hover:bg-primary/90 font-medium px-2.5 py-0.5">
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-500 dark:hover:bg-green-900/50 border-0 font-medium px-2.5 py-0.5">
             <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" /> Aprovado
           </Badge>
         )
@@ -109,14 +130,17 @@ export function SubmissionsHistory() {
         return (
           <Badge
             variant="secondary"
-            className="bg-yellow-500/15 text-yellow-700 hover:bg-yellow-500/25 font-medium px-2.5 py-0.5"
+            className="bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-500 dark:hover:bg-amber-900/50 border-0 font-medium px-2.5 py-0.5"
           >
             <Clock className="w-3.5 h-3.5 mr-1.5" /> Em Análise
           </Badge>
         )
       case 'Ajuste Necessário':
         return (
-          <Badge variant="destructive" className="font-medium px-2.5 py-0.5">
+          <Badge
+            variant="destructive"
+            className="bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-500 dark:hover:bg-red-900/50 border-0 font-medium px-2.5 py-0.5"
+          >
             <AlertCircle className="w-3.5 h-3.5 mr-1.5" /> Ajuste Necessário
           </Badge>
         )
@@ -249,12 +273,17 @@ export function SubmissionsHistory() {
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   required
+                  className={fieldErrors.title ? 'border-red-500' : ''}
                 />
+                {fieldErrors.title && <p className="text-xs text-red-500">{fieldErrors.title}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-type">Tipo</Label>
                 <Select value={editType} onValueChange={setEditType}>
-                  <SelectTrigger id="edit-type">
+                  <SelectTrigger
+                    id="edit-type"
+                    className={fieldErrors.type ? 'border-red-500' : ''}
+                  >
                     <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
                   <SelectContent>
@@ -263,6 +292,31 @@ export function SubmissionsHistory() {
                     <SelectItem value="other">Outros</SelectItem>
                   </SelectContent>
                 </Select>
+                {fieldErrors.type && <p className="text-xs text-red-500">{fieldErrors.type}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-nivel">Nível Referência</Label>
+                <Input
+                  id="edit-nivel"
+                  value={editNivel}
+                  onChange={(e) => setEditNivel(e.target.value)}
+                  placeholder="Ex: Nível I"
+                  className={fieldErrors.nivel ? 'border-red-500' : ''}
+                />
+                {fieldErrors.nivel && <p className="text-xs text-red-500">{fieldErrors.nivel}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-desc">Descrição</Label>
+                <Textarea
+                  id="edit-desc"
+                  value={editDesc}
+                  onChange={(e) => setEditDesc(e.target.value)}
+                  placeholder="Detalhes da atividade..."
+                  className={`resize-none h-20 ${fieldErrors.description ? 'border-red-500' : ''}`}
+                />
+                {fieldErrors.description && (
+                  <p className="text-xs text-red-500">{fieldErrors.description}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-link">Link Externo</Label>
@@ -271,7 +325,9 @@ export function SubmissionsHistory() {
                   value={editLink}
                   onChange={(e) => setEditLink(e.target.value)}
                   placeholder="https://..."
+                  className={fieldErrors.link ? 'border-red-500' : ''}
                 />
+                {fieldErrors.link && <p className="text-xs text-red-500">{fieldErrors.link}</p>}
               </div>
               <div className="space-y-2">
                 <Label>Substituir Arquivo de Evidência</Label>
@@ -311,6 +367,7 @@ export function SubmissionsHistory() {
                     }}
                   />
                 </div>
+                {fieldErrors.file && <p className="text-xs text-red-500">{fieldErrors.file}</p>}
               </div>
             </div>
             <DialogFooter>
