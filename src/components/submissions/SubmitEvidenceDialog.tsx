@@ -10,6 +10,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
 import { UploadCloud, AlertCircle } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
@@ -25,6 +32,8 @@ interface Props {
 export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+  const [title, setTitle] = useState('')
+  const [type, setType] = useState('competency')
   const [file, setFile] = useState<File | null>(null)
   const [link, setLink] = useState('')
   const [desc, setDesc] = useState('')
@@ -33,23 +42,42 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
   const { addSubmission } = useSubmissionsStore()
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && item) {
       setFile(null)
       setLink('')
       setDesc('')
+      setTitle(item.title)
+
+      const isTitulation =
+        item.title.toLowerCase().includes('graduação') ||
+        item.title.toLowerCase().includes('mestrado') ||
+        item.title.toLowerCase().includes('doutorado') ||
+        item.title.toLowerCase().includes('pós')
+
+      setType(isTitulation ? 'titulation' : 'competency')
     }
-  }, [isOpen])
+  }, [isOpen, item])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!file && !link) {
+      toast({
+        title: 'Arquivo ou Link obrigatório',
+        description: 'Por favor, forneça um arquivo ou um link de evidência.',
+        variant: 'destructive',
+      })
+      return
+    }
+
     setLoading(true)
     try {
       if (item) {
         await addSubmission({
-          title: item.title,
+          title: title || item.title,
           nivel: item.nivel,
           points: item.points,
-          type: isTitulation ? 'titulation' : 'competency',
+          type: type,
           file: file || undefined,
           link: link || undefined,
           description: desc || undefined,
@@ -84,46 +112,55 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
 
   const levelFullName = getLevelFullName(item.nivel)
 
-  const isTitulation =
-    item.title.toLowerCase().includes('graduação') ||
-    item.title.toLowerCase().includes('mestrado') ||
-    item.title.toLowerCase().includes('doutorado') ||
-    item.title.toLowerCase().includes('pós')
-
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[550px]">
+      <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle className="text-xl">Submeter Evidências</DialogTitle>
             <DialogDescription className="mt-2">
-              Envie documentos que evidenciem sua atuação em <strong>{item.title}</strong>{' '}
-              (Certificação: {levelFullName}). Ao ser validado, você receberá até{' '}
-              <strong className="text-accent">{item.points} pts</strong>.
+              Envie documentos que evidenciem sua atuação referenciando{' '}
+              <strong>{item.title}</strong> (Certificação: {levelFullName}). Ao ser validado, você
+              receberá até <strong className="text-accent">{item.points} pts</strong>.
             </DialogDescription>
           </DialogHeader>
 
-          {isTitulation ? (
-            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-md p-3 mt-4 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-500 shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-800 dark:text-amber-400">
-                <strong>Informação:</strong> A pontuação não é cumulativa. O envio da maior
-                titulação substitui automaticamente as pontuações anteriores.
-              </p>
-            </div>
-          ) : (
-            <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-md p-3 mt-4 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
-              <p className="text-sm text-blue-800 dark:text-blue-400">
-                <strong>Informação:</strong> Certifique-se de enviar evidências claras e legíveis
-                para facilitar a validação pela equipe.
-              </p>
-            </div>
-          )}
+          <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-md p-3 mt-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
+            <p className="text-sm text-blue-800 dark:text-blue-400">
+              <strong>Informação:</strong> Você pode enviar múltiplas evidências. Certifique-se de
+              nomear claramente e enviar documentos legíveis para facilitar a validação pela equipe.
+            </p>
+          </div>
 
           <div className="grid gap-6 py-6 pt-4">
             <div className="space-y-2">
-              <Label htmlFor="link">Link Externo (Opcional)</Label>
+              <Label htmlFor="title">Título da Evidência *</Label>
+              <Input
+                id="title"
+                placeholder="Ex: MBA em Gestão de Projetos"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="type">Tipo de Evidência *</Label>
+              <Select value={type} onValueChange={setType}>
+                <SelectTrigger id="type">
+                  <SelectValue placeholder="Selecione o tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="titulation">Titulação</SelectItem>
+                  <SelectItem value="competency">Competência</SelectItem>
+                  <SelectItem value="other">Outros</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="link">Link Externo</Label>
               <Input
                 id="link"
                 placeholder="Ex: https://meu-artigo-publicado.com"
@@ -132,7 +169,9 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
               />
             </div>
             <div className="space-y-2">
-              <Label className="block text-sm font-medium mb-2">Arquivo de Evidência</Label>
+              <Label className="block text-sm font-medium mb-2">
+                Arquivo de Evidência (ou Link)
+              </Label>
               <div
                 onDragOver={(e) => {
                   e.preventDefault()

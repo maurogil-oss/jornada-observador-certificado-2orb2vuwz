@@ -20,8 +20,7 @@ export function PlaybookEixo1({ onSelect }: Props) {
             Playbook Eixo I – Formação e Conhecimento
           </h2>
           <p className="opacity-90 mt-2 text-lg">
-            Construa sua base e autoridade técnica. Atividades estruturais (Titulação) não são
-            cumulativas.
+            Construa sua base e autoridade técnica através de sua formação e certificações.
           </p>
         </div>
       </div>

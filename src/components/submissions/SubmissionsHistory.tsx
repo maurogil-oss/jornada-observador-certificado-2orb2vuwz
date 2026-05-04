@@ -20,6 +20,13 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -41,6 +48,8 @@ export function SubmissionsHistory() {
   const [deletingSub, setDeletingSub] = useState<Submission | null>(null)
 
   const [editTitle, setEditTitle] = useState('')
+  const [editType, setEditType] = useState('competency')
+  const [editLink, setEditLink] = useState('')
   const [editFile, setEditFile] = useState<File | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -49,6 +58,8 @@ export function SubmissionsHistory() {
   const openEdit = (sub: Submission) => {
     setEditingSub(sub)
     setEditTitle(sub.title)
+    setEditType(sub.type || 'competency')
+    setEditLink(sub.link || '')
     setEditFile(null)
   }
 
@@ -59,6 +70,8 @@ export function SubmissionsHistory() {
     try {
       await editSubmission(editingSub.id, {
         title: editTitle !== editingSub.title ? editTitle : undefined,
+        type: editType !== editingSub.type ? editType : undefined,
+        link: editLink !== editingSub.link ? editLink : undefined,
         file: editFile || undefined,
       })
       toast({ title: 'Submissão atualizada com sucesso!' })
@@ -161,6 +174,14 @@ export function SubmissionsHistory() {
                       <div className="font-semibold max-w-[250px] truncate" title={sub.title}>
                         {sub.title}
                       </div>
+                      <div className="text-xs text-muted-foreground mt-0.5">
+                        Tipo:{' '}
+                        {sub.type === 'titulation'
+                          ? 'Titulação'
+                          : sub.type === 'competency'
+                            ? 'Competência'
+                            : 'Outros'}
+                      </div>
                       {sub.feedback && (
                         <div
                           className="text-xs text-muted-foreground mt-1 max-w-[250px] line-clamp-2"
@@ -220,7 +241,7 @@ export function SubmissionsHistory() {
             <DialogHeader>
               <DialogTitle>Editar Submissão</DialogTitle>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
+            <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto px-1">
               <div className="space-y-2">
                 <Label htmlFor="edit-title">Título</Label>
                 <Input
@@ -228,6 +249,28 @@ export function SubmissionsHistory() {
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-type">Tipo</Label>
+                <Select value={editType} onValueChange={setEditType}>
+                  <SelectTrigger id="edit-type">
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="titulation">Titulação</SelectItem>
+                    <SelectItem value="competency">Competência</SelectItem>
+                    <SelectItem value="other">Outros</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-link">Link Externo</Label>
+                <Input
+                  id="edit-link"
+                  value={editLink}
+                  onChange={(e) => setEditLink(e.target.value)}
+                  placeholder="https://..."
                 />
               </div>
               <div className="space-y-2">
