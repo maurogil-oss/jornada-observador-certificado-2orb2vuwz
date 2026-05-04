@@ -22,6 +22,7 @@ import {
   Camera,
   Loader2,
   Eye,
+  History,
 } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
@@ -52,6 +53,7 @@ export function AppSidebar() {
     { title: 'Validação de Docs', url: '/admin/submissions', icon: FileCheck },
     { title: 'Indicadores', url: '/admin/indicadores', icon: BarChart },
     { title: 'Demografia', url: '/admin/estatisticas', icon: BarChart },
+    { title: 'Log de Atividades', url: '/admin/logs', icon: History },
   ]
 
   const isAdminArea = location.pathname.startsWith('/admin')

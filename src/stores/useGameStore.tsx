@@ -30,8 +30,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (user && prevLevel && prevLevel !== user.level) {
       toast({
-        title: '🎉 Subiu de Nível!',
-        description: `Parabéns! Você alcançou o ${user.level}`,
+        title: '🎉 Nível Atualizado!',
+        description: `Seu nível agora é: ${user.level}`,
       })
     }
     if (user) {
@@ -42,24 +42,26 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   // Fake add points for local optimistic UI if needed
   const addPoints = (pts: number) => {}
 
+  const isNivel2Base = (user?.turma || 15) <= 14
+
   const niveisProgress: NivelProgress[] = [
     {
       id: 'I',
       name: 'Observador Certificado (Iniciante)',
-      points: Math.min(200, points),
-      status: points >= 200 ? 'Concluído' : 'Em Andamento',
+      points: Math.min(500, points),
+      status: level >= 2 || isNivel2Base ? 'Concluído' : 'Em Andamento',
     },
     {
       id: 'II',
       name: 'Observador Certificado Pleno',
-      points: Math.max(0, Math.min(300, points - 200)),
-      status: points >= 500 ? 'Concluído' : points >= 200 ? 'Em Andamento' : 'Pendente',
+      points: Math.min(500, points),
+      status: level >= 3 ? 'Concluído' : level === 2 || isNivel2Base ? 'Em Andamento' : 'Pendente',
     },
     {
       id: 'III',
       name: 'Mobilizador',
-      points: Math.max(0, Math.min(500, points - 500)),
-      status: points >= 1000 ? 'Concluído' : points >= 500 ? 'Em Andamento' : 'Pendente',
+      points: Math.max(0, points - 500),
+      status: level >= 3 && points >= 1000 ? 'Concluído' : level >= 3 ? 'Em Andamento' : 'Pendente',
     },
   ]
 
