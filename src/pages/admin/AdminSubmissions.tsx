@@ -144,7 +144,7 @@ export default function AdminSubmissions() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <LayoutDashboard className="w-8 h-8 text-primary" />
-            Validação de Documentos
+            Gestão de Submissões
           </h1>
           <p className="text-muted-foreground mt-1">
             Gerencie e avalie as submissões enviadas pelos observadores.
@@ -190,7 +190,7 @@ export default function AdminSubmissions() {
                 <TableRow key={sub.id} className="group hover:bg-muted/30 transition-colors">
                   <TableCell className="font-medium">
                     <div className="flex flex-col">
-                      <span>{sub.user}</span>
+                      <span>{sub.fullName || sub.user || 'Usuário não identificado'}</span>
                       {sub.nickname && (
                         <span className="text-xs text-muted-foreground">{sub.nickname}</span>
                       )}
@@ -246,14 +246,9 @@ export default function AdminSubmissions() {
                   <div className="bg-muted/40 p-4 rounded-lg space-y-2 text-sm border border-border/50">
                     <div className="grid grid-cols-[100px_1fr] gap-2">
                       <span className="text-muted-foreground font-medium">Nome:</span>
-                      <span className="font-semibold">{selectedSub.user}</span>
-
-                      {selectedSub.fullName && (
-                        <>
-                          <span className="text-muted-foreground font-medium">Completo:</span>
-                          <span>{selectedSub.fullName}</span>
-                        </>
-                      )}
+                      <span className="font-semibold">
+                        {selectedSub.fullName || selectedSub.user || 'Usuário não identificado'}
+                      </span>
 
                       {selectedSub.nickname && (
                         <>

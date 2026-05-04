@@ -116,9 +116,9 @@ export function SubmissionsHistory() {
     <>
       <Card className="shadow-subtle border-border/60">
         <CardHeader className="bg-muted/30 border-b border-border/50">
-          <CardTitle>Histórico de Submissões</CardTitle>
+          <CardTitle>Meu Histórico de Submissões</CardTitle>
           <CardDescription>
-            Todas as evidências enviadas e seus respectivos status na curadoria.
+            Acompanhe suas evidências submetidas e seus respectivos status na curadoria.
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
@@ -126,6 +126,7 @@ export function SubmissionsHistory() {
             <TableHeader className="bg-muted/10">
               <TableRow>
                 <TableHead className="pl-6">Data</TableHead>
+                <TableHead>Colaborador</TableHead>
                 <TableHead>Título da Evidência</TableHead>
                 <TableHead>Nível Referência</TableHead>
                 <TableHead>Status</TableHead>
@@ -136,7 +137,7 @@ export function SubmissionsHistory() {
             <TableBody>
               {submissions.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                     Nenhuma submissão encontrada.
                   </TableCell>
                 </TableRow>
@@ -145,6 +146,16 @@ export function SubmissionsHistory() {
                   <TableRow key={sub.id} className="hover:bg-muted/30 transition-colors">
                     <TableCell className="font-medium text-muted-foreground pl-6">
                       {sub.date}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <span className="font-medium">
+                          {sub.fullName || sub.user || 'Usuário não identificado'}
+                        </span>
+                        {sub.nickname && (
+                          <span className="text-xs text-muted-foreground">{sub.nickname}</span>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <div className="font-semibold max-w-[250px] truncate" title={sub.title}>

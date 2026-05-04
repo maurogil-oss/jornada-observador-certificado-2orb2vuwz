@@ -85,7 +85,8 @@ export default function AdminDashboard() {
           id: r.id,
           title: r.title,
           status: r.status,
-          user: r.expand?.user_id?.name || 'Usuário Desconhecido',
+          user:
+            r.expand?.user_id?.full_name || r.expand?.user_id?.name || 'Usuário não identificado',
           axis: r.nivel || 'N/A',
         })),
       )

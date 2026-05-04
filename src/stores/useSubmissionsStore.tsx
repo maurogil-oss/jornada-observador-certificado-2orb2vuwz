@@ -81,7 +81,7 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
           points: r.score || '-',
           date: new Date(r.created).toLocaleDateString('pt-BR'),
           created: r.created,
-          user: r.expand?.user_id?.name || 'Desconhecido',
+          user: r.expand?.user_id?.name || 'Usuário não identificado',
           userId: r.expand?.user_id?.id || '',
           fullName: r.expand?.user_id?.full_name,
           nickname: r.expand?.user_id?.nickname,
