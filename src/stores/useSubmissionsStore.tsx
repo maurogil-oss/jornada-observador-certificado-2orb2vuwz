@@ -28,6 +28,8 @@ export interface Submission {
   link?: string
   description?: string
   type?: string
+  feedback?: string
+  turma?: number
 }
 
 interface SubmissionsState {
@@ -41,7 +43,13 @@ interface SubmissionsState {
     link?: string
     description?: string
   }) => Promise<void>
-  updateSubmissionStatus: (id: string, status: string, points?: number) => Promise<void>
+  updateSubmissionStatus: (
+    id: string,
+    status: string,
+    points?: number,
+    feedback?: string,
+    nivel?: string,
+  ) => Promise<void>
   editSubmission: (id: string, data: { title?: string; file?: File }) => Promise<void>
   deleteSubmission: (id: string) => Promise<void>
 }
@@ -77,10 +85,12 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
           userId: r.expand?.user_id?.id || '',
           fullName: r.expand?.user_id?.full_name,
           nickname: r.expand?.user_id?.nickname,
+          turma: r.expand?.user_id?.turma,
           axis: r.nivel,
           type: r.type,
           description: r.description,
           link: r.link,
+          feedback: r.feedback,
           fileUrl: r.file
             ? `${pb.baseURL}/api/files/${r.collectionId}/${r.id}/${r.file}`
             : undefined,
@@ -133,10 +143,18 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     await pb.collection('submissions').create(formData)
   }
 
-  const updateSubmissionStatus = async (id: string, status: string, points?: number) => {
+  const updateSubmissionStatus = async (
+    id: string,
+    status: string,
+    points?: number,
+    feedback?: string,
+    nivel?: string,
+  ) => {
     await pb.collection('submissions').update(id, {
       status,
       ...(points !== undefined && { score: points }),
+      ...(feedback !== undefined && { feedback }),
+      ...(nivel !== undefined && { nivel }),
     })
   }
 

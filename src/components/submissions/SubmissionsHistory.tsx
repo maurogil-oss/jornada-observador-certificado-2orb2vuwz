@@ -146,8 +146,19 @@ export function SubmissionsHistory() {
                     <TableCell className="font-medium text-muted-foreground pl-6">
                       {sub.date}
                     </TableCell>
-                    <TableCell className="font-semibold max-w-[200px] truncate" title={sub.title}>
-                      {sub.title}
+                    <TableCell>
+                      <div className="font-semibold max-w-[250px] truncate" title={sub.title}>
+                        {sub.title}
+                      </div>
+                      {sub.feedback && (
+                        <div
+                          className="text-xs text-muted-foreground mt-1 max-w-[250px] line-clamp-2"
+                          title={sub.feedback}
+                        >
+                          <span className="font-medium text-foreground">Feedback:</span>{' '}
+                          {sub.feedback}
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">

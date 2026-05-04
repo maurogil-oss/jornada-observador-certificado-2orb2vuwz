@@ -28,6 +28,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import {
   ExternalLink,
@@ -81,6 +82,8 @@ export default function AdminSubmissions() {
 
   const [newStatus, setNewStatus] = useState<string>('')
   const [newScore, setNewScore] = useState<string>('')
+  const [newFeedback, setNewFeedback] = useState<string>('')
+  const [newNivel, setNewNivel] = useState<string>('')
   const [isUpdating, setIsUpdating] = useState(false)
 
   const filteredSubmissions = useMemo(() => {
@@ -102,6 +105,8 @@ export default function AdminSubmissions() {
     setSelectedSub(sub)
     setNewStatus(sub.status)
     setNewScore(sub.points !== '-' ? String(sub.points) : '0')
+    setNewFeedback(sub.feedback || '')
+    setNewNivel(sub.nivel || '')
   }
 
   const handleSave = async () => {
@@ -117,8 +122,14 @@ export default function AdminSubmissions() {
         selectedSub.id,
         newStatus,
         newStatus === 'Aprovado' ? Number(newScore) : undefined,
+        newFeedback,
+        newNivel,
       )
-      toast.success('Status da submissão atualizado com sucesso!')
+      if (newStatus === 'Aprovado') {
+        toast.success('Documentação aprovada com sucesso!')
+      } else {
+        toast.success('Status da submissão atualizado com sucesso!')
+      }
       setSelectedSub(null)
     } catch (error) {
       toast.error('Erro ao atualizar a submissão.')
@@ -250,6 +261,13 @@ export default function AdminSubmissions() {
                           <span>{selectedSub.nickname}</span>
                         </>
                       )}
+
+                      {selectedSub.turma !== undefined && (
+                        <>
+                          <span className="text-muted-foreground font-medium">Turma:</span>
+                          <span>{selectedSub.turma}</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -325,18 +343,48 @@ export default function AdminSubmissions() {
                     Decisão de Avaliação
                   </h4>
 
-                  <div className="space-y-3">
-                    <Label htmlFor="status">Status da Submissão</Label>
-                    <Select value={newStatus} onValueChange={setNewStatus}>
-                      <SelectTrigger id="status" className="bg-background">
-                        <SelectValue placeholder="Selecione um status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Em Análise">Em Análise</SelectItem>
-                        <SelectItem value="Aprovado">Aprovado</SelectItem>
-                        <SelectItem value="Ajuste Necessário">Ajuste Necessário</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <Label htmlFor="nivel">Nível Validado</Label>
+                      <Select value={newNivel} onValueChange={setNewNivel}>
+                        <SelectTrigger id="nivel" className="bg-background">
+                          <SelectValue placeholder="Selecione o nível" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {newNivel && !['Nível I', 'Nível II', 'Nível III'].includes(newNivel) && (
+                            <SelectItem value={newNivel}>{newNivel}</SelectItem>
+                          )}
+                          <SelectItem value="Nível I">Nível I</SelectItem>
+                          <SelectItem value="Nível II" disabled={(selectedSub.turma ?? 0) >= 15}>
+                            Nível II
+                          </SelectItem>
+                          <SelectItem value="Nível III">Nível III</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {(selectedSub.turma ?? 0) >= 15 ? (
+                        <p className="text-xs text-amber-600 font-medium">
+                          Turma 15 ou superior: Nível I obrigatório
+                        </p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground">
+                          Turma menor que 15: Sugerido Nível II
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-3">
+                      <Label htmlFor="status">Status da Submissão</Label>
+                      <Select value={newStatus} onValueChange={setNewStatus}>
+                        <SelectTrigger id="status" className="bg-background">
+                          <SelectValue placeholder="Selecione um status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Em Análise">Em Análise</SelectItem>
+                          <SelectItem value="Aprovado">Aprovado</SelectItem>
+                          <SelectItem value="Ajuste Necessário">Ajuste Necessário</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
                   {newStatus === 'Aprovado' && (
@@ -357,6 +405,17 @@ export default function AdminSubmissions() {
                       </p>
                     </div>
                   )}
+
+                  <div className="space-y-3 pt-2">
+                    <Label htmlFor="feedback">Observações / Ajustes Necessários</Label>
+                    <Textarea
+                      id="feedback"
+                      placeholder="Forneça um feedback detalhado para o observador..."
+                      value={newFeedback}
+                      onChange={(e) => setNewFeedback(e.target.value)}
+                      className="bg-background resize-none h-24"
+                    />
+                  </div>
                 </div>
               </div>
             </ScrollArea>
