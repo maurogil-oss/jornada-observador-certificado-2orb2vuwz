@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Search, Edit, Shield, User as UserIcon, Trash2 } from 'lucide-react'
+import { Search, Edit, Shield, User as UserIcon, Trash2, Mail } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
@@ -165,6 +165,31 @@ export default function AdminUsers() {
     }
   }
 
+  const handleResetPassword = async (user: any) => {
+    if (!user.email) {
+      toast({
+        title: 'Sem E-mail',
+        description: 'O usuário selecionado não possui um e-mail cadastrado.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    try {
+      await pb.collection('users').requestPasswordReset(user.email)
+      toast({
+        title: 'E-mail enviado!',
+        description: `O link de recuperação foi enviado para ${user.email}.`,
+      })
+    } catch (error) {
+      toast({
+        title: 'Erro ao enviar e-mail',
+        description: getErrorMessage(error),
+        variant: 'destructive',
+      })
+    }
+  }
+
   const getInitials = (name?: string, email?: string) => {
     if (name) {
       return name.substring(0, 2).toUpperCase()
@@ -257,17 +282,36 @@ export default function AdminUsers() {
                     <span className="text-sm text-muted-foreground">{user.email || '-'}</span>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={user.is_active !== false}
-                        onCheckedChange={(checked) => handleToggleActive(user, checked)}
-                        title={
-                          user.is_active !== false ? 'Inativar Usuário' : 'Aprovar/Ativar Usuário'
-                        }
-                      />
-                      <span className="text-xs text-muted-foreground whitespace-nowrap">
-                        {user.is_active !== false ? 'Ativo' : 'Pendente'}
-                      </span>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          checked={user.is_active !== false}
+                          onCheckedChange={(checked) => handleToggleActive(user, checked)}
+                          title={
+                            user.is_active !== false ? 'Inativar Usuário' : 'Aprovar/Ativar Usuário'
+                          }
+                        />
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">
+                          {user.is_active !== false ? 'Ativo' : 'Pendente'}
+                        </span>
+                      </div>
+                      <div>
+                        {user.verified ? (
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] bg-green-50 text-green-700 border-green-200"
+                          >
+                            Email Verificado
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] bg-amber-50 text-amber-700 border-amber-200"
+                          >
+                            Não Verificado
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
@@ -296,6 +340,14 @@ export default function AdminUsers() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleResetPassword(user)}
+                        title="Enviar Recuperação de Senha"
+                      >
+                        <Mail className="w-4 h-4 text-blue-600" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
