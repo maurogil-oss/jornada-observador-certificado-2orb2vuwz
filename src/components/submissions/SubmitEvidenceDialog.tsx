@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Progress } from '@/components/ui/progress'
 import { useToast } from '@/hooks/use-toast'
 import { UploadCloud, AlertCircle } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
@@ -37,6 +38,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
   const [link, setLink] = useState('')
   const [desc, setDesc] = useState('')
   const [isDragging, setIsDragging] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { addSubmission } = useSubmissionsStore()
 
@@ -70,6 +72,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
       setFile(null)
       setLink('')
       setDesc('')
+      setUploadProgress(0)
       setTitle(item.title)
 
       const isTitulation =
@@ -95,32 +98,60 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
     }
 
     setLoading(true)
+    setUploadProgress(0)
+
+    let fakeProgressInterval: ReturnType<typeof setInterval> | null = null
+    if (file) {
+      let currentProgress = 0
+      fakeProgressInterval = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev >= 90) return prev
+          currentProgress = prev + (90 - prev) * 0.15
+          return Math.round(currentProgress)
+        })
+      }, 500)
+    }
+
     try {
       if (item) {
-        await addSubmission({
-          title: title || item.title,
-          nivel: item.nivel,
-          points: item.points,
-          type: type,
-          file: file || undefined,
-          link: link || undefined,
-          description: desc || undefined,
-        })
+        await addSubmission(
+          {
+            title: title || item.title,
+            nivel: item.nivel,
+            points: item.points,
+            type: type,
+            file: file || undefined,
+            link: link || undefined,
+            description: desc || undefined,
+          },
+          (progress) => {
+            if (fakeProgressInterval) clearInterval(fakeProgressInterval)
+            setUploadProgress(progress)
+          },
+        )
       }
+
+      if (fakeProgressInterval) clearInterval(fakeProgressInterval)
+      setUploadProgress(100)
       toast({
         title: 'Evidência enviada com sucesso!',
         description: `A equipe de avaliação analisará sua submissão para "${item?.title}".`,
       })
-      onClose()
+
+      setTimeout(() => {
+        onClose()
+        setLoading(false)
+      }, 500)
     } catch (err) {
+      if (fakeProgressInterval) clearInterval(fakeProgressInterval)
+      setUploadProgress(0)
+      setLoading(false)
       toast({
-        title: 'Erro ao enviar',
+        title: 'Erro ao realizar o upload',
         description:
-          'Ocorreu um erro ao enviar. Por favor, tente novamente. Caso não consiga fazer o upload, entre em contato com um dos administradores.',
+          'Erro ao realizar o upload. Por favor, tente novamente. Caso o problema persista, entre em contato com um administrador.',
         variant: 'destructive',
       })
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -260,6 +291,15 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
               />
             </div>
           </div>
+          {loading && uploadProgress > 0 && (
+            <div className="py-2 space-y-2 animate-fade-in-up">
+              <div className="flex justify-between text-sm text-muted-foreground font-medium">
+                <span>Fazendo upload do arquivo...</span>
+                <span>{uploadProgress}%</span>
+              </div>
+              <Progress value={uploadProgress} className="w-full h-2" />
+            </div>
+          )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
               Cancelar

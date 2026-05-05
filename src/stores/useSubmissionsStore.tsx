@@ -34,15 +34,18 @@ export interface Submission {
 
 interface SubmissionsState {
   submissions: Submission[]
-  addSubmission: (sub: {
-    title: string
-    nivel: string
-    points?: number
-    type?: string
-    file?: File
-    link?: string
-    description?: string
-  }) => Promise<void>
+  addSubmission: (
+    sub: {
+      title: string
+      nivel: string
+      points?: number
+      type?: string
+      file?: File
+      link?: string
+      description?: string
+    },
+    onProgress?: (progress: number) => void,
+  ) => Promise<void>
   updateSubmissionStatus: (
     id: string,
     status: string,
@@ -129,15 +132,18 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     isAuthenticated,
   )
 
-  const addSubmission = async (sub: {
-    title: string
-    nivel: string
-    points?: number
-    type?: string
-    file?: File
-    link?: string
-    description?: string
-  }) => {
+  const addSubmission = async (
+    sub: {
+      title: string
+      nivel: string
+      points?: number
+      type?: string
+      file?: File
+      link?: string
+      description?: string
+    },
+    onProgress?: (progress: number) => void,
+  ) => {
     if (!user) return
     const formData = new FormData()
     formData.append('title', sub.title)
@@ -150,7 +156,13 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     if (sub.link) formData.append('link', sub.link)
     if (sub.description) formData.append('description', sub.description)
 
-    await pb.collection('submissions').create(formData)
+    await pb.collection('submissions').create(formData, {
+      onUploadProgress: (e: any) => {
+        if (onProgress && e.total) {
+          onProgress(Math.round((e.loaded / e.total) * 100))
+        }
+      },
+    })
   }
 
   const updateSubmissionStatus = async (
