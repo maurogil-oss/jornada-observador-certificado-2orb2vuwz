@@ -21,7 +21,6 @@ import { useToast } from '@/hooks/use-toast'
 import { UploadCloud, AlertCircle } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import useSubmissionsStore from '@/stores/useSubmissionsStore'
-import { getErrorMessage } from '@/lib/pocketbase/errors'
 
 interface Props {
   isOpen: boolean
@@ -40,6 +39,31 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { addSubmission } = useSubmissionsStore()
+
+  const handleFileSelect = (selectedFile: File) => {
+    const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
+    const ACCEPTED_TYPES = ['application/pdf', 'image/jpeg', 'image/png']
+
+    if (!ACCEPTED_TYPES.includes(selectedFile.type)) {
+      toast({
+        title: 'Formato inválido',
+        description: 'Formatos aceitos: PDF, JPG ou PNG.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      toast({
+        title: 'Arquivo muito grande',
+        description: 'O tamanho máximo permitido é 20MB.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setFile(selectedFile)
+  }
 
   useEffect(() => {
     if (isOpen && item) {
@@ -91,7 +115,8 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
     } catch (err) {
       toast({
         title: 'Erro ao enviar',
-        description: getErrorMessage(err) || 'Tente novamente mais tarde.',
+        description:
+          'Ocorreu um erro ao enviar. Por favor, tente novamente. Caso não consiga fazer o upload, entre em contato com um dos administradores.',
         variant: 'destructive',
       })
     } finally {
@@ -183,7 +208,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                   setIsDragging(false)
                   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
                     const droppedFile = e.dataTransfer.files[0]
-                    setFile(droppedFile)
+                    handleFileSelect(droppedFile)
                   }
                 }}
                 onClick={() => fileInputRef.current?.click()}
@@ -204,18 +229,21 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                     )}
                   </p>
                   {!file && (
-                    <p className="text-xs text-muted-foreground/80">Qualquer formato de arquivo</p>
+                    <p className="text-xs text-muted-foreground/80">
+                      Formatos aceitos: PDF, JPG ou PNG
+                    </p>
                   )}
                 </div>
                 <Input
                   ref={fileInputRef}
                   id="file"
                   type="file"
+                  accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
                   className="hidden"
                   onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
                       const selectedFile = e.target.files[0]
-                      setFile(selectedFile)
+                      handleFileSelect(selectedFile)
                     }
                   }}
                 />
