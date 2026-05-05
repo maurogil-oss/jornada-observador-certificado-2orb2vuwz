@@ -191,20 +191,37 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
 
           <div className="grid gap-6 py-6 pt-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Título da Evidência *</Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="title">Título da Atividade</Label>
+                <span className="text-[10px] uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-full font-semibold">
+                  Definido pelo Sistema
+                </span>
+              </div>
               <Input
                 id="title"
-                placeholder="Ex: MBA em Gestão de Projetos"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                readOnly
+                disabled
+                className="bg-muted/50 text-muted-foreground cursor-not-allowed opacity-100"
                 required
               />
+              <p className="text-xs text-muted-foreground">
+                Este campo é fixo de acordo com as regras de pontuação.
+              </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="type">Tipo de Evidência *</Label>
-              <Select value={type} onValueChange={setType}>
-                <SelectTrigger id="type">
+              <div className="flex items-center gap-2">
+                <Label htmlFor="type">Tipo de Evidência</Label>
+                <span className="text-[10px] uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-full font-semibold">
+                  Definido pelo Sistema
+                </span>
+              </div>
+              <Select value={type} onValueChange={setType} disabled>
+                <SelectTrigger
+                  id="type"
+                  className="bg-muted/50 text-muted-foreground cursor-not-allowed opacity-100"
+                >
                   <SelectValue placeholder="Selecione o tipo" />
                 </SelectTrigger>
                 <SelectContent>
