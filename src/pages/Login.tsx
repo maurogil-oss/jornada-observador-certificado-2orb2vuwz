@@ -147,9 +147,9 @@ export default function Login() {
       if (user.is_active === false) {
         logout()
         toast({
-          title: 'Acesso Negado',
+          title: 'Conta em Análise',
           description:
-            'Sua conta está em processo de validação. Por favor, aguarde o e-mail de aprovação dos administradores antes de acessar.',
+            'Sua conta está em análise. Por favor, aguarde a ativação pelo administrador para acessar o sistema.',
           variant: 'destructive',
         })
       } else {
@@ -194,12 +194,28 @@ export default function Login() {
       if (record && record.is_active === false) {
         logout()
         toast({
-          title: 'Acesso Negado',
+          title: 'Conta em Análise',
           description:
-            'Sua conta está em processo de validação. Por favor, aguarde o e-mail de aprovação dos administradores antes de acessar.',
+            'Sua conta está em análise. Por favor, aguarde a ativação pelo administrador para acessar o sistema.',
           variant: 'destructive',
         })
+        try {
+          await pb.send('/backend/v1/log-login-attempt', {
+            method: 'POST',
+            body: { email: data.email, status: 'failure', reason: 'Attempt with inactive account' },
+          })
+        } catch {
+          /* intentionally ignored */
+        }
         return
+      }
+      try {
+        await pb.send('/backend/v1/log-login-attempt', {
+          method: 'POST',
+          body: { email: data.email, status: 'success', reason: 'Successfully logged in' },
+        })
+      } catch {
+        /* intentionally ignored */
       }
       const isAdmin = record?.role === 'admin' || data.email.toLowerCase() === 'maurog1@hotmail.com'
       navigate(isAdmin ? '/admin' : '/')
@@ -208,15 +224,23 @@ export default function Login() {
         toast({
           title: 'Erro de Conexão',
           description:
-            'Não foi possível conectar ao servidor. Verifique sua conexão com a internet.',
+            'Não foi possível conectar ao servidor. Verifique sua internet e tente novamente em instantes.',
           variant: 'destructive',
         })
       } else {
         toast({
           title: 'Erro ao entrar',
-          description: 'E-mail ou senha inválidos.',
+          description: 'E-mail ou senha incorretos. Por favor, tente novamente.',
           variant: 'destructive',
         })
+        try {
+          await pb.send('/backend/v1/log-login-attempt', {
+            method: 'POST',
+            body: { email: data.email, status: 'failure', reason: 'Invalid credentials' },
+          })
+        } catch {
+          /* intentionally ignored */
+        }
       }
     } finally {
       setIsLoading(false)

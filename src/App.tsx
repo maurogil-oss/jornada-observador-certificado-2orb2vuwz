@@ -5,7 +5,10 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { GameProvider } from '@/stores/useGameStore'
 import { AuthProvider } from '@/stores/useAuthStore'
 import { SubmissionsProvider } from '@/stores/useSubmissionsStore'
+import { useEffect } from 'react'
 import useAuthStore from '@/stores/useAuthStore'
+import { useToast } from '@/hooks/use-toast'
+import { Loader2 } from 'lucide-react'
 import Index from './pages/Index'
 import Axes from './pages/Axes'
 import Submissions from './pages/Submissions'
@@ -33,11 +36,22 @@ const ProtectedRoute = ({
   allowedRoles?: string[]
 }) => {
   const { isAuthenticated, user, isLoading, logout } = useAuthStore()
+  const { toast } = useToast()
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      toast({
+        description: 'Sua sessão expirou. Por favor, faça login novamente.',
+        variant: 'destructive',
+      })
+    }
+  }, [isLoading, isAuthenticated, toast])
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center font-semibold text-muted-foreground animate-pulse">
-        Carregando Sessão...
+      <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background">
+        <Loader2 className="h-10 w-10 animate-spin mb-4 text-primary" />
+        <p>Carregando Sessão...</p>
       </div>
     )
   }
