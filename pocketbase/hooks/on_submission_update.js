@@ -27,7 +27,7 @@ onRecordAfterUpdateSuccess((e) => {
         { userId: userId },
       )
 
-      let titulationMax = 0
+      let titulationSum = 0
       let competencySum = 0
 
       for (let i = 0; i < submissions.length; i++) {
@@ -36,14 +36,14 @@ onRecordAfterUpdateSuccess((e) => {
         const score = sub.getFloat('score') || 0
 
         if (type === 'titulation') {
-          if (score > titulationMax) titulationMax = score
+          titulationSum += score
         } else {
           competencySum += score
         }
       }
 
-      if (titulationMax > 250) titulationMax = 250
-      const totalPoints = titulationMax + competencySum
+      if (titulationSum > 250) titulationSum = 250
+      const totalPoints = titulationSum + competencySum
 
       const currentLevel = user.getString('level')
       const turma = user.getInt('turma') || 15

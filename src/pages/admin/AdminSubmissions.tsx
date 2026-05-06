@@ -295,7 +295,7 @@ export default function AdminSubmissions() {
                       {selectedSub.turma !== undefined && (
                         <>
                           <span className="text-muted-foreground font-medium">Turma:</span>
-                          <span>{selectedSub.turma}</span>
+                          <span>Turma {selectedSub.turma}</span>
                         </>
                       )}
                     </div>

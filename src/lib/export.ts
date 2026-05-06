@@ -28,7 +28,7 @@ export const exportRanking = async (format: 'excel' | 'pdf') => {
       `"${(u.email || '').replace(/"/g, '""')}"`,
       u.points || 0,
       `"${(u.level || '').replace(/"/g, '""')}"`,
-      u.turma || '',
+      u.turma ? `Turma ${u.turma}` : '',
       u.is_active !== false ? 'Ativo' : 'Inativo',
     ])
     const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n')
@@ -94,7 +94,7 @@ export const exportRanking = async (format: 'excel' | 'pdf') => {
                   <td>${u.full_name || u.name || '-'}</td>
                   <td>${u.email || '-'}</td>
                   <td>${u.level || '-'}</td>
-                  <td class="center">${u.turma || '-'}</td>
+                  <td class="center">${u.turma ? `Turma ${u.turma}` : '-'}</td>
                   <td class="center">${u.is_active !== false ? 'Ativo' : 'Inativo'}</td>
                   <td class="points">${u.points || 0}</td>
                 </tr>

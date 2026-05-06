@@ -62,9 +62,8 @@ export default function Ranking() {
   })
 
   const uniqueTurmas = useMemo(() => {
-    const turmas = users.map((u) => u.turma).filter((t) => typeof t === 'number' && !isNaN(t))
-    return Array.from(new Set(turmas)).sort((a, b) => a - b)
-  }, [users])
+    return Array.from({ length: 15 }, (_, i) => i + 1)
+  }, [])
 
   const filteredUsers = useMemo(() => {
     if (filterTurma === 'all') return users
@@ -100,7 +99,7 @@ export default function Ranking() {
   return (
     <div className="max-w-5xl mx-auto space-y-12 animate-fade-in-up pb-10 relative">
       <div className="flex flex-col gap-6 text-center">
-        <div className="flex flex-col items-center justify-center space-y-3">
+        <div className="flex flex-col items-center justify-center space-y-3 relative z-10">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Quadro de Honra</h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto px-4 mt-1">
             O princípio da Meritocracia em ação. Acompanhe os líderes da Jornada de Evolução.
@@ -108,7 +107,7 @@ export default function Ranking() {
         </div>
 
         {isAdmin && (
-          <div className="flex flex-col sm:flex-row justify-center gap-3 items-center w-full z-20">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 items-center w-full z-20 mt-2">
             <Select value={filterTurma} onValueChange={setFilterTurma}>
               <SelectTrigger className="w-full sm:w-[200px] shadow-sm border-border/60 bg-background hover:bg-muted">
                 <SelectValue placeholder="Filtrar por Turma" />

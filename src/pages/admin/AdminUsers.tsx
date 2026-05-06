@@ -87,9 +87,8 @@ export default function AdminUsers() {
   })
 
   const uniqueTurmas = useMemo(() => {
-    const turmas = users.map((u) => u.turma).filter((t) => typeof t === 'number' && !isNaN(t))
-    return Array.from(new Set(turmas)).sort((a, b) => a - b)
-  }, [users])
+    return Array.from({ length: 15 }, (_, i) => i + 1)
+  }, [])
 
   const filteredUsers = useMemo(() => {
     let result = users
@@ -113,7 +112,7 @@ export default function AdminUsers() {
     setEditRole(user.role || 'observer')
     setEditPoints(user.points || 0)
     setEditLevel(user.level || '')
-    setEditTurma(user.turma ?? '')
+    setEditTurma(user.turma || '')
   }
 
   const handleSave = async () => {
@@ -124,7 +123,7 @@ export default function AdminUsers() {
         role: editRole,
         points: editPoints,
         level: editLevel,
-        turma: editTurma !== '' ? Number(editTurma) : null,
+        turma: editTurma ? Number(editTurma) : null,
       })
       toast({
         title: 'Usuário atualizado com sucesso!',
@@ -450,13 +449,22 @@ export default function AdminUsers() {
 
               <div className="grid gap-2">
                 <Label htmlFor="turma">Turma</Label>
-                <Input
-                  id="turma"
-                  type="number"
-                  value={editTurma}
-                  onChange={(e) => setEditTurma(e.target.value ? Number(e.target.value) : '')}
-                  placeholder="Ex: 15"
-                />
+                <Select
+                  value={editTurma ? editTurma.toString() : 'none'}
+                  onValueChange={(val) => setEditTurma(val !== 'none' ? Number(val) : '')}
+                >
+                  <SelectTrigger id="turma">
+                    <SelectValue placeholder="Selecione a turma" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Nenhuma Turma</SelectItem>
+                    {Array.from({ length: 15 }, (_, i) => i + 1).map((t) => (
+                      <SelectItem key={t} value={t.toString()}>
+                        Turma {t}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="grid gap-2">
