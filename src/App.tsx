@@ -19,6 +19,7 @@ import AdminUsers from './pages/admin/AdminUsers'
 import AdminStatistics from './pages/admin/AdminStatistics'
 import AdminSubmissions from './pages/admin/AdminSubmissions'
 import AdminLogs from './pages/admin/AdminLogs'
+import AdminPerformance from './pages/admin/AdminPerformance'
 import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
@@ -138,6 +139,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminUsers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/performance"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminPerformance />
             </ProtectedRoute>
           }
         />

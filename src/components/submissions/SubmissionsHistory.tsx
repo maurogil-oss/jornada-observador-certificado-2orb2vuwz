@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { CheckCircle, Clock, AlertCircle, Eye, FileText } from 'lucide-react'
+import { CheckCircle2, Clock, AlertTriangle, Eye, FileText } from 'lucide-react'
 import useSubmissionsStore, { Submission } from '@/stores/useSubmissionsStore'
 
 export function SubmissionsHistory() {
@@ -43,14 +43,14 @@ export function SubmissionsHistory() {
       case 'Aprovado':
         return (
           <Badge className="bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-500 dark:hover:bg-green-900/50 border-0 font-medium px-2.5 py-0.5">
-            <CheckCircle className="w-3.5 h-3.5 mr-1.5" /> Aprovado
+            <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" /> Aprovado
           </Badge>
         )
       case 'Em Análise':
         return (
           <Badge
             variant="secondary"
-            className="bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-500 dark:hover:bg-amber-900/50 border-0 font-medium px-2.5 py-0.5"
+            className="bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-500 dark:hover:bg-blue-900/50 border-0 font-medium px-2.5 py-0.5"
           >
             <Clock className="w-3.5 h-3.5 mr-1.5" /> Em Análise
           </Badge>
@@ -59,9 +59,9 @@ export function SubmissionsHistory() {
         return (
           <Badge
             variant="destructive"
-            className="bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-500 dark:hover:bg-red-900/50 border-0 font-medium px-2.5 py-0.5"
+            className="bg-orange-100 text-orange-800 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-500 dark:hover:bg-orange-900/50 border-0 font-medium px-2.5 py-0.5"
           >
-            <AlertCircle className="w-3.5 h-3.5 mr-1.5" /> Ajuste Necessário
+            <AlertTriangle className="w-3.5 h-3.5 mr-1.5" /> Ajuste Necessário
           </Badge>
         )
       default:

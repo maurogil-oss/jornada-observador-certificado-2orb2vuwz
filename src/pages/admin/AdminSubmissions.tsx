@@ -34,8 +34,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import {
   ExternalLink,
-  CheckCircle,
-  AlertCircle,
+  CheckCircle2,
+  AlertTriangle,
   Clock,
   User,
   Eye,
@@ -54,15 +54,15 @@ function StatusBadge({ status }: { status: string }) {
     status === 'Aprovado'
       ? {
           color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500',
-          icon: CheckCircle,
+          icon: CheckCircle2,
         }
       : status === 'Ajuste Necessário'
         ? {
-            color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500',
-            icon: AlertCircle,
+            color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-500',
+            icon: AlertTriangle,
           }
         : {
-            color: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-500',
+            color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500',
             icon: Clock,
           }
 
