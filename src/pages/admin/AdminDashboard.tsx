@@ -114,7 +114,11 @@ export default function AdminDashboard() {
         const month = d.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })
         monthlyMap[month] = (monthlyMap[month] || 0) + (sub.score || 0)
       })
-      const cData = Object.entries(monthlyMap).map(([month, points]) => ({ month, points }))
+      let cumulative = 0
+      const cData = Object.entries(monthlyMap).map(([month, points]) => {
+        cumulative += points
+        return { month, points: cumulative }
+      })
       setChartData(cData)
     } catch (err) {
       console.error('Failed to load dashboard data', err)

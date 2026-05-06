@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 
 export default function PublicProfile() {
-  const { userId } = useParams()
+  const { id } = useParams()
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -15,8 +15,8 @@ export default function PublicProfile() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        if (!userId) return
-        const record = await pb.collection('users').getOne(userId)
+        if (!id) return
+        const record = await pb.collection('users').getOne(id)
         setUser(record)
       } catch (err) {
         console.error(err)
@@ -26,7 +26,7 @@ export default function PublicProfile() {
       }
     }
     fetchUser()
-  }, [userId])
+  }, [id])
 
   if (loading) {
     return (

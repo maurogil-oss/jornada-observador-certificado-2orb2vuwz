@@ -16,8 +16,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { toast } from 'sonner'
 import pb from '@/lib/pocketbase/client'
-import { Loader2, Camera } from 'lucide-react'
+import { Loader2, Camera, Award } from 'lucide-react'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
+import { generateCertificate } from '@/lib/certificate'
 
 const formatCPF = (value: string) => {
   return value
@@ -228,12 +229,26 @@ export default function Profile() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in space-y-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">Meu Perfil</h1>
-        <p className="text-muted-foreground mt-2 text-sm sm:text-base">
-          Atualize suas informações pessoais e profissionais para nos ajudar a conhecer melhor nossa
-          rede.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+            Meu Perfil
+          </h1>
+          <p className="text-muted-foreground mt-2 text-sm sm:text-base">
+            Atualize suas informações pessoais e profissionais para nos ajudar a conhecer melhor
+            nossa rede.
+          </p>
+        </div>
+        {user?.level?.includes('Nível III') && (
+          <Button
+            type="button"
+            onClick={() => generateCertificate(user)}
+            className="bg-amber-500 hover:bg-amber-600 text-amber-950 font-semibold shadow-sm shrink-0"
+          >
+            <Award className="w-4 h-4 mr-2" />
+            Baixar Certificado
+          </Button>
+        )}
       </div>
 
       <form

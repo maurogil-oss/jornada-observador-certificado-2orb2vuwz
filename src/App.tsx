@@ -76,7 +76,7 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/profile/:userId" element={<PublicProfile />} />
+      <Route path="/perfil/:id" element={<PublicProfile />} />
 
       <Route
         element={
