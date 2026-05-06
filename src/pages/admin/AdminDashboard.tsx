@@ -37,8 +37,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useToast } from '@/hooks/use-toast'
-import { exportToCSV } from '@/lib/utils'
+import { exportRanking } from '@/lib/export'
 import pb from '@/lib/pocketbase/client'
+import { Link } from 'react-router-dom'
 import { useRealtime } from '@/hooks/use-realtime'
 
 export default function AdminDashboard() {
@@ -55,7 +56,6 @@ export default function AdminDashboard() {
   const [pendingSubmissions, setPendingSubmissions] = useState<any[]>([])
   const [importLogs, setImportLogs] = useState<any[]>([])
   const [isImportOpen, setIsImportOpen] = useState(false)
-  const [selectedSub, setSelectedSub] = useState<any | null>(null)
 
   const loadData = useCallback(async () => {
     try {
@@ -106,57 +106,26 @@ export default function AdminDashboard() {
   useRealtime('submissions', loadData)
   useRealtime('import_logs', loadData)
 
-  const handleExport = (format: 'excel' | 'pdf') => {
-    if (format === 'excel') {
-      const reportData = [
-        {
-          Nome: 'Carlos Silva',
-          'Nível I': 450,
-          'Nível II': 300,
-          'Nível III': 600,
-          Total: 1350,
-          Nivel: 'Nível III - Observador Certificado Mobilizador',
-        },
-        {
-          Nome: 'Ana Souza',
-          'Nível I': 500,
-          'Nível II': 400,
-          'Nível III': 200,
-          Total: 1100,
-          Nivel: 'Nível II - Observador Certificado Pleno',
-        },
-      ]
-      exportToCSV(reportData, 'relatorio_observadores.csv')
+  const handleExport = async (format: 'excel' | 'pdf') => {
+    toast({
+      title: 'Gerando relatório...',
+      description: 'Aguarde enquanto os dados são processados.',
+    })
+    try {
+      await exportRanking(format)
       toast({
-        title: 'Exportação Excel',
-        description: 'O download do arquivo foi iniciado com sucesso.',
+        title: 'Exportação Concluída',
+        description:
+          format === 'excel'
+            ? 'O download do arquivo CSV foi iniciado com sucesso.'
+            : 'A janela de impressão do PDF foi aberta.',
       })
-    } else {
+    } catch (err: any) {
       toast({
-        title: 'Exportação PDF',
-        description: 'O relatório em PDF está sendo gerado e será baixado em instantes.',
+        title: 'Erro na Exportação',
+        description: err.message || 'Não foi possível gerar o relatório.',
+        variant: 'destructive',
       })
-    }
-  }
-
-  const handleReview = async (status: string) => {
-    if (selectedSub) {
-      try {
-        await pb.collection('submissions').update(selectedSub.id, { status })
-        updateSubmissionStatus(selectedSub.id, status)
-
-        toast({
-          title: `Evidência ${status}`,
-          description: `O observador foi notificado por e-mail.`,
-        })
-        setSelectedSub(null)
-      } catch (err) {
-        toast({
-          title: 'Erro',
-          description: 'Não foi possível atualizar o status.',
-          variant: 'destructive',
-        })
-      }
     }
   }
 
@@ -353,12 +322,10 @@ export default function AdminDashboard() {
                           {sub.title}
                         </TableCell>
                         <TableCell className="text-right pr-6">
-                          <Button
-                            size="sm"
-                            onClick={() => setSelectedSub(sub)}
-                            className="h-8 font-semibold shadow-sm"
-                          >
-                            Analisar
+                          <Button size="sm" asChild className="h-8 font-semibold shadow-sm">
+                            <Link to="/admin/submissions" state={{ selectedSubId: sub.id }}>
+                              Analisar
+                            </Link>
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -372,51 +339,6 @@ export default function AdminDashboard() {
       </div>
 
       <ImportSpreadsheetDialog isOpen={isImportOpen} onClose={() => setIsImportOpen(false)} />
-
-      <Dialog open={!!selectedSub} onOpenChange={(open) => !open && setSelectedSub(null)}>
-        <DialogContent className="sm:max-w-[450px]">
-          <DialogHeader>
-            <DialogTitle>Analisar Comprovação</DialogTitle>
-          </DialogHeader>
-          <div className="py-4 space-y-4">
-            <div className="bg-muted/30 p-4 rounded-lg border border-border/50 text-sm space-y-2">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Observador:</span>
-                <span className="font-semibold text-foreground">{selectedSub?.user}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Atividade:</span>
-                <span className="font-semibold text-foreground text-right">
-                  {selectedSub?.title}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Nível de Evolução:</span>
-                <span className="font-semibold text-foreground">{selectedSub?.axis}</span>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              A avaliação desta evidência enviará automaticamente um e-mail ao observador
-              notificando sobre a aprovação ou necessidade de ajustes.
-            </p>
-          </div>
-          <DialogFooter className="flex gap-2 sm:justify-end">
-            <Button
-              variant="destructive"
-              className="w-full sm:w-auto"
-              onClick={() => handleReview('Ajuste Necessário')}
-            >
-              Devolver p/ Ajuste
-            </Button>
-            <Button
-              className="bg-emerald-600 hover:bg-emerald-700 text-white w-full sm:w-auto"
-              onClick={() => handleReview('Aprovado')}
-            >
-              Aprovar Evidência
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

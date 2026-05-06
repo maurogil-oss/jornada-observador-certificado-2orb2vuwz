@@ -1,5 +1,7 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { format } from 'date-fns'
+import { useLocation, useNavigate } from 'react-router-dom'
+import pb from '@/lib/pocketbase/client'
 import { ptBR } from 'date-fns/locale'
 import useSubmissionsStore, { type Submission } from '@/stores/useSubmissionsStore'
 import {
@@ -77,6 +79,9 @@ function StatusBadge({ status }: { status: string }) {
 
 export default function AdminSubmissions() {
   const { submissions, updateSubmissionStatus } = useSubmissionsStore()
+  const location = useLocation()
+  const navigate = useNavigate()
+
   const [filterStatus, setFilterStatus] = useState<string>('Todos')
   const [selectedSub, setSelectedSub] = useState<Submission | null>(null)
 
@@ -104,10 +109,23 @@ export default function AdminSubmissions() {
   const handleOpenReview = (sub: Submission) => {
     setSelectedSub(sub)
     setNewStatus(sub.status)
-    setNewScore(sub.points !== '-' ? String(sub.points) : '0')
+    // Map existing points to the input or default to 0
+    setNewScore(sub.points !== undefined && sub.points !== '-' ? String(sub.points) : '0')
     setNewFeedback(sub.feedback || '')
     setNewNivel(sub.nivel || '')
   }
+
+  // Handle incoming selection from Dashboard
+  useEffect(() => {
+    if (location.state?.selectedSubId && submissions.length > 0) {
+      const sub = submissions.find((s) => s.id === location.state.selectedSubId)
+      if (sub) {
+        handleOpenReview(sub)
+        // Clear state so it doesn't reopen on refresh
+        navigate(location.pathname, { replace: true, state: {} })
+      }
+    }
+  }, [location.state, submissions, navigate])
 
   const handleSave = async () => {
     if (!selectedSub) return
@@ -118,6 +136,21 @@ export default function AdminSubmissions() {
 
     setIsUpdating(true)
     try {
+      // 100% Reliable Database Update
+      const dataToUpdate: any = {
+        status: newStatus,
+        feedback: newFeedback,
+        nivel: newNivel,
+      }
+      if (newStatus === 'Aprovado') {
+        dataToUpdate.score = Number(newScore)
+      } else {
+        dataToUpdate.score = 0 // Reset score if not approved
+      }
+
+      await pb.collection('submissions').update(selectedSub.id, dataToUpdate)
+
+      // Also update local store
       await updateSubmissionStatus(
         selectedSub.id,
         newStatus,
@@ -125,14 +158,16 @@ export default function AdminSubmissions() {
         newFeedback,
         newNivel,
       )
+
       if (newStatus === 'Aprovado') {
         toast.success('Documentação aprovada com sucesso!')
       } else {
         toast.success('Status da submissão atualizado com sucesso!')
       }
       setSelectedSub(null)
-    } catch (error) {
-      toast.error('Erro ao atualizar a submissão.')
+    } catch (error: any) {
+      console.error('Error updating submission:', error)
+      toast.error(error.message || 'Erro ao atualizar a submissão. Verifique os dados.')
     } finally {
       setIsUpdating(false)
     }

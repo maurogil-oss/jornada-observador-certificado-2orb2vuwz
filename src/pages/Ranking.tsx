@@ -12,10 +12,24 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
+import { Download, FileSpreadsheet, FileType2 } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/hooks/use-toast'
+import useAuthStore from '@/stores/useAuthStore'
+import { exportRanking } from '@/lib/export'
 
 export default function Ranking() {
   const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const { user: currentUser } = useAuthStore()
+  const isAdmin = currentUser?.role === 'admin'
+  const { toast } = useToast()
 
   const loadUsers = async () => {
     try {
@@ -42,13 +56,64 @@ export default function Ranking() {
   const top3 = users.slice(0, 3)
   const rest = users.slice(3)
 
+  const handleExport = async (format: 'excel' | 'pdf') => {
+    toast({
+      title: 'Gerando relatório...',
+      description: 'Aguarde enquanto os dados são processados.',
+    })
+    try {
+      await exportRanking(format)
+      toast({
+        title: 'Exportação Concluída',
+        description:
+          format === 'excel'
+            ? 'O download do arquivo CSV foi iniciado com sucesso.'
+            : 'A janela de impressão do PDF foi aberta.',
+      })
+    } catch (err: any) {
+      toast({
+        title: 'Erro na Exportação',
+        description: err.message || 'Não foi possível gerar o relatório.',
+        variant: 'destructive',
+      })
+    }
+  }
+
   return (
-    <div className="max-w-5xl mx-auto space-y-12 animate-fade-in-up pb-10">
-      <div className="text-center space-y-3">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Quadro de Honra</h1>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto px-4">
-          O princípio da Meritocracia em ação. Acompanhe os líderes da Jornada de Evolução.
-        </p>
+    <div className="max-w-5xl mx-auto space-y-12 animate-fade-in-up pb-10 relative">
+      <div className="text-center space-y-3 relative flex flex-col md:flex-row md:justify-center items-center">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Quadro de Honra</h1>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto px-4 mt-3">
+            O princípio da Meritocracia em ação. Acompanhe os líderes da Jornada de Evolução.
+          </p>
+        </div>
+
+        {isAdmin && (
+          <div className="md:absolute right-0 top-0 mt-4 md:mt-0 z-20">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="shadow-sm border-border/60 bg-background hover:bg-muted"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Exportar Ranking
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleExport('excel')} className="cursor-pointer">
+                  <FileSpreadsheet className="w-4 h-4 mr-2 text-emerald-600" />
+                  Excel / CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport('pdf')} className="cursor-pointer">
+                  <FileType2 className="w-4 h-4 mr-2 text-red-600" />
+                  Relatório PDF
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
       </div>
 
       {loading ? (
