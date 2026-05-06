@@ -3,11 +3,14 @@ onRecordAfterUpdateSuccess((e) => {
   const newStatus = e.record.getString('status')
   const originalScore = e.record.original().getFloat('score')
   const newScore = e.record.getFloat('score')
+  const originalType = e.record.original().getString('type')
+  const newType = e.record.getString('type')
 
   if (
     newStatus === 'Aprovado' ||
     (originalStatus === 'Aprovado' && newStatus !== 'Aprovado') ||
-    (newStatus === 'Aprovado' && originalScore !== newScore)
+    (newStatus === 'Aprovado' && originalScore !== newScore) ||
+    (newStatus === 'Aprovado' && originalType !== newType)
   ) {
     const userId = e.record.getString('user_id')
     if (!userId) return e.next()

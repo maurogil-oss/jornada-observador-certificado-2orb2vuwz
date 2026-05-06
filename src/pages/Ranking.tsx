@@ -99,18 +99,18 @@ export default function Ranking() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-12 animate-fade-in-up pb-10 relative">
-      <div className="text-center space-y-3 relative flex flex-col md:flex-row md:justify-center items-center">
-        <div>
+      <div className="flex flex-col gap-6 text-center">
+        <div className="flex flex-col items-center justify-center space-y-3">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Quadro de Honra</h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto px-4 mt-3">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto px-4 mt-1">
             O princípio da Meritocracia em ação. Acompanhe os líderes da Jornada de Evolução.
           </p>
         </div>
 
         {isAdmin && (
-          <div className="md:absolute right-0 top-0 mt-4 md:mt-0 z-20 flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 items-center w-full z-20">
             <Select value={filterTurma} onValueChange={setFilterTurma}>
-              <SelectTrigger className="w-full sm:w-[180px] shadow-sm border-border/60 bg-background hover:bg-muted">
+              <SelectTrigger className="w-full sm:w-[200px] shadow-sm border-border/60 bg-background hover:bg-muted">
                 <SelectValue placeholder="Filtrar por Turma" />
               </SelectTrigger>
               <SelectContent>
@@ -127,7 +127,7 @@ export default function Ranking() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="shadow-sm border-border/60 bg-background hover:bg-muted"
+                  className="w-full sm:w-auto shadow-sm border-border/60 bg-background hover:bg-muted"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   Exportar Ranking
