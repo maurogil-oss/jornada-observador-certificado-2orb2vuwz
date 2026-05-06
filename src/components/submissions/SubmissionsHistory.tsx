@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import {
   Table,
   TableBody,
@@ -27,95 +27,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { CheckCircle2, Clock, AlertCircle, Edit2, Trash2, UploadCloud } from 'lucide-react'
+import { CheckCircle2, Clock, AlertCircle, Eye, FileText } from 'lucide-react'
 import useSubmissionsStore, { Submission } from '@/stores/useSubmissionsStore'
-import { useToast } from '@/hooks/use-toast'
-import { extractFieldErrors } from '@/lib/pocketbase/errors'
 
 export function SubmissionsHistory() {
-  const { submissions, editSubmission, deleteSubmission } = useSubmissionsStore()
-  const { toast } = useToast()
+  const { submissions } = useSubmissionsStore()
+  const [viewingSub, setViewingSub] = useState<Submission | null>(null)
 
-  const [editingSub, setEditingSub] = useState<Submission | null>(null)
-  const [deletingSub, setDeletingSub] = useState<Submission | null>(null)
-
-  const [editTitle, setEditTitle] = useState('')
-  const [editType, setEditType] = useState('competency')
-  const [editLink, setEditLink] = useState('')
-  const [editDesc, setEditDesc] = useState('')
-  const [editNivel, setEditNivel] = useState('')
-  const [editFile, setEditFile] = useState<File | null>(null)
-  const [isDragging, setIsDragging] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const openEdit = (sub: Submission) => {
-    setEditingSub(sub)
-    setEditTitle(sub.title)
-    setEditType(sub.type || 'competency')
-    setEditLink(sub.link || '')
-    setEditDesc(sub.description || '')
-    setEditNivel(sub.nivel || '')
-    setEditFile(null)
-    setFieldErrors({})
-  }
-
-  const handleEditSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!editingSub) return
-    setIsSubmitting(true)
-    setFieldErrors({})
-    try {
-      await editSubmission(editingSub.id, {
-        title: editTitle !== editingSub.title ? editTitle : undefined,
-        type: editType !== editingSub.type ? editType : undefined,
-        link: editLink !== editingSub.link ? editLink : undefined,
-        description: editDesc !== editingSub.description ? editDesc : undefined,
-        nivel: editNivel !== editingSub.nivel ? editNivel : undefined,
-        file: editFile || undefined,
-      })
-      toast({ title: 'Submissão atualizada com sucesso!' })
-      setEditingSub(null)
-    } catch (error) {
-      const errs = extractFieldErrors(error)
-      if (Object.keys(errs).length > 0) {
-        setFieldErrors(errs)
-        toast({
-          title: 'Erro de validação',
-          description: 'Verifique os campos preenchidos',
-          variant: 'destructive',
-        })
-      } else {
-        toast({ title: 'Erro ao atualizar', variant: 'destructive' })
-      }
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleDeleteConfirm = async () => {
-    if (!deletingSub) return
-    setIsSubmitting(true)
-    try {
-      await deleteSubmission(deletingSub.id)
-      toast({ title: 'Submissão excluída.' })
-      setDeletingSub(null)
-    } catch (error) {
-      toast({ title: 'Erro ao excluir', variant: 'destructive' })
-    } finally {
-      setIsSubmitting(false)
-    }
+  const openView = (sub: Submission) => {
+    setViewingSub(sub)
   }
 
   const getStatusBadge = (status: string) => {
@@ -230,26 +150,17 @@ export function SubmissionsHistory() {
                       )}
                     </TableCell>
                     <TableCell className="text-right pr-6">
-                      {sub.status !== 'Aprovado' && (
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/50"
-                            onClick={() => openEdit(sub)}
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/50"
-                            onClick={() => setDeletingSub(sub)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )}
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/50"
+                          onClick={() => openView(sub)}
+                          title="Visualizar"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
@@ -259,30 +170,30 @@ export function SubmissionsHistory() {
         </CardContent>
       </Card>
 
-      <Dialog open={!!editingSub} onOpenChange={(open) => !open && setEditingSub(null)}>
+      <Dialog open={!!viewingSub} onOpenChange={(open) => !open && setViewingSub(null)}>
         <DialogContent className="sm:max-w-[500px]">
-          <form onSubmit={handleEditSubmit}>
-            <DialogHeader>
-              <DialogTitle>Editar Submissão</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto px-1">
+          <DialogHeader>
+            <DialogTitle>Visualizar Submissão</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto px-1">
+            <div className="space-y-2">
+              <Label htmlFor="view-title">Título</Label>
+              <Input
+                id="view-title"
+                value={viewingSub?.title || ''}
+                readOnly
+                disabled
+                className="opacity-100 bg-muted/50 text-muted-foreground cursor-not-allowed"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="edit-title">Título</Label>
-                <Input
-                  id="edit-title"
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  required
-                  className={fieldErrors.title ? 'border-red-500' : ''}
-                />
-                {fieldErrors.title && <p className="text-xs text-red-500">{fieldErrors.title}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-type">Tipo</Label>
-                <Select value={editType} onValueChange={setEditType}>
+                <Label htmlFor="view-type">Tipo</Label>
+                <Select value={viewingSub?.type || 'competency'} disabled>
                   <SelectTrigger
-                    id="edit-type"
-                    className={fieldErrors.type ? 'border-red-500' : ''}
+                    id="view-type"
+                    className="opacity-100 bg-muted/50 text-muted-foreground cursor-not-allowed"
                   >
                     <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
@@ -292,125 +203,70 @@ export function SubmissionsHistory() {
                     <SelectItem value="other">Outros</SelectItem>
                   </SelectContent>
                 </Select>
-                {fieldErrors.type && <p className="text-xs text-red-500">{fieldErrors.type}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-nivel">Nível Referência</Label>
+                <Label htmlFor="view-score">Pontuação</Label>
                 <Input
-                  id="edit-nivel"
-                  value={editNivel}
-                  onChange={(e) => setEditNivel(e.target.value)}
-                  placeholder="Ex: Nível I"
-                  className={fieldErrors.nivel ? 'border-red-500' : ''}
+                  id="view-score"
+                  value={viewingSub?.points !== '-' ? String(viewingSub?.points) : 'Pendente'}
+                  readOnly
+                  disabled
+                  className="opacity-100 bg-muted/50 text-muted-foreground cursor-not-allowed"
                 />
-                {fieldErrors.nivel && <p className="text-xs text-red-500">{fieldErrors.nivel}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-desc">Descrição</Label>
-                <Textarea
-                  id="edit-desc"
-                  value={editDesc}
-                  onChange={(e) => setEditDesc(e.target.value)}
-                  placeholder="Detalhes da atividade..."
-                  className={`resize-none h-20 ${fieldErrors.description ? 'border-red-500' : ''}`}
-                />
-                {fieldErrors.description && (
-                  <p className="text-xs text-red-500">{fieldErrors.description}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-link">Link Externo</Label>
-                <Input
-                  id="edit-link"
-                  value={editLink}
-                  onChange={(e) => setEditLink(e.target.value)}
-                  placeholder="https://..."
-                  className={fieldErrors.link ? 'border-red-500' : ''}
-                />
-                {fieldErrors.link && <p className="text-xs text-red-500">{fieldErrors.link}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label>Substituir Arquivo de Evidência</Label>
-                <div
-                  onDragOver={(e) => {
-                    e.preventDefault()
-                    setIsDragging(true)
-                  }}
-                  onDragLeave={() => setIsDragging(false)}
-                  onDrop={(e) => {
-                    e.preventDefault()
-                    setIsDragging(false)
-                    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                      setEditFile(e.dataTransfer.files[0])
-                    }
-                  }}
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-all ${isDragging ? 'border-primary bg-primary/10' : 'bg-muted/20 hover:bg-muted/40 border-muted-foreground/30'} group`}
-                >
-                  <div className="flex flex-col items-center justify-center pt-4 pb-4">
-                    <UploadCloud className="w-8 h-8 mb-2 text-muted-foreground group-hover:text-primary transition-colors" />
-                    <p className="text-sm text-center px-4">
-                      {editFile ? (
-                        <span className="font-semibold">{editFile.name}</span>
-                      ) : (
-                        'Arraste ou clique para novo arquivo'
-                      )}
-                    </p>
-                  </div>
-                  <Input
-                    ref={fileInputRef}
-                    type="file"
-                    className="hidden"
-                    accept=".pdf,.png,.jpg"
-                    onChange={(e) => {
-                      if (e.target.files?.length) setEditFile(e.target.files[0])
-                    }}
-                  />
-                </div>
-                {fieldErrors.file && <p className="text-xs text-red-500">{fieldErrors.file}</p>}
               </div>
             </div>
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setEditingSub(null)}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={isSubmitting || !editTitle}>
-                {isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
-              </Button>
-            </DialogFooter>
-          </form>
+
+            <div className="space-y-2">
+              <Label htmlFor="view-nivel">Nível Referência</Label>
+              <Input
+                id="view-nivel"
+                value={viewingSub?.nivel || ''}
+                readOnly
+                disabled
+                className="opacity-100 bg-muted/50 text-muted-foreground cursor-not-allowed"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="view-desc">Descrição</Label>
+              <Textarea
+                id="view-desc"
+                value={viewingSub?.description || ''}
+                readOnly
+                disabled
+                className="resize-none h-20 opacity-100 bg-muted/50 text-muted-foreground cursor-not-allowed"
+              />
+            </div>
+            {viewingSub?.link && (
+              <div className="space-y-2">
+                <Label htmlFor="view-link">Link Externo</Label>
+                <Input
+                  id="view-link"
+                  value={viewingSub.link}
+                  readOnly
+                  disabled
+                  className="opacity-100 bg-muted/50 text-muted-foreground cursor-not-allowed"
+                />
+              </div>
+            )}
+            {viewingSub?.fileUrl && (
+              <div className="space-y-2 pt-2 border-t flex flex-col gap-2">
+                <Label>Arquivo de Evidência</Label>
+                <Button variant="outline" className="w-full justify-start" asChild>
+                  <a href={viewingSub.fileUrl} target="_blank" rel="noopener noreferrer">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Visualizar Documento Anexo
+                  </a>
+                </Button>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setViewingSub(null)}>
+              Fechar
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <AlertDialog open={!!deletingSub} onOpenChange={(open) => !open && setDeletingSub(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Excluir Submissão?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja excluir "{deletingSub?.title}"? Esta ação não pode ser
-              desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isSubmitting}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault()
-                handleDeleteConfirm()
-              }}
-              className="bg-red-600 hover:bg-red-700 focus:ring-red-600 text-white"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Excluindo...' : 'Sim, excluir'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   )
 }
