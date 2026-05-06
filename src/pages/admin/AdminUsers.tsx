@@ -49,6 +49,7 @@ import { cn } from '@/lib/utils'
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([])
   const [search, setSearch] = useState('')
+  const [filterTurma, setFilterTurma] = useState<string>('all')
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()
 
@@ -56,6 +57,7 @@ export default function AdminUsers() {
   const [editRole, setEditRole] = useState('observer')
   const [editPoints, setEditPoints] = useState(0)
   const [editLevel, setEditLevel] = useState('')
+  const [editTurma, setEditTurma] = useState<number | ''>('')
   const [isSaving, setIsSaving] = useState(false)
 
   const [userToDelete, setUserToDelete] = useState<any | null>(null)
@@ -84,22 +86,34 @@ export default function AdminUsers() {
     loadUsers()
   })
 
+  const uniqueTurmas = useMemo(() => {
+    const turmas = users.map((u) => u.turma).filter((t) => typeof t === 'number' && !isNaN(t))
+    return Array.from(new Set(turmas)).sort((a, b) => a - b)
+  }, [users])
+
   const filteredUsers = useMemo(() => {
-    if (!search) return users
-    const lowerSearch = search.toLowerCase()
-    return users.filter(
-      (u) =>
-        u.name?.toLowerCase().includes(lowerSearch) ||
-        u.full_name?.toLowerCase().includes(lowerSearch) ||
-        u.email?.toLowerCase().includes(lowerSearch),
-    )
-  }, [users, search])
+    let result = users
+    if (filterTurma !== 'all') {
+      result = result.filter((u) => u.turma === Number(filterTurma))
+    }
+    if (search) {
+      const lowerSearch = search.toLowerCase()
+      result = result.filter(
+        (u) =>
+          u.name?.toLowerCase().includes(lowerSearch) ||
+          u.full_name?.toLowerCase().includes(lowerSearch) ||
+          u.email?.toLowerCase().includes(lowerSearch),
+      )
+    }
+    return result
+  }, [users, search, filterTurma])
 
   const handleEditClick = (user: any) => {
     setEditingUser(user)
     setEditRole(user.role || 'observer')
     setEditPoints(user.points || 0)
     setEditLevel(user.level || '')
+    setEditTurma(user.turma ?? '')
   }
 
   const handleSave = async () => {
@@ -110,6 +124,7 @@ export default function AdminUsers() {
         role: editRole,
         points: editPoints,
         level: editLevel,
+        turma: editTurma !== '' ? Number(editTurma) : null,
       })
       toast({
         title: 'Usuário atualizado com sucesso!',
@@ -216,15 +231,31 @@ export default function AdminUsers() {
         </div>
       </div>
 
-      <div className="flex items-center space-x-2 bg-card border rounded-md px-3 py-2 shadow-sm max-w-sm">
-        <Search className="w-4 h-4 text-muted-foreground" />
-        <Input
-          type="text"
-          placeholder="Buscar por nome ou email..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-auto"
-        />
+      <div className="flex flex-col sm:flex-row items-center gap-4">
+        <div className="flex items-center space-x-2 bg-card border rounded-md px-3 py-2 shadow-sm w-full sm:max-w-sm">
+          <Search className="w-4 h-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Buscar por nome ou email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-auto"
+          />
+        </div>
+
+        <Select value={filterTurma} onValueChange={setFilterTurma}>
+          <SelectTrigger className="w-full sm:w-[180px] bg-card">
+            <SelectValue placeholder="Filtrar por Turma" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas as Turmas</SelectItem>
+            {uniqueTurmas.map((t) => (
+              <SelectItem key={t} value={t.toString()}>
+                Turma {t}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="border rounded-md bg-card overflow-hidden shadow-sm">
@@ -234,7 +265,7 @@ export default function AdminUsers() {
               <TableHead>Usuário</TableHead>
               <TableHead>E-mail</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Data de Cadastro</TableHead>
+              <TableHead>Turma</TableHead>
               <TableHead>Nível Atual</TableHead>
               <TableHead className="text-right">Pontos</TableHead>
               <TableHead>Função</TableHead>
@@ -314,8 +345,8 @@ export default function AdminUsers() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
-                    {user.created ? format(new Date(user.created), 'dd/MM/yyyy') : '-'}
+                  <TableCell className="text-muted-foreground font-medium">
+                    {user.turma ? `Turma ${user.turma}` : '-'}
                   </TableCell>
                   <TableCell>
                     <div className="max-w-[150px] truncate" title={user.level || 'Não definido'}>
@@ -414,6 +445,17 @@ export default function AdminUsers() {
                   type="number"
                   value={editPoints}
                   onChange={(e) => setEditPoints(Number(e.target.value))}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="turma">Turma</Label>
+                <Input
+                  id="turma"
+                  type="number"
+                  value={editTurma}
+                  onChange={(e) => setEditTurma(e.target.value ? Number(e.target.value) : '')}
+                  placeholder="Ex: 15"
                 />
               </div>
 

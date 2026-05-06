@@ -27,6 +27,7 @@ import { exportRanking } from '@/lib/export'
 export default function Ranking() {
   const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [filterTurma, setFilterTurma] = useState<string>('all')
   const { user: currentUser } = useAuthStore()
   const isAdmin = currentUser?.role === 'admin'
   const { toast } = useToast()
@@ -53,8 +54,18 @@ export default function Ranking() {
     loadUsers()
   })
 
-  const top3 = users.slice(0, 3)
-  const rest = users.slice(3)
+  const uniqueTurmas = useMemo(() => {
+    const turmas = users.map((u) => u.turma).filter((t) => typeof t === 'number' && !isNaN(t))
+    return Array.from(new Set(turmas)).sort((a, b) => a - b)
+  }, [users])
+
+  const filteredUsers = useMemo(() => {
+    if (filterTurma === 'all') return users
+    return users.filter((u) => u.turma === Number(filterTurma))
+  }, [users, filterTurma])
+
+  const top3 = filteredUsers.slice(0, 3)
+  const rest = filteredUsers.slice(3)
 
   const handleExport = async (format: 'excel' | 'pdf') => {
     toast({
@@ -90,7 +101,21 @@ export default function Ranking() {
         </div>
 
         {isAdmin && (
-          <div className="md:absolute right-0 top-0 mt-4 md:mt-0 z-20">
+          <div className="md:absolute right-0 top-0 mt-4 md:mt-0 z-20 flex flex-col sm:flex-row gap-3">
+            <Select value={filterTurma} onValueChange={setFilterTurma}>
+              <SelectTrigger className="w-full sm:w-[180px] shadow-sm border-border/60 bg-background hover:bg-muted">
+                <SelectValue placeholder="Filtrar por Turma" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas as Turmas</SelectItem>
+                {uniqueTurmas.map((t) => (
+                  <SelectItem key={t} value={t.toString()}>
+                    Turma {t}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -120,9 +145,9 @@ export default function Ranking() {
         <div className="text-center py-20 text-muted-foreground animate-pulse">
           Carregando Quadro de Honra...
         </div>
-      ) : users.length === 0 ? (
+      ) : filteredUsers.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground bg-muted/20 rounded-xl border border-border/50">
-          Nenhum dado disponível no momento
+          Nenhum dado disponível no momento para esta turma
         </div>
       ) : (
         <>
