@@ -36,6 +36,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
 import { useToast } from '@/hooks/use-toast'
 import { exportRanking } from '@/lib/export'
 import pb from '@/lib/pocketbase/client'
@@ -56,22 +58,34 @@ export default function AdminDashboard() {
   const [pendingSubmissions, setPendingSubmissions] = useState<any[]>([])
   const [importLogs, setImportLogs] = useState<any[]>([])
   const [isImportOpen, setIsImportOpen] = useState(false)
+  const [chartData, setChartData] = useState<any[]>([])
 
   const loadData = useCallback(async () => {
     try {
-      const [usersRes, subsTotalRes, subsPendingRes, subsApprovedRes, pendingListRes, logsRes] =
-        await Promise.all([
-          pb.collection('users').getList(1, 1, { filter: "role = 'observer'" }),
-          pb.collection('submissions').getList(1, 1),
-          pb.collection('submissions').getList(1, 1, { filter: "status = 'Em Análise'" }),
-          pb.collection('submissions').getList(1, 1, { filter: "status = 'Aprovado'" }),
-          pb.collection('submissions').getFullList({
-            filter: "status = 'Em Análise'",
-            expand: 'user_id',
-            sort: '-created',
-          }),
-          pb.collection('import_logs').getList(1, 10, { sort: '-created' }),
-        ])
+      const [
+        usersRes,
+        subsTotalRes,
+        subsPendingRes,
+        subsApprovedRes,
+        pendingListRes,
+        logsRes,
+        allApprovedRes,
+      ] = await Promise.all([
+        pb.collection('users').getList(1, 1, { filter: "role = 'observer'" }),
+        pb.collection('submissions').getList(1, 1),
+        pb.collection('submissions').getList(1, 1, { filter: "status = 'Em Análise'" }),
+        pb.collection('submissions').getList(1, 1, { filter: "status = 'Aprovado'" }),
+        pb.collection('submissions').getFullList({
+          filter: "status = 'Em Análise'",
+          expand: 'user_id',
+          sort: '-created',
+        }),
+        pb.collection('import_logs').getList(1, 10, { sort: '-created' }),
+        pb.collection('submissions').getFullList({
+          filter: "status = 'Aprovado'",
+          sort: 'created',
+        }),
+      ])
 
       setStats({
         observers: usersRes.totalItems,
@@ -92,6 +106,16 @@ export default function AdminDashboard() {
       )
 
       setImportLogs(logsRes.items)
+
+      // Process chart data for Score Evolution
+      const monthlyMap: Record<string, number> = {}
+      allApprovedRes.forEach((sub) => {
+        const d = new Date(sub.created)
+        const month = d.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })
+        monthlyMap[month] = (monthlyMap[month] || 0) + (sub.score || 0)
+      })
+      const cData = Object.entries(monthlyMap).map(([month, points]) => ({ month, points }))
+      setChartData(cData)
     } catch (err) {
       console.error('Failed to load dashboard data', err)
     }
@@ -225,6 +249,60 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {chartData.length > 0 && (
+        <Card className="shadow-subtle border-border/60">
+          <CardHeader className="bg-muted/30 border-b border-border/50">
+            <CardTitle>Evolução de Pontuação</CardTitle>
+            <CardDescription>
+              Progresso do total de pontos distribuídos aos observadores ao longo do tempo.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6 pb-2 pl-0">
+            <ChartContainer
+              config={{
+                points: {
+                  label: 'Pontos',
+                  color: 'hsl(var(--primary))',
+                },
+              }}
+              className="h-[300px] w-full"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData} margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="hsl(var(--muted))"
+                  />
+                  <XAxis
+                    dataKey="month"
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                    dy={10}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                    dx={-10}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Line
+                    type="monotone"
+                    dataKey="points"
+                    stroke="var(--color-points)"
+                    strokeWidth={3}
+                    dot={{ fill: 'var(--color-points)', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, strokeWidth: 0 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card className="shadow-subtle border-border/60">

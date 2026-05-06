@@ -22,6 +22,7 @@ import AdminLogs from './pages/admin/AdminLogs'
 import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
+import PublicProfile from './pages/PublicProfile'
 
 const ProtectedRoute = ({
   children,
@@ -75,6 +76,7 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/profile/:userId" element={<PublicProfile />} />
 
       <Route
         element={

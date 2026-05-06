@@ -4,6 +4,9 @@ import { HighlightsMural } from '@/components/dashboard/HighlightsMural'
 import { RecentActivity } from '@/components/dashboard/RecentActivity'
 import { HeroProgress } from '@/components/dashboard/HeroProgress'
 import useAuthStore from '@/stores/useAuthStore'
+import { Download } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { generateCertificate } from '@/lib/certificate'
 import { useRealtime } from '@/hooks/use-realtime'
 import pb from '@/lib/pocketbase/client'
 import { useState, useEffect } from 'react'
@@ -53,15 +56,34 @@ export default function Index() {
     )
   }
 
+  const isLevel3 = user?.level?.includes('Nível III') || user?.level?.includes('Mobilizador')
+
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in-up pb-10">
-      <div className="space-y-2">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-          Olá, {user?.name?.split(' ')[0] || 'Observador'}
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          Acompanhe sua jornada de evolução, impacto institucional e suas submissões.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div className="space-y-2">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+            Olá, {user?.name?.split(' ')[0] || 'Observador'}
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Acompanhe sua jornada de evolução, impacto institucional e suas submissões.
+          </p>
+        </div>
+        {isLevel3 && (
+          <Button
+            onClick={() => {
+              try {
+                generateCertificate(user)
+              } catch (err: any) {
+                alert(err.message)
+              }
+            }}
+            className="bg-amber-600 hover:bg-amber-700 text-white shadow-md self-start"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Baixar Certificado
+          </Button>
+        )}
       </div>
 
       <HeroProgress />
