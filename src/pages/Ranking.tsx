@@ -188,7 +188,7 @@ export default function Ranking() {
                       src={user.avatar ? pb.files.getUrl(user, user.avatar) : undefined}
                     />
                     <AvatarFallback className="font-bold text-lg sm:text-2xl text-muted-foreground">
-                      {user.name?.charAt(0) || '?'}
+                      {(user.full_name || user.name)?.charAt(0) || '?'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="text-center mb-3 sm:mb-5 px-1 sm:px-2 flex flex-col items-center">
@@ -199,7 +199,7 @@ export default function Ranking() {
                       {(user.level || 'Nível I').split(' - ')[0]}
                     </p>
                     <p className="font-bold text-xs sm:text-base leading-tight truncate w-full max-w-[100px] sm:max-w-[140px] mt-0.5">
-                      {user.name}
+                      {user.full_name || user.name}
                     </p>
                     <p className="text-[10px] sm:text-sm font-semibold text-muted-foreground">
                       {user.points || 0} pts
@@ -250,10 +250,12 @@ export default function Ranking() {
                                 src={user.avatar ? pb.files.getUrl(user, user.avatar) : undefined}
                               />
                               <AvatarFallback className="font-semibold text-muted-foreground">
-                                {user.name?.charAt(0) || '?'}
+                                {(user.full_name || user.name)?.charAt(0) || '?'}
                               </AvatarFallback>
                             </Avatar>
-                            <span className="font-bold text-base">{user.name}</span>
+                            <span className="font-bold text-base">
+                              {user.full_name || user.name}
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell className="py-4">
@@ -288,12 +290,12 @@ export default function Ranking() {
                       src={user.avatar ? pb.files.getUrl(user, user.avatar) : undefined}
                     />
                     <AvatarFallback className="font-semibold text-muted-foreground">
-                      {user.name?.charAt(0) || '?'}
+                      {(user.full_name || user.name)?.charAt(0) || '?'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col min-w-0">
                     <span className="font-bold text-sm leading-tight text-foreground truncate">
-                      {user.name}
+                      {user.full_name || user.name}
                     </span>
                     <span
                       className="text-[10px] font-semibold text-secondary mt-0.5 uppercase tracking-wider line-clamp-1"

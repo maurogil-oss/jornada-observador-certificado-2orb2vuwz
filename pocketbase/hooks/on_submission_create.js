@@ -1,4 +1,4 @@
-onRecordAfterDeleteSuccess((e) => {
+onRecordAfterCreateSuccess((e) => {
   if (e.record.getString('status') === 'Aprovado') {
     const userId = e.record.getString('user_id')
     if (!userId) return e.next()
@@ -57,7 +57,7 @@ onRecordAfterDeleteSuccess((e) => {
         const log = new Record(logs)
         log.set('entity_type', 'users')
         log.set('entity_id', user.id)
-        log.set('action', 'Points/Level Recalculated (Submission Deleted)')
+        log.set('action', 'Points/Level Recalculated (Submission Created)')
 
         let desc = []
         if (originalUserPoints !== totalPoints)
@@ -68,7 +68,7 @@ onRecordAfterDeleteSuccess((e) => {
         $app.save(log)
       }
     } catch (err) {
-      console.log('Error updating user points after deletion: ', err)
+      console.log('Error updating user points after creation: ', err)
     }
   }
   e.next()

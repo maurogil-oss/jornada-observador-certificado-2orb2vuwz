@@ -27,23 +27,15 @@ onRecordAfterUpdateSuccess((e) => {
         { userId: userId },
       )
 
-      let titulationSum = 0
-      let competencySum = 0
+      let totalPoints = 0
 
       for (let i = 0; i < submissions.length; i++) {
         const sub = submissions[i]
-        const type = sub.getString('type')
         const score = sub.getFloat('score') || 0
-
-        if (type === 'titulation') {
-          titulationSum += score
-        } else {
-          competencySum += score
-        }
+        totalPoints += score
       }
 
-      if (titulationSum > 250) titulationSum = 250
-      const totalPoints = titulationSum + competencySum
+      totalPoints = Math.round(totalPoints * 100) / 100
 
       const currentLevel = user.getString('level')
       const turma = user.getInt('turma') || 15
