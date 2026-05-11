@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import pb from '@/lib/pocketbase/client'
 import { useRealtime } from '@/hooks/use-realtime'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -13,14 +13,16 @@ import {
   TableFooter,
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
-import { Download, FileSpreadsheet, FileType2, Loader2, Info } from 'lucide-react'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+  Download,
+  FileSpreadsheet,
+  FileType2,
+  Loader2,
+  Info,
+  X,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,6 +47,119 @@ const TYPE_LABELS: Record<string, string> = {
   other: 'Outros',
 }
 
+function UserBreakdown({ userId, userPoints }: { userId: string; userPoints: number }) {
+  const [submissions, setSubmissions] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let isMounted = true
+    setLoading(true)
+    pb.collection('submissions')
+      .getFullList({
+        filter: `user_id = "${userId}" && status = "Aprovado"`,
+        sort: '-created',
+      })
+      .then((records) => {
+        if (isMounted) {
+          setSubmissions(records)
+          setLoading(false)
+        }
+      })
+      .catch((err) => {
+        console.error(err)
+        if (isMounted) setLoading(false)
+      })
+    return () => {
+      isMounted = false
+    }
+  }, [userId])
+
+  if (loading) {
+    return (
+      <div className="p-8 flex flex-col justify-center items-center gap-3 text-muted-foreground animate-pulse">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <p className="text-sm">Carregando atividades...</p>
+      </div>
+    )
+  }
+
+  if (submissions.length === 0) {
+    return (
+      <div className="p-8 text-center bg-muted/20 border border-dashed rounded-xl m-4">
+        <p className="text-muted-foreground font-medium">
+          Nenhuma atividade aprovada encontrada para este observador.
+        </p>
+        <p className="text-sm text-muted-foreground/70 mt-1">
+          Apenas atividades com status "Aprovado" somam pontos no ranking.
+        </p>
+      </div>
+    )
+  }
+
+  const totalScore = submissions.reduce((acc, sub) => acc + (Number(sub.score) || 0), 0)
+
+  return (
+    <div className="p-4 sm:p-6 bg-card/50">
+      <div className="rounded-md border overflow-hidden bg-background shadow-sm">
+        <Table>
+          <TableHeader className="bg-muted/50">
+            <TableRow>
+              <TableHead className="whitespace-nowrap w-[120px]">Data</TableHead>
+              <TableHead>Atividade</TableHead>
+              <TableHead className="hidden sm:table-cell w-[150px]">Categoria</TableHead>
+              <TableHead className="text-right w-[100px]">Pontos</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {submissions.map((sub) => (
+              <TableRow key={sub.id}>
+                <TableCell className="text-sm whitespace-nowrap text-muted-foreground">
+                  {new Date(sub.created).toLocaleDateString('pt-BR')}
+                </TableCell>
+                <TableCell className="text-sm font-medium">
+                  {sub.title}
+                  <span className="block sm:hidden text-xs font-normal text-muted-foreground mt-0.5">
+                    {TYPE_LABELS[sub.type] || sub.type}
+                  </span>
+                </TableCell>
+                <TableCell className="text-sm hidden sm:table-cell text-muted-foreground">
+                  {TYPE_LABELS[sub.type] || sub.type}
+                </TableCell>
+                <TableCell className="text-right font-bold text-primary">
+                  +{sub.score || 0}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter className="bg-muted/30">
+            <TableRow>
+              <TableCell colSpan={2} className="sm:hidden font-bold">
+                Total Calculado
+              </TableCell>
+              <TableCell colSpan={3} className="hidden sm:table-cell font-bold">
+                Total Calculado
+              </TableCell>
+              <TableCell className="text-right font-black text-lg text-primary">
+                {totalScore}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </div>
+
+      {totalScore !== userPoints && (
+        <div className="mt-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-md flex items-start gap-2">
+          <Info className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+          <p className="text-xs text-amber-700 dark:text-amber-500 font-medium">
+            Nota: A soma das atividades detalhadas ({totalScore}) difere da pontuação geral exibida
+            no ranking ({userPoints}).
+          </p>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function Ranking() {
   const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -53,29 +168,10 @@ export default function Ranking() {
   const isAdmin = currentUser?.role === 'admin'
   const { toast } = useToast()
 
-  const [selectedUser, setSelectedUser] = useState<any | null>(null)
-  const [userSubmissions, setUserSubmissions] = useState<any[]>([])
-  const [loadingDetails, setLoadingDetails] = useState(false)
+  const [expandedUser, setExpandedUser] = useState<string | null>(null)
 
-  const handleUserClick = async (user: any) => {
-    setSelectedUser(user)
-    setLoadingDetails(true)
-    try {
-      const records = await pb.collection('submissions').getFullList({
-        filter: `user_id = "${user.id}" && status = "Aprovado"`,
-        sort: '-created',
-      })
-      setUserSubmissions(records)
-    } catch (err) {
-      console.error(err)
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível carregar as atividades.',
-        variant: 'destructive',
-      })
-    } finally {
-      setLoadingDetails(false)
-    }
+  const handleToggleExpand = (userId: string) => {
+    setExpandedUser((prev) => (prev === userId ? null : userId))
   }
 
   const loadUsers = async () => {
@@ -214,7 +310,7 @@ export default function Ranking() {
                   key={user.id}
                   className="flex flex-col items-center relative animate-slide-up flex-1 max-w-[160px] cursor-pointer group"
                   style={{ animationDelay: `${(3 - position) * 150}ms` }}
-                  onClick={() => handleUserClick(user)}
+                  onClick={() => handleToggleExpand(user.id)}
                 >
                   <Avatar
                     className={cn(
@@ -257,14 +353,47 @@ export default function Ranking() {
                       {position}
                     </span>
                     <div className="absolute bottom-2 text-primary-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-[10px] bg-black/20 px-2 py-0.5 rounded-full backdrop-blur-sm">
-                      <Info className="w-3 h-3" />
-                      Detalhes
+                      {expandedUser === user.id ? (
+                        <ChevronUp className="w-3 h-3" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3" />
+                      )}
+                      {expandedUser === user.id ? 'Ocultar' : 'Detalhes'}
                     </div>
                   </div>
                 </div>
               )
             })}
           </div>
+
+          {/* Top 3 Expanded View */}
+          {expandedUser && top3.find((u) => u.id === expandedUser) && (
+            <div className="animate-fade-in-down mb-8 px-2 sm:px-0">
+              <div className="bg-card border border-border/60 shadow-lg rounded-xl overflow-hidden">
+                <div className="p-4 border-b border-border/50 bg-muted/30 flex justify-between items-center">
+                  <div>
+                    <h3 className="font-bold text-lg">Detalhamento de Pontuação</h3>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      {top3.find((u) => u.id === expandedUser)?.full_name ||
+                        top3.find((u) => u.id === expandedUser)?.name}
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setExpandedUser(null)}
+                    className="rounded-full hover:bg-muted/50"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
+                <UserBreakdown
+                  userId={expandedUser}
+                  userPoints={top3.find((u) => u.id === expandedUser)?.points || 0}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Desktop Table View */}
           <div className="hidden md:block">
@@ -281,51 +410,68 @@ export default function Ranking() {
                   </TableHeader>
                   <TableBody>
                     {rest.map((user, idx) => (
-                      <TableRow
-                        key={user.id}
-                        className="hover:bg-muted/30 transition-colors cursor-pointer group"
-                        onClick={() => handleUserClick(user)}
-                      >
-                        <TableCell className="text-center py-4">
-                          <span className="font-bold text-muted-foreground text-lg">
-                            {idx + 4}º
-                          </span>
-                        </TableCell>
-                        <TableCell className="py-4">
-                          <div className="flex items-center gap-4">
-                            <Avatar className="w-10 h-10 border-2 border-background shadow-sm shrink-0">
-                              <AvatarImage
-                                src={user.avatar ? pb.files.getUrl(user, user.avatar) : undefined}
-                              />
-                              <AvatarFallback className="font-semibold text-muted-foreground">
-                                {(user.full_name || user.name)?.charAt(0) || '?'}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className="font-bold text-base">
-                              {user.full_name || user.name}
+                      <React.Fragment key={user.id}>
+                        <TableRow
+                          className={cn(
+                            'transition-colors cursor-pointer group',
+                            expandedUser === user.id ? 'bg-muted/5' : 'hover:bg-muted/30',
+                          )}
+                          onClick={() => handleToggleExpand(user.id)}
+                        >
+                          <TableCell className="text-center py-4">
+                            <span className="font-bold text-muted-foreground text-lg">
+                              {idx + 4}º
                             </span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="py-4">
-                          <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary/10 text-secondary border border-secondary/20">
-                            {user.level || 'Nível I - Observador Certificado (Iniciante)'}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-right pr-6 py-4">
-                          <div className="flex items-center justify-end gap-3">
-                            <span className="font-black text-lg text-foreground/80">
-                              {user.points || 0}
+                          </TableCell>
+                          <TableCell className="py-4">
+                            <div className="flex items-center gap-4">
+                              <Avatar className="w-10 h-10 border-2 border-background shadow-sm shrink-0">
+                                <AvatarImage
+                                  src={user.avatar ? pb.files.getUrl(user, user.avatar) : undefined}
+                                />
+                                <AvatarFallback className="font-semibold text-muted-foreground">
+                                  {(user.full_name || user.name)?.charAt(0) || '?'}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span className="font-bold text-base">
+                                {user.full_name || user.name}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="py-4">
+                            <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary/10 text-secondary border border-secondary/20">
+                              {user.level || 'Nível I - Observador Certificado (Iniciante)'}
                             </span>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <Info className="h-4 w-4 text-muted-foreground" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
+                          </TableCell>
+                          <TableCell className="text-right pr-6 py-4">
+                            <div className="flex items-center justify-end gap-3">
+                              <span className="font-black text-lg text-foreground/80">
+                                {user.points || 0}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground group-hover:text-foreground transition-colors"
+                              >
+                                {expandedUser === user.id ? (
+                                  <ChevronUp className="h-5 w-5" />
+                                ) : (
+                                  <ChevronDown className="h-5 w-5" />
+                                )}
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        {expandedUser === user.id && (
+                          <TableRow className="bg-muted/5 hover:bg-muted/5">
+                            <TableCell colSpan={4} className="p-0 border-b-2 border-border/60">
+                              <div className="animate-fade-in-down overflow-hidden">
+                                <UserBreakdown userId={user.id} userPoints={user.points || 0} />
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </React.Fragment>
                     ))}
                   </TableBody>
                 </Table>
@@ -336,122 +482,63 @@ export default function Ranking() {
           {/* Mobile Card View */}
           <div className="md:hidden space-y-3 px-2">
             {rest.map((user, idx) => (
-              <Card
+              <div
                 key={user.id}
-                className="p-4 flex items-center justify-between border-border/60 shadow-sm bg-card hover:bg-muted/10 transition-colors gap-3 cursor-pointer"
-                onClick={() => handleUserClick(user)}
+                className="border border-border/60 shadow-sm bg-card rounded-xl overflow-hidden transition-all duration-300"
               >
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <span className="font-bold text-muted-foreground text-base w-6 text-center shrink-0">
-                    {idx + 4}º
-                  </span>
-                  <Avatar className="w-11 h-11 border-2 border-background shadow-sm shrink-0">
-                    <AvatarImage
-                      src={user.avatar ? pb.files.getUrl(user, user.avatar) : undefined}
-                    />
-                    <AvatarFallback className="font-semibold text-muted-foreground">
-                      {(user.full_name || user.name)?.charAt(0) || '?'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col min-w-0">
-                    <span className="font-bold text-sm leading-tight text-foreground truncate">
-                      {user.full_name || user.name}
+                <div
+                  className={cn(
+                    'p-4 flex items-center justify-between hover:bg-muted/10 transition-colors gap-3 cursor-pointer',
+                    expandedUser === user.id ? 'bg-muted/10 border-b border-border/50' : '',
+                  )}
+                  onClick={() => handleToggleExpand(user.id)}
+                >
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    <span className="font-bold text-muted-foreground text-base w-6 text-center shrink-0">
+                      {idx + 4}º
                     </span>
-                    <span
-                      className="text-[10px] font-semibold text-secondary mt-0.5 uppercase tracking-wider line-clamp-1"
-                      title={user.level || 'Nível I'}
-                    >
-                      {user.level || 'Nível I'}
+                    <Avatar className="w-11 h-11 border-2 border-background shadow-sm shrink-0">
+                      <AvatarImage
+                        src={user.avatar ? pb.files.getUrl(user, user.avatar) : undefined}
+                      />
+                      <AvatarFallback className="font-semibold text-muted-foreground">
+                        {(user.full_name || user.name)?.charAt(0) || '?'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-bold text-sm leading-tight text-foreground truncate">
+                        {user.full_name || user.name}
+                      </span>
+                      <span
+                        className="text-[10px] font-semibold text-secondary mt-0.5 uppercase tracking-wider line-clamp-1"
+                        title={user.level || 'Nível I'}
+                      >
+                        {user.level || 'Nível I'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="font-black text-foreground/80 text-base">
+                      {user.points || 0}
                     </span>
+                    {expandedUser === user.id ? (
+                      <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                    )}
                   </div>
                 </div>
-                <div className="font-black text-foreground/80 text-base shrink-0">
-                  {user.points || 0}
-                </div>
-              </Card>
+
+                {expandedUser === user.id && (
+                  <div className="bg-muted/5 animate-fade-in-down overflow-hidden">
+                    <UserBreakdown userId={user.id} userPoints={user.points || 0} />
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </>
       )}
-
-      <Dialog open={!!selectedUser} onOpenChange={(open) => !open && setSelectedUser(null)}>
-        <DialogContent className="max-w-2xl w-[95vw] sm:w-full max-h-[90vh] overflow-hidden flex flex-col p-4 sm:p-6">
-          <DialogHeader className="pb-4 border-b">
-            <DialogTitle className="text-xl sm:text-2xl">Detalhamento de Pontuação</DialogTitle>
-            <DialogDescription className="text-base font-medium text-foreground mt-2">
-              {selectedUser?.full_name || selectedUser?.name}
-            </DialogDescription>
-            <DialogDescription className="text-sm">
-              Atividades aprovadas que compõem a pontuação do observador no ranking.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="flex-1 overflow-y-auto py-4 min-h-[200px]">
-            {loadingDetails ? (
-              <div className="h-full flex flex-col justify-center items-center gap-3 text-muted-foreground">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p>Carregando atividades...</p>
-              </div>
-            ) : userSubmissions.length === 0 ? (
-              <div className="h-full flex flex-col justify-center items-center text-center p-8 bg-muted/20 rounded-xl border border-dashed">
-                <p className="text-muted-foreground">
-                  Nenhuma atividade aprovada encontrada para este usuário.
-                </p>
-                <p className="text-sm text-muted-foreground/70 mt-2">
-                  Apenas atividades com status "Aprovado" somam pontos no ranking.
-                </p>
-              </div>
-            ) : (
-              <div className="rounded-md border overflow-hidden">
-                <Table>
-                  <TableHeader className="bg-muted/50">
-                    <TableRow>
-                      <TableHead className="whitespace-nowrap">Data</TableHead>
-                      <TableHead>Atividade</TableHead>
-                      <TableHead className="hidden sm:table-cell">Categoria</TableHead>
-                      <TableHead className="text-right">Pontos</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {userSubmissions.map((sub) => (
-                      <TableRow key={sub.id}>
-                        <TableCell className="text-sm whitespace-nowrap">
-                          {new Date(sub.created).toLocaleDateString('pt-BR')}
-                        </TableCell>
-                        <TableCell className="text-sm font-medium">
-                          {sub.title}
-                          <span className="block sm:hidden text-xs font-normal text-muted-foreground mt-0.5">
-                            {TYPE_LABELS[sub.type] || sub.type}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-sm hidden sm:table-cell">
-                          {TYPE_LABELS[sub.type] || sub.type}
-                        </TableCell>
-                        <TableCell className="text-right font-bold text-primary">
-                          +{sub.score || 0}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TableCell colSpan={2} className="sm:hidden font-bold">
-                        Total
-                      </TableCell>
-                      <TableCell colSpan={3} className="hidden sm:table-cell font-bold">
-                        Total
-                      </TableCell>
-                      <TableCell className="text-right font-black text-lg text-primary">
-                        {userSubmissions.reduce((acc, sub) => acc + (sub.score || 0), 0)}
-                      </TableCell>
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
