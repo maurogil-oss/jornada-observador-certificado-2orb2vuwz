@@ -24,6 +24,7 @@ import {
   Eye,
   History,
   TrendingUp,
+  ShieldCheck,
 } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
@@ -53,6 +54,7 @@ export function AppSidebar() {
     { title: 'Performance', url: '/admin/performance', icon: TrendingUp },
     { title: 'Gestão de Usuários', url: '/admin/users', icon: Users },
     { title: 'Validação de Docs', url: '/admin/submissions', icon: FileCheck },
+    { title: 'Auditoria de Pontos', url: '/admin/auditoria', icon: ShieldCheck },
     { title: 'Indicadores', url: '/admin/indicadores', icon: BarChart },
     { title: 'Demografia', url: '/admin/estatisticas', icon: BarChart },
     { title: 'Log de Atividades', url: '/admin/logs', icon: History },
