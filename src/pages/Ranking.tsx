@@ -10,9 +10,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableFooter,
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
-import { Download, FileSpreadsheet, FileType2 } from 'lucide-react'
+import { Download, FileSpreadsheet, FileType2, Loader2, Info } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +39,12 @@ import { useToast } from '@/hooks/use-toast'
 import useAuthStore from '@/stores/useAuthStore'
 import { exportRanking } from '@/lib/export'
 
+const TYPE_LABELS: Record<string, string> = {
+  titulation: 'Titulação',
+  competency: 'Competência',
+  other: 'Outros',
+}
+
 export default function Ranking() {
   const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -38,6 +52,31 @@ export default function Ranking() {
   const { user: currentUser } = useAuthStore()
   const isAdmin = currentUser?.role === 'admin'
   const { toast } = useToast()
+
+  const [selectedUser, setSelectedUser] = useState<any | null>(null)
+  const [userSubmissions, setUserSubmissions] = useState<any[]>([])
+  const [loadingDetails, setLoadingDetails] = useState(false)
+
+  const handleUserClick = async (user: any) => {
+    setSelectedUser(user)
+    setLoadingDetails(true)
+    try {
+      const records = await pb.collection('submissions').getFullList({
+        filter: `user_id = "${user.id}" && status = "Aprovado"`,
+        sort: '-created',
+      })
+      setUserSubmissions(records)
+    } catch (err) {
+      console.error(err)
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível carregar as atividades.',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoadingDetails(false)
+    }
+  }
 
   const loadUsers = async () => {
     try {
@@ -173,8 +212,9 @@ export default function Ranking() {
               return (
                 <div
                   key={user.id}
-                  className="flex flex-col items-center relative animate-slide-up flex-1 max-w-[160px]"
+                  className="flex flex-col items-center relative animate-slide-up flex-1 max-w-[160px] cursor-pointer group"
                   style={{ animationDelay: `${(3 - position) * 150}ms` }}
+                  onClick={() => handleUserClick(user)}
                 >
                   <Avatar
                     className={cn(
@@ -213,9 +253,13 @@ export default function Ranking() {
                     )}
                   >
                     <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent"></div>
-                    <span className="text-3xl sm:text-4xl font-black relative z-10 opacity-80">
+                    <span className="text-3xl sm:text-4xl font-black relative z-10 opacity-80 group-hover:scale-110 transition-transform">
                       {position}
                     </span>
+                    <div className="absolute bottom-2 text-primary-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-[10px] bg-black/20 px-2 py-0.5 rounded-full backdrop-blur-sm">
+                      <Info className="w-3 h-3" />
+                      Detalhes
+                    </div>
                   </div>
                 </div>
               )
@@ -237,7 +281,11 @@ export default function Ranking() {
                   </TableHeader>
                   <TableBody>
                     {rest.map((user, idx) => (
-                      <TableRow key={user.id} className="hover:bg-muted/30 transition-colors">
+                      <TableRow
+                        key={user.id}
+                        className="hover:bg-muted/30 transition-colors cursor-pointer group"
+                        onClick={() => handleUserClick(user)}
+                      >
                         <TableCell className="text-center py-4">
                           <span className="font-bold text-muted-foreground text-lg">
                             {idx + 4}º
@@ -263,8 +311,19 @@ export default function Ranking() {
                             {user.level || 'Nível I - Observador Certificado (Iniciante)'}
                           </span>
                         </TableCell>
-                        <TableCell className="text-right pr-6 font-black text-lg text-foreground/80 py-4">
-                          {user.points || 0}
+                        <TableCell className="text-right pr-6 py-4">
+                          <div className="flex items-center justify-end gap-3">
+                            <span className="font-black text-lg text-foreground/80">
+                              {user.points || 0}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <Info className="h-4 w-4 text-muted-foreground" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -279,7 +338,8 @@ export default function Ranking() {
             {rest.map((user, idx) => (
               <Card
                 key={user.id}
-                className="p-4 flex items-center justify-between border-border/60 shadow-sm bg-card hover:bg-muted/10 transition-colors gap-3"
+                className="p-4 flex items-center justify-between border-border/60 shadow-sm bg-card hover:bg-muted/10 transition-colors gap-3 cursor-pointer"
+                onClick={() => handleUserClick(user)}
               >
                 <div className="flex items-center gap-3 overflow-hidden">
                   <span className="font-bold text-muted-foreground text-base w-6 text-center shrink-0">
@@ -313,6 +373,85 @@ export default function Ranking() {
           </div>
         </>
       )}
+
+      <Dialog open={!!selectedUser} onOpenChange={(open) => !open && setSelectedUser(null)}>
+        <DialogContent className="max-w-2xl w-[95vw] sm:w-full max-h-[90vh] overflow-hidden flex flex-col p-4 sm:p-6">
+          <DialogHeader className="pb-4 border-b">
+            <DialogTitle className="text-xl sm:text-2xl">Detalhamento de Pontuação</DialogTitle>
+            <DialogDescription className="text-base font-medium text-foreground mt-2">
+              {selectedUser?.full_name || selectedUser?.name}
+            </DialogDescription>
+            <DialogDescription className="text-sm">
+              Atividades aprovadas que compõem a pontuação do observador no ranking.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex-1 overflow-y-auto py-4 min-h-[200px]">
+            {loadingDetails ? (
+              <div className="h-full flex flex-col justify-center items-center gap-3 text-muted-foreground">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p>Carregando atividades...</p>
+              </div>
+            ) : userSubmissions.length === 0 ? (
+              <div className="h-full flex flex-col justify-center items-center text-center p-8 bg-muted/20 rounded-xl border border-dashed">
+                <p className="text-muted-foreground">
+                  Nenhuma atividade aprovada encontrada para este usuário.
+                </p>
+                <p className="text-sm text-muted-foreground/70 mt-2">
+                  Apenas atividades com status "Aprovado" somam pontos no ranking.
+                </p>
+              </div>
+            ) : (
+              <div className="rounded-md border overflow-hidden">
+                <Table>
+                  <TableHeader className="bg-muted/50">
+                    <TableRow>
+                      <TableHead className="whitespace-nowrap">Data</TableHead>
+                      <TableHead>Atividade</TableHead>
+                      <TableHead className="hidden sm:table-cell">Categoria</TableHead>
+                      <TableHead className="text-right">Pontos</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {userSubmissions.map((sub) => (
+                      <TableRow key={sub.id}>
+                        <TableCell className="text-sm whitespace-nowrap">
+                          {new Date(sub.created).toLocaleDateString('pt-BR')}
+                        </TableCell>
+                        <TableCell className="text-sm font-medium">
+                          {sub.title}
+                          <span className="block sm:hidden text-xs font-normal text-muted-foreground mt-0.5">
+                            {TYPE_LABELS[sub.type] || sub.type}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-sm hidden sm:table-cell">
+                          {TYPE_LABELS[sub.type] || sub.type}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          +{sub.score || 0}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell colSpan={2} className="sm:hidden font-bold">
+                        Total
+                      </TableCell>
+                      <TableCell colSpan={3} className="hidden sm:table-cell font-bold">
+                        Total
+                      </TableCell>
+                      <TableCell className="text-right font-black text-lg text-primary">
+                        {userSubmissions.reduce((acc, sub) => acc + (sub.score || 0), 0)}
+                      </TableCell>
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

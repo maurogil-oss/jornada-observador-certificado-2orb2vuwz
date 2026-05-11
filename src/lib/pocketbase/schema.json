@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-11T17:15:48.720Z",
+  "generatedAt": "2026-05-11T17:23:05.934Z",
   "collections": [
     {
       "name": "users",
@@ -148,7 +148,7 @@
       "name": "submissions",
       "type": "base",
       "apiRules": {
-        "list": "@request.auth.role = 'admin' || user_id = @request.auth.id",
+        "list": "@request.auth.role = 'admin' || user_id = @request.auth.id || (@request.auth.id != '' && status = 'Aprovado')",
         "view": "@request.auth.id != ''",
         "create": "@request.auth.id != ''",
         "update": "@request.auth.role = 'admin' || (user_id = @request.auth.id && status != 'Aprovado')",
