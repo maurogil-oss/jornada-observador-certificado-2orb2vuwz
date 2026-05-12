@@ -164,13 +164,12 @@ export default function AdminUsers() {
     try {
       await deleteUser(userToDelete.id)
       toast({
-        title: 'Usuário eliminado',
-        description: 'A conta do observador foi permanentemente removida.',
+        title: 'Usuário excluído com sucesso.',
       })
       setUserToDelete(null)
     } catch (error) {
       toast({
-        title: 'Erro ao eliminar usuário',
+        title: 'Erro ao excluir usuário',
         description: getErrorMessage(error),
         variant: 'destructive',
       })
@@ -381,19 +380,19 @@ export default function AdminUsers() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleEditClick(user)}
-                        title="Editar Usuário"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30"
+                        onClick={() => setUserToDelete(user)}
+                        title="Excluir Usuário"
                       >
-                        <Edit className="w-4 h-4 text-muted-foreground" />
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30"
-                        onClick={() => setUserToDelete(user)}
-                        title="Eliminar Usuário"
+                        onClick={() => handleEditClick(user)}
+                        title="Editar Usuário"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Edit className="w-4 h-4 text-muted-foreground" />
                       </Button>
                     </div>
                   </TableCell>
@@ -492,11 +491,12 @@ export default function AdminUsers() {
       <AlertDialog open={!!userToDelete} onOpenChange={(open) => !open && setUserToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Tem certeza que deseja eliminar este observador?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação não pode ser desfeita. O usuário{' '}
-              <strong>{userToDelete?.name || userToDelete?.email}</strong> e todos os seus dados
-              serão permanentemente apagados dos nossos servidores.
+              O usuário <strong>{userToDelete?.name || userToDelete?.email}</strong> e todos os seus
+              dados serão permanentemente apagados dos nossos servidores.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -509,7 +509,7 @@ export default function AdminUsers() {
               disabled={isDeleting}
               className="bg-red-600 hover:bg-red-700 focus:ring-red-600 text-white"
             >
-              {isDeleting ? 'Eliminando...' : 'Eliminar'}
+              {isDeleting ? 'Excluindo...' : 'Excluir'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
