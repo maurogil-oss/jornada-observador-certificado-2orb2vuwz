@@ -98,6 +98,7 @@ const registerSchema = z
       ),
     workplace: z.string().optional(),
     turma: z.coerce.number().min(0, 'Inválido').max(16, 'Máximo 16'),
+    cep: z.string().optional(),
     city: z.string().min(1, 'Obrigatório'),
     state: z.string().min(1, 'Obrigatório'),
     country: z.string().min(1, 'Obrigatório'),
@@ -127,7 +128,7 @@ const STEPS = [
   {
     id: 'professional',
     title: 'Contexto Profissional',
-    fields: ['workplace', 'turma', 'city', 'state', 'country', 'lgpd_consent'],
+    fields: ['workplace', 'turma', 'country', 'cep', 'city', 'state', 'lgpd_consent'],
   },
 ]
 
@@ -185,9 +186,10 @@ export default function Login() {
       email: '',
       password: '',
       passwordConfirm: '',
+      cep: '',
       city: '',
       state: '',
-      country: '',
+      country: 'Brasil',
       workplace: '',
       lgpd_consent: false,
     },
@@ -722,38 +724,7 @@ export default function Login() {
                             />
                           </div>
 
-                          <FormField
-                            control={registerForm.control}
-                            name="city"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Cidade *</FormLabel>
-                                <FormControl>
-                                  <div className="relative">
-                                    <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                                    <Input placeholder="Cidade" className="pl-10 h-11" {...field} />
-                                  </div>
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormField
-                              control={registerForm.control}
-                              name="state"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Estado *</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="UF" className="h-11" {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-
                             <FormField
                               control={registerForm.control}
                               name="country"
@@ -766,6 +737,115 @@ export default function Login() {
                                   <FormMessage />
                                 </FormItem>
                               )}
+                            />
+
+                            {(!registerForm.watch('country') ||
+                              registerForm.watch('country').trim().toLowerCase() === 'brasil' ||
+                              registerForm.watch('country').trim().toLowerCase() === 'brazil') && (
+                              <FormField
+                                control={registerForm.control}
+                                name="cep"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>CEP *</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="00000-000"
+                                        className="h-11"
+                                        value={field.value || ''}
+                                        onChange={(e) => {
+                                          let value = e.target.value.replace(/\D/g, '')
+                                          if (value.length > 8) value = value.slice(0, 8)
+                                          let formatted = value
+                                          if (value.length > 5) {
+                                            formatted = `${value.slice(0, 5)}-${value.slice(5)}`
+                                          }
+                                          field.onChange(formatted)
+
+                                          if (value.length === 8) {
+                                            fetch(`https://viacep.com.br/ws/${value}/json/`)
+                                              .then((res) => res.json())
+                                              .then((data) => {
+                                                if (!data.erro) {
+                                                  registerForm.setValue('city', data.localidade, {
+                                                    shouldValidate: true,
+                                                  })
+                                                  registerForm.setValue('state', data.uf, {
+                                                    shouldValidate: true,
+                                                  })
+                                                } else {
+                                                  toast({
+                                                    title: 'CEP não encontrado',
+                                                    description:
+                                                      'Verifique o CEP digitado e tente novamente.',
+                                                    variant: 'destructive',
+                                                  })
+                                                }
+                                              })
+                                              .catch(console.error)
+                                          }
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                              control={registerForm.control}
+                              name="city"
+                              render={({ field }) => {
+                                const isBrazil =
+                                  !registerForm.watch('country') ||
+                                  registerForm.watch('country').trim().toLowerCase() === 'brasil' ||
+                                  registerForm.watch('country').trim().toLowerCase() === 'brazil'
+                                return (
+                                  <FormItem>
+                                    <FormLabel>Cidade *</FormLabel>
+                                    <FormControl>
+                                      <div className="relative">
+                                        <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                        <Input
+                                          placeholder="Cidade"
+                                          className={`pl-10 h-11 ${isBrazil ? 'bg-muted text-muted-foreground' : ''}`}
+                                          readOnly={isBrazil}
+                                          {...field}
+                                        />
+                                      </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )
+                              }}
+                            />
+
+                            <FormField
+                              control={registerForm.control}
+                              name="state"
+                              render={({ field }) => {
+                                const isBrazil =
+                                  !registerForm.watch('country') ||
+                                  registerForm.watch('country').trim().toLowerCase() === 'brasil' ||
+                                  registerForm.watch('country').trim().toLowerCase() === 'brazil'
+                                return (
+                                  <FormItem>
+                                    <FormLabel>Estado *</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="UF"
+                                        className={`h-11 ${isBrazil ? 'bg-muted text-muted-foreground' : ''}`}
+                                        readOnly={isBrazil}
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )
+                              }}
                             />
                           </div>
 

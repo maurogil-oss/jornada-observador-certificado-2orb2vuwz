@@ -105,6 +105,7 @@ export default function Profile() {
     cpf_document: '',
     birth_date: '',
     workplace: '',
+    cep: '',
     city: '',
     state: '',
     country: 'Brasil',
@@ -121,6 +122,7 @@ export default function Profile() {
         cpf_document: formatCPF(user.cpf_document || ''),
         birth_date: user.birth_date || '',
         workplace: user.workplace || '',
+        cep: user.cep || '',
         city: user.city || '',
         state: user.state || '',
         country: user.country || 'Brasil',
@@ -143,6 +145,41 @@ export default function Profile() {
   const handleStateChange = (val: string) => {
     setFormData((prev) => ({ ...prev, state: val }))
   }
+
+  const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, '')
+    if (value.length > 8) value = value.slice(0, 8)
+
+    let formatted = value
+    if (value.length > 5) {
+      formatted = `${value.slice(0, 5)}-${value.slice(5)}`
+    }
+
+    setFormData((prev) => ({ ...prev, cep: formatted }))
+
+    if (value.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${value}/json/`)
+        const data = await res.json()
+        if (!data.erro) {
+          setFormData((prev) => ({
+            ...prev,
+            city: data.localidade,
+            state: data.uf,
+          }))
+        } else {
+          toast.error('CEP não encontrado. Verifique o número digitado.')
+        }
+      } catch (err) {
+        console.error(err)
+      }
+    }
+  }
+
+  const isBrazil =
+    !formData.country ||
+    formData.country.trim().toLowerCase() === 'brasil' ||
+    formData.country.trim().toLowerCase() === 'brazil'
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -333,29 +370,59 @@ export default function Profile() {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="country">País</Label>
+            <Input id="country" name="country" value={formData.country} onChange={handleChange} />
+          </div>
+
+          {isBrazil && (
+            <div className="space-y-2">
+              <Label htmlFor="cep">CEP</Label>
+              <Input
+                id="cep"
+                name="cep"
+                value={formData.cep || ''}
+                onChange={handleCepChange}
+                placeholder="00000-000"
+              />
+            </div>
+          )}
+
+          <div className="space-y-2">
             <Label htmlFor="city">Cidade</Label>
-            <Input id="city" name="city" value={formData.city} onChange={handleChange} />
+            <Input
+              id="city"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              readOnly={isBrazil}
+              className={isBrazil ? 'bg-muted text-muted-foreground' : ''}
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="state">Estado</Label>
-            <Select value={formData.state || undefined} onValueChange={handleStateChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione um estado" />
-              </SelectTrigger>
-              <SelectContent>
-                {BRAZILIAN_STATES.map((uf) => (
-                  <SelectItem key={uf} value={uf}>
-                    {uf}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="country">País</Label>
-            <Input id="country" name="country" value={formData.country} onChange={handleChange} />
+            {isBrazil ? (
+              <Input
+                id="state"
+                name="state"
+                value={formData.state}
+                readOnly
+                className="bg-muted text-muted-foreground"
+              />
+            ) : (
+              <Select value={formData.state || undefined} onValueChange={handleStateChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione um estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  {BRAZILIAN_STATES.map((uf) => (
+                    <SelectItem key={uf} value={uf}>
+                      {uf}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           <div className="space-y-2">

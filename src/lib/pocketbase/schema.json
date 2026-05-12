@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-12T22:52:22.521Z",
+  "generatedAt": "2026-05-12T23:04:40.467Z",
   "collections": [
     {
       "name": "users",
@@ -131,6 +131,12 @@
         },
         {
           "name": "rg_state",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "cep",
           "type": "text",
           "required": false,
           "system": false
