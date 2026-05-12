@@ -60,9 +60,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    let isMounted = true
+
     const updateUserData = () => {
       const record = pb.authStore.record
-      if (record) {
+      if (record && pb.authStore.isValid) {
         setUser({
           id: record.id,
           name: record.name || record.email.split('@')[0],
@@ -90,14 +92,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     }
 
-    updateUserData()
-    setIsLoading(false)
+    const validateSession = async () => {
+      try {
+        if (pb.authStore.isValid && pb.authStore.token) {
+          await pb.collection('users').authRefresh()
+        } else {
+          pb.authStore.clear()
+        }
+      } catch (err: any) {
+        console.error('Session validation failed:', err)
+        if (err.status !== 0) {
+          pb.authStore.clear()
+        }
+      } finally {
+        if (isMounted) {
+          updateUserData()
+          setIsLoading(false)
+        }
+      }
+    }
+
+    validateSession()
 
     const unsub = pb.authStore.onChange(() => {
-      updateUserData()
+      if (isMounted) {
+        updateUserData()
+      }
     })
 
     return () => {
+      isMounted = false
       unsub()
     }
   }, [])
@@ -119,6 +143,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     pb.authStore.clear()
+    try {
+      localStorage.removeItem('pocketbase_auth')
+      sessionStorage.clear()
+    } catch (e) {
+      console.warn('Failed to clear storage', e)
+    }
+    setUser(null)
   }
 
   return (

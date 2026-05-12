@@ -28,6 +28,7 @@ import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
 import PublicProfile from './pages/PublicProfile'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 const ProtectedRoute = ({
   children,
@@ -37,31 +38,21 @@ const ProtectedRoute = ({
   allowedRoles?: string[]
 }) => {
   const { isAuthenticated, user, isLoading, logout } = useAuthStore()
-  const { toast } = useToast()
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        description: 'Sua sessão expirou. Por favor, faça login novamente.',
-        variant: 'destructive',
-      })
-    }
-  }, [isLoading, isAuthenticated, toast])
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background">
         <Loader2 className="h-10 w-10 animate-spin mb-4 text-primary" />
-        <p>Carregando Sessão...</p>
+        <p>Validando Sessão...</p>
       </div>
     )
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />
   }
 
-  if (user && user.is_active === false) {
+  if (user.is_active === false) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background text-center px-4">
         <h1 className="text-2xl font-bold text-foreground mb-2">Conta Pendente de Validação</h1>
@@ -79,7 +70,7 @@ const ProtectedRoute = ({
     )
   }
 
-  if (allowedRoles && user?.role && !allowedRoles.includes(user.role)) {
+  if (allowedRoles && user.role && !allowedRoles.includes(user.role)) {
     return <Navigate to={user.role === 'admin' ? '/admin' : '/'} replace />
   }
 
@@ -213,19 +204,21 @@ const AppRoutes = () => {
 }
 
 const App = () => (
-  <BrowserRouter future={{ v7_startTransition: false, v7_relativeSplatPath: false }}>
-    <AuthProvider>
-      <GameProvider>
-        <SubmissionsProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <AppRoutes />
-          </TooltipProvider>
-        </SubmissionsProvider>
-      </GameProvider>
-    </AuthProvider>
-  </BrowserRouter>
+  <ErrorBoundary>
+    <BrowserRouter future={{ v7_startTransition: false, v7_relativeSplatPath: false }}>
+      <AuthProvider>
+        <GameProvider>
+          <SubmissionsProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <AppRoutes />
+            </TooltipProvider>
+          </SubmissionsProvider>
+        </GameProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  </ErrorBoundary>
 )
 
 export default App

@@ -138,12 +138,19 @@ export default function Login() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
-  const { login, register, isAuthenticated, user, logout } = useAuthStore()
+  const {
+    login,
+    register,
+    isAuthenticated,
+    user,
+    logout,
+    isLoading: isAuthLoading,
+  } = useAuthStore()
   const navigate = useNavigate()
   const { toast } = useToast()
 
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (!isAuthLoading && isAuthenticated && user) {
       if (user.is_active === false) {
         logout()
         toast({
@@ -153,10 +160,10 @@ export default function Login() {
           variant: 'destructive',
         })
       } else {
-        navigate(user.role === 'admin' ? '/admin' : '/')
+        navigate(user.role === 'admin' ? '/admin' : '/', { replace: true })
       }
     }
-  }, [isAuthenticated, user, navigate, logout, toast])
+  }, [isAuthLoading, isAuthenticated, user, navigate, logout, toast])
 
   const loginForm = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
