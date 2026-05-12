@@ -23,6 +23,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,13 +51,20 @@ const TYPE_LABELS: Record<string, string> = {
 function UserBreakdown({ userId, userPoints }: { userId: string; userPoints: number }) {
   const [submissions, setSubmissions] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const { user: currentUser } = useAuthStore()
+  const isAdmin = currentUser?.role === 'admin'
 
   useEffect(() => {
     let isMounted = true
     setLoading(true)
+
+    const filter = isAdmin
+      ? `user_id = "${userId}"`
+      : `user_id = "${userId}" && status = "Aprovado"`
+
     pb.collection('submissions')
       .getFullList({
-        filter: `user_id = "${userId}" && status = "Aprovado"`,
+        filter,
         sort: '-created',
       })
       .then((records) => {
@@ -72,7 +80,7 @@ function UserBreakdown({ userId, userPoints }: { userId: string; userPoints: num
     return () => {
       isMounted = false
     }
-  }, [userId])
+  }, [userId, isAdmin])
 
   if (loading) {
     return (
@@ -87,16 +95,22 @@ function UserBreakdown({ userId, userPoints }: { userId: string; userPoints: num
     return (
       <div className="p-8 text-center bg-muted/20 border border-dashed rounded-xl m-4">
         <p className="text-muted-foreground font-medium">
-          Nenhuma atividade aprovada encontrada para este observador.
+          {isAdmin
+            ? 'Nenhuma atividade encontrada para este observador.'
+            : 'Nenhuma atividade aprovada encontrada para este observador.'}
         </p>
-        <p className="text-sm text-muted-foreground/70 mt-1">
-          Apenas atividades com status "Aprovado" somam pontos no ranking.
-        </p>
+        {!isAdmin && (
+          <p className="text-sm text-muted-foreground/70 mt-1">
+            Apenas atividades com status "Aprovado" somam pontos no ranking.
+          </p>
+        )}
       </div>
     )
   }
 
-  const totalScore = submissions.reduce((acc, sub) => acc + (Number(sub.score) || 0), 0)
+  const totalScore = submissions
+    .filter((sub) => sub.status === 'Aprovado')
+    .reduce((acc, sub) => acc + (Number(sub.score) || 0), 0)
 
   return (
     <div className="p-4 sm:p-6 bg-card/50">
@@ -107,6 +121,8 @@ function UserBreakdown({ userId, userPoints }: { userId: string; userPoints: num
               <TableHead className="whitespace-nowrap w-[120px]">Data</TableHead>
               <TableHead>Atividade</TableHead>
               <TableHead className="hidden sm:table-cell w-[150px]">Categoria</TableHead>
+              {isAdmin && <TableHead className="hidden md:table-cell w-[120px]">Status</TableHead>}
+              {isAdmin && <TableHead className="hidden lg:table-cell">Feedback</TableHead>}
               <TableHead className="text-right w-[100px]">Pontos</TableHead>
             </TableRow>
           </TableHeader>
@@ -121,23 +137,60 @@ function UserBreakdown({ userId, userPoints }: { userId: string; userPoints: num
                   <span className="block sm:hidden text-xs font-normal text-muted-foreground mt-0.5">
                     {TYPE_LABELS[sub.type] || sub.type}
                   </span>
+                  {isAdmin && (
+                    <div className="block md:hidden mt-1 space-y-1">
+                      <Badge variant="outline" className="text-[10px]">
+                        {sub.status}
+                      </Badge>
+                      {sub.feedback && (
+                        <p className="text-xs text-muted-foreground line-clamp-2">{sub.feedback}</p>
+                      )}
+                    </div>
+                  )}
                 </TableCell>
                 <TableCell className="text-sm hidden sm:table-cell text-muted-foreground">
                   {TYPE_LABELS[sub.type] || sub.type}
                 </TableCell>
+                {isAdmin && (
+                  <TableCell className="hidden md:table-cell">
+                    <Badge
+                      variant={
+                        sub.status === 'Aprovado'
+                          ? 'default'
+                          : sub.status === 'Ajuste Necessário'
+                            ? 'destructive'
+                            : 'secondary'
+                      }
+                      className="text-[10px]"
+                    >
+                      {sub.status}
+                    </Badge>
+                  </TableCell>
+                )}
+                {isAdmin && (
+                  <TableCell
+                    className="hidden lg:table-cell text-xs text-muted-foreground max-w-[200px] truncate"
+                    title={sub.feedback || ''}
+                  >
+                    {sub.feedback || '-'}
+                  </TableCell>
+                )}
                 <TableCell className="text-right font-bold text-primary">
-                  +{sub.score || 0}
+                  {sub.status === 'Aprovado' ? `+${sub.score || 0}` : '-'}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
           <TableFooter className="bg-muted/30">
             <TableRow>
-              <TableCell colSpan={2} className="sm:hidden font-bold">
-                Total Calculado
+              <TableCell colSpan={2} className="sm:hidden font-bold text-right">
+                Total Aprovado
               </TableCell>
-              <TableCell colSpan={3} className="hidden sm:table-cell font-bold">
-                Total Calculado
+              <TableCell
+                colSpan={isAdmin ? 5 : 3}
+                className="hidden sm:table-cell font-bold text-right"
+              >
+                Total Aprovado
               </TableCell>
               <TableCell className="text-right font-black text-lg text-primary">
                 {totalScore}

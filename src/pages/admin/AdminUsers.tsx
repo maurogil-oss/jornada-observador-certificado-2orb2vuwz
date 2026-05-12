@@ -216,7 +216,7 @@ export default function AdminUsers() {
 
   const getAvatarUrl = (user: any) => {
     if (!user.avatar) return ''
-    return pb.files.getURL(user, user.avatar)
+    return pb.files.getUrl(user, user.avatar)
   }
 
   return (

@@ -42,10 +42,16 @@ const ProtectedRoute = ({
   const location = useLocation()
 
   useEffect(() => {
+    let isMounted = true
     if (isAuthenticated && user && checkSession) {
-      checkSession().catch(console.error)
+      checkSession().catch((err) => {
+        if (isMounted) console.error('Silent session check failed:', err)
+      })
     }
-  }, [location.pathname])
+    return () => {
+      isMounted = false
+    }
+  }, [location.pathname, isAuthenticated])
 
   if (isLoading) {
     return (

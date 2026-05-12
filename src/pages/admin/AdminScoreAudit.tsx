@@ -18,6 +18,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Search, Loader2, ShieldCheck, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import pb from '@/lib/pocketbase/client'
+import useAuthStore from '@/stores/useAuthStore'
 
 interface User {
   id: string
@@ -33,6 +34,8 @@ interface Submission {
   type: string
   created: string
   score: number
+  status: string
+  feedback?: string
 }
 
 const formatType = (type: string) => {
@@ -47,14 +50,19 @@ const formatType = (type: string) => {
 function UserSubmissionsAudit({ userId, userPoints }: { userId: string; userPoints: number }) {
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [loading, setLoading] = useState(true)
+  const { user } = useAuthStore()
+  const isAdmin = user?.role === 'admin'
 
   useEffect(() => {
     let isMounted = true
     const fetchSubmissions = async () => {
       setLoading(true)
       try {
+        const filter = isAdmin
+          ? `user_id = "${userId}"`
+          : `user_id = "${userId}" && status = "Aprovado"`
         const records = await pb.collection('submissions').getFullList({
-          filter: `user_id = "${userId}" && status = "Aprovado"`,
+          filter,
           sort: '-created',
         })
         if (isMounted) {
@@ -72,10 +80,12 @@ function UserSubmissionsAudit({ userId, userPoints }: { userId: string; userPoin
     return () => {
       isMounted = false
     }
-  }, [userId])
+  }, [userId, isAdmin])
 
   const calculatedPoints = useMemo(() => {
-    return submissions.reduce((sum, sub) => sum + (sub.score || 0), 0)
+    return submissions
+      .filter((sub) => sub.status === 'Aprovado')
+      .reduce((sum, sub) => sum + (sub.score || 0), 0)
   }, [submissions])
 
   const isMatch = calculatedPoints === userPoints
@@ -124,7 +134,11 @@ function UserSubmissionsAudit({ userId, userPoints }: { userId: string; userPoin
 
       {submissions.length === 0 ? (
         <div className="text-center p-8 bg-muted/10 rounded-lg border border-dashed text-muted-foreground">
-          <p>Nenhuma pontuação aprovada encontrada para este usuário.</p>
+          <p>
+            {isAdmin
+              ? 'Nenhuma submissão encontrada para este usuário.'
+              : 'Nenhuma pontuação aprovada encontrada para este usuário.'}
+          </p>
         </div>
       ) : (
         <div className="rounded-md border overflow-hidden">
@@ -134,6 +148,8 @@ function UserSubmissionsAudit({ userId, userPoints }: { userId: string; userPoin
                 <TableHead>Data</TableHead>
                 <TableHead>Título</TableHead>
                 <TableHead>Tipo</TableHead>
+                {isAdmin && <TableHead>Status</TableHead>}
+                {isAdmin && <TableHead>Feedback</TableHead>}
                 <TableHead className="text-right">Pontos</TableHead>
               </TableRow>
             </TableHeader>
@@ -149,7 +165,33 @@ function UserSubmissionsAudit({ userId, userPoints }: { userId: string; userPoin
                       {formatType(sub.type)}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right font-bold text-primary">+{sub.score}</TableCell>
+                  {isAdmin && (
+                    <TableCell>
+                      <Badge
+                        variant={
+                          sub.status === 'Aprovado'
+                            ? 'default'
+                            : sub.status === 'Ajuste Necessário'
+                              ? 'destructive'
+                              : 'secondary'
+                        }
+                        className="text-[10px]"
+                      >
+                        {sub.status}
+                      </Badge>
+                    </TableCell>
+                  )}
+                  {isAdmin && (
+                    <TableCell
+                      className="text-xs text-muted-foreground max-w-[150px] truncate"
+                      title={sub.feedback || ''}
+                    >
+                      {sub.feedback || '-'}
+                    </TableCell>
+                  )}
+                  <TableCell className="text-right font-bold text-primary">
+                    {sub.status === 'Aprovado' ? `+${sub.score || 0}` : '-'}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
