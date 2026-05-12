@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -24,6 +24,7 @@ import AdminSubmissions from './pages/admin/AdminSubmissions'
 import AdminLogs from './pages/admin/AdminLogs'
 import AdminPerformance from './pages/admin/AdminPerformance'
 import AdminScoreAudit from './pages/admin/AdminScoreAudit'
+import AdminImportLogs from './pages/admin/AdminImportLogs'
 import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
@@ -37,7 +38,14 @@ const ProtectedRoute = ({
   children: React.ReactNode
   allowedRoles?: string[]
 }) => {
-  const { isAuthenticated, user, isLoading, logout } = useAuthStore()
+  const { isAuthenticated, user, isLoading, logout, checkSession } = useAuthStore()
+  const location = useLocation()
+
+  useEffect(() => {
+    if (isAuthenticated && user && checkSession) {
+      checkSession().catch(console.error)
+    }
+  }, [location.pathname])
 
   if (isLoading) {
     return (
@@ -50,6 +58,15 @@ const ProtectedRoute = ({
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />
+  }
+
+  if (user.role === undefined || typeof user.is_active !== 'boolean') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background">
+        <Loader2 className="h-10 w-10 animate-spin mb-4 text-primary" />
+        <p>Sincronizando sessão...</p>
+      </div>
+    )
   }
 
   if (user.is_active === false) {
@@ -193,6 +210,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminLogs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/import-logs"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminImportLogs />
             </ProtectedRoute>
           }
         />

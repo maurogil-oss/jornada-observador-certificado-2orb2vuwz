@@ -26,7 +26,21 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   private handleReload = () => {
-    window.location.reload()
+    try {
+      const keysToKeep = ['pocketbase_auth']
+      const keysToRemove = []
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key && !keysToKeep.includes(key)) {
+          keysToRemove.push(key)
+        }
+      }
+      keysToRemove.forEach((key) => localStorage.removeItem(key))
+      sessionStorage.clear()
+    } catch (err) {
+      console.warn('Failed to clear non-essential storage:', err)
+    }
+    this.setState({ hasError: false, error: null })
   }
 
   private handleClearAndReload = () => {

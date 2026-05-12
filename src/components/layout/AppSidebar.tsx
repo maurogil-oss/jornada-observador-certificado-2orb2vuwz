@@ -25,6 +25,7 @@ import {
   History,
   TrendingUp,
   ShieldCheck,
+  Database,
 } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
@@ -58,6 +59,7 @@ export function AppSidebar() {
     { title: 'Indicadores', url: '/admin/indicadores', icon: BarChart },
     { title: 'Demografia', url: '/admin/estatisticas', icon: BarChart },
     { title: 'Log de Atividades', url: '/admin/logs', icon: History },
+    { title: 'Logs de Importação', url: '/admin/import-logs', icon: Database },
   ]
 
   const isAdminArea = location.pathname.startsWith('/admin')

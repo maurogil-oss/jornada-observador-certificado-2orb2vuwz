@@ -51,6 +51,7 @@ interface AuthState {
   logout: () => void
   isAuthenticated: boolean
   isLoading: boolean
+  checkSession: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthState | undefined>(undefined)
@@ -59,60 +60,60 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  const updateUserData = () => {
+    const record = pb.authStore.record
+    if (record && pb.authStore.isValid) {
+      setUser({
+        id: record.id,
+        name: record.name || record.email.split('@')[0],
+        full_name: record.full_name || '',
+        nickname: record.nickname || '',
+        email: record.email,
+        role: record.role || 'observer',
+        points: record.points || 0,
+        level: record.level || 'Nível I - Observador Certificado (Iniciante)',
+        avatar: record.avatar ? pb.files.getUrl(record, record.avatar) : '',
+        is_active: record.is_active !== false,
+        birth_date: record.birth_date || '',
+        city: record.city || '',
+        state: record.state || '',
+        country: record.country || '',
+        workplace: record.workplace || '',
+        turma: record.turma,
+        cpf_document: record.cpf_document,
+        rg: record.rg,
+        rg_issuer: record.rg_issuer,
+        rg_state: record.rg_state,
+      })
+    } else {
+      setUser(null)
+    }
+  }
+
+  const validateSession = async (isMounted: boolean) => {
+    try {
+      if (pb.authStore.isValid && pb.authStore.token) {
+        await pb.collection('users').authRefresh()
+      } else {
+        pb.authStore.clear()
+      }
+    } catch (err: any) {
+      console.error('Session validation failed:', err)
+      if (err.status !== 0) {
+        pb.authStore.clear()
+      }
+    } finally {
+      if (isMounted) {
+        updateUserData()
+        setIsLoading(false)
+      }
+    }
+  }
+
   useEffect(() => {
     let isMounted = true
 
-    const updateUserData = () => {
-      const record = pb.authStore.record
-      if (record && pb.authStore.isValid) {
-        setUser({
-          id: record.id,
-          name: record.name || record.email.split('@')[0],
-          full_name: record.full_name || '',
-          nickname: record.nickname || '',
-          email: record.email,
-          role: record.role || 'observer',
-          points: record.points || 0,
-          level: record.level || 'Nível I - Observador Certificado (Iniciante)',
-          avatar: record.avatar ? pb.files.getUrl(record, record.avatar) : '',
-          is_active: record.is_active !== false,
-          birth_date: record.birth_date || '',
-          city: record.city || '',
-          state: record.state || '',
-          country: record.country || '',
-          workplace: record.workplace || '',
-          turma: record.turma,
-          cpf_document: record.cpf_document,
-          rg: record.rg,
-          rg_issuer: record.rg_issuer,
-          rg_state: record.rg_state,
-        })
-      } else {
-        setUser(null)
-      }
-    }
-
-    const validateSession = async () => {
-      try {
-        if (pb.authStore.isValid && pb.authStore.token) {
-          await pb.collection('users').authRefresh()
-        } else {
-          pb.authStore.clear()
-        }
-      } catch (err: any) {
-        console.error('Session validation failed:', err)
-        if (err.status !== 0) {
-          pb.authStore.clear()
-        }
-      } finally {
-        if (isMounted) {
-          updateUserData()
-          setIsLoading(false)
-        }
-      }
-    }
-
-    validateSession()
+    validateSession(isMounted)
 
     const unsub = pb.authStore.onChange(() => {
       if (isMounted) {
@@ -125,6 +126,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       unsub()
     }
   }, [])
+
+  const checkSession = async () => {
+    try {
+      if (pb.authStore.isValid && pb.authStore.token) {
+        await pb.collection('users').authRefresh()
+        updateUserData()
+      }
+    } catch (err: any) {
+      if (err.status !== 0) {
+        pb.authStore.clear()
+        setUser(null)
+      }
+    }
+  }
 
   const login = async (email: string, pass: string) => {
     await pb.collection('users').authWithPassword(email, pass)
@@ -154,7 +169,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, logout, isAuthenticated: pb.authStore.isValid, isLoading }}
+      value={{
+        user,
+        login,
+        register,
+        logout,
+        isAuthenticated: pb.authStore.isValid,
+        isLoading,
+        checkSession,
+      }}
     >
       {children}
     </AuthContext.Provider>
