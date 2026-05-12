@@ -39,10 +39,10 @@ const getLevelStyle = (level?: string) => {
     return 'bg-amber-500/10 text-amber-700 border-amber-500/30 dark:text-amber-400'
   // Nível II / Nível 2
   if (l.match(/\b(ii|2)\b/))
-    return 'bg-teal-500/10 text-teal-700 border-teal-500/30 dark:text-teal-400'
+    return 'bg-blue-500/10 text-blue-700 border-blue-500/30 dark:text-blue-400'
   // Nível I / Nível 1
   if (l.match(/\b(i|1)\b/))
-    return 'bg-slate-200 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
+    return 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30 dark:text-emerald-400'
 
   if (l.includes('bronze')) return 'bg-[#CD7F32]/10 text-[#CD7F32] border-[#CD7F32]/30'
   if (l.includes('prata'))

@@ -72,7 +72,7 @@ export default function AdminIndicators() {
     return {
       id: obs.id,
       name: obs.name || obs.email,
-      level: obs.level || 'Nível I - Observador Certificado (Iniciante)',
+      level: obs.level || 'Sem Nível',
       lastActivityDate: lastActivityDate,
       lastActivity: lastActivityDate.toLocaleDateString('pt-BR'),
     }
@@ -87,12 +87,12 @@ export default function AdminIndicators() {
       nivel3++
     } else if (obs.level.includes('Nível II')) {
       nivel2++
-    } else {
+    } else if (obs.level.includes('Nível I')) {
       nivel1++
     }
   })
 
-  const total = nivel1 + nivel2 + nivel3
+  const total = observersList.length
 
   const sortedData = [...observersList].sort((a, b) => {
     if (!sortConfig) return 0
@@ -274,6 +274,7 @@ export default function AdminIndicators() {
                   sortedData.map((obs) => {
                     const isAmber = obs.level.includes('Nível III')
                     const isBlue = obs.level.includes('Nível II') && !isAmber
+                    const isEmerald = obs.level.includes('Nível I') && !isAmber && !isBlue
 
                     return (
                       <TableRow key={obs.id} className="hover:bg-muted/30 transition-colors">
@@ -287,9 +288,12 @@ export default function AdminIndicators() {
                                 'bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400',
                               isBlue &&
                                 'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400',
+                              isEmerald &&
+                                'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400',
                               !isAmber &&
                                 !isBlue &&
-                                'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400',
+                                !isEmerald &&
+                                'bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400',
                             )}
                           >
                             {obs.level}

@@ -16,32 +16,28 @@ onRecordAfterDeleteSuccess((e) => {
       )
 
       let totalPoints = 0
+      let axes = {}
 
       for (let i = 0; i < submissions.length; i++) {
         const sub = submissions[i]
         const score = sub.getFloat('score') || 0
         totalPoints += score
+        const type = sub.getString('type')
+        if (type) {
+          axes[type] = true
+        }
       }
 
       totalPoints = Math.round(totalPoints * 100) / 100
+      let axesCount = Object.keys(axes).length
 
-      const currentLevel = user.getString('level')
-      const turma = user.getInt('turma') || 15
-
-      let baseLevel =
-        turma <= 14
-          ? 'Nível II - Observador Certificado Pleno'
-          : 'Nível I - Observador Certificado (Iniciante)'
-      let newLevel = currentLevel || baseLevel
-
-      if (totalPoints >= 500) {
+      let newLevel = ''
+      if (totalPoints >= 1000 && axesCount >= 3) {
         newLevel = 'Nível III - Mobilizador'
-      } else {
-        if (totalPoints < 500 && currentLevel === 'Nível III - Mobilizador') {
-          newLevel = baseLevel
-        } else if (totalPoints < 500) {
-          newLevel = currentLevel || baseLevel
-        }
+      } else if (totalPoints >= 500 && axesCount >= 2) {
+        newLevel = 'Nível II - Observador Certificado Pleno'
+      } else if (axesCount >= 1) {
+        newLevel = 'Nível I - Observador Certificado (Iniciante)'
       }
 
       const originalUserPoints = user.getFloat('points')
