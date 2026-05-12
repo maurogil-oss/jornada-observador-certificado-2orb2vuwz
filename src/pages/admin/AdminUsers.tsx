@@ -46,6 +46,21 @@ import pb from '@/lib/pocketbase/client'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 
+const getLevelStyle = (level?: string) => {
+  if (!level) return ''
+  const l = level.toLowerCase()
+  if (l.includes('bronze')) return 'bg-[#CD7F32]/10 text-[#CD7F32] border-[#CD7F32]/30'
+  if (l.includes('prata'))
+    return 'bg-slate-200 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
+  if (l.includes('ouro'))
+    return 'bg-yellow-500/10 text-yellow-700 border-yellow-500/30 dark:text-yellow-400'
+  if (l.includes('diamante'))
+    return 'bg-cyan-500/10 text-cyan-700 border-cyan-500/30 dark:text-cyan-400'
+  if (l.includes('rubi'))
+    return 'bg-rose-500/10 text-rose-700 border-rose-500/30 dark:text-rose-400'
+  return 'bg-primary/10 text-primary border-primary/30'
+}
+
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([])
   const [search, setSearch] = useState('')
@@ -91,7 +106,7 @@ export default function AdminUsers() {
   }, [])
 
   const filteredUsers = useMemo(() => {
-    let result = users
+    let result = [...users]
     if (filterTurma !== 'all') {
       result = result.filter((u) => u.turma === Number(filterTurma))
     }
@@ -104,6 +119,7 @@ export default function AdminUsers() {
           u.email?.toLowerCase().includes(lowerSearch),
       )
     }
+    result.sort((a, b) => (b.points || 0) - (a.points || 0))
     return result
   }, [users, search, filterTurma])
 
@@ -348,8 +364,20 @@ export default function AdminUsers() {
                   </TableCell>
                   <TableCell>
                     <div className="max-w-[150px] truncate" title={user.level || 'Não definido'}>
-                      {user.level || (
-                        <span className="text-muted-foreground italic">Não definido</span>
+                      {user.level ? (
+                        <Badge
+                          variant="outline"
+                          className={cn(
+                            'font-medium text-[10px] uppercase tracking-wider',
+                            getLevelStyle(user.level),
+                          )}
+                        >
+                          {user.level}
+                        </Badge>
+                      ) : (
+                        <span className="text-muted-foreground italic text-[10px]">
+                          Não definido
+                        </span>
                       )}
                     </div>
                   </TableCell>

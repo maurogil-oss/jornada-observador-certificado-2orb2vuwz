@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge'
 import { Search, Loader2, ShieldCheck, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import pb from '@/lib/pocketbase/client'
 import useAuthStore from '@/stores/useAuthStore'
+import { cn } from '@/lib/utils'
 
 interface User {
   id: string
@@ -26,6 +27,22 @@ interface User {
   full_name: string
   nickname: string
   points: number
+  level?: string
+}
+
+const getLevelStyle = (level?: string) => {
+  if (!level) return ''
+  const l = level.toLowerCase()
+  if (l.includes('bronze')) return 'bg-[#CD7F32]/10 text-[#CD7F32] border-[#CD7F32]/30'
+  if (l.includes('prata'))
+    return 'bg-slate-200 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
+  if (l.includes('ouro'))
+    return 'bg-yellow-500/10 text-yellow-700 border-yellow-500/30 dark:text-yellow-400'
+  if (l.includes('diamante'))
+    return 'bg-cyan-500/10 text-cyan-700 border-cyan-500/30 dark:text-cyan-400'
+  if (l.includes('rubi'))
+    return 'bg-rose-500/10 text-rose-700 border-rose-500/30 dark:text-rose-400'
+  return 'bg-primary/10 text-primary border-primary/30'
 }
 
 interface Submission {
@@ -211,7 +228,7 @@ export default function AdminScoreAudit() {
     const fetchUsers = async () => {
       try {
         const records = await pb.collection('users').getFullList({
-          sort: 'full_name,name',
+          sort: '-points,full_name,name',
         })
         setUsers(records as unknown as User[])
       } catch (error) {
@@ -287,11 +304,24 @@ export default function AdminScoreAudit() {
                             <span className="font-semibold text-base text-left">
                               {user.full_name || user.name || 'Sem nome'}
                             </span>
-                            {user.nickname && (
-                              <Badge variant="secondary" className="font-medium text-xs">
-                                {user.nickname}
-                              </Badge>
-                            )}
+                            <div className="flex flex-wrap items-center gap-2 mt-1">
+                              {user.nickname && (
+                                <Badge variant="secondary" className="font-medium text-xs">
+                                  {user.nickname}
+                                </Badge>
+                              )}
+                              {user.level && (
+                                <Badge
+                                  variant="outline"
+                                  className={cn(
+                                    'font-medium text-[10px] uppercase tracking-wider',
+                                    getLevelStyle(user.level),
+                                  )}
+                                >
+                                  {user.level}
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-muted-foreground hidden sm:inline-block">
