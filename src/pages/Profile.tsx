@@ -143,7 +143,7 @@ export default function Profile() {
   }
 
   const handleStateChange = (val: string) => {
-    setFormData((prev) => ({ ...prev, state: val }))
+    setFormData((prev) => ({ ...prev, state: val.toUpperCase() }))
   }
 
   const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,7 +165,7 @@ export default function Profile() {
           setFormData((prev) => ({
             ...prev,
             city: data.localidade,
-            state: data.uf,
+            state: data.uf ? data.uf.toUpperCase() : prev.state,
           }))
         } else {
           toast.error('CEP não encontrado. Verifique o número digitado.')
@@ -402,14 +402,6 @@ export default function Profile() {
           <div className="space-y-2">
             <Label htmlFor="state">Estado</Label>
             {isBrazil ? (
-              <Input
-                id="state"
-                name="state"
-                value={formData.state}
-                readOnly
-                className="bg-muted text-muted-foreground"
-              />
-            ) : (
               <Select value={formData.state || undefined} onValueChange={handleStateChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione um estado" />
@@ -422,6 +414,14 @@ export default function Profile() {
                   ))}
                 </SelectContent>
               </Select>
+            ) : (
+              <Input
+                id="state"
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
+                placeholder="Digite seu estado/província"
+              />
             )}
           </div>
 
