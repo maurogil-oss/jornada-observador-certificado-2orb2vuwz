@@ -16,7 +16,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Search, Loader2, ShieldCheck, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { Search, Loader2, ShieldCheck, AlertTriangle, CheckCircle2, Info } from 'lucide-react'
 import pb from '@/lib/pocketbase/client'
 import useAuthStore from '@/stores/useAuthStore'
 import { cn } from '@/lib/utils'
@@ -74,6 +74,93 @@ const formatType = (type: string) => {
     other: 'Outros',
   }
   return map[type] || type
+}
+
+function EvolutionLevelsLegend() {
+  return (
+    <div className="space-y-6 mb-8 mt-8">
+      <div className="space-y-2">
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          Níveis de Evolução
+        </h2>
+        <p className="text-slate-600 dark:text-slate-400">
+          Acompanhe sua jornada e descubra os requisitos para alcançar novos níveis de certificação
+          na plataforma.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Nível I */}
+        <div className="flex flex-col p-6 rounded-xl border border-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/20 dark:border-emerald-900/50 shadow-sm">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-xl font-bold text-emerald-600 dark:text-emerald-500">Nível I</h3>
+            <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white border-0 font-medium px-2.5 py-0.5 rounded-full flex items-center gap-1.5 shadow-none">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Concluído
+            </Badge>
+          </div>
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-6">
+            Observador Certificado
+          </p>
+
+          <div className="mt-auto p-4 rounded-lg bg-emerald-100/60 dark:bg-emerald-900/40 border border-emerald-200/60 dark:border-emerald-800/50 flex gap-3">
+            <Info className="w-5 h-5 text-emerald-600 dark:text-emerald-500 shrink-0 mt-0.5" />
+            <div className="flex flex-col">
+              <span className="font-bold text-emerald-800 dark:text-emerald-300 text-lg leading-tight mb-1">
+                0 - 499
+              </span>
+              <span className="text-sm font-medium text-emerald-800 dark:text-emerald-300/90 leading-snug">
+                Pontuação obrigatória em 1 Eixo
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Nível II */}
+        <div className="flex flex-col p-6 rounded-xl border border-blue-300 bg-blue-50/50 dark:bg-blue-950/20 dark:border-blue-900/50 shadow-sm">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-xl font-bold text-blue-600 dark:text-blue-500">Nível II</h3>
+            <Badge className="bg-blue-500 hover:bg-blue-600 text-white border-0 font-medium px-2.5 py-0.5 rounded-full flex items-center gap-1.5 shadow-none">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Concluído
+            </Badge>
+          </div>
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-6">
+            Observador Certificado Pleno
+          </p>
+
+          <div className="mt-auto flex flex-col pt-2">
+            <span className="font-bold text-slate-700 dark:text-slate-300 text-lg mb-1">
+              500 - 999
+            </span>
+            <span className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Pontuação obrigatória em 2 Eixos
+            </span>
+          </div>
+        </div>
+
+        {/* Nível III */}
+        <div className="flex flex-col p-6 rounded-xl border border-amber-300 bg-amber-50/50 dark:bg-amber-950/20 dark:border-amber-900/50 shadow-sm">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-xl font-bold text-amber-600 dark:text-amber-500">Nível III</h3>
+            <Badge className="bg-amber-500 hover:bg-amber-600 text-white border-0 font-medium px-2.5 py-0.5 rounded-full flex items-center gap-1.5 shadow-none">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Concluído
+            </Badge>
+          </div>
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-6">
+            Observador Certificado Mobilizador
+          </p>
+
+          <div className="mt-auto flex flex-col pt-2">
+            <span className="font-bold text-slate-700 dark:text-slate-300 text-lg mb-1">
+              1000 - acima de 1000
+            </span>
+            <span className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Pontuação obrigatória em 3 Eixos
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function UserSubmissionsAudit({ userId, userPoints }: { userId: string; userPoints: number }) {
@@ -272,6 +359,8 @@ export default function AdminScoreAudit() {
           Verifique o detalhamento dos pontos dos usuários gerados por submissões aprovadas.
         </p>
       </div>
+
+      <EvolutionLevelsLegend />
 
       <Card>
         <CardHeader>
