@@ -59,13 +59,9 @@ export default function AdminIndicators() {
     loadData()
   })
 
-  const observers = users.filter((u) => u.role === 'observer')
-  const total = observers.length
-  const nivel1 = observers.filter((u) => (u.level || '').includes('Nível I')).length
-  const nivel2 = observers.filter((u) => (u.level || '').includes('Nível II')).length
-  const nivel3 = observers.filter((u) => (u.level || '').includes('Nível III')).length
+  const activeObservers = users.filter((u) => u.role === 'observer' && u.is_active === true)
 
-  const observersList = observers.map((obs) => {
+  const observersList = activeObservers.map((obs) => {
     const userSubs = submissions.filter((s) => s.user_id === obs.id)
     const lastSub = userSubs.sort(
       (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime(),
@@ -81,6 +77,22 @@ export default function AdminIndicators() {
       lastActivity: lastActivityDate.toLocaleDateString('pt-BR'),
     }
   })
+
+  let nivel1 = 0
+  let nivel2 = 0
+  let nivel3 = 0
+
+  observersList.forEach((obs) => {
+    if (obs.level.includes('Nível III')) {
+      nivel3++
+    } else if (obs.level.includes('Nível II')) {
+      nivel2++
+    } else {
+      nivel1++
+    }
+  })
+
+  const total = nivel1 + nivel2 + nivel3
 
   const sortedData = [...observersList].sort((a, b) => {
     if (!sortConfig) return 0
@@ -261,7 +273,7 @@ export default function AdminIndicators() {
                 ) : (
                   sortedData.map((obs) => {
                     const isAmber = obs.level.includes('Nível III')
-                    const isBlue = obs.level.includes('Nível II')
+                    const isBlue = obs.level.includes('Nível II') && !isAmber
 
                     return (
                       <TableRow key={obs.id} className="hover:bg-muted/30 transition-colors">
