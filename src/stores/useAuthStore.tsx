@@ -56,15 +56,32 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | undefined>(undefined)
 
+const APP_VERSION = '1.0.1'
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+
+  const clearAllStorage = () => {
+    pb.authStore.clear()
+    try {
+      localStorage.removeItem('pocketbase_auth')
+      sessionStorage.clear()
+    } catch (e) {
+      console.warn('Failed to clear storage', e)
+    }
+  }
 
   const updateUserData = () => {
     try {
       const record = pb.authStore.record
       if (record && pb.authStore.isValid) {
-        if (typeof record !== 'object' || !record.id) {
+        if (
+          typeof record !== 'object' ||
+          !record.id ||
+          record.role === undefined ||
+          typeof record.is_active !== 'boolean'
+        ) {
           throw new Error('Malformed user record in local storage')
         }
         setUser({
@@ -94,23 +111,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (err) {
       console.error('Error parsing user data:', err)
-      pb.authStore.clear()
+      clearAllStorage()
       setUser(null)
     }
   }
 
   const validateSession = async (isMounted: boolean) => {
     try {
+      const currentVersion = localStorage.getItem('app_version')
+      if (currentVersion !== APP_VERSION) {
+        clearAllStorage()
+        localStorage.setItem('app_version', APP_VERSION)
+      }
+
       if (pb.authStore.isValid && pb.authStore.token) {
         await pb.collection('users').authRefresh()
       } else {
-        pb.authStore.clear()
+        clearAllStorage()
       }
     } catch (err: any) {
       console.error('Session validation failed:', err)
-      if (err?.status !== 0) {
-        pb.authStore.clear()
-      }
+      clearAllStorage()
     } finally {
       if (isMounted) {
         updateUserData()
@@ -142,15 +163,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await pb.collection('users').authRefresh()
         updateUserData()
       } else {
-        pb.authStore.clear()
+        clearAllStorage()
         setUser(null)
       }
     } catch (err: any) {
       console.warn('Silent session refresh failed:', err)
-      if (err?.status !== 0) {
-        pb.authStore.clear()
-        setUser(null)
-      }
+      clearAllStorage()
+      setUser(null)
     }
   }
 
@@ -170,13 +189,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const logout = () => {
-    pb.authStore.clear()
-    try {
-      localStorage.removeItem('pocketbase_auth')
-      sessionStorage.clear()
-    } catch (e) {
-      console.warn('Failed to clear storage', e)
-    }
+    clearAllStorage()
     setUser(null)
   }
 

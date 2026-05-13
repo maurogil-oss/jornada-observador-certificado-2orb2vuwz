@@ -68,17 +68,6 @@ const ProtectedRoute = ({
     return <Navigate to="/login" replace />
   }
 
-  if (user.role === undefined || typeof user.is_active !== 'boolean') {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background">
-        <Loader2 className="h-10 w-10 animate-spin mb-4 text-primary" />
-        <p>
-          <span>Sincronizando sessão...</span>
-        </p>
-      </div>
-    )
-  }
-
   if (user.is_active === false) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background text-center px-4">
