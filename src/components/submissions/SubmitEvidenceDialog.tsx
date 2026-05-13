@@ -24,6 +24,7 @@ import { useState, useRef, useEffect } from 'react'
 import useSubmissionsStore from '@/stores/useSubmissionsStore'
 import useAuthStore from '@/stores/useAuthStore'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
+import { ITEM_CAPS, EIXO3_TITLES } from '@/lib/scoring'
 
 interface Props {
   isOpen: boolean
@@ -84,27 +85,69 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
         item.title.toLowerCase().includes('doutorado') ||
         item.title.toLowerCase().includes('pós')
 
-      setType(isTitulation ? 'titulation' : 'competency')
+      if (isTitulation) {
+        setType('titulation')
+      } else if (EIXO3_TITLES.has(item.title)) {
+        setType('other')
+      } else {
+        setType('competency')
+      }
     }
   }, [isOpen, item])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (item?.title === 'Curso geral na área de trânsito/mobilidade (Mínimo 8h)') {
-      const currentCount = submissions.filter(
-        (s) =>
-          s.title === 'Curso geral na área de trânsito/mobilidade (Mínimo 8h)' &&
-          s.userId === user?.id,
-      ).length
+    if (item?.title) {
+      const cap = ITEM_CAPS[item.title]
+      if (cap) {
+        const currentCount = submissions.filter(
+          (s) =>
+            s.title === item.title && s.userId === user?.id && s.status !== 'Ajuste Necessário',
+        ).length
 
-      if (currentCount >= 5) {
-        toast({
-          title: 'Limite atingido',
-          description: 'Limite de 5 registros atingido para este curso.',
-          variant: 'destructive',
-        })
-        return
+        if (currentCount >= cap) {
+          toast({
+            title: 'Limite atingido',
+            description: `Limite de ${cap} registros atingido para esta atividade.`,
+            variant: 'destructive',
+          })
+          return
+        }
+      }
+
+      if (item.title === 'Projeto Local (Municipal)' || item.title === 'Projeto Estadual') {
+        const currentCount = submissions.filter(
+          (s) =>
+            (s.title === 'Projeto Local (Municipal)' || s.title === 'Projeto Estadual') &&
+            s.userId === user?.id &&
+            s.status !== 'Ajuste Necessário',
+        ).length
+        if (currentCount >= 3) {
+          toast({
+            title: 'Limite atingido',
+            description: `Limite de 3 projetos locais/estaduais atingido.`,
+            variant: 'destructive',
+          })
+          return
+        }
+      }
+
+      if (item.title === 'Projeto Nacional' || item.title === 'Projeto Internacional') {
+        const currentCount = submissions.filter(
+          (s) =>
+            (s.title === 'Projeto Nacional' || s.title === 'Projeto Internacional') &&
+            s.userId === user?.id &&
+            s.status !== 'Ajuste Necessário',
+        ).length
+        if (currentCount >= 2) {
+          toast({
+            title: 'Limite atingido',
+            description: `Limite de 2 projetos nacionais/internacionais atingido.`,
+            variant: 'destructive',
+          })
+          return
+        }
       }
     }
 

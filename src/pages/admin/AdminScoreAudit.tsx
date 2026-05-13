@@ -20,6 +20,7 @@ import { Search, Loader2, ShieldCheck, AlertTriangle, CheckCircle2, Info } from 
 import pb from '@/lib/pocketbase/client'
 import useAuthStore from '@/stores/useAuthStore'
 import { cn } from '@/lib/utils'
+import { calculateUserPoints } from '@/lib/scoring'
 
 interface User {
   id: string
@@ -199,46 +200,8 @@ function UserSubmissionsAudit({ userId, userPoints }: { userId: string; userPoin
   }, [userId, isAdmin])
 
   const { calculatedPoints, ignoredSubmissionIds } = useMemo(() => {
-    let sum = 0
-    let courseCount = 0
-    let maxTitulationScore = -1
-    let maxTitulationId = ''
-
-    // First pass: find the highest titulation
-    submissions.forEach((sub) => {
-      if (sub.status === 'Aprovado' && sub.type === 'titulation') {
-        if ((sub.score || 0) > maxTitulationScore) {
-          maxTitulationScore = sub.score || 0
-          maxTitulationId = sub.id
-        }
-      }
-    })
-
-    const ignoredIds = new Set<string>()
-
-    submissions.forEach((sub) => {
-      if (sub.status !== 'Aprovado') return
-      const score = sub.score || 0
-
-      if (sub.type === 'titulation') {
-        if (sub.id === maxTitulationId) {
-          sum += score
-        } else {
-          ignoredIds.add(sub.id)
-        }
-      } else if (sub.title === 'Curso geral na área de trânsito/mobilidade (Mínimo 8h)') {
-        if (courseCount < 5) {
-          sum += score
-          courseCount++
-        } else {
-          ignoredIds.add(sub.id)
-        }
-      } else {
-        sum += score
-      }
-    })
-
-    return { calculatedPoints: sum, ignoredSubmissionIds: ignoredIds }
+    const { totalPoints, ignoredSubmissionIds: ignoredIds } = calculateUserPoints(submissions)
+    return { calculatedPoints: totalPoints, ignoredSubmissionIds: ignoredIds }
   }, [submissions])
 
   const isMatch = calculatedPoints === userPoints

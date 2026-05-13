@@ -1,32 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import useSubmissionsStore from '@/stores/useSubmissionsStore'
+import { calculateUserPoints } from '@/lib/scoring'
 
 export function AxesBadges() {
   const { submissions } = useSubmissionsStore()
 
-  const titulationPoints = submissions
-    .filter((s) => s.status === 'Aprovado' && s.type === 'titulation')
-    .reduce((max, curr) => {
-      const pts = typeof curr.points === 'number' ? curr.points : Number(curr.points) || 0
-      return pts > max ? pts : max
-    }, 0)
-
-  const competencyPoints = submissions
-    .filter((s) => s.status === 'Aprovado' && s.type === 'competency')
-    .reduce(
-      (acc, curr) =>
-        acc + (typeof curr.points === 'number' ? curr.points : Number(curr.points) || 0),
-      0,
-    )
-
-  const otherPoints = submissions
-    .filter((s) => s.status === 'Aprovado' && s.type === 'other')
-    .reduce(
-      (acc, curr) =>
-        acc + (typeof curr.points === 'number' ? curr.points : Number(curr.points) || 0),
-      0,
-    )
+  const { eixo1Points, eixo2Points, eixo3Points } = calculateUserPoints(submissions)
 
   return (
     <Card className="shadow-subtle border-border/60">
@@ -37,31 +17,27 @@ export function AxesBadges() {
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="font-medium text-foreground">E1 - Titulação e Formação</span>
-            <span className="text-muted-foreground font-semibold">
-              {titulationPoints} / 200 pts
-            </span>
+            <span className="text-muted-foreground font-semibold">{eixo1Points} pts</span>
           </div>
-          <Progress value={Math.min((titulationPoints / 200) * 100, 100)} className="h-2" />
+          <Progress value={Math.min((eixo1Points / 500) * 100, 100)} className="h-2" />
         </div>
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="font-medium text-foreground">E2 - Competência Técnica</span>
-            <span className="text-muted-foreground font-semibold">
-              {competencyPoints} / 300 pts
-            </span>
+            <span className="text-muted-foreground font-semibold">{eixo2Points} pts</span>
           </div>
           <Progress
-            value={Math.min((competencyPoints / 300) * 100, 100)}
+            value={Math.min((eixo2Points / 1000) * 100, 100)}
             className="h-2 [&>div]:bg-secondary"
           />
         </div>
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="font-medium text-foreground">E3 - Atuação Externa e Impacto</span>
-            <span className="text-muted-foreground font-semibold">{otherPoints} / 500 pts</span>
+            <span className="text-muted-foreground font-semibold">{eixo3Points} pts</span>
           </div>
           <Progress
-            value={Math.min((otherPoints / 500) * 100, 100)}
+            value={Math.min((eixo3Points / 1000) * 100, 100)}
             className="h-2 [&>div]:bg-accent"
           />
         </div>
