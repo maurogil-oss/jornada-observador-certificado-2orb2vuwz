@@ -63,25 +63,27 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             <div className="space-y-2">
               <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                Ops! Algo deu errado.
+                <span>Ops! Algo deu errado.</span>
               </h1>
               <p className="text-muted-foreground">
-                Ocorreu um erro inesperado na aplicação. Tente recarregar a página ou limpar os
-                dados locais para continuar.
+                <span>
+                  Ocorreu um erro inesperado na aplicação. Tente recarregar a página ou limpar os
+                  dados locais para continuar.
+                </span>
               </p>
             </div>
             {this.state.error && (
               <div className="p-4 bg-muted/50 rounded-lg text-left text-xs font-mono overflow-auto text-muted-foreground break-words max-h-32 border border-border">
-                {this.state.error.message}
+                <span>{this.state.error.message}</span>
               </div>
             )}
             <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
               <Button onClick={this.handleReload} className="gap-2">
                 <RefreshCw className="w-4 h-4" />
-                Tentar Novamente
+                <span>Tentar Novamente</span>
               </Button>
               <Button variant="outline" onClick={this.handleClearAndReload}>
-                Limpar Cache e Recarregar
+                <span>Limpar Cache e Recarregar</span>
               </Button>
             </div>
           </div>

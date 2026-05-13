@@ -57,7 +57,9 @@ const ProtectedRoute = ({
     return (
       <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background">
         <Loader2 className="h-10 w-10 animate-spin mb-4 text-primary" />
-        <p>Validando Sessão...</p>
+        <p>
+          <span>Validando Sessão...</span>
+        </p>
       </div>
     )
   }
@@ -70,7 +72,9 @@ const ProtectedRoute = ({
     return (
       <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background">
         <Loader2 className="h-10 w-10 animate-spin mb-4 text-primary" />
-        <p>Sincronizando sessão...</p>
+        <p>
+          <span>Sincronizando sessão...</span>
+        </p>
       </div>
     )
   }
@@ -78,16 +82,20 @@ const ProtectedRoute = ({
   if (user.is_active === false) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background text-center px-4">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Conta Pendente de Validação</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-2">
+          <span>Conta Pendente de Validação</span>
+        </h1>
         <p className="mb-6 max-w-md">
-          Sua conta está em processo de validação. Por favor, aguarde o e-mail de aprovação dos
-          administradores antes de acessar.
+          <span>
+            Sua conta está em processo de validação. Por favor, aguarde o e-mail de aprovação dos
+            administradores antes de acessar.
+          </span>
         </p>
         <button
           className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
           onClick={logout}
         >
-          Voltar para Login
+          <span>Voltar para Login</span>
         </button>
       </div>
     )

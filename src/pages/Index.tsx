@@ -63,10 +63,10 @@ export default function Index() {
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div className="space-y-2">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-            Olá, {user?.name?.split(' ')[0] || 'Observador'}
+            <span>{`Olá, ${user?.name?.split(' ')[0] || 'Observador'}`}</span>
           </h1>
           <p className="text-muted-foreground text-lg">
-            Acompanhe sua jornada de evolução, impacto institucional e suas submissões.
+            <span>Acompanhe sua jornada de evolução, impacto institucional e suas submissões.</span>
           </p>
         </div>
         {isLevel3 && (
@@ -81,7 +81,7 @@ export default function Index() {
             className="bg-amber-600 hover:bg-amber-700 text-white shadow-md self-start"
           >
             <Download className="w-4 h-4 mr-2" />
-            Baixar Certificado
+            <span>Baixar Certificado</span>
           </Button>
         )}
       </div>

@@ -51,7 +51,7 @@ export function TopHeader() {
                   : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30 dark:text-emerald-400'
               }`}
             >
-              {user.role === 'admin' ? 'Administrador' : 'Observador'}
+              <span>{user.role === 'admin' ? 'Administrador' : 'Observador'}</span>
             </Badge>
 
             {user.role !== 'admin' && (
@@ -59,7 +59,7 @@ export function TopHeader() {
                 className={`hidden sm:inline-flex font-bold shadow-sm text-xs truncate max-w-[120px] md:max-w-[200px] lg:max-w-none ${badgeColor}`}
                 title={levelName}
               >
-                {shortLevelName}
+                <span>{shortLevelName}</span>
               </Badge>
             )}
           </div>

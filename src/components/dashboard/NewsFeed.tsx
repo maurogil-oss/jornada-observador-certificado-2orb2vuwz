@@ -38,13 +38,15 @@ export function NewsFeed() {
           <div key={news.id} className="space-y-1 group">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-4">
               <h4 className="font-bold text-sm leading-tight text-foreground group-hover:text-primary transition-colors">
-                {news.title}
+                <span>{news.title}</span>
               </h4>
               <span className="text-[11px] font-semibold text-muted-foreground whitespace-nowrap bg-muted px-2 py-0.5 rounded-full">
                 {news.date}
               </span>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">{news.content}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              <span>{news.content}</span>
+            </p>
           </div>
         ))}
       </CardContent>

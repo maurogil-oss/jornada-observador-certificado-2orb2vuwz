@@ -43,7 +43,7 @@ export function SubmissionsHistory() {
       case 'Aprovado':
         return (
           <Badge className="bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-500 dark:hover:bg-green-900/50 border-0 font-medium px-2.5 py-0.5">
-            <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" /> Aprovado
+            <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" /> <span>Aprovado</span>
           </Badge>
         )
       case 'Em Análise':
@@ -52,7 +52,7 @@ export function SubmissionsHistory() {
             variant="secondary"
             className="bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-500 dark:hover:bg-blue-900/50 border-0 font-medium px-2.5 py-0.5"
           >
-            <Clock className="w-3.5 h-3.5 mr-1.5" /> Em Análise
+            <Clock className="w-3.5 h-3.5 mr-1.5" /> <span>Em Análise</span>
           </Badge>
         )
       case 'Ajuste Necessário':
@@ -61,11 +61,15 @@ export function SubmissionsHistory() {
             variant="destructive"
             className="bg-orange-100 text-orange-800 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-500 dark:hover:bg-orange-900/50 border-0 font-medium px-2.5 py-0.5"
           >
-            <AlertTriangle className="w-3.5 h-3.5 mr-1.5" /> Ajuste Necessário
+            <AlertTriangle className="w-3.5 h-3.5 mr-1.5" /> <span>Ajuste Necessário</span>
           </Badge>
         )
       default:
-        return <Badge>{status}</Badge>
+        return (
+          <Badge>
+            <span>{status}</span>
+          </Badge>
+        )
     }
   }
 
@@ -95,7 +99,7 @@ export function SubmissionsHistory() {
               {submissions.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
-                    Nenhuma submissão encontrada.
+                    <span>Nenhuma submissão encontrada.</span>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -119,20 +123,22 @@ export function SubmissionsHistory() {
                         {sub.title}
                       </div>
                       <div className="text-xs text-muted-foreground mt-0.5">
-                        Tipo:{' '}
-                        {sub.type === 'titulation'
-                          ? 'Titulação'
-                          : sub.type === 'competency'
-                            ? 'Competência'
-                            : 'Outros'}
+                        <span>Tipo: </span>
+                        <span>
+                          {sub.type === 'titulation'
+                            ? 'Titulação'
+                            : sub.type === 'competency'
+                              ? 'Competência'
+                              : 'Outros'}
+                        </span>
                       </div>
                       {sub.feedback && (
                         <div
                           className="text-xs text-muted-foreground mt-1 max-w-[250px] line-clamp-2"
                           title={sub.feedback}
                         >
-                          <span className="font-medium text-foreground">Feedback:</span>{' '}
-                          {sub.feedback}
+                          <span className="font-medium text-foreground">Feedback: </span>
+                          <span>{sub.feedback}</span>
                         </div>
                       )}
                     </TableCell>
@@ -144,7 +150,7 @@ export function SubmissionsHistory() {
                     <TableCell>{getStatusBadge(sub.status)}</TableCell>
                     <TableCell className="text-right font-bold text-accent">
                       {sub.points !== '-' ? (
-                        `+${sub.points}`
+                        <span>{`+${sub.points}`}</span>
                       ) : (
                         <span className="text-muted-foreground/50">-</span>
                       )}
@@ -170,14 +176,20 @@ export function SubmissionsHistory() {
         </CardContent>
       </Card>
 
-      <Dialog open={!!viewingSub} onOpenChange={(open) => !open && setViewingSub(null)}>
+      <Dialog
+        key={viewingSub?.id || 'dialog-empty'}
+        open={!!viewingSub}
+        onOpenChange={(open) => !open && setViewingSub(null)}
+      >
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Visualizar Submissão</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto px-1">
             <div className="space-y-2">
-              <Label htmlFor="view-title">Título</Label>
+              <Label htmlFor="view-title">
+                <span>Título</span>
+              </Label>
               <Input
                 id="view-title"
                 value={viewingSub?.title || ''}
@@ -189,7 +201,9 @@ export function SubmissionsHistory() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="view-type">Tipo</Label>
+                <Label htmlFor="view-type">
+                  <span>Tipo</span>
+                </Label>
                 <Select value={viewingSub?.type || 'competency'} disabled>
                   <SelectTrigger
                     id="view-type"
@@ -205,7 +219,9 @@ export function SubmissionsHistory() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="view-score">Pontuação</Label>
+                <Label htmlFor="view-score">
+                  <span>Pontuação</span>
+                </Label>
                 <Input
                   id="view-score"
                   value={viewingSub?.points !== '-' ? String(viewingSub?.points) : 'Pendente'}
@@ -217,7 +233,9 @@ export function SubmissionsHistory() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="view-nivel">Nível Referência</Label>
+              <Label htmlFor="view-nivel">
+                <span>Nível Referência</span>
+              </Label>
               <Input
                 id="view-nivel"
                 value={viewingSub?.nivel || ''}
@@ -227,7 +245,9 @@ export function SubmissionsHistory() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="view-desc">Descrição</Label>
+              <Label htmlFor="view-desc">
+                <span>Descrição</span>
+              </Label>
               <Textarea
                 id="view-desc"
                 value={viewingSub?.description || ''}
@@ -238,7 +258,9 @@ export function SubmissionsHistory() {
             </div>
             {viewingSub?.link && (
               <div className="space-y-2">
-                <Label htmlFor="view-link">Link Externo</Label>
+                <Label htmlFor="view-link">
+                  <span>Link Externo</span>
+                </Label>
                 <Input
                   id="view-link"
                   value={viewingSub.link}
@@ -250,11 +272,13 @@ export function SubmissionsHistory() {
             )}
             {viewingSub?.fileUrl && (
               <div className="space-y-2 pt-2 border-t flex flex-col gap-2">
-                <Label>Arquivo de Evidência</Label>
+                <Label>
+                  <span>Arquivo de Evidência</span>
+                </Label>
                 <Button variant="outline" className="w-full justify-start" asChild>
                   <a href={viewingSub.fileUrl} target="_blank" rel="noopener noreferrer">
                     <FileText className="w-4 h-4 mr-2" />
-                    Visualizar Documento Anexo
+                    <span>Visualizar Documento Anexo</span>
                   </a>
                 </Button>
               </div>

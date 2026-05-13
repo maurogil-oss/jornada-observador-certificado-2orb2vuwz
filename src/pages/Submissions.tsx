@@ -18,9 +18,11 @@ export default function Submissions() {
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in-up">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Cofre de Evidências</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            <span>Cofre de Evidências</span>
+          </h1>
           <p className="text-muted-foreground mt-2 text-lg">
-            Acompanhe o status das suas submissões garantindo a rastreabilidade.
+            <span>Acompanhe o status das suas submissões garantindo a rastreabilidade.</span>
           </p>
         </div>
         <div className="p-3 bg-primary/10 text-primary rounded-xl flex items-center gap-3 shadow-sm border border-primary/20">
@@ -38,25 +40,25 @@ export default function Submissions() {
             value="nivel1"
             className="text-xs md:text-sm py-2.5 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-normal h-full text-center"
           >
-            Playbook Eixo I – Formação e Conhecimento
+            <span>Playbook Eixo I – Formação e Conhecimento</span>
           </TabsTrigger>
           <TabsTrigger
             value="nivel2"
             className="text-xs md:text-sm py-2.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-normal h-full text-center"
           >
-            Playbook Eixo II – Atuação e Impacto Social
+            <span>Playbook Eixo II – Atuação e Impacto Social</span>
           </TabsTrigger>
           <TabsTrigger
             value="nivel3"
             className="text-xs md:text-sm py-2.5 data-[state=active]:bg-amber-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-md transition-all whitespace-normal h-full text-center"
           >
-            Playbook Eixo III – Representatividade e Liderança
+            <span>Playbook Eixo III – Representatividade e Liderança</span>
           </TabsTrigger>
           <TabsTrigger
             value="history"
             className="text-xs md:text-sm py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md rounded-md transition-all h-full"
           >
-            Histórico
+            <span>Histórico</span>
           </TabsTrigger>
         </TabsList>
 
@@ -78,6 +80,7 @@ export default function Submissions() {
       </Tabs>
 
       <SubmitEvidenceDialog
+        key={selectedItem?.title || 'empty-dialog'}
         isOpen={!!selectedItem}
         onClose={() => setSelectedItem(null)}
         item={selectedItem as any}

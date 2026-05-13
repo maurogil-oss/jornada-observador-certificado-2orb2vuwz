@@ -18,7 +18,7 @@ export function RecentActivity() {
       <CardContent className="space-y-5">
         {recent.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4">
-            Nenhuma atividade recente.
+            <span>Nenhuma atividade recente.</span>
           </p>
         ) : (
           recent.map((act) => (
@@ -42,9 +42,12 @@ export function RecentActivity() {
                 )}
               </div>
               <div>
-                <p className="text-sm font-medium leading-tight text-foreground">{act.title}</p>
+                <p className="text-sm font-medium leading-tight text-foreground">
+                  <span>{act.title}</span>
+                </p>
                 <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
-                  <span>{act.date}</span> &bull;{' '}
+                  <span>{act.date}</span>
+                  <span>&bull;</span>
                   <span
                     className={cn(
                       'font-bold',
