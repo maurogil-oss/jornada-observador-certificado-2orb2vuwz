@@ -279,10 +279,10 @@ export default function AdminUsers() {
               <TableHead>Usuário</TableHead>
               <TableHead>E-mail</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Turma</TableHead>
-              <TableHead>Nível Atual</TableHead>
+              <TableHead className="w-[70px]">Turma</TableHead>
+              <TableHead className="w-[140px]">Nível Atual</TableHead>
               <TableHead className="text-right">Pontos</TableHead>
-              <TableHead>Função</TableHead>
+              <TableHead className="w-[80px]">Função</TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -359,16 +359,19 @@ export default function AdminUsers() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground font-medium">
-                    {user.turma ? `Turma ${user.turma}` : '-'}
+                  <TableCell className="text-muted-foreground font-medium text-xs whitespace-nowrap">
+                    {user.turma ? `T. ${user.turma}` : '-'}
                   </TableCell>
                   <TableCell>
-                    <div className="max-w-[150px] truncate" title={user.level || 'Não definido'}>
+                    <div
+                      className="w-full max-w-[120px] md:max-w-[140px]"
+                      title={user.level || 'Não definido'}
+                    >
                       {user.level ? (
                         <Badge
                           variant="outline"
                           className={cn(
-                            'font-medium text-[10px] uppercase tracking-wider',
+                            'font-medium text-[10px] uppercase tracking-wider truncate block w-full text-center',
                             getLevelStyle(user.level),
                           )}
                         >
@@ -384,14 +387,22 @@ export default function AdminUsers() {
                   <TableCell className="text-right font-medium">{user.points || 0}</TableCell>
                   <TableCell>
                     {user.role === 'admin' ? (
-                      <Badge variant="default" className="bg-blue-600 hover:bg-blue-700">
-                        <Shield className="w-3 h-3 mr-1" />
-                        Admin
+                      <Badge
+                        variant="default"
+                        className="bg-blue-600 hover:bg-blue-700 text-[10px] px-1.5 py-0.5 h-5 flex items-center w-fit"
+                        title="Administrador"
+                      >
+                        <Shield className="w-3 h-3 mr-1 shrink-0" />
+                        <span className="truncate">Admin</span>
                       </Badge>
                     ) : (
-                      <Badge variant="secondary">
-                        <UserIcon className="w-3 h-3 mr-1" />
-                        Observer
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] px-1.5 py-0.5 h-5 flex items-center w-fit"
+                        title="Observador"
+                      >
+                        <UserIcon className="w-3 h-3 mr-1 shrink-0" />
+                        <span className="truncate">Obs.</span>
                       </Badge>
                     )}
                   </TableCell>
