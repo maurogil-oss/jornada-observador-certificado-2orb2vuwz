@@ -16,6 +16,7 @@ onRecordAfterCreateSuccess((e) => {
       )
 
       let totalPoints = 0
+      let axes = {}
       let courseCount = 0
       let maxTitulationScore = 0
 
@@ -37,20 +38,17 @@ onRecordAfterCreateSuccess((e) => {
         } else {
           totalPoints += score
         }
+
+        if (type) {
+          axes[type] = true
+        }
       }
 
       totalPoints += maxTitulationScore
       totalPoints = Math.round(totalPoints * 100) / 100
+      let axesCount = Object.keys(axes).length
 
-      const currentLevel = user.getString('level')
       const turma = user.getInt('turma') || 15
-
-      let baseLevel =
-        turma <= 14
-          ? 'Nível II - Observador Certificado Pleno'
-          : 'Nível I - Observador Certificado (Iniciante)'
-      let newLevel = currentLevel || baseLevel
-
       const createdDateStr = user.getString('created')
       let isProbationary = false
       if (turma >= 15 && createdDateStr) {
@@ -62,17 +60,20 @@ onRecordAfterCreateSuccess((e) => {
         }
       }
 
+      let newLevel =
+        turma <= 14
+          ? 'Nível II - Observador Certificado Pleno'
+          : 'Nível I - Observador Certificado (Iniciante)'
+
       if (isProbationary) {
         newLevel = 'Nível I - Observador Certificado (Iniciante)'
       } else {
-        if (totalPoints >= 500) {
+        if (totalPoints >= 1000 && axesCount >= 3) {
           newLevel = 'Nível III - Mobilizador'
-        } else {
-          if (totalPoints < 500 && currentLevel === 'Nível III - Mobilizador') {
-            newLevel = baseLevel
-          } else if (totalPoints < 500) {
-            newLevel = currentLevel || baseLevel
-          }
+        } else if (totalPoints >= 500 && axesCount >= 2) {
+          newLevel = 'Nível II - Observador Certificado Pleno'
+        } else if (axesCount >= 1) {
+          newLevel = 'Nível I - Observador Certificado (Iniciante)'
         }
       }
 

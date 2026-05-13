@@ -72,7 +72,11 @@ onRecordAfterUpdateSuccess((e) => {
         }
       }
 
-      let newLevel = ''
+      let newLevel =
+        turma <= 14
+          ? 'Nível II - Observador Certificado Pleno'
+          : 'Nível I - Observador Certificado (Iniciante)'
+
       if (isProbationary) {
         newLevel = 'Nível I - Observador Certificado (Iniciante)'
       } else {
