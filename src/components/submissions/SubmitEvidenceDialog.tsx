@@ -22,6 +22,8 @@ import { useToast } from '@/hooks/use-toast'
 import { UploadCloud, AlertCircle } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import useSubmissionsStore from '@/stores/useSubmissionsStore'
+import useAuthStore from '@/stores/useAuthStore'
+import { getErrorMessage } from '@/lib/pocketbase/errors'
 
 interface Props {
   isOpen: boolean
@@ -40,7 +42,8 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
   const [isDragging, setIsDragging] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { addSubmission } = useSubmissionsStore()
+  const { addSubmission, submissions } = useSubmissionsStore()
+  const { user } = useAuthStore()
 
   const handleFileSelect = (selectedFile: File) => {
     const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
@@ -87,6 +90,23 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (item?.title === 'Curso geral na área de trânsito/mobilidade (Mínimo 8h)') {
+      const currentCount = submissions.filter(
+        (s) =>
+          s.title === 'Curso geral na área de trânsito/mobilidade (Mínimo 8h)' &&
+          s.userId === user?.id,
+      ).length
+
+      if (currentCount >= 5) {
+        toast({
+          title: 'Limite atingido',
+          description: 'Limite de 5 registros atingido para este curso.',
+          variant: 'destructive',
+        })
+        return
+      }
+    }
 
     if (!file && !link) {
       toast({
@@ -146,10 +166,12 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
       if (fakeProgressInterval) clearInterval(fakeProgressInterval)
       setUploadProgress(0)
       setLoading(false)
+
+      const errorMessage = getErrorMessage(err)
+
       toast({
         title: 'Erro ao realizar o upload',
-        description:
-          'Erro ao realizar o upload. Por favor, tente novamente. Caso o problema persista, entre em contato com um administrador.',
+        description: errorMessage || 'Erro ao realizar o upload. Por favor, tente novamente.',
         variant: 'destructive',
       })
     }

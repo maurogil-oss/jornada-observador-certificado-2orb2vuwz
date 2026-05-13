@@ -16,11 +16,21 @@ onRecordAfterCreateSuccess((e) => {
       )
 
       let totalPoints = 0
+      let courseCount = 0
 
       for (let i = 0; i < submissions.length; i++) {
         const sub = submissions[i]
         const score = sub.getFloat('score') || 0
-        totalPoints += score
+        const title = sub.getString('title')
+
+        if (title === 'Curso geral na área de trânsito/mobilidade (Mínimo 8h)') {
+          if (courseCount < 5) {
+            totalPoints += score
+            courseCount++
+          }
+        } else {
+          totalPoints += score
+        }
       }
 
       totalPoints = Math.round(totalPoints * 100) / 100
