@@ -11,6 +11,25 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Converts a string to Title Case (e.g., "PEDRO SILVA" -> "Pedro Silva")
+ * Handles extra spaces and lowercase prepositions.
+ */
+export function toTitleCase(str: string): string {
+  if (!str) return ''
+  const lowercaseWords = ['da', 'de', 'di', 'do', 'du', 'das', 'dos', 'e']
+  return str
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toLowerCase()
+    .split(' ')
+    .map((word, index) => {
+      if (index > 0 && lowercaseWords.includes(word)) return word
+      return word.charAt(0).toUpperCase() + word.slice(1)
+    })
+    .join(' ')
+}
+
+/**
  * Exports an array of objects to a CSV file and triggers download
  */
 export function exportToCSV(data: Record<string, any>[], filename: string) {

@@ -36,6 +36,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast'
 import { extractFieldErrors } from '@/lib/pocketbase/errors'
 import pb from '@/lib/pocketbase/client'
+import { toTitleCase } from '@/lib/utils'
 
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido.'),
@@ -585,6 +586,10 @@ export default function Login() {
                                       placeholder="Como prefere ser chamado(a)"
                                       className="h-11"
                                       {...field}
+                                      onBlur={(e) => {
+                                        field.onChange(toTitleCase(e.target.value))
+                                        field.onBlur()
+                                      }}
                                     />
                                   </FormControl>
                                   <FormMessage />

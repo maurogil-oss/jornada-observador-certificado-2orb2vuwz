@@ -19,6 +19,7 @@ import pb from '@/lib/pocketbase/client'
 import { Loader2, Camera, Award } from 'lucide-react'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
 import { generateCertificate } from '@/lib/certificate'
+import { toTitleCase } from '@/lib/utils'
 
 const formatCPF = (value: string) => {
   return value
@@ -102,6 +103,7 @@ export default function Profile() {
 
   const [formData, setFormData] = useState({
     full_name: '',
+    nickname: '',
     cpf_document: '',
     birth_date: '',
     workplace: '',
@@ -119,6 +121,7 @@ export default function Profile() {
     if (user) {
       setFormData({
         full_name: user.full_name || '',
+        nickname: user.nickname || '',
         cpf_document: formatCPF(user.cpf_document || ''),
         birth_date: user.birth_date || '',
         workplace: user.workplace || '',
@@ -140,6 +143,12 @@ export default function Profile() {
       value = formatCPF(value)
     }
     setFormData((prev) => ({ ...prev, [e.target.name]: value }))
+  }
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.target.name === 'nickname') {
+      setFormData((prev) => ({ ...prev, nickname: toTitleCase(e.target.value) }))
+    }
   }
 
   const handleStateChange = (val: string) => {
@@ -333,6 +342,18 @@ export default function Profile() {
               value={formData.full_name}
               onChange={handleChange}
               required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="nickname">Apelido / Nome Social</Label>
+            <Input
+              id="nickname"
+              name="nickname"
+              value={formData.nickname}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Como prefere ser chamado(a)"
             />
           </div>
 
