@@ -1,10 +1,10 @@
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,16 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Progress } from '@/components/ui/progress'
+import { Info, Loader2, Link as LinkIcon, AlertCircle } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-import { UploadCloud, AlertCircle, Info } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
-import useSubmissionsStore from '@/stores/useSubmissionsStore'
-import { getActivityMetadataByTitle } from '@/services/activities_metadata'
-import { Skeleton } from '@/components/ui/skeleton'
+import pb from '@/lib/pocketbase/client'
 import useAuthStore from '@/stores/useAuthStore'
-import { getErrorMessage } from '@/lib/pocketbase/errors'
-import { ITEM_CAPS, EIXO3_TITLES } from '@/lib/scoring'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Badge } from '@/components/ui/badge'
 
 interface Props {
   isOpen: boolean
@@ -35,445 +32,246 @@ interface Props {
 }
 
 export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
-  const { toast } = useToast()
-  const [loading, setLoading] = useState(false)
-  const [title, setTitle] = useState('')
-  const [type, setType] = useState('competency')
-  const [file, setFile] = useState<File | null>(null)
-  const [link, setLink] = useState('')
-  const [desc, setDesc] = useState('')
-  const [isDragging, setIsDragging] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState(0)
-  const [metadata, setMetadata] = useState<any>(null)
-  const [loadingMetadata, setLoadingMetadata] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const { addSubmission, submissions } = useSubmissionsStore()
   const { user } = useAuthStore()
+  const { toast } = useToast()
 
-  const handleFileSelect = (selectedFile: File) => {
-    const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
-    const ACCEPTED_TYPES = ['application/pdf', 'image/jpeg', 'image/png']
+  const [loading, setLoading] = useState(false)
+  const [metadata, setMetadata] = useState<any>(null)
+  const [fetchingMeta, setFetchingMeta] = useState(false)
 
-    if (!ACCEPTED_TYPES.includes(selectedFile.type)) {
-      toast({
-        title: 'Formato inválido',
-        description: 'Formatos aceitos: PDF, JPG ou PNG.',
-        variant: 'destructive',
-      })
-      return
-    }
-
-    if (selectedFile.size > MAX_FILE_SIZE) {
-      toast({
-        title: 'Arquivo muito grande',
-        description: 'O tamanho máximo permitido é 20MB.',
-        variant: 'destructive',
-      })
-      return
-    }
-
-    setFile(selectedFile)
-  }
+  const [type, setType] = useState('titulation')
+  const [link, setLink] = useState('')
+  const [description, setDescription] = useState('')
+  const [file, setFile] = useState<File | null>(null)
 
   useEffect(() => {
     if (isOpen && item) {
-      setFile(null)
-      setLink('')
-      setDesc('')
-      setUploadProgress(0)
-      setTitle(item.title)
+      setFetchingMeta(true)
+      // Fetch metadata from activities_metadata collection
+      pb.collection('activities_metadata')
+        .getFirstListItem(`title="${item.title}"`)
+        .then((record) => {
+          setMetadata(record)
+        })
+        .catch((err) => {
+          console.warn('Metadata not found for this activity')
+          setMetadata(null)
+        })
+        .finally(() => {
+          setFetchingMeta(false)
+        })
+    } else {
       setMetadata(null)
-      setLoadingMetadata(true)
-
-      getActivityMetadataByTitle(item.title)
-        .then((data) => {
-          setMetadata(data)
-          setLoadingMetadata(false)
-        })
-        .catch(() => {
-          setLoadingMetadata(false)
-        })
-
-      const isTitulation =
-        item.title.toLowerCase().includes('graduação') ||
-        item.title.toLowerCase().includes('mestrado') ||
-        item.title.toLowerCase().includes('doutorado') ||
-        item.title.toLowerCase().includes('pós')
-
-      if (isTitulation) {
-        setType('titulation')
-      } else if (EIXO3_TITLES.has(item.title)) {
-        setType('other')
-      } else {
-        setType('competency')
-      }
+      setType('titulation')
+      setLink('')
+      setDescription('')
+      setFile(null)
     }
   }, [isOpen, item])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    if (item?.title) {
-      const cap = ITEM_CAPS[item.title]
-      if (cap) {
-        const currentCount = submissions.filter(
-          (s) =>
-            s.title === item.title && s.userId === user?.id && s.status !== 'Ajuste Necessário',
-        ).length
-
-        if (currentCount >= cap) {
-          toast({
-            title: 'Limite atingido',
-            description: `Limite de ${cap} registros atingido para esta atividade.`,
-            variant: 'destructive',
-          })
-          return
-        }
-      }
-
-      if (item.title === 'Projeto Local (Municipal)' || item.title === 'Projeto Estadual') {
-        const currentCount = submissions.filter(
-          (s) =>
-            (s.title === 'Projeto Local (Municipal)' || s.title === 'Projeto Estadual') &&
-            s.userId === user?.id &&
-            s.status !== 'Ajuste Necessário',
-        ).length
-        if (currentCount >= 3) {
-          toast({
-            title: 'Limite atingido',
-            description: `Limite de 3 projetos locais/estaduais atingido.`,
-            variant: 'destructive',
-          })
-          return
-        }
-      }
-
-      if (item.title === 'Projeto Nacional' || item.title === 'Projeto Internacional') {
-        const currentCount = submissions.filter(
-          (s) =>
-            (s.title === 'Projeto Nacional' || s.title === 'Projeto Internacional') &&
-            s.userId === user?.id &&
-            s.status !== 'Ajuste Necessário',
-        ).length
-        if (currentCount >= 2) {
-          toast({
-            title: 'Limite atingido',
-            description: `Limite de 2 projetos nacionais/internacionais atingido.`,
-            variant: 'destructive',
-          })
-          return
-        }
-      }
-    }
+    if (!item || !user) return
 
     if (!file && !link) {
       toast({
-        title: 'Arquivo ou Link obrigatório',
-        description: 'Por favor, forneça um arquivo ou um link de evidência.',
+        title: 'Evidência necessária',
+        description: 'Forneça um arquivo ou um link como evidência.',
         variant: 'destructive',
       })
       return
     }
 
     setLoading(true)
-    setUploadProgress(0)
-
-    let fakeProgressInterval: ReturnType<typeof setInterval> | null = null
-    if (file) {
-      let currentProgress = 0
-      fakeProgressInterval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 90) return prev
-          currentProgress = prev + (90 - prev) * 0.15
-          return Math.round(currentProgress)
-        })
-      }, 500)
-    }
-
     try {
-      if (item) {
-        await addSubmission(
-          {
-            title: title || item.title,
-            nivel: item.nivel,
-            points: item.points,
-            type: type,
-            file: file || undefined,
-            link: link || undefined,
-            description: desc || undefined,
-          },
-          (progress) => {
-            if (fakeProgressInterval) clearInterval(fakeProgressInterval)
-            setUploadProgress(progress)
-          },
-        )
-      }
+      const formData = new FormData()
+      formData.append('title', item.title)
+      formData.append('nivel', item.nivel)
+      formData.append('status', 'Em Análise')
+      formData.append('user_id', user.id)
+      formData.append('type', type)
+      formData.append('description', description)
 
-      if (fakeProgressInterval) clearInterval(fakeProgressInterval)
-      setUploadProgress(100)
+      if (link) formData.append('link', link)
+      if (file) formData.append('file', file)
+
+      await pb.collection('submissions').create(formData)
+
       toast({
-        title: 'Evidência enviada com sucesso!',
-        description: `A equipe de avaliação analisará sua submissão para "${item?.title}".`,
+        title: 'Sucesso',
+        description: 'Sua evidência foi submetida e está em análise.',
       })
-
-      setTimeout(() => {
-        onClose()
-        setLoading(false)
-      }, 500)
-    } catch (err) {
-      if (fakeProgressInterval) clearInterval(fakeProgressInterval)
-      setUploadProgress(0)
-      setLoading(false)
-
-      const errorMessage = getErrorMessage(err)
-
+      onClose()
+    } catch (error: any) {
       toast({
-        title: 'Erro ao realizar o upload',
-        description: errorMessage || 'Erro ao realizar o upload. Por favor, tente novamente.',
+        title: 'Erro',
+        description: error.message || 'Ocorreu um erro ao enviar.',
         variant: 'destructive',
       })
+    } finally {
+      setLoading(false)
     }
   }
 
-  if (!item) return null
-
-  const getLevelFullName = (nivel: string) => {
-    const n = nivel.toUpperCase()
-    if (n.includes('3') || n.includes('III'))
-      return 'Nível III - Observador Certificado Mobilizador'
-    if (n.includes('2') || n.includes('II')) return 'Nível II - Observador Certificado Pleno'
-    if (n.includes('1') || n.includes('I')) return 'Nível I - Observador Certificado'
-    return nivel
+  // Filter out specific phrases as requested
+  const cleanText = (text: string) => {
+    if (!text) return text
+    let cleaned = text.replace(/você pode enviar múltiplas evidências/gi, '')
+    cleaned = cleaned.replace(/Detalhes da atuação:?/gi, '')
+    return cleaned.trim()
   }
 
-  const levelFullName = getLevelFullName(item.nivel)
-
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle className="text-xl">Submeter Evidências</DialogTitle>
-            <DialogDescription className="mt-2">
-              Envie documentos que evidenciem sua atuação referenciando{' '}
-              <strong>{item.title}</strong> (Certificação: {levelFullName}). Ao ser validado, você
-              receberá até <strong className="text-accent">{item.points} pts</strong>.
-            </DialogDescription>
-          </DialogHeader>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="px-6 py-4 border-b bg-muted/30">
+          <DialogTitle className="text-xl font-bold leading-tight">Submeter Evidência</DialogTitle>
+          <DialogDescription className="mt-1.5 text-base font-medium text-foreground">
+            {item?.title}
+          </DialogDescription>
+        </div>
 
-          <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-md p-3 mt-4 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-500 shrink-0 mt-0.5" />
-            <p className="text-sm text-blue-800 dark:text-blue-400">
-              <strong>Informação:</strong> Você pode enviar múltiplas evidências. Certifique-se de
-              nomear claramente e enviar documentos legíveis para facilitar a validação pela equipe.
-            </p>
-          </div>
-
-          <div className="mt-6 border rounded-lg overflow-hidden">
-            <div className="bg-muted/50 px-4 py-3 border-b flex items-center gap-2">
-              <Info className="w-4 h-4 text-primary" />
-              <h4 className="font-semibold text-sm">Critérios de Validação da Atividade</h4>
-            </div>
-            <div className="p-4 bg-card">
-              {loadingMetadata ? (
-                <div className="space-y-3">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-5/6" />
-                  <Skeleton className="h-4 w-4/6" />
-                </div>
-              ) : metadata ? (
-                <div className="space-y-4 text-sm">
-                  <div>
-                    <span className="font-semibold text-foreground block mb-1">
-                      Definição (O que é?):
-                    </span>
-                    <p className="text-muted-foreground">
-                      {metadata.definition || 'Não definida.'}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-foreground block mb-1">
-                      Evidência Exigida:
-                    </span>
-                    <p className="text-muted-foreground">
-                      {metadata.required_evidence || 'Não definida.'}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-foreground block mb-1">
-                      Forma de Validação:
-                    </span>
-                    <p className="text-muted-foreground">
-                      {metadata.validation_method || 'Não definida.'}
-                    </p>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="bg-muted px-3 py-2 rounded-md flex-1">
-                      <span className="font-semibold block text-xs uppercase text-muted-foreground mb-1">
-                        Pontuação
-                      </span>
-                      <p className="font-medium text-foreground">
-                        {metadata.points ? `${metadata.points} pts` : `${item.points} pts`}
-                      </p>
-                    </div>
-                    <div className="bg-muted px-3 py-2 rounded-md flex-1">
-                      <span className="font-semibold block text-xs uppercase text-muted-foreground mb-1">
-                        Máx Permitido
-                      </span>
-                      <p className="font-medium text-foreground">
-                        {metadata.max_limit || 'Ver manual'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-sm text-muted-foreground text-center py-2">
-                  <p>
-                    Os detalhes específicos desta atividade não foram carregados no banco de dados.
-                  </p>
-                  <p className="text-xs mt-1">Siga as orientações gerais do manual do programa.</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="grid gap-6 py-6 pt-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="title">Título da Atividade</Label>
-                <span className="text-[10px] uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-full font-semibold">
-                  Definido pelo Sistema
-                </span>
+        <ScrollArea className="px-6 py-4 flex-1">
+          <div className="space-y-6">
+            {fetchingMeta ? (
+              <div className="flex items-center justify-center p-6 text-muted-foreground">
+                <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                Carregando informações da atividade...
               </div>
-              <Input
-                id="title"
-                value={title}
-                readOnly
-                disabled
-                className="bg-muted/50 text-muted-foreground cursor-not-allowed opacity-100"
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Este campo é fixo de acordo com as regras de pontuação.
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="type">Tipo de Evidência</Label>
-                <span className="text-[10px] uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-full font-semibold">
-                  Definido pelo Sistema
-                </span>
-              </div>
-              <Select value={type} onValueChange={setType} disabled>
-                <SelectTrigger
-                  id="type"
-                  className="bg-muted/50 text-muted-foreground cursor-not-allowed opacity-100"
-                >
-                  <SelectValue placeholder="Selecione o tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="titulation">Titulação</SelectItem>
-                  <SelectItem value="competency">Competência</SelectItem>
-                  <SelectItem value="other">Outros</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="link">Link Externo</Label>
-              <Input
-                id="link"
-                placeholder="Ex: https://meu-artigo-publicado.com"
-                value={link}
-                onChange={(e) => setLink(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="block text-sm font-medium mb-2">
-                Arquivo de Evidência (ou Link)
-              </Label>
-              <div
-                onDragOver={(e) => {
-                  e.preventDefault()
-                  setIsDragging(true)
-                }}
-                onDragLeave={() => setIsDragging(false)}
-                onDrop={(e) => {
-                  e.preventDefault()
-                  setIsDragging(false)
-                  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                    const droppedFile = e.dataTransfer.files[0]
-                    handleFileSelect(droppedFile)
-                  }
-                }}
-                onClick={() => fileInputRef.current?.click()}
-                className={`flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer transition-all ${isDragging ? 'border-primary bg-primary/10' : 'bg-muted/20 hover:bg-muted/40 border-muted-foreground/30 hover:border-primary/50'} group`}
-              >
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <UploadCloud
-                    className={`w-10 h-10 mb-3 transition-colors ${isDragging ? 'text-primary' : 'text-muted-foreground group-hover:text-primary'}`}
-                  />
-                  <p className="mb-2 text-sm text-muted-foreground text-center px-4">
-                    {file ? (
-                      <span className="font-semibold text-foreground">{file.name}</span>
-                    ) : (
-                      <>
-                        <span className="font-semibold text-foreground">Clique para anexar</span> ou
-                        arraste e solte
-                      </>
-                    )}
-                  </p>
-                  {!file && (
-                    <p className="text-xs text-muted-foreground/80">
-                      Formatos aceitos: PDF, JPG ou PNG
-                    </p>
+            ) : metadata ? (
+              <Alert className="bg-primary/5 border-primary/20 text-primary-foreground">
+                <Info className="h-5 w-5 text-primary" />
+                <AlertTitle className="text-primary font-semibold mb-2">
+                  Requisitos da Atividade
+                </AlertTitle>
+                <AlertDescription className="text-foreground/90 space-y-3 mt-2 text-sm leading-relaxed">
+                  {metadata.definition && cleanText(metadata.definition) && (
+                    <div>
+                      <strong className="block text-primary/80 mb-0.5">Definição:</strong>
+                      {cleanText(metadata.definition)}
+                    </div>
                   )}
+                  {metadata.required_evidence && cleanText(metadata.required_evidence) && (
+                    <div>
+                      <strong className="block text-primary/80 mb-0.5">
+                        Evidência Necessária:
+                      </strong>
+                      {cleanText(metadata.required_evidence)}
+                    </div>
+                  )}
+                  {metadata.max_limit && cleanText(metadata.max_limit) && (
+                    <div>
+                      <strong className="block text-primary/80 mb-0.5">Limite Máximo:</strong>
+                      {cleanText(metadata.max_limit)}
+                    </div>
+                  )}
+                  <div>
+                    <strong className="block text-primary/80 mb-0.5">Pontuação:</strong>
+                    <Badge
+                      variant="secondary"
+                      className="bg-primary/10 text-primary hover:bg-primary/20 font-mono"
+                    >
+                      {metadata.points || item?.points} pts
+                    </Badge>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <Alert className="bg-muted border-muted">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Informação</AlertTitle>
+                <AlertDescription>
+                  Esta atividade vale {item?.points} pts. Preencha os campos abaixo para submeter
+                  sua evidência.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <form id="evidence-form" onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="type" className="font-semibold">
+                  Tipo de Evidência
+                </Label>
+                <Select value={type} onValueChange={setType}>
+                  <SelectTrigger id="type" className="w-full">
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="titulation">Titulação / Formação</SelectItem>
+                    <SelectItem value="competency">Competência / Atuação</SelectItem>
+                    <SelectItem value="other">Outro / Diversos</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-4 bg-muted/30 p-4 rounded-lg border border-border/50">
+                <div className="space-y-2">
+                  <Label htmlFor="file" className="font-semibold">
+                    Arquivo (Opcional se houver link)
+                  </Label>
+                  <Input
+                    id="file"
+                    type="file"
+                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    className="cursor-pointer file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                  />
                 </div>
-                <Input
-                  ref={fileInputRef}
-                  id="file"
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
-                  className="hidden"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files.length > 0) {
-                      const selectedFile = e.target.files[0]
-                      handleFileSelect(selectedFile)
-                    }
-                  }}
+
+                <div className="relative py-2">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-border/50" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-muted/30 px-2 text-muted-foreground rounded-full">
+                      Ou / E
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="link" className="font-semibold">
+                    Link (Opcional se houver arquivo)
+                  </Label>
+                  <div className="relative">
+                    <LinkIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="link"
+                      type="url"
+                      placeholder="https://..."
+                      className="pl-9"
+                      value={link}
+                      onChange={(e) => setLink(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description" className="font-semibold">
+                  Descrição / Observações (Opcional)
+                </Label>
+                <Textarea
+                  id="description"
+                  rows={3}
+                  className="resize-none"
+                  placeholder="Adicione detalhes adicionais que facilitem a avaliação..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="desc">Detalhes da Atuação</Label>
-              <Textarea
-                id="desc"
-                placeholder="Descreva brevemente o impacto gerado por esta atividade..."
-                className="resize-none h-24"
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-              />
-            </div>
+            </form>
           </div>
-          {loading && uploadProgress > 0 && (
-            <div className="py-2 space-y-2 animate-fade-in-up">
-              <div className="flex justify-between text-sm text-muted-foreground font-medium">
-                <span>Fazendo upload do arquivo...</span>
-                <span>{uploadProgress}%</span>
-              </div>
-              <Progress value={uploadProgress} className="w-full h-2" />
-            </div>
-          )}
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Enviando...' : 'Submeter Evidências'}
-            </Button>
-          </DialogFooter>
-        </form>
+        </ScrollArea>
+
+        <div className="px-6 py-4 border-t bg-muted/10 flex justify-end gap-3 mt-auto">
+          <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
+            Cancelar
+          </Button>
+          <Button type="submit" form="evidence-form" disabled={loading} className="min-w-[150px]">
+            {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+            {loading ? 'Enviando...' : 'Enviar Evidência'}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   )
