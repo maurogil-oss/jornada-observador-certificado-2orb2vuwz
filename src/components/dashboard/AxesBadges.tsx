@@ -7,11 +7,10 @@ export function AxesBadges() {
 
   const titulationPoints = submissions
     .filter((s) => s.status === 'Aprovado' && s.type === 'titulation')
-    .reduce(
-      (acc, curr) =>
-        acc + (typeof curr.points === 'number' ? curr.points : Number(curr.points) || 0),
-      0,
-    )
+    .reduce((max, curr) => {
+      const pts = typeof curr.points === 'number' ? curr.points : Number(curr.points) || 0
+      return pts > max ? pts : max
+    }, 0)
 
   const competencyPoints = submissions
     .filter((s) => s.status === 'Aprovado' && s.type === 'competency')
@@ -37,7 +36,7 @@ export function AxesBadges() {
       <CardContent className="space-y-6">
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="font-medium text-foreground">Titulação e Formação</span>
+            <span className="font-medium text-foreground">E1 - Titulação e Formação</span>
             <span className="text-muted-foreground font-semibold">
               {titulationPoints} / 200 pts
             </span>
@@ -46,7 +45,7 @@ export function AxesBadges() {
         </div>
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="font-medium text-foreground">Competência Técnica</span>
+            <span className="font-medium text-foreground">E2 - Competência Técnica</span>
             <span className="text-muted-foreground font-semibold">
               {competencyPoints} / 300 pts
             </span>
@@ -58,7 +57,7 @@ export function AxesBadges() {
         </div>
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="font-medium text-foreground">Atuação Externa e Impacto</span>
+            <span className="font-medium text-foreground">E3 - Atuação Externa e Impacto</span>
             <span className="text-muted-foreground font-semibold">{otherPoints} / 500 pts</span>
           </div>
           <Progress
