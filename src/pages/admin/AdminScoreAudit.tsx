@@ -198,10 +198,47 @@ function UserSubmissionsAudit({ userId, userPoints }: { userId: string; userPoin
     }
   }, [userId, isAdmin])
 
-  const calculatedPoints = useMemo(() => {
-    return submissions
-      .filter((sub) => sub.status === 'Aprovado')
-      .reduce((sum, sub) => sum + (sub.score || 0), 0)
+  const { calculatedPoints, ignoredSubmissionIds } = useMemo(() => {
+    let sum = 0
+    let courseCount = 0
+    let maxTitulationScore = -1
+    let maxTitulationId = ''
+
+    // First pass: find the highest titulation
+    submissions.forEach((sub) => {
+      if (sub.status === 'Aprovado' && sub.type === 'titulation') {
+        if ((sub.score || 0) > maxTitulationScore) {
+          maxTitulationScore = sub.score || 0
+          maxTitulationId = sub.id
+        }
+      }
+    })
+
+    const ignoredIds = new Set<string>()
+
+    submissions.forEach((sub) => {
+      if (sub.status !== 'Aprovado') return
+      const score = sub.score || 0
+
+      if (sub.type === 'titulation') {
+        if (sub.id === maxTitulationId) {
+          sum += score
+        } else {
+          ignoredIds.add(sub.id)
+        }
+      } else if (sub.title === 'Curso geral na área de trânsito/mobilidade (Mínimo 8h)') {
+        if (courseCount < 5) {
+          sum += score
+          courseCount++
+        } else {
+          ignoredIds.add(sub.id)
+        }
+      } else {
+        sum += score
+      }
+    })
+
+    return { calculatedPoints: sum, ignoredSubmissionIds: ignoredIds }
   }, [submissions])
 
   const isMatch = calculatedPoints === userPoints
@@ -305,8 +342,21 @@ function UserSubmissionsAudit({ userId, userPoints }: { userId: string; userPoin
                       {sub.feedback || '-'}
                     </TableCell>
                   )}
-                  <TableCell className="text-right font-bold text-primary">
-                    {sub.status === 'Aprovado' ? `+${sub.score || 0}` : '-'}
+                  <TableCell className="text-right font-bold">
+                    {sub.status === 'Aprovado' ? (
+                      ignoredSubmissionIds.has(sub.id) ? (
+                        <span
+                          className="text-muted-foreground line-through opacity-60"
+                          title="Pontuação não contabilizada (regra de limite ou hierarquia atingida)"
+                        >
+                          +{sub.score || 0}
+                        </span>
+                      ) : (
+                        <span className="text-primary">+{sub.score || 0}</span>
+                      )
+                    ) : (
+                      '-'
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

@@ -18,13 +18,19 @@ onRecordAfterDeleteSuccess((e) => {
       let totalPoints = 0
       let axes = {}
       let courseCount = 0
+      let maxTitulationScore = 0
 
       for (let i = 0; i < submissions.length; i++) {
         const sub = submissions[i]
         const score = sub.getFloat('score') || 0
         const title = sub.getString('title')
+        const type = sub.getString('type')
 
-        if (title === 'Curso geral na área de trânsito/mobilidade (Mínimo 8h)') {
+        if (type === 'titulation') {
+          if (score > maxTitulationScore) {
+            maxTitulationScore = score
+          }
+        } else if (title === 'Curso geral na área de trânsito/mobilidade (Mínimo 8h)') {
           if (courseCount < 5) {
             totalPoints += score
             courseCount++
@@ -33,12 +39,12 @@ onRecordAfterDeleteSuccess((e) => {
           totalPoints += score
         }
 
-        const type = sub.getString('type')
         if (type) {
           axes[type] = true
         }
       }
 
+      totalPoints += maxTitulationScore
       totalPoints = Math.round(totalPoints * 100) / 100
       let axesCount = Object.keys(axes).length
 
