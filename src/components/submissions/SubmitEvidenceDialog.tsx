@@ -19,9 +19,11 @@ import {
 } from '@/components/ui/select'
 import { Progress } from '@/components/ui/progress'
 import { useToast } from '@/hooks/use-toast'
-import { UploadCloud, AlertCircle } from 'lucide-react'
+import { UploadCloud, AlertCircle, Info } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import useSubmissionsStore from '@/stores/useSubmissionsStore'
+import { getActivityMetadataByTitle } from '@/services/activities_metadata'
+import { Skeleton } from '@/components/ui/skeleton'
 import useAuthStore from '@/stores/useAuthStore'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
 import { ITEM_CAPS, EIXO3_TITLES } from '@/lib/scoring'
@@ -42,6 +44,8 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
   const [desc, setDesc] = useState('')
   const [isDragging, setIsDragging] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
+  const [metadata, setMetadata] = useState<any>(null)
+  const [loadingMetadata, setLoadingMetadata] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { addSubmission, submissions } = useSubmissionsStore()
   const { user } = useAuthStore()
@@ -78,6 +82,17 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
       setDesc('')
       setUploadProgress(0)
       setTitle(item.title)
+      setMetadata(null)
+      setLoadingMetadata(true)
+
+      getActivityMetadataByTitle(item.title)
+        .then((data) => {
+          setMetadata(data)
+          setLoadingMetadata(false)
+        })
+        .catch(() => {
+          setLoadingMetadata(false)
+        })
 
       const isTitulation =
         item.title.toLowerCase().includes('graduação') ||
@@ -252,6 +267,74 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
               <strong>Informação:</strong> Você pode enviar múltiplas evidências. Certifique-se de
               nomear claramente e enviar documentos legíveis para facilitar a validação pela equipe.
             </p>
+          </div>
+
+          <div className="mt-6 border rounded-lg overflow-hidden">
+            <div className="bg-muted/50 px-4 py-3 border-b flex items-center gap-2">
+              <Info className="w-4 h-4 text-primary" />
+              <h4 className="font-semibold text-sm">Critérios de Validação da Atividade</h4>
+            </div>
+            <div className="p-4 bg-card">
+              {loadingMetadata ? (
+                <div className="space-y-3">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                  <Skeleton className="h-4 w-4/6" />
+                </div>
+              ) : metadata ? (
+                <div className="space-y-4 text-sm">
+                  <div>
+                    <span className="font-semibold text-foreground block mb-1">
+                      Definição (O que é?):
+                    </span>
+                    <p className="text-muted-foreground">
+                      {metadata.definition || 'Não definida.'}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-foreground block mb-1">
+                      Evidência Exigida:
+                    </span>
+                    <p className="text-muted-foreground">
+                      {metadata.required_evidence || 'Não definida.'}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-foreground block mb-1">
+                      Forma de Validação:
+                    </span>
+                    <p className="text-muted-foreground">
+                      {metadata.validation_method || 'Não definida.'}
+                    </p>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="bg-muted px-3 py-2 rounded-md flex-1">
+                      <span className="font-semibold block text-xs uppercase text-muted-foreground mb-1">
+                        Pontuação
+                      </span>
+                      <p className="font-medium text-foreground">
+                        {metadata.points ? `${metadata.points} pts` : `${item.points} pts`}
+                      </p>
+                    </div>
+                    <div className="bg-muted px-3 py-2 rounded-md flex-1">
+                      <span className="font-semibold block text-xs uppercase text-muted-foreground mb-1">
+                        Máx Permitido
+                      </span>
+                      <p className="font-medium text-foreground">
+                        {metadata.max_limit || 'Ver manual'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-sm text-muted-foreground text-center py-2">
+                  <p>
+                    Os detalhes específicos desta atividade não foram carregados no banco de dados.
+                  </p>
+                  <p className="text-xs mt-1">Siga as orientações gerais do manual do programa.</p>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="grid gap-6 py-6 pt-4">

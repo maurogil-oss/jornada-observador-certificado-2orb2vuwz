@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-13T12:42:59.223Z",
+  "generatedAt": "2026-05-13T13:16:55.452Z",
   "collections": [
     {
       "name": "users",
@@ -362,6 +362,78 @@
         }
       ],
       "indexes": []
+    },
+    {
+      "name": "activities_metadata",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.role = 'admin'",
+        "update": "@request.auth.role = 'admin'",
+        "delete": "@request.auth.role = 'admin'"
+      },
+      "fields": [
+        {
+          "name": "title",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "axis",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "definition",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "required_evidence",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "validation_method",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "max_limit",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "points",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX `idx_activities_metadata_title` ON `activities_metadata` (title)"
+      ]
     }
   ]
 }
