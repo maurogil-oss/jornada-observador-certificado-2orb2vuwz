@@ -61,6 +61,20 @@ const getLevelStyle = (level?: string) => {
   return 'bg-primary/10 text-primary border-primary/30'
 }
 
+const formatLevelDisplay = (level?: string) => {
+  if (!level) return ''
+  const l = level.toLowerCase()
+  if (
+    (l.includes('nível i') || l.includes('nivel i')) &&
+    !l.includes('ii') &&
+    !l.includes('iii') &&
+    !l.includes('iv')
+  ) {
+    return 'Nível I - OBSERVADOR C.'
+  }
+  return level
+}
+
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([])
   const [search, setSearch] = useState('')
@@ -375,7 +389,7 @@ export default function AdminUsers() {
                             getLevelStyle(user.level),
                           )}
                         >
-                          {user.level}
+                          {formatLevelDisplay(user.level)}
                         </Badge>
                       ) : (
                         <span className="text-muted-foreground italic text-[10px]">
