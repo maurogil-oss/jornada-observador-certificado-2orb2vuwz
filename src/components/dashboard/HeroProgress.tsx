@@ -2,13 +2,21 @@ import { DonutChart } from '@/components/shared/DonutChart'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import useGameStore from '@/stores/useGameStore'
-import { ArrowRight, Trophy, Download } from 'lucide-react'
+import { ArrowRight, Trophy, Download, Clock } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import useAuthStore from '@/stores/useAuthStore'
 
 export function HeroProgress() {
   const { points, level } = useGameStore()
   const { user } = useAuthStore()
+
+  const isProbationary = (() => {
+    if (!user || (user.turma || 15) < 15 || !user.created) return false
+    const createdDate = new Date(user.created.replace(' ', 'T'))
+    const oneYearAgo = new Date()
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
+    return createdDate > oneYearAgo
+  })()
 
   const levelName =
     level === 3
@@ -17,7 +25,7 @@ export function HeroProgress() {
         ? 'Nível II - Observador Certificado Pleno'
         : 'Nível I - Observador Certificado'
 
-  const nextLevelPoints = level === 1 ? 200 : level === 2 ? 500 : 1000
+  const nextLevelPoints = level === 1 ? 500 : level === 2 ? 1000 : 1000
   const progressToNext = Math.min(100, Math.round((points / nextLevelPoints) * 100))
 
   const downloadCertificate = () => {
@@ -116,14 +124,22 @@ export function HeroProgress() {
               {levelName}
             </span>
           </h2>
-          <p className="text-secondary-foreground/80 text-lg max-w-xl">
-            Você possui{' '}
-            <strong>
-              {points} / {nextLevelPoints} pts
-            </strong>{' '}
-            de impacto institucional no nível atual. Faltam {Math.max(0, nextLevelPoints - points)}{' '}
-            pontos para alcançar o teto de titulação.
-          </p>
+          <div className="space-y-2">
+            <p className="text-secondary-foreground/80 text-lg max-w-xl">
+              Você possui{' '}
+              <strong>
+                {points} / {nextLevelPoints} pts
+              </strong>{' '}
+              de impacto institucional no nível atual. Faltam{' '}
+              {Math.max(0, nextLevelPoints - points)} pontos para avançar.
+            </p>
+            {isProbationary && points >= nextLevelPoints && (
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 text-amber-700 dark:text-amber-500 rounded-md text-sm font-medium border border-amber-500/20">
+                <Clock className="w-4 h-4" />
+                No período probatório (1 ano). Seu nível será liberado ao fim do prazo.
+              </div>
+            )}
+          </div>
           <div className="flex flex-wrap gap-4 mt-4 justify-center md:justify-start">
             <Button
               asChild

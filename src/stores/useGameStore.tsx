@@ -55,7 +55,12 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       id: 'II',
       name: 'Observador Certificado Pleno',
       points: Math.min(500, points),
-      status: level >= 3 ? 'Concluído' : level === 2 || isNivel2Base ? 'Em Andamento' : 'Pendente',
+      status:
+        level >= 3
+          ? 'Concluído'
+          : level === 2 || (isNivel2Base && level >= 2)
+            ? 'Em Andamento'
+            : 'Pendente',
     },
     {
       id: 'III',

@@ -51,13 +51,28 @@ onRecordAfterCreateSuccess((e) => {
           : 'Nível I - Observador Certificado (Iniciante)'
       let newLevel = currentLevel || baseLevel
 
-      if (totalPoints >= 500) {
-        newLevel = 'Nível III - Mobilizador'
+      const createdDateStr = user.getString('created')
+      let isProbationary = false
+      if (turma >= 15 && createdDateStr) {
+        const createdDate = new Date(createdDateStr.replace(' ', 'T'))
+        const oneYearAgo = new Date()
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
+        if (createdDate > oneYearAgo) {
+          isProbationary = true
+        }
+      }
+
+      if (isProbationary) {
+        newLevel = 'Nível I - Observador Certificado (Iniciante)'
       } else {
-        if (totalPoints < 500 && currentLevel === 'Nível III - Mobilizador') {
-          newLevel = baseLevel
-        } else if (totalPoints < 500) {
-          newLevel = currentLevel || baseLevel
+        if (totalPoints >= 500) {
+          newLevel = 'Nível III - Mobilizador'
+        } else {
+          if (totalPoints < 500 && currentLevel === 'Nível III - Mobilizador') {
+            newLevel = baseLevel
+          } else if (totalPoints < 500) {
+            newLevel = currentLevel || baseLevel
+          }
         }
       }
 

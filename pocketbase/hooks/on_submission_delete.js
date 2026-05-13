@@ -48,13 +48,29 @@ onRecordAfterDeleteSuccess((e) => {
       totalPoints = Math.round(totalPoints * 100) / 100
       let axesCount = Object.keys(axes).length
 
+      const turma = user.getInt('turma') || 15
+      const createdDateStr = user.getString('created')
+      let isProbationary = false
+      if (turma >= 15 && createdDateStr) {
+        const createdDate = new Date(createdDateStr.replace(' ', 'T'))
+        const oneYearAgo = new Date()
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
+        if (createdDate > oneYearAgo) {
+          isProbationary = true
+        }
+      }
+
       let newLevel = ''
-      if (totalPoints >= 1000 && axesCount >= 3) {
-        newLevel = 'Nível III - Mobilizador'
-      } else if (totalPoints >= 500 && axesCount >= 2) {
-        newLevel = 'Nível II - Observador Certificado Pleno'
-      } else if (axesCount >= 1) {
+      if (isProbationary) {
         newLevel = 'Nível I - Observador Certificado (Iniciante)'
+      } else {
+        if (totalPoints >= 1000 && axesCount >= 3) {
+          newLevel = 'Nível III - Mobilizador'
+        } else if (totalPoints >= 500 && axesCount >= 2) {
+          newLevel = 'Nível II - Observador Certificado Pleno'
+        } else if (axesCount >= 1) {
+          newLevel = 'Nível I - Observador Certificado (Iniciante)'
+        }
       }
 
       const originalUserPoints = user.getFloat('points')
