@@ -30,6 +30,7 @@ export interface Submission {
   type?: string
   feedback?: string
   turma?: number
+  userPoints?: number
 }
 
 interface SubmissionsState {
@@ -104,6 +105,7 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
           description: r.description,
           link: r.link,
           feedback: r.feedback,
+          userPoints: r.expand?.user_id?.points || 0,
           fileUrl: r.file
             ? `${pb.baseURL}/api/files/${r.collectionId}/${r.id}/${r.file}`
             : undefined,

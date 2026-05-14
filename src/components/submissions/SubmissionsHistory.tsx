@@ -29,10 +29,36 @@ import {
 } from '@/components/ui/select'
 import { CheckCircle2, Clock, AlertTriangle, Eye, FileText } from 'lucide-react'
 import useSubmissionsStore, { Submission } from '@/stores/useSubmissionsStore'
+import useAuthStore from '@/stores/useAuthStore'
 
 export function SubmissionsHistory() {
   const { submissions } = useSubmissionsStore()
+  const { user: authUser } = useAuthStore()
   const [viewingSub, setViewingSub] = useState<Submission | null>(null)
+
+  const uniqueUsers = Array.from(new Set(submissions.map((s) => s.userId).filter(Boolean)))
+  const isSingleUser = uniqueUsers.length === 1
+  const isObserver = authUser?.role !== 'admin'
+
+  let showSummary = false
+  let validPoints = 0
+
+  if (isObserver) {
+    showSummary = true
+    validPoints = authUser?.points || 0
+  } else if (isSingleUser) {
+    showSummary = true
+    validPoints = submissions.find((s) => s.userId === uniqueUsers[0])?.userPoints || 0
+  }
+
+  const approvedPointsSum = submissions
+    .filter((s) => s.status === 'Aprovado' && (isSingleUser ? s.userId === uniqueUsers[0] : true))
+    .reduce((sum, s) => {
+      const pts = typeof s.points === 'number' ? s.points : Number(s.points) || 0
+      return sum + pts
+    }, 0)
+
+  const excessPoints = Math.max(0, approvedPointsSum - validPoints)
 
   const openView = (sub: Submission) => {
     setViewingSub(sub)
@@ -174,6 +200,28 @@ export function SubmissionsHistory() {
             </TableBody>
           </Table>
         </CardContent>
+        {showSummary && (
+          <div className="bg-muted/10 border-t border-border/50 p-6 flex flex-col items-end gap-2 text-sm">
+            <div className="flex flex-col gap-2 w-full sm:w-72 bg-card p-4 rounded-md border shadow-sm">
+              <div className="flex justify-between items-center w-full">
+                <span className="text-muted-foreground font-medium">
+                  Total de Pontos Aprovados:
+                </span>
+                <span className="font-bold text-foreground">{approvedPointsSum}</span>
+              </div>
+              <div className="flex justify-between items-center w-full">
+                <span className="text-muted-foreground font-medium">Pontos Válidos:</span>
+                <span className="font-bold text-green-600 dark:text-green-500">{validPoints}</span>
+              </div>
+              <div className="flex justify-between items-center w-full border-t pt-2 mt-1">
+                <span className="text-muted-foreground font-medium">Pontos Excedentes:</span>
+                <span className="font-bold text-orange-600 dark:text-orange-500">
+                  {excessPoints}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
       </Card>
 
       <Dialog
