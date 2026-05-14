@@ -196,6 +196,15 @@ export default function Login() {
     },
   })
 
+  if (isAuthLoading || (isAuthenticated && user)) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col justify-center items-center">
+        <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+        <p className="text-muted-foreground font-medium animate-pulse">Acessando...</p>
+      </div>
+    )
+  }
+
   const onLogin = async (data: LoginForm) => {
     setIsLoading(true)
     try {

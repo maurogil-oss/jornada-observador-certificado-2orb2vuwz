@@ -38,7 +38,7 @@ const ProtectedRoute = ({
   children: React.ReactNode
   allowedRoles?: string[]
 }) => {
-  const { isAuthenticated, user, isLoading, logout, checkSession } = useAuthStore()
+  const { isAuthenticated, user, logout, checkSession } = useAuthStore()
   const location = useLocation()
 
   useEffect(() => {
@@ -62,17 +62,6 @@ const ProtectedRoute = ({
       isMounted = false
     }
   }, [location.pathname, isAuthenticated, user, logout, checkSession])
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background">
-        <Loader2 className="h-10 w-10 animate-spin mb-4 text-primary" />
-        <p>
-          <span>Validando Sessão...</span>
-        </p>
-      </div>
-    )
-  }
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />
@@ -108,6 +97,19 @@ const ProtectedRoute = ({
 }
 
 const AppRoutes = () => {
+  const { isLoading } = useAuthStore()
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center font-semibold text-muted-foreground bg-background">
+        <Loader2 className="h-10 w-10 animate-spin mb-4 text-primary" />
+        <p>
+          <span>Carregando Aplicação...</span>
+        </p>
+      </div>
+    )
+  }
+
   return (
     <Routes>
       <Route path="/login" element={<Login />} />

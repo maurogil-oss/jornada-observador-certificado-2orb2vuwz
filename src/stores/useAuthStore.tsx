@@ -56,10 +56,53 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | undefined>(undefined)
 
-const APP_VERSION = '1.0.2'
+const APP_VERSION = '1.0.3'
+
+const extractUserFromRecord = (record: any): User | null => {
+  if (
+    !record ||
+    typeof record !== 'object' ||
+    !record.id ||
+    record.role === undefined ||
+    typeof record.is_active !== 'boolean'
+  ) {
+    return null
+  }
+  return {
+    id: record.id,
+    name: record.name || (record.email ? record.email.split('@')[0] : 'Usuário'),
+    full_name: record.full_name || '',
+    nickname: record.nickname || '',
+    email: record.email || '',
+    role: record.role || 'observer',
+    points: record.points || 0,
+    level: record.level || 'Nível I - Observador Certificado (Iniciante)',
+    avatar: record.avatar ? pb.files.getUrl(record, record.avatar) : '',
+    is_active: record.is_active !== false,
+    birth_date: record.birth_date || '',
+    city: record.city || '',
+    state: record.state || '',
+    country: record.country || '',
+    workplace: record.workplace || '',
+    turma: record.turma,
+    cpf_document: record.cpf_document,
+    rg: record.rg,
+    rg_issuer: record.rg_issuer,
+    rg_state: record.rg_state,
+  }
+}
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      if (pb.authStore.isValid && pb.authStore.record) {
+        return extractUserFromRecord(pb.authStore.record)
+      }
+    } catch (e) {
+      console.warn('Failed to parse initial user state', e)
+    }
+    return null
+  })
   const [isLoading, setIsLoading] = useState(true)
 
   const clearAllStorage = () => {
@@ -76,36 +119,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const record = pb.authStore.record
       if (record && pb.authStore.isValid) {
-        if (
-          typeof record !== 'object' ||
-          !record.id ||
-          record.role === undefined ||
-          typeof record.is_active !== 'boolean'
-        ) {
+        const parsedUser = extractUserFromRecord(record)
+        if (parsedUser) {
+          setUser(parsedUser)
+        } else {
           throw new Error('Malformed user record in local storage')
         }
-        setUser({
-          id: record.id,
-          name: record.name || (record.email ? record.email.split('@')[0] : 'Usuário'),
-          full_name: record.full_name || '',
-          nickname: record.nickname || '',
-          email: record.email || '',
-          role: record.role || 'observer',
-          points: record.points || 0,
-          level: record.level || 'Nível I - Observador Certificado (Iniciante)',
-          avatar: record.avatar ? pb.files.getUrl(record, record.avatar) : '',
-          is_active: record.is_active !== false,
-          birth_date: record.birth_date || '',
-          city: record.city || '',
-          state: record.state || '',
-          country: record.country || '',
-          workplace: record.workplace || '',
-          turma: record.turma,
-          cpf_document: record.cpf_document,
-          rg: record.rg,
-          rg_issuer: record.rg_issuer,
-          rg_state: record.rg_state,
-        })
       } else {
         setUser(null)
       }
@@ -125,6 +144,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       if (pb.authStore.isValid && pb.authStore.token) {
+        try {
+          const tokenPayload = JSON.parse(atob(pb.authStore.token.split('.')[1]))
+          if (tokenPayload.exp * 1000 < Date.now()) {
+            throw new Error('Token expired locally')
+          }
+        } catch (e) {
+          throw new Error('Invalid token format or expired')
+        }
         await pb.collection('users').authRefresh()
       } else {
         clearAllStorage()
@@ -184,7 +211,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       role: 'observer',
       points: 0,
       level: 'Nível I - Observador Certificado (Iniciante)',
-      is_active: false, // Wait for admin approval
+      is_active: false,
     })
   }
 
