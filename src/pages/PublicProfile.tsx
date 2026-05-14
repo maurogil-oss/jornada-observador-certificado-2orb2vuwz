@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 export default function PublicProfile() {
   const { id } = useParams()
   const [user, setUser] = useState<any>(null)
+  const [submissions, setSubmissions] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
@@ -18,6 +19,18 @@ export default function PublicProfile() {
         if (!id) return
         const record = await pb.collection('users').getOne(id)
         setUser(record)
+
+        try {
+          if (pb.authStore.isValid) {
+            const subs = await pb.collection('submissions').getFullList({
+              filter: `user_id = "${id}" && status = 'Aprovado'`,
+              sort: '-created',
+            })
+            setSubmissions(subs)
+          }
+        } catch (subErr) {
+          console.warn('Could not fetch submissions:', subErr)
+        }
       } catch (err) {
         console.error(err)
         setError(true)
@@ -55,6 +68,13 @@ export default function PublicProfile() {
   const avatarUrl = user.avatar ? pb.files.getURL(user, user.avatar, { thumb: '256x256' }) : ''
   const name = user.full_name || user.name || 'Observador'
   const initials = name.substring(0, 2).toUpperCase()
+
+  const validPoints = user?.points || 0
+  const approvedPointsSum = submissions.reduce((sum, s) => {
+    const pts = typeof s.score === 'number' ? s.score : Number(s.score) || 0
+    return sum + pts
+  }, 0)
+  const excessPoints = Math.max(0, approvedPointsSum - validPoints)
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-background py-12 px-4 sm:px-6 animate-fade-in">
@@ -122,6 +142,74 @@ export default function PublicProfile() {
                 <p className="text-2xl font-black text-foreground">{user.points || 0} pts</p>
               </div>
             </div>
+
+            {pb.authStore.isValid && (
+              <div className="mt-10 pt-8 border-t border-border/40">
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <Trophy className="w-5 h-5 text-amber-500" />
+                  Atividades Aprovadas
+                </h3>
+
+                {submissions.length === 0 ? (
+                  <p className="text-muted-foreground text-center py-8">
+                    Nenhuma atividade aprovada encontrada.
+                  </p>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="rounded-md border border-border/50 overflow-hidden">
+                      <table className="w-full text-sm text-left">
+                        <thead className="bg-muted/30 text-muted-foreground">
+                          <tr>
+                            <th className="px-4 py-3 font-medium">Atividade</th>
+                            <th className="px-4 py-3 font-medium">Eixo</th>
+                            <th className="px-4 py-3 font-medium text-right">Pontos</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border/50">
+                          {submissions.map((sub) => (
+                            <tr
+                              key={sub.id}
+                              className="hover:bg-muted/10 transition-colors bg-card"
+                            >
+                              <td className="px-4 py-3 font-medium">{sub.title}</td>
+                              <td className="px-4 py-3 text-muted-foreground">{sub.nivel}</td>
+                              <td className="px-4 py-3 text-right font-bold text-emerald-600 dark:text-emerald-500">
+                                +{sub.score || 0}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div className="bg-muted/10 border border-border/50 p-6 flex flex-col items-end gap-2 text-sm rounded-lg">
+                      <div className="flex flex-col gap-2 w-full sm:w-80 bg-card p-4 rounded-md border shadow-sm">
+                        <div className="flex justify-between items-center w-full">
+                          <span className="text-muted-foreground font-medium">
+                            Total de Pontos Aprovados:
+                          </span>
+                          <span className="font-bold text-foreground">{approvedPointsSum}</span>
+                        </div>
+                        <div className="flex justify-between items-center w-full">
+                          <span className="text-muted-foreground font-medium">Pontos Válidos:</span>
+                          <span className="font-bold text-green-600 dark:text-green-500">
+                            {validPoints}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center w-full border-t pt-2 mt-1">
+                          <span className="text-muted-foreground font-medium">
+                            Pontos Excedentes:
+                          </span>
+                          <span className="font-bold text-orange-600 dark:text-orange-500">
+                            {excessPoints}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="mt-10 pt-8 border-t border-border/40 text-center">
               <div className="inline-flex items-center justify-center p-2 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 rounded-full mb-3">
