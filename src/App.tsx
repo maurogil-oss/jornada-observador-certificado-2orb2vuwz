@@ -38,30 +38,22 @@ const ProtectedRoute = ({
   children: React.ReactNode
   allowedRoles?: string[]
 }) => {
-  const { isAuthenticated, user, logout, checkSession } = useAuthStore()
+  const { isAuthenticated, user, logout, isLoading } = useAuthStore()
   const location = useLocation()
 
   useEffect(() => {
-    let isMounted = true
-
     // Session Integrity Guard
-    if (isAuthenticated) {
+    if (isAuthenticated && !isLoading) {
       if (!user || typeof user !== 'object' || !user.id || typeof user.is_active !== 'boolean') {
         console.warn('Session integrity failed. Corrupted user data.')
         logout()
-        return
       }
+    }
+  }, [isAuthenticated, user, logout, isLoading])
 
-      if (checkSession) {
-        checkSession().catch((err) => {
-          if (isMounted) console.error('Silent session check failed:', err)
-        })
-      }
-    }
-    return () => {
-      isMounted = false
-    }
-  }, [location.pathname, isAuthenticated, user, logout, checkSession])
+  if (isLoading) {
+    return null
+  }
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" state={{ from: location }} replace />

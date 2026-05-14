@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react'
+import { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react'
 import pb from '@/lib/pocketbase/client'
 
 type Role = 'observer' | 'admin' | null
@@ -59,13 +59,7 @@ const AuthContext = createContext<AuthState | undefined>(undefined)
 const APP_VERSION = '1.0.3'
 
 const extractUserFromRecord = (record: any): User | null => {
-  if (
-    !record ||
-    typeof record !== 'object' ||
-    !record.id ||
-    record.role === undefined ||
-    typeof record.is_active !== 'boolean'
-  ) {
+  if (!record || typeof record !== 'object' || !record.id || record.role === undefined) {
     return null
   }
   return {
@@ -134,7 +128,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
+  const isValidatingRef = useRef(false)
+
   const validateSession = async (isMounted: boolean) => {
+    if (isValidatingRef.current) return
+    isValidatingRef.current = true
     try {
       const currentVersion = localStorage.getItem('app_version')
       if (currentVersion !== APP_VERSION) {
@@ -154,9 +152,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         try {
           await pb.collection('users').authRefresh()
-        } catch (refreshErr) {
-          console.warn('Auth refresh failed, clearing session', refreshErr)
-          clearAllStorage()
+        } catch (refreshErr: any) {
+          console.warn('Auth refresh failed', refreshErr)
+          if (refreshErr?.status !== 0) {
+            clearAllStorage()
+          }
         }
       } else {
         clearAllStorage()
@@ -165,6 +165,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error('Session validation failed:', err)
       clearAllStorage()
     } finally {
+      isValidatingRef.current = false
       if (isMounted) {
         updateUserData()
         setIsLoading(false)
@@ -200,8 +201,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (err: any) {
       console.warn('Silent session refresh failed:', err)
-      clearAllStorage()
-      setUser(null)
+      if (err?.status !== 0) {
+        clearAllStorage()
+        setUser(null)
+      }
     }
   }
 
@@ -232,7 +235,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         register,
         logout,
-        isAuthenticated: pb.authStore.isValid,
+        isAuthenticated: !!user && pb.authStore.isValid,
         isLoading,
         checkSession,
       }}
