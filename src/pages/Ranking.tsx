@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import pb from '@/lib/pocketbase/client'
 import { useRealtime } from '@/hooks/use-realtime'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -54,33 +54,32 @@ function UserBreakdown({ userId, userPoints }: { userId: string; userPoints: num
   const { user: currentUser } = useAuthStore()
   const isAdmin = currentUser?.role === 'admin'
 
-  useEffect(() => {
-    let isMounted = true
-    setLoading(true)
-
+  const loadSubmissions = useCallback(async () => {
     const filter = isAdmin
       ? `user_id = "${userId}"`
       : `user_id = "${userId}" && status = "Aprovado"`
 
-    pb.collection('submissions')
-      .getFullList({
+    try {
+      const records = await pb.collection('submissions').getFullList({
         filter,
         sort: '-created',
       })
-      .then((records) => {
-        if (isMounted) {
-          setSubmissions(records)
-          setLoading(false)
-        }
-      })
-      .catch((err) => {
-        console.error(err)
-        if (isMounted) setLoading(false)
-      })
-    return () => {
-      isMounted = false
+      setSubmissions(records)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
   }, [userId, isAdmin])
+
+  useEffect(() => {
+    setLoading(true)
+    loadSubmissions()
+  }, [loadSubmissions])
+
+  useRealtime('submissions', () => {
+    loadSubmissions()
+  })
 
   if (loading) {
     return (
@@ -183,32 +182,59 @@ function UserBreakdown({ userId, userPoints }: { userId: string; userPoints: num
           </TableBody>
           <TableFooter className="bg-muted/30">
             <TableRow>
-              <TableCell colSpan={2} className="sm:hidden font-bold text-right">
-                Total Aprovado
+              <TableCell
+                colSpan={2}
+                className="sm:hidden font-bold text-right text-muted-foreground"
+              >
+                Total de Pontos Lançados
               </TableCell>
               <TableCell
                 colSpan={isAdmin ? 5 : 3}
-                className="hidden sm:table-cell font-bold text-right"
+                className="hidden sm:table-cell font-bold text-right text-muted-foreground"
               >
-                Total Aprovado
+                Total de Pontos Lançados
               </TableCell>
-              <TableCell className="text-right font-black text-lg text-primary">
+              <TableCell className="text-right font-bold text-muted-foreground">
                 {totalScore}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell
+                colSpan={2}
+                className="sm:hidden font-bold text-right text-green-600 dark:text-green-500"
+              >
+                Pontos Válidos
+              </TableCell>
+              <TableCell
+                colSpan={isAdmin ? 5 : 3}
+                className="hidden sm:table-cell font-bold text-right text-green-600 dark:text-green-500"
+              >
+                Pontos Válidos
+              </TableCell>
+              <TableCell className="text-right font-black text-lg text-green-600 dark:text-green-500">
+                {userPoints}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell
+                colSpan={2}
+                className="sm:hidden font-bold text-right text-orange-600 dark:text-orange-500"
+              >
+                Pontos Excedentes
+              </TableCell>
+              <TableCell
+                colSpan={isAdmin ? 5 : 3}
+                className="hidden sm:table-cell font-bold text-right text-orange-600 dark:text-orange-500"
+              >
+                Pontos Excedentes
+              </TableCell>
+              <TableCell className="text-right font-bold text-orange-600 dark:text-orange-500">
+                {Math.max(0, totalScore - userPoints)}
               </TableCell>
             </TableRow>
           </TableFooter>
         </Table>
       </div>
-
-      {totalScore !== userPoints && (
-        <div className="mt-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-md flex items-start gap-2">
-          <Info className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
-          <p className="text-xs text-amber-700 dark:text-amber-500 font-medium">
-            Nota: A soma das atividades detalhadas ({totalScore}) difere da pontuação geral exibida
-            no ranking ({userPoints}).
-          </p>
-        </div>
-      )}
     </div>
   )
 }
