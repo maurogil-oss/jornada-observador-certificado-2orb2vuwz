@@ -109,7 +109,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     pb.authStore.clear()
     try {
       localStorage.removeItem('pocketbase_auth')
-      sessionStorage.clear()
     } catch (e) {
       console.warn('Failed to clear storage', e)
     }
@@ -152,7 +151,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } catch (e) {
           throw new Error('Invalid token format or expired')
         }
-        await pb.collection('users').authRefresh()
+
+        try {
+          await pb.collection('users').authRefresh()
+        } catch (refreshErr) {
+          console.warn('Auth refresh failed, clearing session', refreshErr)
+          clearAllStorage()
+        }
       } else {
         clearAllStorage()
       }

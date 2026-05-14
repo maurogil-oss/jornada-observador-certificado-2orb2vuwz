@@ -64,7 +64,7 @@ const ProtectedRoute = ({
   }, [location.pathname, isAuthenticated, user, logout, checkSession])
 
   if (!isAuthenticated || !user) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/login" state={{ from: location }} replace />
   }
 
   if (user.is_active === false) {

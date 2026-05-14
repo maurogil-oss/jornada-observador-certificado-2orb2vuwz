@@ -33,12 +33,7 @@ export class ErrorBoundary extends Component<Props, State> {
       const hasReloaded = sessionStorage.getItem('error_reloaded')
       if (!hasReloaded) {
         sessionStorage.setItem('error_reloaded', 'true')
-        try {
-          localStorage.clear()
-        } catch {
-          /* intentionally ignored */
-        }
-        window.location.href = '/login'
+        window.location.reload()
       }
     }
   }
@@ -63,8 +58,8 @@ export class ErrorBoundary extends Component<Props, State> {
 
   private handleClearAndReload = () => {
     try {
-      localStorage.clear()
-      sessionStorage.clear()
+      localStorage.removeItem('pocketbase_auth')
+      sessionStorage.removeItem('error_reloaded')
     } catch (err) {
       console.warn('Failed to clear storage:', err)
     }

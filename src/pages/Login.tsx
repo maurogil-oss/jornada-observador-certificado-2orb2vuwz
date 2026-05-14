@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -150,6 +150,8 @@ export default function Login() {
   } = useAuthStore()
   const navigate = useNavigate()
   const { toast } = useToast()
+  const location = useLocation()
+  const from = location.state?.from?.pathname || (user?.role === 'admin' ? '/admin' : '/')
 
   useEffect(() => {
     if (!isAuthLoading && isAuthenticated && user) {
@@ -162,10 +164,10 @@ export default function Login() {
           variant: 'destructive',
         })
       } else {
-        navigate(user.role === 'admin' ? '/admin' : '/', { replace: true })
+        navigate(from, { replace: true })
       }
     }
-  }, [isAuthLoading, isAuthenticated, user, navigate, logout, toast])
+  }, [isAuthLoading, isAuthenticated, user, navigate, logout, toast, from])
 
   const loginForm = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -237,7 +239,8 @@ export default function Login() {
         /* intentionally ignored */
       }
       const isAdmin = record?.role === 'admin' || data.email.toLowerCase() === 'maurog1@hotmail.com'
-      navigate(isAdmin ? '/admin' : '/')
+      const redirectPath = location.state?.from?.pathname || (isAdmin ? '/admin' : '/')
+      navigate(redirectPath, { replace: true })
     } catch (err: any) {
       if (err.status === 0) {
         toast({
