@@ -23,6 +23,24 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo)
+
+    // Auto-recover from removeChild or other DOM/hydration errors
+    if (
+      error.message.includes('removeChild') ||
+      error.message.includes('Node') ||
+      error.message.includes('is not a valid')
+    ) {
+      const hasReloaded = sessionStorage.getItem('error_reloaded')
+      if (!hasReloaded) {
+        sessionStorage.setItem('error_reloaded', 'true')
+        try {
+          localStorage.clear()
+        } catch {
+          /* intentionally ignored */
+        }
+        window.location.href = '/login'
+      }
+    }
   }
 
   private handleReload = () => {

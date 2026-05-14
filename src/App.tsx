@@ -43,15 +43,25 @@ const ProtectedRoute = ({
 
   useEffect(() => {
     let isMounted = true
-    if (isAuthenticated && user && checkSession) {
-      checkSession().catch((err) => {
-        if (isMounted) console.error('Silent session check failed:', err)
-      })
+
+    // Session Integrity Guard
+    if (isAuthenticated) {
+      if (!user || typeof user !== 'object' || !user.id || typeof user.is_active !== 'boolean') {
+        console.warn('Session integrity failed. Corrupted user data.')
+        logout()
+        return
+      }
+
+      if (checkSession) {
+        checkSession().catch((err) => {
+          if (isMounted) console.error('Silent session check failed:', err)
+        })
+      }
     }
     return () => {
       isMounted = false
     }
-  }, [location.pathname, isAuthenticated])
+  }, [location.pathname, isAuthenticated, user, logout, checkSession])
 
   if (isLoading) {
     return (

@@ -56,7 +56,7 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | undefined>(undefined)
 
-const APP_VERSION = '1.0.1'
+const APP_VERSION = '1.0.2'
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
