@@ -330,46 +330,46 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+    <div className="h-[100dvh] bg-background flex flex-col relative overflow-hidden">
       <div className="absolute top-[-15%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse duration-1000 z-0" />
       <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none z-0" />
       <div className="absolute top-[20%] right-[10%] w-[20%] h-[20%] bg-amber-500/10 rounded-full blur-[80px] pointer-events-none z-0" />
 
-      <div className="flex-1 flex flex-col items-center justify-center p-4 z-10 w-full">
-        <Card className="w-full max-w-xl shadow-elevation border-border/60 relative z-10 backdrop-blur-md bg-background/80 animate-fade-in-up">
-          <CardHeader className="space-y-4 pb-6 text-center">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-2">
+      <div className="flex-1 flex flex-col items-center p-4 sm:p-6 z-10 w-full overflow-y-auto">
+        <Card className="w-full max-w-xl shadow-elevation border-border/60 relative z-10 backdrop-blur-md bg-background/80 animate-fade-in-up my-auto shrink-0">
+          <CardHeader className="space-y-2 pb-4 text-center">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-1">
               <img
                 src={logo15Anos}
                 alt="Observatório 15 Anos Logo"
-                className="h-12 md:h-14 object-contain"
+                className="h-8 md:h-10 object-contain"
               />
-              <div className="hidden sm:block w-px h-10 bg-border/60"></div>
+              <div className="hidden sm:block w-px h-8 bg-border/60"></div>
               <img
                 src={logoMaioAmarelo}
                 alt="Maio Amarelo Campaign"
-                className="h-10 md:h-12 object-contain"
+                className="h-6 md:h-8 object-contain"
               />
             </div>
 
-            <div className="flex justify-center mt-4 mb-2">
+            <div className="flex justify-center mt-2 mb-1">
               <img
                 src={logoOC}
                 alt="Observador Certificado"
-                className="h-28 sm:h-32 md:h-36 w-auto max-w-[90%] object-contain drop-shadow-sm"
+                className="h-20 sm:h-24 md:h-28 w-auto max-w-[90%] object-contain drop-shadow-sm"
               />
             </div>
 
-            <CardTitle className="text-2xl font-bold tracking-tight">
+            <CardTitle className="text-xl md:text-2xl font-bold tracking-tight">
               Portal Estratégico ONSV
             </CardTitle>
-            <CardDescription className="text-base font-medium uppercase text-primary">
+            <CardDescription className="text-sm md:text-base font-medium uppercase text-primary">
               MAPEAMENTO E JORNADA DO OBSERVADOR CERTIFICADO
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
                 <TabsTrigger value="login">Entrar</TabsTrigger>
                 <TabsTrigger value="register">Cadastrar</TabsTrigger>
               </TabsList>
@@ -486,7 +486,7 @@ export default function Login() {
                   <Form {...registerForm}>
                     <form
                       onSubmit={registerForm.handleSubmit(onRegister)}
-                      className="space-y-4 max-h-[65vh] overflow-y-auto px-1 pb-2"
+                      className="space-y-4 px-1 pb-2"
                     >
                       <div className="mb-2">
                         <Progress value={((step + 1) / STEPS.length) * 100} className="h-2" />
@@ -973,8 +973,8 @@ export default function Login() {
         </Card>
       </div>
 
-      <div className="w-full bg-background/90 backdrop-blur-md border-t border-border/60 py-4 px-4 flex justify-center z-20 mt-auto">
-        <img src={logoParceiros} alt="Parceiros" className="h-6 md:h-8 object-contain max-w-full" />
+      <div className="w-full shrink-0 bg-background/90 backdrop-blur-md border-t border-border/60 py-3 px-4 flex justify-center z-20 mt-auto">
+        <img src={logoParceiros} alt="Parceiros" className="h-5 md:h-7 object-contain max-w-full" />
       </div>
     </div>
   )
