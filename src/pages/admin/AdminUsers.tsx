@@ -195,13 +195,18 @@ export default function AdminUsers() {
     try {
       await deleteUser(userToDelete.id)
       toast({
-        title: 'Usuário excluído com sucesso.',
+        title: 'Usuário excluído',
+        description: 'O usuário e seus dados associados foram removidos com sucesso.',
       })
       setUserToDelete(null)
-    } catch (error) {
+    } catch (error: any) {
+      console.error(error)
+      const msg = getErrorMessage(error)
       toast({
         title: 'Erro ao excluir usuário',
-        description: getErrorMessage(error),
+        description: msg.toLowerCase().includes('constraint')
+          ? 'Não foi possível excluir o usuário devido a registros dependentes que não puderam ser limpos.'
+          : msg,
         variant: 'destructive',
       })
     } finally {
