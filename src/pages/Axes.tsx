@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Info, CheckCircle2, Lock } from 'lucide-react'
+import { Info, CheckCircle2, Lock, HelpCircle } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import useGameStore from '@/stores/useGameStore'
 
 export default function Axes() {
@@ -9,7 +10,20 @@ export default function Axes() {
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Níveis de Evolução</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-3xl font-bold tracking-tight">Níveis de Evolução</h1>
+          <Tooltip>
+            <TooltipTrigger type="button" tabIndex={-1} className="mt-1">
+              <HelpCircle className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="max-w-xs text-sm font-normal">
+                Os pontos acumulados estão sujeitos aos limites definidos no Guia da Jornada.
+                Verifique as regras de pontuação.
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
         <p className="text-muted-foreground mt-2">
           Acompanhe sua jornada e descubra os requisitos para alcançar novos níveis de certificação
           na plataforma.

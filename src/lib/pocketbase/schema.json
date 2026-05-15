@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-14T14:51:18.143Z",
+  "generatedAt": "2026-05-15T12:52:23.997Z",
   "collections": [
     {
       "name": "users",
@@ -138,6 +138,12 @@
         {
           "name": "cep",
           "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "onboarding_completed",
+          "type": "bool",
           "required": false,
           "system": false
         }

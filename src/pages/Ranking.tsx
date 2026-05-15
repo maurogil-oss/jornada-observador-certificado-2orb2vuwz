@@ -22,7 +22,9 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  HelpCircle,
 } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
@@ -203,13 +205,37 @@ function UserBreakdown({ userId, userPoints }: { userId: string; userPoints: num
                 colSpan={2}
                 className="sm:hidden font-bold text-right text-green-600 dark:text-green-500"
               >
-                Pontos Válidos
+                <div className="flex items-center justify-end gap-1">
+                  Pontos Válidos
+                  <Tooltip>
+                    <TooltipTrigger type="button" tabIndex={-1}>
+                      <HelpCircle className="h-3 w-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs text-xs font-normal">
+                        Pontuação contabilizada para evolução de nível, respeitando os limites.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
               </TableCell>
               <TableCell
                 colSpan={isAdmin ? 5 : 3}
                 className="hidden sm:table-cell font-bold text-right text-green-600 dark:text-green-500"
               >
-                Pontos Válidos
+                <div className="flex items-center justify-end gap-1">
+                  Pontos Válidos
+                  <Tooltip>
+                    <TooltipTrigger type="button" tabIndex={-1}>
+                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs text-xs font-normal">
+                        Pontuação contabilizada para evolução de nível, respeitando os limites.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
               </TableCell>
               <TableCell className="text-right font-black text-lg text-green-600 dark:text-green-500">
                 {userPoints}
@@ -220,13 +246,39 @@ function UserBreakdown({ userId, userPoints }: { userId: string; userPoints: num
                 colSpan={2}
                 className="sm:hidden font-bold text-right text-orange-600 dark:text-orange-500"
               >
-                Pontos Excedentes
+                <div className="flex items-center justify-end gap-1">
+                  Pontos Excedentes
+                  <Tooltip>
+                    <TooltipTrigger type="button" tabIndex={-1}>
+                      <HelpCircle className="h-3 w-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs text-xs font-normal">
+                        Pontuação que ultrapassou o limite máximo permitido, não somando para o
+                        nível.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
               </TableCell>
               <TableCell
                 colSpan={isAdmin ? 5 : 3}
                 className="hidden sm:table-cell font-bold text-right text-orange-600 dark:text-orange-500"
               >
-                Pontos Excedentes
+                <div className="flex items-center justify-end gap-1">
+                  Pontos Excedentes
+                  <Tooltip>
+                    <TooltipTrigger type="button" tabIndex={-1}>
+                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs text-xs font-normal">
+                        Pontuação que ultrapassou o limite máximo permitido, não somando para o
+                        nível.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
               </TableCell>
               <TableCell className="text-right font-bold text-orange-600 dark:text-orange-500">
                 {Math.max(0, totalScore - userPoints)}

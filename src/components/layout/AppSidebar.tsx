@@ -26,6 +26,7 @@ import {
   TrendingUp,
   ShieldCheck,
   Database,
+  BookOpen,
 } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
@@ -48,6 +49,7 @@ export function AppSidebar() {
     { title: 'Níveis de Evolução', url: '/niveis', icon: Compass },
     { title: 'Cofre de Evidências', url: '/submissoes', icon: FileCheck },
     { title: 'Ranking / Mérito', url: '/ranking', icon: Trophy },
+    { title: 'Guia da Jornada', url: '/guia', icon: BookOpen },
   ]
 
   const adminNav = [

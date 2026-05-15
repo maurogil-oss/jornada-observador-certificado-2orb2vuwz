@@ -14,6 +14,7 @@ interface User {
   level: string
   avatar: string
   is_active: boolean
+  onboarding_completed: boolean
   birth_date?: string
   city?: string
   state?: string
@@ -73,6 +74,7 @@ const extractUserFromRecord = (record: any): User | null => {
     level: record.level || 'Nível I - Observador Certificado (Iniciante)',
     avatar: record.avatar ? pb.files.getUrl(record, record.avatar) : '',
     is_active: record.is_active !== false,
+    onboarding_completed: record.onboarding_completed === true,
     birth_date: record.birth_date || '',
     city: record.city || '',
     state: record.state || '',
@@ -220,6 +222,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       points: 0,
       level: 'Nível I - Observador Certificado (Iniciante)',
       is_active: false,
+      onboarding_completed: false,
     })
   }
 

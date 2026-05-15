@@ -26,6 +26,7 @@ import AdminPerformance from './pages/admin/AdminPerformance'
 import AdminScoreAudit from './pages/admin/AdminScoreAudit'
 import AdminImportLogs from './pages/admin/AdminImportLogs'
 import Profile from './pages/Profile'
+import Manual from './pages/Manual'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
 import PublicProfile from './pages/PublicProfile'
@@ -225,6 +226,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminImportLogs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/guia"
+          element={
+            <ProtectedRoute allowedRoles={['observer', 'admin']}>
+              <Manual />
             </ProtectedRoute>
           }
         />

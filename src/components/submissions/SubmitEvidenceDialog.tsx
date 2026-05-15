@@ -17,7 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Info, Loader2, Link as LinkIcon, AlertCircle } from 'lucide-react'
+import { Info, Loader2, Link as LinkIcon, AlertCircle, HelpCircle } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useToast } from '@/hooks/use-toast'
 import pb from '@/lib/pocketbase/client'
 import useAuthStore from '@/stores/useAuthStore'
@@ -189,9 +190,25 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
 
             <form id="evidence-form" onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="type" className="font-semibold">
-                  Tipo de Evidência
-                </Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="type" className="font-semibold">
+                    Tipo de Evidência
+                  </Label>
+                  <Tooltip>
+                    <TooltipTrigger type="button" tabIndex={-1}>
+                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs font-normal text-sm">
+                        <strong>Titulação:</strong> Certificados, diplomas e cursos.
+                        <br />
+                        <strong>Competência:</strong> Ações práticas, palestras e eventos.
+                        <br />
+                        <strong>Outro:</strong> Atividades diversas.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
                 <Select value={type} onValueChange={setType}>
                   <SelectTrigger id="type" className="w-full">
                     <SelectValue placeholder="Selecione o tipo" />

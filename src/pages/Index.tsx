@@ -11,6 +11,8 @@ import { useRealtime } from '@/hooks/use-realtime'
 import pb from '@/lib/pocketbase/client'
 import { useState, useEffect } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
+import { WelcomeModal } from '@/components/onboarding/WelcomeModal'
+import { OnboardingChecklist } from '@/components/dashboard/OnboardingChecklist'
 
 export default function Index() {
   const { user } = useAuthStore()
@@ -60,6 +62,9 @@ export default function Index() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in-up pb-10">
+      <WelcomeModal />
+      <OnboardingChecklist />
+
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div className="space-y-2">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
