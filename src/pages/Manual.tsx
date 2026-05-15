@@ -4,6 +4,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { useEffect, useState, useCallback } from 'react'
 import pb from '@/lib/pocketbase/client'
 import useAuthStore from '@/stores/useAuthStore'
@@ -161,57 +169,74 @@ export default function Manual() {
                 Nenhuma regra de pontuação cadastrada no momento.
               </div>
             ) : (
-              <Accordion
-                type="single"
-                collapsible
-                className="w-full border rounded-xl bg-card overflow-hidden"
-              >
-                {metadata.map((item) => (
-                  <AccordionItem key={item.id} value={item.id} className="last:border-0 px-4">
-                    <AccordionTrigger className="hover:no-underline py-4">
-                      <div className="flex flex-1 items-center justify-between mr-4 text-left">
-                        <div className="pr-4">
-                          <div className="font-medium text-foreground leading-tight">
-                            {item.title}
-                          </div>
-                          {item.axis && (
-                            <div className="text-xs text-muted-foreground mt-1">{item.axis}</div>
+              <div className="rounded-xl border bg-card overflow-hidden overflow-x-auto">
+                <Table className="w-full text-sm">
+                  <TableHeader>
+                    <TableRow className="bg-muted/50 hover:bg-muted/50">
+                      <TableHead className="min-w-[250px] py-4">Atividade</TableHead>
+                      <TableHead className="py-4">Eixo</TableHead>
+                      <TableHead className="text-center py-4 whitespace-nowrap">Nível I</TableHead>
+                      <TableHead className="text-center py-4 whitespace-nowrap">Nível II</TableHead>
+                      <TableHead className="text-center py-4 whitespace-nowrap">
+                        Nível III
+                      </TableHead>
+                      <TableHead className="py-4 whitespace-nowrap">Limite Máximo</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {metadata.map((item) => (
+                      <TableRow key={item.id} className="group">
+                        <TableCell className="font-medium align-top py-4">
+                          <span className="text-foreground">{item.title}</span>
+                          {(item.definition || item.required_evidence) && (
+                            <div className="mt-2 space-y-2 text-xs text-muted-foreground font-normal">
+                              {item.definition && (
+                                <p>
+                                  <strong className="text-foreground/80">Definição:</strong>{' '}
+                                  {item.definition}
+                                </p>
+                              )}
+                              {item.required_evidence && (
+                                <p>
+                                  <strong className="text-foreground/80">Evidência:</strong>{' '}
+                                  {item.required_evidence}
+                                </p>
+                              )}
+                            </div>
                           )}
-                        </div>
-                        <div className="flex items-center shrink-0">
-                          <Badge variant="secondary" className="whitespace-nowrap font-bold">
-                            {item.points} pts
+                        </TableCell>
+                        <TableCell className="align-top py-4 text-muted-foreground">
+                          {item.axis || '-'}
+                        </TableCell>
+                        <TableCell className="align-top text-center py-4">
+                          <Badge variant="secondary" className="font-bold">
+                            {item.points_level_1 ?? item.points ?? '-'} pts
                           </Badge>
-                        </div>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="space-y-4 pt-1 pb-5 text-muted-foreground">
-                      {item.definition && (
-                        <div>
-                          <strong className="text-foreground block text-sm mb-1">
-                            Definição / Descrição:
-                          </strong>
-                          <p className="text-sm">{item.definition}</p>
-                        </div>
-                      )}
-                      {item.required_evidence && (
-                        <div>
-                          <strong className="text-foreground block text-sm mb-1">
-                            Evidência Necessária:
-                          </strong>
-                          <p className="text-sm">{item.required_evidence}</p>
-                        </div>
-                      )}
-                      <div>
-                        <strong className="text-foreground block text-sm mb-1">
-                          Limite Máximo:
-                        </strong>
-                        <p className="text-sm">{item.max_limit || 'Sem limite específico'}</p>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
+                        </TableCell>
+                        <TableCell className="align-top text-center py-4">
+                          <Badge
+                            variant="secondary"
+                            className="font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                          >
+                            {item.points_level_2 ?? item.points ?? '-'} pts
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="align-top text-center py-4">
+                          <Badge
+                            variant="secondary"
+                            className="font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/30"
+                          >
+                            {item.points_level_3 ?? item.points ?? '-'} pts
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="align-top py-4 text-muted-foreground">
+                          {item.max_limit || 'Sem limite específico'}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </AccordionContent>
         </AccordionItem>

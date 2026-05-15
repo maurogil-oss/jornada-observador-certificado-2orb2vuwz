@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-15T12:58:10.730Z",
+  "generatedAt": "2026-05-15T13:08:31.636Z",
   "collections": [
     {
       "name": "users",
@@ -435,6 +435,24 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "points_level_1",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "points_level_2",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "points_level_3",
+          "type": "number",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [

@@ -9,6 +9,9 @@ export interface ActivityMetadata {
   validation_method?: string
   max_limit?: string
   points?: number
+  points_level_1?: number
+  points_level_2?: number
+  points_level_3?: number
 }
 
 export const getActivityMetadataByTitle = async (
