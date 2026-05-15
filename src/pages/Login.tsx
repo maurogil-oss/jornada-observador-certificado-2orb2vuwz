@@ -338,17 +338,17 @@ export default function Login() {
       <div className="flex-1 flex flex-col items-center p-4 sm:p-6 z-10 w-full overflow-y-auto">
         <Card className="w-full max-w-xl shadow-elevation border-border/60 relative z-10 backdrop-blur-md bg-background/80 animate-fade-in-up my-auto shrink-0">
           <CardHeader className="space-y-2 pb-4 text-center">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-1">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-2">
               <img
                 src={logo15Anos}
                 alt="Observatório 15 Anos Logo"
-                className="h-8 md:h-10 object-contain"
+                className="h-12 md:h-16 object-contain"
               />
-              <div className="hidden sm:block w-px h-8 bg-border/60"></div>
+              <div className="hidden sm:block w-px h-12 bg-border/60"></div>
               <img
                 src={logoMaioAmarelo}
                 alt="Maio Amarelo Campaign"
-                className="h-6 md:h-8 object-contain"
+                className="h-10 md:h-14 object-contain"
               />
             </div>
 
