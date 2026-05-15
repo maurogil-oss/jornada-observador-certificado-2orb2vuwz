@@ -109,28 +109,52 @@ export default function Manual() {
             </p>
             <div className="space-y-4 mt-4">
               <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/20 dark:border-emerald-800">
-                <h4 className="font-bold text-emerald-800 dark:text-emerald-400">
-                  Nível I - Observador Certificado
-                </h4>
-                <p className="text-sm mt-1 text-emerald-900 dark:text-emerald-300">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <h4 className="font-bold text-emerald-800 dark:text-emerald-400">
+                    Nível I - Observador Certificado
+                  </h4>
+                  <Badge
+                    variant="outline"
+                    className="w-fit bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-700"
+                  >
+                    000 a 499 pontos
+                  </Badge>
+                </div>
+                <p className="text-sm mt-2 text-emerald-900 dark:text-emerald-300">
                   Status inicial conferido após a aprovação na prova de nivelamento e documentação
                   básica (ex: Ensino Médio).
                 </p>
               </div>
               <div className="p-4 rounded-lg bg-blue-50 border border-blue-200 dark:bg-blue-950/20 dark:border-blue-800">
-                <h4 className="font-bold text-blue-800 dark:text-blue-400">
-                  Nível II - Observador Certificado Pleno
-                </h4>
-                <p className="text-sm mt-1 text-blue-900 dark:text-blue-300">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <h4 className="font-bold text-blue-800 dark:text-blue-400">
+                    Nível II - Observador Certificado Pleno
+                  </h4>
+                  <Badge
+                    variant="outline"
+                    className="w-fit bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-700"
+                  >
+                    500 a 999 pontos
+                  </Badge>
+                </div>
+                <p className="text-sm mt-2 text-blue-900 dark:text-blue-300">
                   Requer acúmulo de <strong>500 pontos</strong> em evidências válidas. Demonstra
                   atuação constante e desenvolvimento contínuo.
                 </p>
               </div>
               <div className="p-4 rounded-lg bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-800">
-                <h4 className="font-bold text-amber-800 dark:text-amber-400">
-                  Nível III - Observador Certificado Mobilizador
-                </h4>
-                <p className="text-sm mt-1 text-amber-900 dark:text-amber-300">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <h4 className="font-bold text-amber-800 dark:text-amber-400">
+                    Nível III - Observador Certificado Mobilizador
+                  </h4>
+                  <Badge
+                    variant="outline"
+                    className="w-fit bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/50 dark:text-amber-300 dark:border-amber-700"
+                  >
+                    1000+ pontos
+                  </Badge>
+                </div>
+                <p className="text-sm mt-2 text-amber-900 dark:text-amber-300">
                   O topo da jornada, requerendo <strong>1000 pontos</strong>. Demonstra forte
                   capacidade de liderança, impacto social relevante e articulação em prol do
                   Movimento Maio Amarelo e outras campanhas do ONSV.
