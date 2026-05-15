@@ -38,9 +38,9 @@ import { extractFieldErrors } from '@/lib/pocketbase/errors'
 import pb from '@/lib/pocketbase/client'
 import { toTitleCase } from '@/lib/utils'
 import logo15Anos from '@/assets/image-123e2.png'
-import logoParceiros from '@/assets/image-bf198.png'
 import logoMaioAmarelo from '@/assets/image-cb3e5.png'
 import logoOC from '@/assets/image-29272.png'
+import { AppFooter } from '@/components/layout/AppFooter'
 
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido.'),
@@ -973,13 +973,7 @@ export default function Login() {
         </Card>
       </div>
 
-      <div className="w-full shrink-0 bg-background/90 backdrop-blur-md border-t border-border/60 py-4 md:py-6 px-4 flex justify-center items-center z-20 mt-auto overflow-hidden">
-        <img
-          src={logoParceiros}
-          alt="Parceiros"
-          className="h-12 sm:h-16 md:h-20 lg:h-24 object-contain max-w-[95%]"
-        />
-      </div>
+      <AppFooter />
     </div>
   )
 }
