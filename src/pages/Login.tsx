@@ -973,8 +973,12 @@ export default function Login() {
         </Card>
       </div>
 
-      <div className="w-full shrink-0 bg-background/90 backdrop-blur-md border-t border-border/60 py-3 px-4 flex justify-center z-20 mt-auto">
-        <img src={logoParceiros} alt="Parceiros" className="h-5 md:h-7 object-contain max-w-full" />
+      <div className="w-full shrink-0 bg-background/90 backdrop-blur-md border-t border-border/60 py-4 md:py-6 px-4 flex justify-center items-center z-20 mt-auto overflow-hidden">
+        <img
+          src={logoParceiros}
+          alt="Parceiros"
+          className="h-12 sm:h-16 md:h-20 lg:h-24 object-contain max-w-[95%]"
+        />
       </div>
     </div>
   )
