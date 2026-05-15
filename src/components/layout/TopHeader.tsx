@@ -4,6 +4,8 @@ import useAuthStore from '@/stores/useAuthStore'
 import useGameStore from '@/stores/useGameStore'
 import { Badge } from '@/components/ui/badge'
 import pb from '@/lib/pocketbase/client'
+import logoOC from '@/assets/image-29272.png'
+import { Link } from 'react-router-dom'
 
 export function TopHeader() {
   const { user } = useAuthStore()
@@ -28,6 +30,9 @@ export function TopHeader() {
     <header className="h-16 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 shadow-sm">
       <div className="flex items-center gap-4">
         <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors min-h-[44px] min-w-[44px]" />
+        <Link to="/" className="md:hidden flex items-center hover:opacity-80 transition-opacity">
+          <img src={logoOC} alt="Observador Certificado" className="h-8 w-auto object-contain" />
+        </Link>
       </div>
 
       {user && (
