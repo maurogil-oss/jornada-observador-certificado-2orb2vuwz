@@ -4,33 +4,49 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import pb from '@/lib/pocketbase/client'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import useAuthStore from '@/stores/useAuthStore'
-import { BookOpen, AlertCircle, ShieldCheck } from 'lucide-react'
+import { BookOpen, AlertCircle, ShieldCheck, Loader2, RefreshCw } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { useRealtime } from '@/hooks/use-realtime'
+import { ActivityMetadata } from '@/services/activities_metadata'
 
 export default function Manual() {
   const { user } = useAuthStore()
-  const [metadata, setMetadata] = useState<any[]>([])
+  const [metadata, setMetadata] = useState<ActivityMetadata[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchMetadata = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      const res = await pb
+        .collection('activities_metadata')
+        .getFullList<ActivityMetadata>({ sort: 'axis,title' })
+      setMetadata(res)
+    } catch (err: any) {
+      if (!err.isAbort) {
+        setError(
+          'Não foi possível carregar as regras de pontuação. Por favor, tente novamente mais tarde.',
+        )
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
     if (user) localStorage.setItem(`manual_read_${user.id}`, 'true')
+    fetchMetadata()
+  }, [user, fetchMetadata])
 
-    pb.collection('activities_metadata')
-      .getFullList({ sort: 'title' })
-      .then((res) => setMetadata(res))
-      .catch(console.error)
-  }, [user])
+  useRealtime('activities_metadata', () => {
+    fetchMetadata()
+  })
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-10">
@@ -125,45 +141,78 @@ export default function Manual() {
               Abaixo estão listadas todas as atividades pontuáveis, seus respectivos valores e
               limites máximos permitidos na jornada.
             </p>
-            <div className="rounded-md border overflow-hidden">
-              <Table>
-                <TableHeader className="bg-muted/50">
-                  <TableRow>
-                    <TableHead>Atividade / Eixo</TableHead>
-                    <TableHead className="text-right">Pontos</TableHead>
-                    <TableHead>Limite Máximo</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {metadata.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
-                        Carregando regras de pontuação...
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    metadata.map((item) => (
-                      <TableRow key={item.id}>
-                        <TableCell>
-                          <div className="font-medium text-foreground">{item.title}</div>
+
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground border rounded-xl bg-muted/20">
+                <Loader2 className="h-8 w-8 animate-spin mb-4 text-primary" />
+                <p>Carregando regras de pontuação...</p>
+              </div>
+            ) : error ? (
+              <div className="flex flex-col items-center justify-center py-12 text-destructive border border-destructive/20 rounded-xl bg-destructive/5 px-4 text-center">
+                <AlertCircle className="h-8 w-8 mb-4" />
+                <p className="mb-4">{error}</p>
+                <Button onClick={fetchMetadata} variant="outline" className="text-foreground">
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Tentar Novamente
+                </Button>
+              </div>
+            ) : metadata.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground border rounded-xl bg-muted/20">
+                Nenhuma regra de pontuação cadastrada no momento.
+              </div>
+            ) : (
+              <Accordion
+                type="single"
+                collapsible
+                className="w-full border rounded-xl bg-card overflow-hidden"
+              >
+                {metadata.map((item) => (
+                  <AccordionItem key={item.id} value={item.id} className="last:border-0 px-4">
+                    <AccordionTrigger className="hover:no-underline py-4">
+                      <div className="flex flex-1 items-center justify-between mr-4 text-left">
+                        <div className="pr-4">
+                          <div className="font-medium text-foreground leading-tight">
+                            {item.title}
+                          </div>
                           {item.axis && (
-                            <Badge variant="outline" className="mt-1 text-[10px]">
-                              {item.axis}
-                            </Badge>
+                            <div className="text-xs text-muted-foreground mt-1">{item.axis}</div>
                           )}
-                        </TableCell>
-                        <TableCell className="text-right font-bold text-primary whitespace-nowrap">
-                          {item.points} pts
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {item.max_limit || 'Sem limite específico'}
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                        </div>
+                        <div className="flex items-center shrink-0">
+                          <Badge variant="secondary" className="whitespace-nowrap font-bold">
+                            {item.points} pts
+                          </Badge>
+                        </div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-1 pb-5 text-muted-foreground">
+                      {item.definition && (
+                        <div>
+                          <strong className="text-foreground block text-sm mb-1">
+                            Definição / Descrição:
+                          </strong>
+                          <p className="text-sm">{item.definition}</p>
+                        </div>
+                      )}
+                      {item.required_evidence && (
+                        <div>
+                          <strong className="text-foreground block text-sm mb-1">
+                            Evidência Necessária:
+                          </strong>
+                          <p className="text-sm">{item.required_evidence}</p>
+                        </div>
+                      )}
+                      <div>
+                        <strong className="text-foreground block text-sm mb-1">
+                          Limite Máximo:
+                        </strong>
+                        <p className="text-sm">{item.max_limit || 'Sem limite específico'}</p>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            )}
           </AccordionContent>
         </AccordionItem>
 
