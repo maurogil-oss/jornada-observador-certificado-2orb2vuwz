@@ -35,6 +35,7 @@ import { updateUser } from '@/services/users'
 import { toast } from 'sonner'
 import { useRef, useState } from 'react'
 import pb from '@/lib/pocketbase/client'
+import logoOC from '@/assets/image-29272.png'
 
 export function AppSidebar() {
   const location = useLocation()
@@ -114,16 +115,16 @@ export function AppSidebar() {
   return (
     <Sidebar variant="sidebar" collapsible="icon" className="border-r border-border/50 shadow-sm">
       <SidebarHeader className="p-4 border-b border-border/50 bg-amber-50/50 dark:bg-amber-950/20">
-        <div className="flex items-center px-2">
-          <div className="flex flex-col group-data-[collapsible=icon]:hidden whitespace-nowrap overflow-hidden">
-            <span className="font-black text-sm tracking-tight text-foreground leading-none">
-              OBSERVADOR
-            </span>
-            <span className="font-bold text-[10px] tracking-[0.2em] text-amber-600 dark:text-amber-500 leading-tight mt-0.5">
-              CERTIFICADO
-            </span>
-          </div>
-        </div>
+        <Link
+          to="/"
+          className="flex items-center justify-center w-full py-1 hover:opacity-80 transition-opacity"
+        >
+          <img
+            src={logoOC}
+            alt="Observador Certificado"
+            className="h-10 group-data-[collapsible=icon]:h-6 w-auto object-contain transition-all duration-300"
+          />
+        </Link>
       </SidebarHeader>
       <SidebarContent className="bg-muted/5">
         <SidebarGroup>

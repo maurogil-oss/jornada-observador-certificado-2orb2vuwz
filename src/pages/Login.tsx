@@ -40,6 +40,7 @@ import { toTitleCase } from '@/lib/utils'
 import logo15Anos from '@/assets/image-123e2.png'
 import logoParceiros from '@/assets/image-bf198.png'
 import logoMaioAmarelo from '@/assets/image-cb3e5.png'
+import logoOC from '@/assets/image-29272.png'
 
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido.'),
@@ -350,6 +351,15 @@ export default function Login() {
                 className="h-10 md:h-12 object-contain"
               />
             </div>
+
+            <div className="flex justify-center mt-4 mb-2">
+              <img
+                src={logoOC}
+                alt="Observador Certificado"
+                className="h-28 sm:h-32 md:h-36 w-auto max-w-[90%] object-contain drop-shadow-sm"
+              />
+            </div>
+
             <CardTitle className="text-2xl font-bold tracking-tight">
               Portal Estratégico ONSV
             </CardTitle>

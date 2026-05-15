@@ -28,16 +28,6 @@ export function TopHeader() {
     <header className="h-16 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 shadow-sm">
       <div className="flex items-center gap-4">
         <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors min-h-[44px] min-w-[44px]" />
-        <div className="hidden md:flex items-center">
-          <div className="flex flex-col">
-            <h2 className="text-sm font-black text-foreground tracking-tight leading-none uppercase">
-              Observador Certificado
-            </h2>
-            <span className="text-[10px] font-bold tracking-widest text-amber-600 dark:text-amber-500 uppercase mt-0.5">
-              Jornada de Evolução
-            </span>
-          </div>
-        </div>
       </div>
 
       {user && (
