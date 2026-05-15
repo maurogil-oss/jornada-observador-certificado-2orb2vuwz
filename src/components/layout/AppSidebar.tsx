@@ -45,11 +45,11 @@ export function AppSidebar() {
 
   const observerNav = [
     { title: 'Dashboard', url: '/', icon: Home },
+    { title: 'Guia da Jornada', url: '/guia', icon: BookOpen },
     { title: 'Meu Perfil', url: '/perfil', icon: Users },
     { title: 'Níveis de Evolução', url: '/niveis', icon: Compass },
     { title: 'Cofre de Evidências', url: '/submissoes', icon: FileCheck },
     { title: 'Ranking / Mérito', url: '/ranking', icon: Trophy },
-    { title: 'Guia da Jornada', url: '/guia', icon: BookOpen },
   ]
 
   const adminNav = [
