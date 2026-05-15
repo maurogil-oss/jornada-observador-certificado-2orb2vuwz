@@ -1,131 +1,172 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Info, CheckCircle2, Lock, HelpCircle } from 'lucide-react'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import useGameStore from '@/stores/useGameStore'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Trophy, Star, Shield, ArrowRight, BookOpen, Target, Users } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 
 export default function Axes() {
-  const { level } = useGameStore()
-
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-8 animate-fade-in">
+    <div className="container mx-auto py-8 max-w-5xl space-y-8 animate-fade-in px-4">
       <div>
-        <div className="flex items-center gap-2">
-          <h1 className="text-3xl font-bold tracking-tight">Níveis de Evolução</h1>
-          <Tooltip>
-            <TooltipTrigger type="button" tabIndex={-1} className="mt-1">
-              <HelpCircle className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="max-w-xs text-sm font-normal">
-                Os pontos acumulados estão sujeitos aos limites definidos no Guia da Jornada.
-                Verifique as regras de pontuação.
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
-        <p className="text-muted-foreground mt-2">
-          Acompanhe sua jornada e descubra os requisitos para alcançar novos níveis de certificação
-          na plataforma.
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Níveis de Evolução</h1>
+        <p className="text-muted-foreground mt-2 text-lg">
+          Compreenda os requisitos de pontuação para progredir na sua Jornada de Evolução como
+          Observador Certificado.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="relative overflow-hidden border-emerald-500/50 bg-emerald-50/50 dark:bg-emerald-950/20 shadow-sm transition-all hover:shadow-md">
-          <CardHeader>
-            <div className="flex justify-between items-start">
-              <CardTitle className="text-xl text-emerald-700 dark:text-emerald-400">
-                Nível I
-              </CardTitle>
-              <Badge className="bg-emerald-500 text-white">
-                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Concluído
-              </Badge>
+      <div className="space-y-4">
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+          Progressão de Níveis
+        </h2>
+        <p className="text-muted-foreground">
+          Sua jornada é dividida em três níveis de reconhecimento. Acumule pontos através de suas
+          contribuições para avançar.
+        </p>
+
+        <div className="grid gap-6 md:grid-cols-3 mt-6">
+          <Card className="relative overflow-hidden border-border/50 bg-card hover:bg-muted/20 transition-all shadow-sm group">
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+              <Star className="w-24 h-24" />
             </div>
-            <CardDescription className="font-semibold text-foreground/80">
-              Observador Certificado
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-start gap-3 bg-emerald-100/60 dark:bg-emerald-900/40 p-4 rounded-md border border-emerald-200 dark:border-emerald-800">
-              <Info className="w-5 h-5 text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" />
-              <p className="text-sm text-emerald-900 dark:text-emerald-100 font-medium">
-                Este nível é automaticamente concluído para Observadores Certificados, pois a
-                formação inicial e o ensino médio são pré-requisitos já atendidos.
+            <CardHeader>
+              <div className="w-12 h-12 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mb-4">
+                <Star className="w-6 h-6 text-amber-600 dark:text-amber-500" />
+              </div>
+              <CardTitle className="text-2xl text-foreground">Nível I</CardTitle>
+              <CardDescription className="text-base font-bold text-foreground mt-1">
+                Nível I de 000 a 499
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                O início da sua jornada como Observador Certificado. Foco em capacitação, titulação
+                e nas suas primeiras ações de impacto.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="relative overflow-hidden border-border/50 bg-card hover:bg-muted/20 transition-all shadow-sm group">
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+              <Shield className="w-24 h-24" />
+            </div>
+            <CardHeader>
+              <div className="w-12 h-12 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-4">
+                <Shield className="w-6 h-6 text-emerald-600 dark:text-emerald-500" />
+              </div>
+              <CardTitle className="text-2xl text-foreground">Nível II</CardTitle>
+              <CardDescription className="text-base font-bold text-foreground mt-1">
+                Nível II 500 à 999
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Nível intermediário de engajamento ativo. Demonstra dedicação contínua e resultados
+                expressivos em projetos de segurança viária.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="relative overflow-hidden border-border/50 bg-card hover:bg-muted/20 transition-all shadow-sm group">
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+              <Trophy className="w-24 h-24" />
+            </div>
+            <CardHeader>
+              <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4">
+                <Trophy className="w-6 h-6 text-blue-600 dark:text-blue-500" />
+              </div>
+              <CardTitle className="text-2xl text-foreground">Nível III</CardTitle>
+              <CardDescription className="text-base font-bold text-foreground mt-1">
+                Nível III acima de 1000
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                A excelência na jornada. Liderança reconhecida, influência significativa na
+                sociedade e atuação como mentor para a rede.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <div className="space-y-4 pt-6">
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+          Eixos de Avaliação
+        </h2>
+        <p className="text-muted-foreground mb-6">
+          Suas atividades e submissões são pontuadas através de três eixos fundamentais que compõem
+          o perfil de um Observador Certificado.
+        </p>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          <Card className="border-border/50 shadow-sm bg-card">
+            <CardHeader>
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                <BookOpen className="w-5 h-5 text-primary" />
+              </div>
+              <CardTitle className="text-xl text-foreground">Eixo 1</CardTitle>
+              <CardDescription>Capacitação e Titulação</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Valoriza a busca contínua por conhecimento, incluindo graduações, pós-graduações,
+                mestrados e cursos na área de trânsito e mobilidade.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-border/50 shadow-sm bg-card">
+            <CardHeader>
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                <Target className="w-5 h-5 text-primary" />
+              </div>
+              <CardTitle className="text-xl text-foreground">Eixo 2</CardTitle>
+              <CardDescription>Atuação Prática e Impacto</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Mede o resultado prático de suas ações: projetos locais ou nacionais, produção de
+                materiais educativos e participação ativa na mídia.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-border/50 shadow-sm bg-card">
+            <CardHeader>
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                <Users className="w-5 h-5 text-primary" />
+              </div>
+              <CardTitle className="text-xl text-foreground">Eixo 3</CardTitle>
+              <CardDescription>Liderança e Representação</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Reconhece o papel de liderança institucional, como mentoria no programa, atuação em
+                comitês estratégicos e representação técnica.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <Card className="mt-8 border-primary/20 bg-primary/5 shadow-sm">
+        <CardContent className="p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="flex items-start md:items-center gap-4">
+            <div className="p-3 bg-primary/20 rounded-full shrink-0">
+              <ArrowRight className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg text-foreground mb-1">Pronto para evoluir?</h3>
+              <p className="text-muted-foreground">
+                Envie suas evidências para análise e garanta seus pontos na jornada de evolução.
               </p>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card
-          className={`transition-all ${level >= 2 ? 'border-blue-500/50 bg-blue-50/50 dark:bg-blue-950/20 shadow-sm hover:shadow-md' : 'opacity-80 grayscale-[0.2]'}`}
-        >
-          <CardHeader>
-            <div className="flex justify-between items-start">
-              <CardTitle
-                className={`text-xl ${level >= 2 ? 'text-blue-700 dark:text-blue-400' : 'text-muted-foreground'}`}
-              >
-                Nível II
-              </CardTitle>
-              {level >= 2 ? (
-                <Badge className="bg-blue-500 text-white">
-                  <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Concluído
-                </Badge>
-              ) : (
-                <Badge
-                  variant="outline"
-                  className="border-muted-foreground/30 text-muted-foreground"
-                >
-                  <Lock className="w-3.5 h-3.5 mr-1" /> Bloqueado
-                </Badge>
-              )}
-            </div>
-            <CardDescription className="font-semibold">
-              Observador Certificado Pleno
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Alcance <strong>500 pontos</strong> submetendo evidências de missões de impacto.
-              Complete formações adicionais e comprove sua atuação para desbloquear este nível.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card
-          className={`transition-all ${level >= 3 ? 'border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20 shadow-sm hover:shadow-md' : 'opacity-80 grayscale-[0.2]'}`}
-        >
-          <CardHeader>
-            <div className="flex justify-between items-start">
-              <CardTitle
-                className={`text-xl ${level >= 3 ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground'}`}
-              >
-                Nível III
-              </CardTitle>
-              {level >= 3 ? (
-                <Badge className="bg-amber-500 text-amber-950">
-                  <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Concluído
-                </Badge>
-              ) : (
-                <Badge
-                  variant="outline"
-                  className="border-muted-foreground/30 text-muted-foreground"
-                >
-                  <Lock className="w-3.5 h-3.5 mr-1" /> Bloqueado
-                </Badge>
-              )}
-            </div>
-            <CardDescription className="font-semibold">
-              Observador Certificado Mobilizador
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              O topo da jornada. Alcance <strong>1000 pontos</strong> com forte impacto
-              institucional e liderança para conquistar o nível mais alto de nossa certificação.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+          <Button asChild className="w-full md:w-auto shrink-0">
+            <Link to="/submissoes">Ir para o Cofre de Evidências</Link>
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   )
 }
