@@ -27,16 +27,20 @@ export function TopHeader() {
         : 'bg-emerald-500 text-white hover:bg-emerald-600'
 
   return (
-    <header className="h-16 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 shadow-sm">
-      <div className="flex items-center gap-4">
-        <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors min-h-[44px] min-w-[44px]" />
+    <header className="h-auto min-h-[4.5rem] md:h-20 py-2 md:py-0 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 shadow-sm">
+      <div className="flex items-center gap-2 sm:gap-4 shrink-0 mr-4">
+        <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors min-h-[44px] min-w-[44px] shrink-0" />
         <Link to="/" className="md:hidden flex items-center hover:opacity-80 transition-opacity">
-          <img src={logoOC} alt="Observador Certificado" className="h-8 w-auto object-contain" />
+          <img
+            src={logoOC}
+            alt="Observador Certificado"
+            className="h-10 sm:h-12 w-auto max-w-[150px] sm:max-w-[200px] object-contain"
+          />
         </Link>
       </div>
 
       {user && (
-        <div className="flex items-center gap-3 sm:gap-5">
+        <div className="flex items-center gap-3 sm:gap-5 shrink-0">
           <div className="flex items-center gap-2">
             <Badge
               variant="outline"

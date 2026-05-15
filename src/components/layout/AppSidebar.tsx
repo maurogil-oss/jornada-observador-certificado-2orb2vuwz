@@ -114,15 +114,15 @@ export function AppSidebar() {
 
   return (
     <Sidebar variant="sidebar" collapsible="icon" className="border-r border-border/50 shadow-sm">
-      <SidebarHeader className="p-4 border-b border-border/50 bg-amber-50/50 dark:bg-amber-950/20">
+      <SidebarHeader className="p-4 md:p-6 border-b border-border/50 bg-amber-50/50 dark:bg-amber-950/20 min-h-[5rem] flex items-center justify-center">
         <Link
           to="/"
-          className="flex items-center justify-center w-full py-1 hover:opacity-80 transition-opacity"
+          className="flex items-center justify-center w-full hover:opacity-80 transition-opacity"
         >
           <img
             src={logoOC}
             alt="Observador Certificado"
-            className="h-10 group-data-[collapsible=icon]:h-6 w-auto object-contain transition-all duration-300"
+            className="h-16 md:h-20 lg:h-24 max-w-full group-data-[collapsible=icon]:h-8 w-auto object-contain transition-all duration-300"
           />
         </Link>
       </SidebarHeader>
