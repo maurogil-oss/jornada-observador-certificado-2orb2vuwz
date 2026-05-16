@@ -41,7 +41,7 @@ import logo15Anos from '@/assets/image-123e2.png'
 import logoMaioAmarelo from '@/assets/image-cb3e5.png'
 import logoOC from '@/assets/image-29272.png'
 import { AppFooter } from '@/components/layout/AppFooter'
-import { COUNTRIES, BRAZILIAN_STATES } from '@/lib/data'
+import { COUNTRIES, BRAZILIAN_STATES, LOCATIONS } from '@/lib/data'
 import {
   Select,
   SelectContent,
@@ -123,6 +123,19 @@ const registerSchema = z
     message: 'As senhas não coincidem',
     path: ['passwordConfirm'],
   })
+  .refine(
+    (data) => {
+      if (data.country === 'Outro' || !LOCATIONS[data.country]) return true
+      const states = LOCATIONS[data.country]
+      if (!states[data.state]) return false
+      if (!states[data.state].includes(data.city)) return false
+      return true
+    },
+    {
+      message: 'A cidade selecionada não pertence ao estado selecionado.',
+      path: ['city'],
+    },
+  )
 
 type LoginForm = z.infer<typeof loginSchema>
 type RegisterForm = z.infer<typeof registerSchema>
@@ -790,7 +803,11 @@ export default function Login() {
                                   <FormItem>
                                     <FormLabel>País *</FormLabel>
                                     <Select
-                                      onValueChange={field.onChange}
+                                      onValueChange={(val) => {
+                                        field.onChange(val)
+                                        registerForm.setValue('state', '')
+                                        registerForm.setValue('city', '')
+                                      }}
                                       defaultValue={field.value || 'Brasil'}
                                     >
                                       <FormControl>
@@ -799,7 +816,7 @@ export default function Login() {
                                         </SelectTrigger>
                                       </FormControl>
                                       <SelectContent>
-                                        {COUNTRIES.map((c) => (
+                                        {Object.keys(LOCATIONS).map((c) => (
                                           <SelectItem key={c} value={c}>
                                             {c}
                                           </SelectItem>
@@ -811,10 +828,7 @@ export default function Login() {
                                 )}
                               />
 
-                              {(!registerForm.watch('country') ||
-                                registerForm.watch('country').trim().toLowerCase() === 'brasil' ||
-                                registerForm.watch('country').trim().toLowerCase() ===
-                                  'brazil') && (
+                              {registerForm.watch('country') === 'Brasil' && (
                                 <FormField
                                   control={registerForm.control}
                                   name="cep"
@@ -840,10 +854,27 @@ export default function Login() {
                                                 .then((res) => res.json())
                                                 .then((data) => {
                                                   if (!data.erro) {
-                                                    registerForm.setValue('city', data.localidade, {
+                                                    const uf = data.uf
+                                                    const localidade = data.localidade
+
+                                                    // Ensure the city is in the LOCATIONS array so it passes validation and appears in select
+                                                    if (
+                                                      LOCATIONS['Brasil'] &&
+                                                      LOCATIONS['Brasil'][uf]
+                                                    ) {
+                                                      if (
+                                                        !LOCATIONS['Brasil'][uf].includes(
+                                                          localidade,
+                                                        )
+                                                      ) {
+                                                        LOCATIONS['Brasil'][uf].push(localidade)
+                                                      }
+                                                    }
+
+                                                    registerForm.setValue('state', uf, {
                                                       shouldValidate: true,
                                                     })
-                                                    registerForm.setValue('state', data.uf, {
+                                                    registerForm.setValue('city', localidade, {
                                                       shouldValidate: true,
                                                     })
                                                   } else {
@@ -870,27 +901,37 @@ export default function Login() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <FormField
                                 control={registerForm.control}
-                                name="city"
+                                name="state"
                                 render={({ field }) => {
-                                  const isBrazil =
-                                    !registerForm.watch('country') ||
-                                    registerForm.watch('country').trim().toLowerCase() ===
-                                      'brasil' ||
-                                    registerForm.watch('country').trim().toLowerCase() === 'brazil'
+                                  const country = registerForm.watch('country') || 'Brasil'
+                                  const states = LOCATIONS[country]
+                                    ? Object.keys(LOCATIONS[country])
+                                    : []
+
                                   return (
                                     <FormItem>
-                                      <FormLabel>Cidade *</FormLabel>
-                                      <FormControl>
-                                        <div className="relative">
-                                          <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                                          <Input
-                                            placeholder="Cidade"
-                                            className={`pl-10 h-11 ${isBrazil ? 'bg-muted text-muted-foreground' : ''}`}
-                                            readOnly={isBrazil}
-                                            {...field}
-                                          />
-                                        </div>
-                                      </FormControl>
+                                      <FormLabel>Estado / Província *</FormLabel>
+                                      <Select
+                                        onValueChange={(val) => {
+                                          field.onChange(val)
+                                          registerForm.setValue('city', '')
+                                        }}
+                                        value={field.value || undefined}
+                                        disabled={states.length === 0}
+                                      >
+                                        <FormControl>
+                                          <SelectTrigger className="h-11">
+                                            <SelectValue placeholder="Selecione o estado" />
+                                          </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                          {states.map((s) => (
+                                            <SelectItem key={s} value={s}>
+                                              {s}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
                                       <FormMessage />
                                     </FormItem>
                                   )
@@ -899,41 +940,36 @@ export default function Login() {
 
                               <FormField
                                 control={registerForm.control}
-                                name="state"
+                                name="city"
                                 render={({ field }) => {
-                                  const isBrazil =
-                                    !registerForm.watch('country') ||
-                                    registerForm.watch('country').trim().toLowerCase() ===
-                                      'brasil' ||
-                                    registerForm.watch('country').trim().toLowerCase() === 'brazil'
+                                  const country = registerForm.watch('country') || 'Brasil'
+                                  const state = registerForm.watch('state')
+                                  const cities =
+                                    state && LOCATIONS[country]
+                                      ? LOCATIONS[country][state] || []
+                                      : []
+
                                   return (
                                     <FormItem>
-                                      <FormLabel>Estado *</FormLabel>
-                                      {isBrazil ? (
-                                        <Select
-                                          onValueChange={field.onChange}
-                                          value={field.value || undefined}
-                                        >
-                                          <FormControl>
-                                            <SelectTrigger
-                                              className={`h-11 ${isBrazil && registerForm.watch('cep') && registerForm.watch('cep').length === 9 ? 'bg-muted/50' : ''}`}
-                                            >
-                                              <SelectValue placeholder="UF" />
-                                            </SelectTrigger>
-                                          </FormControl>
-                                          <SelectContent>
-                                            {BRAZILIAN_STATES.map((uf) => (
-                                              <SelectItem key={uf} value={uf}>
-                                                {uf}
-                                              </SelectItem>
-                                            ))}
-                                          </SelectContent>
-                                        </Select>
-                                      ) : (
+                                      <FormLabel>Cidade *</FormLabel>
+                                      <Select
+                                        onValueChange={field.onChange}
+                                        value={field.value || undefined}
+                                        disabled={cities.length === 0}
+                                      >
                                         <FormControl>
-                                          <Input placeholder="UF" className="h-11" {...field} />
+                                          <SelectTrigger className="h-11">
+                                            <SelectValue placeholder="Selecione a cidade" />
+                                          </SelectTrigger>
                                         </FormControl>
-                                      )}
+                                        <SelectContent>
+                                          {cities.map((c) => (
+                                            <SelectItem key={c} value={c}>
+                                              {c}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
                                       <FormMessage />
                                     </FormItem>
                                   )

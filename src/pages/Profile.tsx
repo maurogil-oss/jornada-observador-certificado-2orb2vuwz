@@ -54,7 +54,7 @@ const isValidDate = (dateString: string) => {
   return true
 }
 
-import { COUNTRIES, BRAZILIAN_STATES } from '@/lib/data'
+import { COUNTRIES, BRAZILIAN_STATES, LOCATIONS } from '@/lib/data'
 
 export default function Profile() {
   const { user } = useAuthStore()
@@ -124,7 +124,7 @@ export default function Profile() {
   }
 
   const handleStateChange = (val: string) => {
-    setFormData((prev) => ({ ...prev, state: val.toUpperCase() }))
+    setFormData((prev) => ({ ...prev, state: val, city: '' }))
   }
 
   const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,10 +143,19 @@ export default function Profile() {
         const res = await fetch(`https://viacep.com.br/ws/${value}/json/`)
         const data = await res.json()
         if (!data.erro) {
+          const uf = data.uf
+          const localidade = data.localidade
+
+          if (LOCATIONS['Brasil'] && LOCATIONS['Brasil'][uf]) {
+            if (!LOCATIONS['Brasil'][uf].includes(localidade)) {
+              LOCATIONS['Brasil'][uf].push(localidade)
+            }
+          }
+
           setFormData((prev) => ({
             ...prev,
-            city: data.localidade,
-            state: data.uf ? data.uf.toUpperCase() : prev.state,
+            city: localidade,
+            state: uf ? uf.toUpperCase() : prev.state,
           }))
         } else {
           toast.error('CEP não encontrado. Verifique o número digitado.')
@@ -157,10 +166,31 @@ export default function Profile() {
     }
   }
 
-  const isBrazil =
-    !formData.country ||
-    formData.country.trim().toLowerCase() === 'brasil' ||
-    formData.country.trim().toLowerCase() === 'brazil'
+  const isBrazil = formData.country === 'Brasil'
+
+  const currentStates = LOCATIONS[formData.country] ? Object.keys(LOCATIONS[formData.country]) : []
+
+  if (
+    user?.state &&
+    formData.country === (user.country || 'Brasil') &&
+    !currentStates.includes(user.state)
+  ) {
+    currentStates.push(user.state)
+  }
+
+  let currentCities =
+    formData.state && LOCATIONS[formData.country]
+      ? [...(LOCATIONS[formData.country][formData.state] || [])]
+      : []
+
+  if (
+    user?.city &&
+    formData.state === user?.state &&
+    formData.country === (user.country || 'Brasil') &&
+    !currentCities.includes(user.city)
+  ) {
+    currentCities.push(user.city)
+  }
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -185,6 +215,20 @@ export default function Profile() {
     if (formData.birth_date && !isValidDate(formData.birth_date)) {
       toast.error('Data de nascimento inválida.')
       return
+    }
+
+    if (formData.country !== 'Outro' && LOCATIONS[formData.country]) {
+      const states = LOCATIONS[formData.country]
+      const validCities =
+        formData.state && states[formData.state] ? [...states[formData.state]] : []
+      if (user?.city && formData.state === user?.state) {
+        validCities.push(user.city)
+      }
+
+      if (!states[formData.state] || !validCities.includes(formData.city)) {
+        toast.error('A cidade selecionada não pertence ao estado selecionado.')
+        return
+      }
     }
 
     setLoading(true)
@@ -366,13 +410,15 @@ export default function Profile() {
             <Label htmlFor="country">País</Label>
             <Select
               value={formData.country}
-              onValueChange={(val) => setFormData((prev) => ({ ...prev, country: val }))}
+              onValueChange={(val) =>
+                setFormData((prev) => ({ ...prev, country: val, state: '', city: '' }))
+              }
             >
               <SelectTrigger id="country">
                 <SelectValue placeholder="Selecione um país" />
               </SelectTrigger>
               <SelectContent>
-                {COUNTRIES.map((c) => (
+                {Object.keys(LOCATIONS).map((c) => (
                   <SelectItem key={c} value={c}>
                     {c}
                   </SelectItem>
@@ -395,41 +441,43 @@ export default function Profile() {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="city">Cidade</Label>
-            <Input
-              id="city"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              readOnly={isBrazil}
-              className={isBrazil ? 'bg-muted text-muted-foreground' : ''}
-            />
+            <Label htmlFor="state">Estado / Província</Label>
+            <Select
+              value={formData.state || undefined}
+              onValueChange={handleStateChange}
+              disabled={currentStates.length === 0}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione um estado" />
+              </SelectTrigger>
+              <SelectContent>
+                {currentStates.map((uf) => (
+                  <SelectItem key={uf} value={uf}>
+                    {uf}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="state">Estado</Label>
-            {isBrazil ? (
-              <Select value={formData.state || undefined} onValueChange={handleStateChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione um estado" />
-                </SelectTrigger>
-                <SelectContent>
-                  {BRAZILIAN_STATES.map((uf) => (
-                    <SelectItem key={uf} value={uf}>
-                      {uf}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <Input
-                id="state"
-                name="state"
-                value={formData.state}
-                onChange={handleChange}
-                placeholder="Digite seu estado/província"
-              />
-            )}
+            <Label htmlFor="city">Cidade</Label>
+            <Select
+              value={formData.city || undefined}
+              onValueChange={(val) => setFormData((prev) => ({ ...prev, city: val }))}
+              disabled={currentCities.length === 0}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione uma cidade" />
+              </SelectTrigger>
+              <SelectContent>
+                {currentCities.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">

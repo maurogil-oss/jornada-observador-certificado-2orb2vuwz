@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { getUsers } from '@/services/users'
+import { exportToCSV } from '@/lib/utils'
 import {
   Table,
   TableBody,
@@ -9,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Loader2, MapPin, Globe, Building2 } from 'lucide-react'
+import { Loader2, MapPin, Globe, Building2, FileSpreadsheet, FileText } from 'lucide-react'
 
 export default function AdminStatistics() {
   const [loading, setLoading] = useState(true)
@@ -17,17 +19,28 @@ export default function AdminStatistics() {
   const [byCity, setByCity] = useState<Record<string, number>>({})
   const [byState, setByState] = useState<Record<string, number>>({})
   const [byCountry, setByCountry] = useState<Record<string, number>>({})
+  const [cityDetails, setCityDetails] = useState<
+    Record<string, { state: string; country: string }>
+  >({})
 
   useEffect(() => {
     async function loadStats() {
       try {
         const users = await getUsers()
+        const invalidNames = ['balantinis', 'sssv', 'ssv', 'waltdisney']
+
         const activeObservers = users.filter(
-          (u: any) => u.is_active !== false && u.role === 'observer',
+          (u: any) =>
+            u.is_active !== false &&
+            u.role === 'observer' &&
+            !invalidNames.includes((u.name || '').toLowerCase()) &&
+            !invalidNames.includes((u.full_name || '').toLowerCase()),
         )
 
         const cCityMap: Record<string, string> = {}
         const cCityCount: Record<string, number> = {}
+        const cCityDetailMap: Record<string, { state: string; country: string }> = {}
+
         const cState: Record<string, number> = {}
         const cCountry: Record<string, number> = {}
 
@@ -51,6 +64,7 @@ export default function AdminStatistics() {
               (raw !== raw.toLowerCase() && cCityMap[lower] === cCityMap[lower].toLowerCase())
             ) {
               cCityMap[lower] = display
+              cCityDetailMap[display] = { state: u.state || '-', country: u.country || '-' }
             }
           }
           if (u.state) {
@@ -122,6 +136,7 @@ export default function AdminStatistics() {
         setByCity(cCityFinal)
         setByState(cState)
         setByCountry(cCountry)
+        setCityDetails(cCityDetailMap)
       } catch (err) {
         console.error('Failed to load stats', err)
       } finally {
@@ -137,6 +152,106 @@ export default function AdminStatistics() {
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     )
+  }
+
+  const handleExportCSV = () => {
+    const exportData = Object.entries(byCity)
+      .sort((a, b) => b[1] - a[1])
+      .map(([city, count]) => ({
+        Cidade: city,
+        Estado: cityDetails[city]?.state || '-',
+        País: cityDetails[city]?.country || '-',
+        'Total de Observadores': count,
+      }))
+    exportToCSV(exportData, `demografia_observadores_${new Date().toISOString().split('T')[0]}.csv`)
+  }
+
+  const handleExportPDF = () => {
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) return
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Relatório Demográfico - Jornada Observador Certificado</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 30px; color: #111; margin: 0; }
+            h1 { text-align: center; color: #1e3a8a; margin-bottom: 5px; font-size: 24px; }
+            .date { text-align: center; color: #64748b; margin-bottom: 30px; font-size: 13px; }
+            .summary { display: flex; justify-content: space-around; margin-bottom: 30px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
+            .summary-item { text-align: center; }
+            .summary-value { font-size: 20px; font-weight: bold; color: #0f172a; }
+            .summary-label { font-size: 12px; color: #64748b; text-transform: uppercase; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
+            th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
+            th { background-color: #f1f5f9; font-weight: bold; color: #334155; text-transform: uppercase; }
+            tr:nth-child(even) { background-color: #f8fafc; }
+            .right { text-align: right; }
+            @media print {
+              body { padding: 0; }
+              @page { margin: 1cm; }
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Demografia - Observador Certificado</h1>
+          <div class="date">Gerado em: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</div>
+          
+          <div class="summary">
+            <div class="summary-item">
+              <div class="summary-value">${Object.keys(byCity).length}</div>
+              <div class="summary-label">Cidades Distintas</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-value">${Object.keys(byState).length}</div>
+              <div class="summary-label">Estados (UF)</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-value">${Object.keys(byCountry).length}</div>
+              <div class="summary-label">Países</div>
+            </div>
+          </div>
+
+          <h3>Distribuição por Cidades</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Cidade</th>
+                <th>Estado</th>
+                <th>País</th>
+                <th class="right">Observadores</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${Object.entries(byCity)
+                .sort((a, b) => b[1] - a[1])
+                .map(
+                  ([city, count]) => `
+                <tr>
+                  <td>${city}</td>
+                  <td>${cityDetails[city]?.state || '-'}</td>
+                  <td>${cityDetails[city]?.country || '-'}</td>
+                  <td class="right">${count}</td>
+                </tr>
+              `,
+                )
+                .join('')}
+            </tbody>
+          </table>
+          <script>
+            window.onload = () => {
+              setTimeout(() => {
+                window.print();
+                setTimeout(() => window.close(), 500);
+              }, 500);
+            };
+          </script>
+        </body>
+      </html>
+    `
+    printWindow.document.write(html)
+    printWindow.document.close()
   }
 
   const renderTable = (data: Record<string, number>, emptyMsg: string) => {
@@ -174,11 +289,31 @@ export default function AdminStatistics() {
 
   return (
     <div className="p-6 space-y-8 max-w-6xl mx-auto animate-fade-in-up">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Demografia e Estatísticas</h1>
-        <p className="text-muted-foreground">
-          Distribuição geográfica dos observadores ativos na plataforma.
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Demografia e Estatísticas</h1>
+          <p className="text-muted-foreground">
+            Distribuição geográfica dos observadores ativos na plataforma.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            onClick={handleExportCSV}
+            variant="outline"
+            className="bg-white hover:bg-slate-50 text-slate-700"
+          >
+            <FileSpreadsheet className="w-4 h-4 mr-2 text-green-600" />
+            Exportar CSV
+          </Button>
+          <Button
+            onClick={handleExportPDF}
+            variant="outline"
+            className="bg-white hover:bg-slate-50 text-slate-700"
+          >
+            <FileText className="w-4 h-4 mr-2 text-red-500" />
+            Exportar PDF
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
