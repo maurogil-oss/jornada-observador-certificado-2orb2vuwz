@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Search, Edit, Shield, User as UserIcon, Trash2, Mail } from 'lucide-react'
+import { LocationSelector } from '@/components/LocationSelector'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
@@ -88,6 +89,9 @@ export default function AdminUsers() {
   const [editPoints, setEditPoints] = useState(0)
   const [editLevel, setEditLevel] = useState('')
   const [editTurma, setEditTurma] = useState<number | ''>('')
+  const [editCountry, setEditCountry] = useState('')
+  const [editState, setEditState] = useState('')
+  const [editCity, setEditCity] = useState('')
   const [isSaving, setIsSaving] = useState(false)
 
   const [userToDelete, setUserToDelete] = useState<any | null>(null)
@@ -144,6 +148,9 @@ export default function AdminUsers() {
     setEditPoints(user.points || 0)
     setEditLevel(user.level || '')
     setEditTurma(user.turma || '')
+    setEditCountry(user.country || '')
+    setEditState(user.state || '')
+    setEditCity(user.city || '')
   }
 
   const handleSave = async () => {
@@ -155,6 +162,9 @@ export default function AdminUsers() {
         points: editPoints,
         level: editLevel,
         turma: editTurma ? Number(editTurma) : null,
+        country: editCountry,
+        state: editState,
+        city: editCity,
       })
       toast({
         title: 'Usuário atualizado com sucesso!',
@@ -483,7 +493,7 @@ export default function AdminUsers() {
       </div>
 
       <Dialog open={!!editingUser} onOpenChange={(open) => !open && setEditingUser(null)}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Editar Usuário</DialogTitle>
           </DialogHeader>
@@ -552,6 +562,19 @@ export default function AdminUsers() {
                   value={editLevel}
                   onChange={(e) => setEditLevel(e.target.value)}
                   placeholder="Ex: Nível I - Observador Certificado"
+                />
+              </div>
+
+              <div className="grid gap-2 pt-2">
+                <Label className="mb-2">Localização</Label>
+                <LocationSelector
+                  country={editCountry}
+                  state={editState}
+                  city={editCity}
+                  onCountryChange={setEditCountry}
+                  onStateChange={setEditState}
+                  onCityChange={setEditCity}
+                  layout="grid"
                 />
               </div>
             </div>
