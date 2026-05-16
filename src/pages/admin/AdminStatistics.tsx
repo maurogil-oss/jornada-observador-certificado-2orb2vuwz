@@ -26,14 +26,32 @@ export default function AdminStatistics() {
           (u: any) => u.is_active !== false && u.role === 'observer',
         )
 
-        const cCity: Record<string, number> = {}
+        const cCityMap: Record<string, string> = {}
+        const cCityCount: Record<string, number> = {}
         const cState: Record<string, number> = {}
         const cCountry: Record<string, number> = {}
 
         activeObservers.forEach((u: any) => {
           if (u.city) {
-            const c = u.city.trim()
-            cCity[c] = (cCity[c] || 0) + 1
+            const raw = u.city.trim()
+            let lower = raw.toLowerCase()
+            let display = raw
+
+            // Specific normalization for São José dos Campos as per requirements
+            if (lower === 'sao jose dos campos' || lower === 'são josé dos campos') {
+              lower = 'são josé dos campos'
+              display = 'São José dos Campos'
+            }
+
+            cCityCount[lower] = (cCityCount[lower] || 0) + 1
+
+            // Prefer version with uppercase/accents for display
+            if (
+              !cCityMap[lower] ||
+              (raw !== raw.toLowerCase() && cCityMap[lower] === cCityMap[lower].toLowerCase())
+            ) {
+              cCityMap[lower] = display
+            }
           }
           if (u.state) {
             let s = u.state.trim()
@@ -96,7 +114,12 @@ export default function AdminStatistics() {
           }
         })
 
-        setByCity(cCity)
+        const cCityFinal: Record<string, number> = {}
+        for (const [lower, count] of Object.entries(cCityCount)) {
+          cCityFinal[cCityMap[lower]] = count
+        }
+
+        setByCity(cCityFinal)
         setByState(cState)
         setByCountry(cCountry)
       } catch (err) {
