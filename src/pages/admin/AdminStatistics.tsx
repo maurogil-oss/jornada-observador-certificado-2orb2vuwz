@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button'
 import { getUsers } from '@/services/users'
 import { exportToCSV } from '@/lib/utils'
+import { LocationSelector } from '@/components/LocationSelector'
 import {
   Table,
   TableBody,
@@ -15,13 +16,11 @@ import { Loader2, MapPin, Globe, Building2, FileSpreadsheet, FileText } from 'lu
 
 export default function AdminStatistics() {
   const [loading, setLoading] = useState(true)
+  const [allUsers, setAllUsers] = useState<any[]>([])
 
-  const [byCity, setByCity] = useState<Record<string, number>>({})
-  const [byState, setByState] = useState<Record<string, number>>({})
-  const [byCountry, setByCountry] = useState<Record<string, number>>({})
-  const [cityDetails, setCityDetails] = useState<
-    Record<string, { state: string; country: string }>
-  >({})
+  const [filterCountry, setFilterCountry] = useState<string>('all')
+  const [filterState, setFilterState] = useState<string>('all')
+  const [filterCity, setFilterCity] = useState<string>('all')
 
   useEffect(() => {
     async function loadStats() {
@@ -37,106 +36,7 @@ export default function AdminStatistics() {
             !invalidNames.includes((u.full_name || '').toLowerCase()),
         )
 
-        const cCityMap: Record<string, string> = {}
-        const cCityCount: Record<string, number> = {}
-        const cCityDetailMap: Record<string, { state: string; country: string }> = {}
-
-        const cState: Record<string, number> = {}
-        const cCountry: Record<string, number> = {}
-
-        activeObservers.forEach((u: any) => {
-          if (u.city) {
-            const raw = u.city.trim()
-            let lower = raw.toLowerCase()
-            let display = raw
-
-            // Specific normalization for São José dos Campos as per requirements
-            if (lower === 'sao jose dos campos' || lower === 'são josé dos campos') {
-              lower = 'são josé dos campos'
-              display = 'São José dos Campos'
-            }
-
-            cCityCount[lower] = (cCityCount[lower] || 0) + 1
-
-            // Prefer version with uppercase/accents for display
-            if (
-              !cCityMap[lower] ||
-              (raw !== raw.toLowerCase() && cCityMap[lower] === cCityMap[lower].toLowerCase())
-            ) {
-              cCityMap[lower] = display
-              cCityDetailMap[display] = { state: u.state || '-', country: u.country || '-' }
-            }
-          }
-          if (u.state) {
-            let s = u.state.trim()
-            if (s.length === 2) {
-              s = s.toUpperCase()
-            } else if (
-              u.country &&
-              (u.country.trim().toLowerCase() === 'brasil' ||
-                u.country.trim().toLowerCase() === 'brazil')
-            ) {
-              // Runtime grouping fallback to prevent duplicate segments
-              const stateMap: Record<string, string> = {
-                acre: 'AC',
-                alagoas: 'AL',
-                amapá: 'AP',
-                amapa: 'AP',
-                amazonas: 'AM',
-                bahia: 'BA',
-                ceará: 'CE',
-                ceara: 'CE',
-                'distrito federal': 'DF',
-                'espírito santo': 'ES',
-                'espirito santo': 'ES',
-                goiás: 'GO',
-                goias: 'GO',
-                maranhão: 'MA',
-                maranhao: 'MA',
-                'mato grosso': 'MT',
-                'mato grosso do sul': 'MS',
-                'minas gerais': 'MG',
-                pará: 'PA',
-                para: 'PA',
-                paraíba: 'PB',
-                paraiba: 'PB',
-                paraná: 'PR',
-                parana: 'PR',
-                pernambuco: 'PE',
-                piauí: 'PI',
-                piaui: 'PI',
-                'rio de janeiro': 'RJ',
-                'rio grande do norte': 'RN',
-                'rio grande do sul': 'RS',
-                rondônia: 'RO',
-                rondonia: 'RO',
-                roraima: 'RR',
-                'santa catarina': 'SC',
-                'são paulo': 'SP',
-                'sao paulo': 'SP',
-                sergipe: 'SE',
-                tocantins: 'TO',
-              }
-              const lower = s.toLowerCase()
-              if (stateMap[lower]) s = stateMap[lower]
-            }
-            cState[s] = (cState[s] || 0) + 1
-          }
-          if (u.country) {
-            const cnt = u.country.trim()
-            cCountry[cnt] = (cCountry[cnt] || 0) + 1
-          }
-        })
-
-        const cCityFinal: Record<string, number> = {}
-        for (const [lower, count] of Object.entries(cCityCount)) {
-          cCityFinal[cCityMap[lower]] = count
-        }
-
-        setByCity(cCityFinal)
-        setByState(cState)
-        setByCountry(cCountry)
-        setCityDetails(cCityDetailMap)
+        setAllUsers(activeObservers)
       } catch (err) {
         console.error('Failed to load stats', err)
       } finally {
@@ -145,6 +45,29 @@ export default function AdminStatistics() {
     }
     loadStats()
   }, [])
+
+  const filteredUsers = useMemo(() => {
+    return allUsers.filter((u) => {
+      if (filterCountry !== 'all' && u.country !== filterCountry) return false
+      if (filterState !== 'all' && u.state !== filterState) return false
+      if (filterCity !== 'all' && u.city !== filterCity) return false
+      return true
+    })
+  }, [allUsers, filterCountry, filterState, filterCity])
+
+  const { byCity, byState, byCountry } = useMemo(() => {
+    const cCity: Record<string, number> = {}
+    const cState: Record<string, number> = {}
+    const cCountry: Record<string, number> = {}
+
+    filteredUsers.forEach((u) => {
+      if (u.city) cCity[u.city] = (cCity[u.city] || 0) + 1
+      if (u.state) cState[u.state] = (cState[u.state] || 0) + 1
+      if (u.country) cCountry[u.country] = (cCountry[u.country] || 0) + 1
+    })
+
+    return { byCity: cCity, byState: cState, byCountry: cCountry }
+  }, [filteredUsers])
 
   if (loading) {
     return (
@@ -155,15 +78,15 @@ export default function AdminStatistics() {
   }
 
   const handleExportCSV = () => {
-    const exportData = Object.entries(byCity)
-      .sort((a, b) => b[1] - a[1])
-      .map(([city, count]) => ({
-        Cidade: city,
-        Estado: cityDetails[city]?.state || '-',
-        País: cityDetails[city]?.country || '-',
-        'Total de Observadores': count,
-      }))
-    exportToCSV(exportData, `demografia_observadores_${new Date().toISOString().split('T')[0]}.csv`)
+    const exportData = filteredUsers.map((u) => ({
+      'Nome Completo': u.full_name || u.name || '-',
+      'E-mail': u.email || '-',
+      País: u.country || '-',
+      Estado: u.state || '-',
+      Cidade: u.city || '-',
+      Pontos: u.points || 0,
+    }))
+    exportToCSV(exportData, `usuarios_geografia_${new Date().toISOString().split('T')[0]}.csv`)
   }
 
   const handleExportPDF = () => {
@@ -178,13 +101,14 @@ export default function AdminStatistics() {
           <style>
             body { font-family: Arial, sans-serif; padding: 30px; color: #111; margin: 0; }
             h1 { text-align: center; color: #1e3a8a; margin-bottom: 5px; font-size: 24px; }
-            .date { text-align: center; color: #64748b; margin-bottom: 30px; font-size: 13px; }
+            .date { text-align: center; color: #64748b; margin-bottom: 10px; font-size: 13px; }
+            .filters { text-align: center; color: #475569; margin-bottom: 30px; font-size: 12px; }
             .summary { display: flex; justify-content: space-around; margin-bottom: 30px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
             .summary-item { text-align: center; }
             .summary-value { font-size: 20px; font-weight: bold; color: #0f172a; }
             .summary-label { font-size: 12px; color: #64748b; text-transform: uppercase; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
-            th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11px; }
+            th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
             th { background-color: #f1f5f9; font-weight: bold; color: #334155; text-transform: uppercase; }
             tr:nth-child(even) { background-color: #f8fafc; }
             .right { text-align: right; }
@@ -195,8 +119,9 @@ export default function AdminStatistics() {
           </style>
         </head>
         <body>
-          <h1>Demografia - Observador Certificado</h1>
-          <div class="date">Gerado em: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</div>
+          <h1>Jornada Observador Certificado</h1>
+          <div class="date">Relatório Demográfico gerado em: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</div>
+          <div class="filters">Filtros: País (${filterCountry === 'all' ? 'Todos' : filterCountry}) | Estado (${filterState === 'all' ? 'Todos' : filterState}) | Cidade (${filterCity === 'all' ? 'Todas' : filterCity})</div>
           
           <div class="summary">
             <div class="summary-item">
@@ -213,26 +138,29 @@ export default function AdminStatistics() {
             </div>
           </div>
 
-          <h3>Distribuição por Cidades</h3>
           <table>
             <thead>
               <tr>
-                <th>Cidade</th>
-                <th>Estado</th>
+                <th>Nome Completo</th>
+                <th>E-mail</th>
                 <th>País</th>
-                <th class="right">Observadores</th>
+                <th>Estado</th>
+                <th>Cidade</th>
+                <th class="right">Pontos</th>
               </tr>
             </thead>
             <tbody>
-              ${Object.entries(byCity)
-                .sort((a, b) => b[1] - a[1])
+              ${filteredUsers
+                .sort((a, b) => (b.points || 0) - (a.points || 0))
                 .map(
-                  ([city, count]) => `
+                  (u) => `
                 <tr>
-                  <td>${city}</td>
-                  <td>${cityDetails[city]?.state || '-'}</td>
-                  <td>${cityDetails[city]?.country || '-'}</td>
-                  <td class="right">${count}</td>
+                  <td>${u.full_name || u.name || '-'}</td>
+                  <td>${u.email || '-'}</td>
+                  <td>${u.country || '-'}</td>
+                  <td>${u.state || '-'}</td>
+                  <td>${u.city || '-'}</td>
+                  <td class="right">${u.points || 0}</td>
                 </tr>
               `,
                 )
@@ -314,6 +242,19 @@ export default function AdminStatistics() {
             Exportar PDF
           </Button>
         </div>
+      </div>
+
+      <div className="bg-card border rounded-lg p-4 mb-8">
+        <LocationSelector
+          layout="horizontal"
+          showAllOption
+          country={filterCountry}
+          state={filterState}
+          city={filterCity}
+          onCountryChange={setFilterCountry}
+          onStateChange={setFilterState}
+          onCityChange={setFilterCity}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

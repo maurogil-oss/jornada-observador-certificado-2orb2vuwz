@@ -23,8 +23,6 @@ import {
   Eye,
   EyeOff,
   User as UserIcon,
-  Calendar,
-  MapPin,
   Briefcase,
   IdCard,
   Loader2,
@@ -41,14 +39,7 @@ import logo15Anos from '@/assets/image-123e2.png'
 import logoMaioAmarelo from '@/assets/image-cb3e5.png'
 import logoOC from '@/assets/image-29272.png'
 import { AppFooter } from '@/components/layout/AppFooter'
-import { COUNTRIES, BRAZILIAN_STATES, LOCATIONS } from '@/lib/data'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { LocationSelector } from '@/components/LocationSelector'
 
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido.'),
@@ -123,19 +114,6 @@ const registerSchema = z
     message: 'As senhas não coincidem',
     path: ['passwordConfirm'],
   })
-  .refine(
-    (data) => {
-      if (data.country === 'Outro' || !LOCATIONS[data.country]) return true
-      const states = LOCATIONS[data.country]
-      if (!states[data.state]) return false
-      if (!states[data.state].includes(data.city)) return false
-      return true
-    },
-    {
-      message: 'A cidade selecionada não pertence ao estado selecionado.',
-      path: ['city'],
-    },
-  )
 
 type LoginForm = z.infer<typeof loginSchema>
 type RegisterForm = z.infer<typeof registerSchema>
@@ -154,7 +132,7 @@ const STEPS = [
   {
     id: 'professional',
     title: 'Contexto Profissional',
-    fields: ['workplace', 'turma', 'country', 'cep', 'city', 'state', 'lgpd_consent'],
+    fields: ['workplace', 'turma', 'country', 'state', 'city', 'cep', 'lgpd_consent'],
   },
 ]
 
@@ -795,187 +773,80 @@ export default function Login() {
                               />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <LocationSelector
+                              country={registerForm.watch('country')}
+                              state={registerForm.watch('state')}
+                              city={registerForm.watch('city')}
+                              onCountryChange={(v) =>
+                                registerForm.setValue('country', v, { shouldValidate: true })
+                              }
+                              onStateChange={(v) =>
+                                registerForm.setValue('state', v, { shouldValidate: true })
+                              }
+                              onCityChange={(v) =>
+                                registerForm.setValue('city', v, { shouldValidate: true })
+                              }
+                              countryError={registerForm.formState.errors.country?.message}
+                              stateError={registerForm.formState.errors.state?.message}
+                              cityError={registerForm.formState.errors.city?.message}
+                            />
+
+                            {registerForm.watch('country') === 'Brasil' && (
                               <FormField
                                 control={registerForm.control}
-                                name="country"
+                                name="cep"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>País *</FormLabel>
-                                    <Select
-                                      onValueChange={(val) => {
-                                        field.onChange(val)
-                                        registerForm.setValue('state', '')
-                                        registerForm.setValue('city', '')
-                                      }}
-                                      defaultValue={field.value || 'Brasil'}
-                                    >
-                                      <FormControl>
-                                        <SelectTrigger className="h-11">
-                                          <SelectValue placeholder="Selecione um país" />
-                                        </SelectTrigger>
-                                      </FormControl>
-                                      <SelectContent>
-                                        {Object.keys(LOCATIONS).map((c) => (
-                                          <SelectItem key={c} value={c}>
-                                            {c}
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
+                                    <FormLabel>CEP *</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="00000-000"
+                                        className="h-11"
+                                        value={field.value || ''}
+                                        onChange={(e) => {
+                                          let value = e.target.value.replace(/\D/g, '')
+                                          if (value.length > 8) value = value.slice(0, 8)
+                                          let formatted = value
+                                          if (value.length > 5) {
+                                            formatted = `${value.slice(0, 5)}-${value.slice(5)}`
+                                          }
+                                          field.onChange(formatted)
+
+                                          if (value.length === 8) {
+                                            fetch(`https://viacep.com.br/ws/${value}/json/`)
+                                              .then((res) => res.json())
+                                              .then((data) => {
+                                                if (!data.erro) {
+                                                  const uf = data.uf
+                                                  const localidade = data.localidade
+
+                                                  registerForm.setValue('state', uf, {
+                                                    shouldValidate: true,
+                                                  })
+                                                  setTimeout(() => {
+                                                    registerForm.setValue('city', localidade, {
+                                                      shouldValidate: true,
+                                                    })
+                                                  }, 500)
+                                                } else {
+                                                  toast({
+                                                    title: 'CEP não encontrado',
+                                                    description:
+                                                      'Verifique o CEP digitado e tente novamente.',
+                                                    variant: 'destructive',
+                                                  })
+                                                }
+                                              })
+                                              .catch(console.error)
+                                          }
+                                        }}
+                                      />
+                                    </FormControl>
                                     <FormMessage />
                                   </FormItem>
                                 )}
                               />
-
-                              {registerForm.watch('country') === 'Brasil' && (
-                                <FormField
-                                  control={registerForm.control}
-                                  name="cep"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>CEP *</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          placeholder="00000-000"
-                                          className="h-11"
-                                          value={field.value || ''}
-                                          onChange={(e) => {
-                                            let value = e.target.value.replace(/\D/g, '')
-                                            if (value.length > 8) value = value.slice(0, 8)
-                                            let formatted = value
-                                            if (value.length > 5) {
-                                              formatted = `${value.slice(0, 5)}-${value.slice(5)}`
-                                            }
-                                            field.onChange(formatted)
-
-                                            if (value.length === 8) {
-                                              fetch(`https://viacep.com.br/ws/${value}/json/`)
-                                                .then((res) => res.json())
-                                                .then((data) => {
-                                                  if (!data.erro) {
-                                                    const uf = data.uf
-                                                    const localidade = data.localidade
-
-                                                    // Ensure the city is in the LOCATIONS array so it passes validation and appears in select
-                                                    if (
-                                                      LOCATIONS['Brasil'] &&
-                                                      LOCATIONS['Brasil'][uf]
-                                                    ) {
-                                                      if (
-                                                        !LOCATIONS['Brasil'][uf].includes(
-                                                          localidade,
-                                                        )
-                                                      ) {
-                                                        LOCATIONS['Brasil'][uf].push(localidade)
-                                                      }
-                                                    }
-
-                                                    registerForm.setValue('state', uf, {
-                                                      shouldValidate: true,
-                                                    })
-                                                    registerForm.setValue('city', localidade, {
-                                                      shouldValidate: true,
-                                                    })
-                                                  } else {
-                                                    toast({
-                                                      title: 'CEP não encontrado',
-                                                      description:
-                                                        'Verifique o CEP digitado e tente novamente.',
-                                                      variant: 'destructive',
-                                                    })
-                                                  }
-                                                })
-                                                .catch(console.error)
-                                            }
-                                          }}
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                              )}
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <FormField
-                                control={registerForm.control}
-                                name="state"
-                                render={({ field }) => {
-                                  const country = registerForm.watch('country') || 'Brasil'
-                                  const states = LOCATIONS[country]
-                                    ? Object.keys(LOCATIONS[country])
-                                    : []
-
-                                  return (
-                                    <FormItem>
-                                      <FormLabel>Estado / Província *</FormLabel>
-                                      <Select
-                                        onValueChange={(val) => {
-                                          field.onChange(val)
-                                          registerForm.setValue('city', '')
-                                        }}
-                                        value={field.value || undefined}
-                                        disabled={states.length === 0}
-                                      >
-                                        <FormControl>
-                                          <SelectTrigger className="h-11">
-                                            <SelectValue placeholder="Selecione o estado" />
-                                          </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                          {states.map((s) => (
-                                            <SelectItem key={s} value={s}>
-                                              {s}
-                                            </SelectItem>
-                                          ))}
-                                        </SelectContent>
-                                      </Select>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )
-                                }}
-                              />
-
-                              <FormField
-                                control={registerForm.control}
-                                name="city"
-                                render={({ field }) => {
-                                  const country = registerForm.watch('country') || 'Brasil'
-                                  const state = registerForm.watch('state')
-                                  const cities =
-                                    state && LOCATIONS[country]
-                                      ? LOCATIONS[country][state] || []
-                                      : []
-
-                                  return (
-                                    <FormItem>
-                                      <FormLabel>Cidade *</FormLabel>
-                                      <Select
-                                        onValueChange={field.onChange}
-                                        value={field.value || undefined}
-                                        disabled={cities.length === 0}
-                                      >
-                                        <FormControl>
-                                          <SelectTrigger className="h-11">
-                                            <SelectValue placeholder="Selecione a cidade" />
-                                          </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                          {cities.map((c) => (
-                                            <SelectItem key={c} value={c}>
-                                              {c}
-                                            </SelectItem>
-                                          ))}
-                                        </SelectContent>
-                                      </Select>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )
-                                }}
-                              />
-                            </div>
+                            )}
 
                             <FormField
                               control={registerForm.control}

@@ -6,13 +6,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { toast } from 'sonner'
 import pb from '@/lib/pocketbase/client'
@@ -20,6 +13,7 @@ import { Loader2, Camera, Award } from 'lucide-react'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
 import { generateCertificate } from '@/lib/certificate'
 import { toTitleCase } from '@/lib/utils'
+import { LocationSelector } from '@/components/LocationSelector'
 
 const formatCPF = (value: string) => {
   return value
@@ -53,8 +47,6 @@ const isValidDate = (dateString: string) => {
   if (age > 110) return false
   return true
 }
-
-import { COUNTRIES, BRAZILIAN_STATES, LOCATIONS } from '@/lib/data'
 
 export default function Profile() {
   const { user } = useAuthStore()
@@ -123,10 +115,6 @@ export default function Profile() {
     }
   }
 
-  const handleStateChange = (val: string) => {
-    setFormData((prev) => ({ ...prev, state: val, city: '' }))
-  }
-
   const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, '')
     if (value.length > 8) value = value.slice(0, 8)
@@ -146,17 +134,16 @@ export default function Profile() {
           const uf = data.uf
           const localidade = data.localidade
 
-          if (LOCATIONS['Brasil'] && LOCATIONS['Brasil'][uf]) {
-            if (!LOCATIONS['Brasil'][uf].includes(localidade)) {
-              LOCATIONS['Brasil'][uf].push(localidade)
-            }
-          }
-
           setFormData((prev) => ({
             ...prev,
-            city: localidade,
             state: uf ? uf.toUpperCase() : prev.state,
           }))
+          setTimeout(() => {
+            setFormData((prev) => ({
+              ...prev,
+              city: localidade,
+            }))
+          }, 500)
         } else {
           toast.error('CEP não encontrado. Verifique o número digitado.')
         }
@@ -167,30 +154,6 @@ export default function Profile() {
   }
 
   const isBrazil = formData.country === 'Brasil'
-
-  const currentStates = LOCATIONS[formData.country] ? Object.keys(LOCATIONS[formData.country]) : []
-
-  if (
-    user?.state &&
-    formData.country === (user.country || 'Brasil') &&
-    !currentStates.includes(user.state)
-  ) {
-    currentStates.push(user.state)
-  }
-
-  let currentCities =
-    formData.state && LOCATIONS[formData.country]
-      ? [...(LOCATIONS[formData.country][formData.state] || [])]
-      : []
-
-  if (
-    user?.city &&
-    formData.state === user?.state &&
-    formData.country === (user.country || 'Brasil') &&
-    !currentCities.includes(user.city)
-  ) {
-    currentCities.push(user.city)
-  }
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -217,32 +180,16 @@ export default function Profile() {
       return
     }
 
-    if (formData.country !== 'Outro' && LOCATIONS[formData.country]) {
-      const states = LOCATIONS[formData.country]
-      const validCities =
-        formData.state && states[formData.state] ? [...states[formData.state]] : []
-      if (user?.city && formData.state === user?.state) {
-        validCities.push(user.city)
-      }
-
-      if (!states[formData.state] || !validCities.includes(formData.city)) {
-        toast.error('A cidade selecionada não pertence ao estado selecionado.')
-        return
-      }
-    }
-
     setLoading(true)
     try {
       const data = new FormData()
 
-      // Append all text fields correctly
       Object.entries(formData).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
           data.append(key, value)
         }
       })
 
-      // Append avatar if a new one was selected
       if (avatarFile) {
         data.append('avatar', avatarFile)
       }
@@ -250,7 +197,6 @@ export default function Profile() {
       await updateUser(user.id, data)
       await pb.collection('users').authRefresh()
 
-      // Clear avatar file from state after successfully uploading
       setAvatarFile(null)
       toast.success('Perfil atualizado com sucesso!')
     } catch (error) {
@@ -317,7 +263,6 @@ export default function Profile() {
         onSubmit={handleSubmit}
         className="bg-card rounded-xl border border-border/40 shadow-sm p-6 sm:p-8"
       >
-        {/* Avatar Section */}
         <div className="flex flex-col items-center space-y-3 mb-8">
           <div
             className="relative group cursor-pointer"
@@ -348,7 +293,6 @@ export default function Profile() {
           />
         </div>
 
-        {/* Fields Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
           <div className="space-y-2">
             <Label htmlFor="full_name">Nome Completo</Label>
@@ -397,6 +341,17 @@ export default function Profile() {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="cpf_document">CPF</Label>
+            <Input
+              id="cpf_document"
+              name="cpf_document"
+              value={formData.cpf_document}
+              onChange={handleChange}
+              placeholder="000.000.000-00"
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="workplace">Local de Trabalho</Label>
             <Input
               id="workplace"
@@ -406,26 +361,15 @@ export default function Profile() {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="country">País</Label>
-            <Select
-              value={formData.country}
-              onValueChange={(val) =>
-                setFormData((prev) => ({ ...prev, country: val, state: '', city: '' }))
-              }
-            >
-              <SelectTrigger id="country">
-                <SelectValue placeholder="Selecione um país" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.keys(LOCATIONS).map((c) => (
-                  <SelectItem key={c} value={c}>
-                    {c}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <LocationSelector
+            className="md:col-span-2"
+            country={formData.country}
+            state={formData.state}
+            city={formData.city}
+            onCountryChange={(val) => setFormData((p) => ({ ...p, country: val }))}
+            onStateChange={(val) => setFormData((p) => ({ ...p, state: val }))}
+            onCityChange={(val) => setFormData((p) => ({ ...p, city: val }))}
+          />
 
           {isBrazil && (
             <div className="space-y-2">
@@ -439,57 +383,6 @@ export default function Profile() {
               />
             </div>
           )}
-
-          <div className="space-y-2">
-            <Label htmlFor="state">Estado / Província</Label>
-            <Select
-              value={formData.state || undefined}
-              onValueChange={handleStateChange}
-              disabled={currentStates.length === 0}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione um estado" />
-              </SelectTrigger>
-              <SelectContent>
-                {currentStates.map((uf) => (
-                  <SelectItem key={uf} value={uf}>
-                    {uf}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="city">Cidade</Label>
-            <Select
-              value={formData.city || undefined}
-              onValueChange={(val) => setFormData((prev) => ({ ...prev, city: val }))}
-              disabled={currentCities.length === 0}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione uma cidade" />
-              </SelectTrigger>
-              <SelectContent>
-                {currentCities.map((c) => (
-                  <SelectItem key={c} value={c}>
-                    {c}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="cpf_document">CPF</Label>
-            <Input
-              id="cpf_document"
-              name="cpf_document"
-              value={formData.cpf_document}
-              onChange={handleChange}
-              placeholder="000.000.000-00"
-            />
-          </div>
         </div>
 
         <div className="mt-8 pt-6 border-t border-border/50 flex justify-end">
