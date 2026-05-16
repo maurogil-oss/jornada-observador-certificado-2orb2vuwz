@@ -54,35 +54,7 @@ const isValidDate = (dateString: string) => {
   return true
 }
 
-const BRAZILIAN_STATES = [
-  'AC',
-  'AL',
-  'AP',
-  'AM',
-  'BA',
-  'CE',
-  'DF',
-  'ES',
-  'GO',
-  'MA',
-  'MT',
-  'MS',
-  'MG',
-  'PA',
-  'PB',
-  'PR',
-  'PE',
-  'PI',
-  'RJ',
-  'RN',
-  'RS',
-  'RO',
-  'RR',
-  'SC',
-  'SP',
-  'SE',
-  'TO',
-]
+import { COUNTRIES, BRAZILIAN_STATES } from '@/lib/data'
 
 export default function Profile() {
   const { user } = useAuthStore()
@@ -392,7 +364,21 @@ export default function Profile() {
 
           <div className="space-y-2">
             <Label htmlFor="country">País</Label>
-            <Input id="country" name="country" value={formData.country} onChange={handleChange} />
+            <Select
+              value={formData.country}
+              onValueChange={(val) => setFormData((prev) => ({ ...prev, country: val }))}
+            >
+              <SelectTrigger id="country">
+                <SelectValue placeholder="Selecione um país" />
+              </SelectTrigger>
+              <SelectContent>
+                {COUNTRIES.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {isBrazil && (

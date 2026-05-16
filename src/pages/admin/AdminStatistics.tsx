@@ -23,11 +23,7 @@ export default function AdminStatistics() {
       try {
         const users = await getUsers()
         const activeObservers = users.filter(
-          (u: any) =>
-            u.is_active !== false &&
-            u.role === 'observer' &&
-            u.state !== 'SSV' &&
-            u.country !== 'waltdieney',
+          (u: any) => u.is_active !== false && u.role === 'observer',
         )
 
         const cCityMap: Record<string, string> = {}

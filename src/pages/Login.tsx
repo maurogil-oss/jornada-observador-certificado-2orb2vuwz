@@ -41,6 +41,14 @@ import logo15Anos from '@/assets/image-123e2.png'
 import logoMaioAmarelo from '@/assets/image-cb3e5.png'
 import logoOC from '@/assets/image-29272.png'
 import { AppFooter } from '@/components/layout/AppFooter'
+import { COUNTRIES, BRAZILIAN_STATES } from '@/lib/data'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido.'),
@@ -781,9 +789,23 @@ export default function Login() {
                                 render={({ field }) => (
                                   <FormItem>
                                     <FormLabel>País *</FormLabel>
-                                    <FormControl>
-                                      <Input placeholder="Brasil" className="h-11" {...field} />
-                                    </FormControl>
+                                    <Select
+                                      onValueChange={field.onChange}
+                                      defaultValue={field.value || 'Brasil'}
+                                    >
+                                      <FormControl>
+                                        <SelectTrigger className="h-11">
+                                          <SelectValue placeholder="Selecione um país" />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        {COUNTRIES.map((c) => (
+                                          <SelectItem key={c} value={c}>
+                                            {c}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                   </FormItem>
                                 )}
@@ -887,14 +909,31 @@ export default function Login() {
                                   return (
                                     <FormItem>
                                       <FormLabel>Estado *</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          placeholder="UF"
-                                          className={`h-11 ${isBrazil ? 'bg-muted text-muted-foreground' : ''}`}
-                                          readOnly={isBrazil}
-                                          {...field}
-                                        />
-                                      </FormControl>
+                                      {isBrazil ? (
+                                        <Select
+                                          onValueChange={field.onChange}
+                                          value={field.value || undefined}
+                                        >
+                                          <FormControl>
+                                            <SelectTrigger
+                                              className={`h-11 ${isBrazil && registerForm.watch('cep') && registerForm.watch('cep').length === 9 ? 'bg-muted/50' : ''}`}
+                                            >
+                                              <SelectValue placeholder="UF" />
+                                            </SelectTrigger>
+                                          </FormControl>
+                                          <SelectContent>
+                                            {BRAZILIAN_STATES.map((uf) => (
+                                              <SelectItem key={uf} value={uf}>
+                                                {uf}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      ) : (
+                                        <FormControl>
+                                          <Input placeholder="UF" className="h-11" {...field} />
+                                        </FormControl>
+                                      )}
                                       <FormMessage />
                                     </FormItem>
                                   )
