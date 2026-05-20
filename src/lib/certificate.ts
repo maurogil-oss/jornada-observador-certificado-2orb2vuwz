@@ -57,6 +57,10 @@ export const generateCertificateDataUrl = async (level: string): Promise<string>
   })
 }
 
+export const generateCertificate = async (level: string) => {
+  return downloadCertificateAsPDF(level)
+}
+
 export const downloadCertificateAsPDF = async (level: string) => {
   const dataUrl = await generateCertificateDataUrl(level)
 
