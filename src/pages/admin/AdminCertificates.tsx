@@ -85,7 +85,7 @@ export default function AdminCertificates() {
       ctx.textAlign = textAlign as CanvasTextAlign
       ctx.textBaseline = 'middle'
 
-      ctx.fillText('NOME DO USUÁRIO', Number(x), Number(y))
+      ctx.fillText('Nome Sobrenome', Number(x), Number(y))
     }
     img.src = previewUrl
   }
@@ -115,6 +115,8 @@ export default function AdminCertificates() {
       formData.append(
         'settings',
         JSON.stringify({
+          positionX: Number(x),
+          positionY: Number(y),
           x: Number(x),
           y: Number(y),
           fontSize: Number(fontSize),
@@ -158,8 +160,12 @@ export default function AdminCertificates() {
   const handleEdit = (tpl: any) => {
     setLevel(tpl.level)
     const pos = tpl.settings?.name_position || tpl.settings || {}
-    setX(String(pos.x ?? tpl.settings?.name_x_position ?? tpl.settings?.x ?? '500'))
-    setY(String(pos.y ?? tpl.settings?.name_y_position ?? tpl.settings?.y ?? '400'))
+    setX(
+      String(pos.positionX ?? pos.x ?? tpl.settings?.name_x_position ?? tpl.settings?.x ?? '500'),
+    )
+    setY(
+      String(pos.positionY ?? pos.y ?? tpl.settings?.name_y_position ?? tpl.settings?.y ?? '400'),
+    )
     setFontSize(String(pos.fontSize ?? tpl.settings?.font_size ?? tpl.settings?.fontSize ?? '48'))
     setColor(pos.color ?? tpl.settings?.font_color ?? tpl.settings?.color ?? '#000000')
     setTextAlign(pos.alignment ?? tpl.settings?.text_align ?? tpl.settings?.alignment ?? 'center')
@@ -338,12 +344,27 @@ export default function AdminCertificates() {
               <CardHeader>
                 <CardTitle>Pré-visualização</CardTitle>
                 <CardDescription>
-                  Assim o certificado será gerado. Ajuste os valores e clique em "Pré-visualizar"
-                  para atualizar.
+                  Assim o certificado será gerado. Ajuste os valores ou clique na imagem para
+                  definir a posição do texto, e clique em "Pré-visualizar" para atualizar.
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center overflow-auto bg-muted/30 p-4 rounded-b-lg">
-                <canvas ref={canvasRef} className="max-w-full h-auto border shadow-sm bg-white" />
+                <canvas
+                  ref={canvasRef}
+                  className="max-w-full h-auto border shadow-sm bg-white cursor-crosshair"
+                  onClick={(e) => {
+                    const canvas = canvasRef.current
+                    if (!canvas) return
+                    const rect = canvas.getBoundingClientRect()
+                    const scaleX = canvas.width / rect.width
+                    const scaleY = canvas.height / rect.height
+                    const clickX = (e.clientX - rect.left) * scaleX
+                    const clickY = (e.clientY - rect.top) * scaleY
+                    setX(Math.round(clickX).toString())
+                    setY(Math.round(clickY).toString())
+                    setTimeout(handlePreview, 50)
+                  }}
+                />
               </CardContent>
             </Card>
           )}
@@ -365,8 +386,8 @@ export default function AdminCertificates() {
           ) : (
             templates.map((tpl) => {
               const pos = tpl.settings?.name_position || tpl.settings || {}
-              const px = pos.x ?? tpl.settings?.name_x_position ?? tpl.settings?.x
-              const py = pos.y ?? tpl.settings?.name_y_position ?? tpl.settings?.y
+              const px = pos.positionX ?? pos.x ?? tpl.settings?.name_x_position ?? tpl.settings?.x
+              const py = pos.positionY ?? pos.y ?? tpl.settings?.name_y_position ?? tpl.settings?.y
               const fs = pos.fontSize ?? tpl.settings?.font_size ?? tpl.settings?.fontSize
               const alg =
                 pos.alignment ?? tpl.settings?.text_align ?? tpl.settings?.alignment ?? 'center'
