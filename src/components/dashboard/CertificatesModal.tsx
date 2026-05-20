@@ -8,9 +8,9 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Download, Mail, Loader2, Award } from 'lucide-react'
+import { Download, Loader2, Award } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
-import { downloadCertificate, emailCertificate } from '@/services/certificates'
+import { downloadCertificate } from '@/services/certificates'
 import { useToast } from '@/hooks/use-toast'
 
 const LEVELS = ['Nível I', 'Nível II', 'Nível III']
@@ -26,7 +26,6 @@ export function CertificatesModal() {
   const { user } = useAuthStore()
   const { toast } = useToast()
   const [loadingPdf, setLoadingPdf] = useState<string | null>(null)
-  const [loadingEmail, setLoadingEmail] = useState<string | null>(null)
 
   const userIndex = getUserLevelIndex(user?.level)
 
@@ -36,29 +35,9 @@ export function CertificatesModal() {
       await downloadCertificate(level)
       toast({ title: 'Sucesso', description: 'Certificado baixado com sucesso.' })
     } catch (error) {
-      toast({
-        title: 'Erro',
-        description: 'Erro ao gerar PDF do certificado.',
-        variant: 'destructive',
-      })
+      toast({ title: 'Erro', description: 'Erro ao gerar certificado.', variant: 'destructive' })
     } finally {
       setLoadingPdf(null)
-    }
-  }
-
-  const handleEmail = async (level: string) => {
-    setLoadingEmail(level)
-    try {
-      await emailCertificate(level)
-      toast({ title: 'Sucesso', description: 'Certificado enviado com sucesso para seu e-mail.' })
-    } catch (error) {
-      toast({
-        title: 'Erro',
-        description: 'Erro ao enviar certificado por e-mail.',
-        variant: 'destructive',
-      })
-    } finally {
-      setLoadingEmail(null)
     }
   }
 
@@ -76,7 +55,7 @@ export function CertificatesModal() {
         <DialogHeader>
           <DialogTitle>Meus Certificados</DialogTitle>
           <DialogDescription>
-            Baixe ou envie por e-mail os certificados dos níveis que você já alcançou.
+            Baixe os certificados dos níveis que você já alcançou.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 mt-4">
@@ -97,27 +76,14 @@ export function CertificatesModal() {
                   <Button
                     variant="outline"
                     size="sm"
-                    disabled={!hasAccess || loadingEmail === level || loadingPdf === level}
+                    disabled={!hasAccess || loadingPdf === level}
                     onClick={() => handleDownload(level)}
-                    title="Baixar PDF"
+                    title="Baixar Certificado"
                   >
                     {loadingPdf === level ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       <Download className="w-4 h-4" />
-                    )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={!hasAccess || loadingEmail === level || loadingPdf === level}
-                    onClick={() => handleEmail(level)}
-                    title="Enviar por E-mail"
-                  >
-                    {loadingEmail === level ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Mail className="w-4 h-4" />
                     )}
                   </Button>
                 </div>
