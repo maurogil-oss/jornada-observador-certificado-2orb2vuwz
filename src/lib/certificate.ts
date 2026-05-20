@@ -35,13 +35,13 @@ export const generateCertificateDataUrl = async (level: string): Promise<string>
         )
       }
 
-      const pos = settings.name_position || {}
+      const pos = settings.name_position || settings || {}
 
       const x = Number(pos.x ?? settings.name_x_position ?? settings.x) || img.width / 2
       const y = Number(pos.y ?? settings.name_y_position ?? settings.y) || img.height / 2
-      const fontSize = Number(pos.fontSize ?? settings.font_size) || 30
+      const fontSize = Number(pos.fontSize ?? settings.font_size ?? settings.fontSize) || 30
       const color = pos.color ?? settings.font_color ?? settings.color ?? '#000000'
-      const align = pos.alignment ?? settings.text_align ?? 'center'
+      const align = pos.alignment ?? settings.text_align ?? settings.alignment ?? 'center'
 
       ctx.font = `bold ${fontSize}px sans-serif`
       ctx.fillStyle = color

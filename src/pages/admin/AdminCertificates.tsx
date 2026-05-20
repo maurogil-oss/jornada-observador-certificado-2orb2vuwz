@@ -13,6 +13,7 @@ import {
 import {
   getCertificateTemplates,
   createCertificateTemplate,
+  updateCertificateTemplate,
   deleteCertificateTemplate,
 } from '@/services/certificates'
 import { useToast } from '@/hooks/use-toast'
@@ -56,12 +57,6 @@ export default function AdminCertificates() {
       const url = URL.createObjectURL(file)
       setPreviewUrl(url)
       return () => URL.revokeObjectURL(url)
-    } else {
-      setPreviewUrl(null)
-      if (canvasRef.current) {
-        const ctx = canvasRef.current.getContext('2d')
-        if (ctx) ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
-      }
     }
   }, [file])
 
@@ -69,7 +64,7 @@ export default function AdminCertificates() {
     if (!previewUrl) {
       toast({
         title: 'Aviso',
-        description: 'Selecione uma imagem de fundo primeiro para visualizar.',
+        description: 'Selecione uma imagem de fundo ou edite um template existente.',
         variant: 'destructive',
       })
       return
@@ -79,6 +74,7 @@ export default function AdminCertificates() {
     if (!canvas || !ctx) return
 
     const img = new Image()
+    img.crossOrigin = 'anonymous'
     img.onload = () => {
       canvas.width = img.width
       canvas.height = img.height
@@ -96,10 +92,13 @@ export default function AdminCertificates() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!file) {
+
+    const existing = templates.find((t) => t.level === level)
+
+    if (!existing && !file) {
       toast({
         title: 'Erro',
-        description: 'Selecione uma imagem de fundo.',
+        description: 'Selecione uma imagem de fundo para o novo template.',
         variant: 'destructive',
       })
       return
@@ -109,27 +108,29 @@ export default function AdminCertificates() {
     try {
       const formData = new FormData()
       formData.append('level', level)
-      formData.append('file', file)
+      if (file) {
+        formData.append('file', file)
+      }
+
       formData.append(
         'settings',
         JSON.stringify({
-          name_position: {
-            x: Number(x),
-            y: Number(y),
-            fontSize: Number(fontSize),
-            color: color,
-            alignment: textAlign,
-          },
+          x: Number(x),
+          y: Number(y),
+          fontSize: Number(fontSize),
+          color: color,
+          alignment: textAlign,
         }),
       )
 
-      const existing = templates.find((t) => t.level === level)
       if (existing) {
-        await deleteCertificateTemplate(existing.id)
+        await updateCertificateTemplate(existing.id, formData)
+        toast({ title: 'Sucesso', description: 'Template atualizado com sucesso.' })
+      } else {
+        await createCertificateTemplate(formData)
+        toast({ title: 'Sucesso', description: 'Template salvo com sucesso.' })
       }
 
-      await createCertificateTemplate(formData)
-      toast({ title: 'Sucesso', description: 'Template salvo com sucesso.' })
       setFile(null)
       if (canvasRef.current) {
         const ctx = canvasRef.current.getContext('2d')
@@ -156,18 +157,44 @@ export default function AdminCertificates() {
 
   const handleEdit = (tpl: any) => {
     setLevel(tpl.level)
-    const pos = tpl.settings?.name_position || {}
+    const pos = tpl.settings?.name_position || tpl.settings || {}
     setX(String(pos.x ?? tpl.settings?.name_x_position ?? tpl.settings?.x ?? '500'))
     setY(String(pos.y ?? tpl.settings?.name_y_position ?? tpl.settings?.y ?? '400'))
-    setFontSize(String(pos.fontSize ?? tpl.settings?.font_size ?? '48'))
+    setFontSize(String(pos.fontSize ?? tpl.settings?.font_size ?? tpl.settings?.fontSize ?? '48'))
     setColor(pos.color ?? tpl.settings?.font_color ?? tpl.settings?.color ?? '#000000')
-    setTextAlign(pos.alignment ?? tpl.settings?.text_align ?? 'center')
+    setTextAlign(pos.alignment ?? tpl.settings?.text_align ?? tpl.settings?.alignment ?? 'center')
+
+    setPreviewUrl(pb.files.getUrl(tpl, tpl.file))
+    setFile(null)
 
     toast({
-      title: 'Info',
-      description:
-        'Configurações carregadas. Por favor, selecione a imagem de fundo novamente para atualizar.',
+      title: 'Modo de Edição',
+      description: 'Configurações carregadas. Ajuste os valores e clique em Salvar.',
     })
+
+    setTimeout(() => {
+      handlePreview()
+    }, 100)
+  }
+
+  const handleLevelChange = (newLevel: string) => {
+    setLevel(newLevel)
+    const existing = templates.find((t) => t.level === newLevel)
+    if (existing) {
+      handleEdit(existing)
+    } else {
+      setX('500')
+      setY('400')
+      setFontSize('48')
+      setColor('#000000')
+      setTextAlign('center')
+      setPreviewUrl(null)
+      setFile(null)
+      if (canvasRef.current) {
+        const ctx = canvasRef.current.getContext('2d')
+        if (ctx) ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
+      }
+    }
   }
 
   return (
@@ -192,7 +219,7 @@ export default function AdminCertificates() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label>Nível</Label>
-                  <Select value={level} onValueChange={setLevel}>
+                  <Select value={level} onValueChange={handleLevelChange}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o nível" />
                     </SelectTrigger>
@@ -211,6 +238,9 @@ export default function AdminCertificates() {
                     accept="image/jpeg,image/png"
                     onChange={(e) => setFile(e.target.files?.[0] || null)}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Deixe em branco para manter a imagem atual.
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -218,6 +248,7 @@ export default function AdminCertificates() {
                     <Label>Posição X (px)</Label>
                     <Input
                       type="number"
+                      step="any"
                       value={x}
                       onChange={(e) => setX(e.target.value)}
                       required
@@ -227,6 +258,7 @@ export default function AdminCertificates() {
                     <Label>Posição Y (px, do topo para baixo)</Label>
                     <Input
                       type="number"
+                      step="any"
                       value={y}
                       onChange={(e) => setY(e.target.value)}
                       required
@@ -239,6 +271,7 @@ export default function AdminCertificates() {
                     <Label>Tamanho da Fonte (px)</Label>
                     <Input
                       type="number"
+                      step="any"
                       value={fontSize}
                       onChange={(e) => setFontSize(e.target.value)}
                       required
@@ -331,11 +364,12 @@ export default function AdminCertificates() {
             </Card>
           ) : (
             templates.map((tpl) => {
-              const pos = tpl.settings?.name_position || {}
+              const pos = tpl.settings?.name_position || tpl.settings || {}
               const px = pos.x ?? tpl.settings?.name_x_position ?? tpl.settings?.x
               const py = pos.y ?? tpl.settings?.name_y_position ?? tpl.settings?.y
-              const fs = pos.fontSize ?? tpl.settings?.font_size
-              const alg = pos.alignment ?? tpl.settings?.text_align ?? 'center'
+              const fs = pos.fontSize ?? tpl.settings?.font_size ?? tpl.settings?.fontSize
+              const alg =
+                pos.alignment ?? tpl.settings?.text_align ?? tpl.settings?.alignment ?? 'center'
 
               return (
                 <Card key={tpl.id}>
@@ -361,6 +395,7 @@ export default function AdminCertificates() {
                         size="icon"
                         onClick={() => handleEdit(tpl)}
                         className="text-primary hover:bg-primary/10"
+                        title="Editar Template"
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
@@ -369,6 +404,7 @@ export default function AdminCertificates() {
                         size="icon"
                         onClick={() => handleDelete(tpl.id)}
                         className="text-destructive hover:bg-destructive/10"
+                        title="Excluir Template"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
