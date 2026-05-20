@@ -4,9 +4,7 @@ import { HighlightsMural } from '@/components/dashboard/HighlightsMural'
 import { RecentActivity } from '@/components/dashboard/RecentActivity'
 import { HeroProgress } from '@/components/dashboard/HeroProgress'
 import useAuthStore from '@/stores/useAuthStore'
-import { Download } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { generateCertificate } from '@/lib/certificate'
+import { CertificatesModal } from '@/components/dashboard/CertificatesModal'
 import { useRealtime } from '@/hooks/use-realtime'
 import pb from '@/lib/pocketbase/client'
 import { useState, useEffect } from 'react'
@@ -58,8 +56,6 @@ export default function Index() {
     )
   }
 
-  const isLevel3 = user?.level?.includes('Nível III') || user?.level?.includes('Mobilizador')
-
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in-up pb-10">
       <WelcomeModal />
@@ -74,21 +70,7 @@ export default function Index() {
             <span>Acompanhe sua jornada de evolução, impacto institucional e suas submissões.</span>
           </p>
         </div>
-        {isLevel3 && (
-          <Button
-            onClick={() => {
-              try {
-                generateCertificate(user)
-              } catch (err: any) {
-                alert(err.message)
-              }
-            }}
-            className="bg-amber-600 hover:bg-amber-700 text-white shadow-md self-start"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            <span>Baixar Certificado</span>
-          </Button>
-        )}
+        <CertificatesModal />
       </div>
 
       <HeroProgress />

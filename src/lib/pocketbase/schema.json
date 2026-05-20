@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-18T12:43:52.845Z",
+  "generatedAt": "2026-05-20T11:19:58.858Z",
   "collections": [
     {
       "name": "users",
@@ -592,6 +592,53 @@
         "CREATE INDEX idx_cities_state ON cities (state_id)",
         "CREATE UNIQUE INDEX idx_cities_name_state ON cities (name, state_id)"
       ]
+    },
+    {
+      "name": "certificate_templates",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.role = 'admin'",
+        "update": "@request.auth.role = 'admin'",
+        "delete": "@request.auth.role = 'admin'"
+      },
+      "fields": [
+        {
+          "name": "level",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["Nível I", "Nível II", "Nível III"]
+        },
+        {
+          "name": "file",
+          "type": "file",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "settings",
+          "type": "json",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": []
     }
   ]
 }

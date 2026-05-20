@@ -27,6 +27,7 @@ import {
   ShieldCheck,
   Database,
   BookOpen,
+  Award,
 } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
@@ -63,6 +64,7 @@ export function AppSidebar() {
     { title: 'Demografia', url: '/admin/estatisticas', icon: BarChart },
     { title: 'Log de Atividades', url: '/admin/logs', icon: History },
     { title: 'Logs de Importação', url: '/admin/import-logs', icon: Database },
+    { title: 'Certificados', url: '/admin/certificados', icon: Award },
   ]
 
   const isAdminArea = location.pathname.startsWith('/admin')
