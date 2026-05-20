@@ -6,7 +6,7 @@ export const generateCertificateDataUrl = async (level: string): Promise<string>
   })
 
   if (!templates.length) {
-    throw new Error('Template não configurado para este nível.')
+    throw new Error('Modelo de certificado não encontrado para o seu nível.')
   }
 
   const template = templates[0]
@@ -29,11 +29,19 @@ export const generateCertificateDataUrl = async (level: string): Promise<string>
       ctx.drawImage(img, 0, 0)
 
       const settings = template.settings || {}
-      const x = Number(settings.name_x_position ?? settings.x) || img.width / 2
-      const y = Number(settings.name_y_position ?? settings.y) || img.height / 2
-      const fontSize = Number(settings.font_size) || 30
-      const color = settings.font_color || settings.color || '#000000'
-      const align = settings.text_align || 'center'
+      if (Object.keys(settings).length === 0) {
+        console.warn(
+          'Aviso para Administrador: Configurações de posicionamento ausentes ou malformadas. Usando centralização padrão.',
+        )
+      }
+
+      const pos = settings.name_position || {}
+
+      const x = Number(pos.x ?? settings.name_x_position ?? settings.x) || img.width / 2
+      const y = Number(pos.y ?? settings.name_y_position ?? settings.y) || img.height / 2
+      const fontSize = Number(pos.fontSize ?? settings.font_size) || 30
+      const color = pos.color ?? settings.font_color ?? settings.color ?? '#000000'
+      const align = pos.alignment ?? settings.text_align ?? 'center'
 
       ctx.font = `bold ${fontSize}px sans-serif`
       ctx.fillStyle = color

@@ -1,5 +1,4 @@
 import pb from '@/lib/pocketbase/client'
-import pb from '@/lib/pocketbase/client'
 import {
   downloadCertificateAsPDF,
   emailCertificate as sendEmailCertificate,
