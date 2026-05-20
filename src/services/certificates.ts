@@ -1,5 +1,9 @@
 import pb from '@/lib/pocketbase/client'
-import { generateCertificate } from '@/lib/certificate'
+import pb from '@/lib/pocketbase/client'
+import {
+  downloadCertificateAsPDF,
+  emailCertificate as sendEmailCertificate,
+} from '@/lib/certificate'
 
 export const getCertificateTemplates = () => pb.collection('certificate_templates').getFullList()
 
@@ -13,5 +17,9 @@ export const deleteCertificateTemplate = (id: string) =>
   pb.collection('certificate_templates').delete(id)
 
 export const downloadCertificate = async (level: string) => {
-  return generateCertificate(level)
+  return downloadCertificateAsPDF(level)
+}
+
+export const emailCertificate = async (level: string) => {
+  return sendEmailCertificate(level)
 }

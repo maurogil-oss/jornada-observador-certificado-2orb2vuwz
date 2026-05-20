@@ -31,6 +31,7 @@ export default function AdminCertificates() {
   const [y, setY] = useState<string>('300')
   const [fontSize, setFontSize] = useState<string>('48')
   const [color, setColor] = useState<string>('#000000')
+  const [textAlign, setTextAlign] = useState<string>('center')
 
   const loadTemplates = async () => {
     try {
@@ -66,10 +67,11 @@ export default function AdminCertificates() {
       formData.append(
         'settings',
         JSON.stringify({
-          x: Number(x),
-          y: Number(y),
+          name_x_position: Number(x),
+          name_y_position: Number(y),
           font_size: Number(fontSize),
-          color: color,
+          font_color: color,
+          text_align: textAlign,
         }),
       )
 
@@ -153,7 +155,7 @@ export default function AdminCertificates() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label>Tamanho da Fonte (px)</Label>
                   <Input
@@ -170,7 +172,7 @@ export default function AdminCertificates() {
                       type="color"
                       value={color}
                       onChange={(e) => setColor(e.target.value)}
-                      className="w-16 p-1 h-10"
+                      className="w-12 p-1 h-10"
                     />
                     <Input
                       type="text"
@@ -180,6 +182,19 @@ export default function AdminCertificates() {
                       pattern="^#[0-9A-Fa-f]{6}$"
                     />
                   </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Alinhamento</Label>
+                  <Select value={textAlign} onValueChange={setTextAlign}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Alinhamento" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="left">Esquerda</SelectItem>
+                      <SelectItem value="center">Centro</SelectItem>
+                      <SelectItem value="right">Direita</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -223,8 +238,10 @@ export default function AdminCertificates() {
                     <div>
                       <h4 className="font-semibold">{tpl.level}</h4>
                       <p className="text-xs text-muted-foreground mt-1">
-                        X: {tpl.settings?.x} | Y: {tpl.settings?.y} | Fonte:{' '}
-                        {tpl.settings?.font_size}
+                        X: {tpl.settings?.name_x_position ?? tpl.settings?.x} | Y:{' '}
+                        {tpl.settings?.name_y_position ?? tpl.settings?.y} | Fonte:{' '}
+                        {tpl.settings?.font_size} | Alinhamento:{' '}
+                        {tpl.settings?.text_align || 'center'}
                       </p>
                     </div>
                   </div>

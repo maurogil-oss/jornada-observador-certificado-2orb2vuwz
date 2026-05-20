@@ -1,12 +1,12 @@
 import pb from '@/lib/pocketbase/client'
 
-export const generateCertificate = async (level: string) => {
+export const generateCertificateDataUrl = async (level: string): Promise<string> => {
   const templates = await pb.collection('certificate_templates').getFullList({
     filter: `level = "${level}"`,
   })
 
   if (!templates.length) {
-    throw new Error('Template não encontrado para este nível.')
+    throw new Error('Template não configurado para este nível.')
   }
 
   const template = templates[0]
@@ -16,7 +16,7 @@ export const generateCertificate = async (level: string) => {
   const name = user.full_name || user.name || 'Observador'
   const url = pb.files.getUrl(template, template.file)
 
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.onload = () => {
@@ -29,28 +29,69 @@ export const generateCertificate = async (level: string) => {
       ctx.drawImage(img, 0, 0)
 
       const settings = template.settings || {}
-      const x = Number(settings.x) || img.width / 2
-      const y = Number(settings.y) || img.height / 2
+      const x = Number(settings.name_x_position ?? settings.x) || img.width / 2
+      const y = Number(settings.name_y_position ?? settings.y) || img.height / 2
       const fontSize = Number(settings.font_size) || 30
-      const color = settings.color || '#000000'
+      const color = settings.font_color || settings.color || '#000000'
+      const align = settings.text_align || 'center'
 
       ctx.font = `bold ${fontSize}px sans-serif`
       ctx.fillStyle = color
-      ctx.textAlign = 'center'
+      ctx.textAlign = align as CanvasTextAlign
       ctx.textBaseline = 'middle'
 
       ctx.fillText(name, x, y)
 
-      const dataUrl = canvas.toDataURL('image/png')
-      const a = document.createElement('a')
-      a.href = dataUrl
-      a.download = `Certificado_${level.replace(/\s+/g, '_')}.png`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      resolve()
+      resolve(canvas.toDataURL('image/png'))
     }
     img.onerror = () => reject(new Error('Falha ao carregar imagem do template'))
     img.src = url
+  })
+}
+
+export const downloadCertificateAsPDF = async (level: string) => {
+  const dataUrl = await generateCertificateDataUrl(level)
+
+  const win = window.open('', '_blank')
+  if (!win) {
+    // Fallback caso popups estejam bloqueados
+    const a = document.createElement('a')
+    a.href = dataUrl
+    a.download = `Certificado_${level.replace(/\s+/g, '_')}.png`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    return
+  }
+
+  win.document.write(`
+    <html>
+      <head>
+        <title>Certificado - ${level}</title>
+        <style>
+          body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #fff; }
+          img { max-width: 100%; max-height: 100vh; object-fit: contain; }
+          @media print {
+            @page { margin: 0; size: landscape; }
+            body { margin: 0; display: block; }
+            img { width: 100%; height: 100%; object-fit: contain; }
+          }
+        </style>
+      </head>
+      <body>
+        <img src="${dataUrl}" onload="window.print(); window.close();" />
+      </body>
+    </html>
+  `)
+  win.document.close()
+}
+
+export const emailCertificate = async (level: string) => {
+  const dataUrl = await generateCertificateDataUrl(level)
+
+  await pb.send('/backend/v1/certificates/send', {
+    method: 'POST',
+    body: JSON.stringify({ level, image: dataUrl }),
+    headers: { 'Content-Type': 'application/json' },
   })
 }

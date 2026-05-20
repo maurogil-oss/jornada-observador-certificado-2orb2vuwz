@@ -8,10 +8,16 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Download, Loader2, Award } from 'lucide-react'
+import { useEffect } from 'react'
+import { Download, Loader2, Award, Mail } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
-import { downloadCertificate } from '@/services/certificates'
+import {
+  downloadCertificate,
+  emailCertificate,
+  getCertificateTemplates,
+} from '@/services/certificates'
 import { useToast } from '@/hooks/use-toast'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 const LEVELS = ['Nível I', 'Nível II', 'Nível III']
 
@@ -26,6 +32,14 @@ export function CertificatesModal() {
   const { user } = useAuthStore()
   const { toast } = useToast()
   const [loadingPdf, setLoadingPdf] = useState<string | null>(null)
+  const [loadingEmail, setLoadingEmail] = useState<string | null>(null)
+  const [templates, setTemplates] = useState<any[]>([])
+
+  useEffect(() => {
+    getCertificateTemplates()
+      .then(setTemplates)
+      .catch(() => {})
+  }, [])
 
   const userIndex = getUserLevelIndex(user?.level)
 
@@ -33,11 +47,31 @@ export function CertificatesModal() {
     setLoadingPdf(level)
     try {
       await downloadCertificate(level)
-      toast({ title: 'Sucesso', description: 'Certificado baixado com sucesso.' })
-    } catch (error) {
-      toast({ title: 'Erro', description: 'Erro ao gerar certificado.', variant: 'destructive' })
+      toast({ title: 'Sucesso', description: 'Certificado gerado com sucesso.' })
+    } catch (error: any) {
+      toast({
+        title: 'Erro',
+        description: error.message || 'Erro ao gerar certificado.',
+        variant: 'destructive',
+      })
     } finally {
       setLoadingPdf(null)
+    }
+  }
+
+  const handleEmail = async (level: string) => {
+    setLoadingEmail(level)
+    try {
+      await emailCertificate(level)
+      toast({ title: 'Sucesso', description: 'Certificado enviado para o seu e-mail.' })
+    } catch (error: any) {
+      toast({
+        title: 'Erro',
+        description: error.message || 'Erro ao enviar certificado.',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoadingEmail(null)
     }
   }
 
@@ -61,6 +95,9 @@ export function CertificatesModal() {
         <div className="space-y-4 mt-4">
           {LEVELS.map((level, idx) => {
             const hasAccess = userIndex >= idx
+            const hasTemplate = templates.some((t) => t.level === level)
+            const isAvailable = hasAccess && hasTemplate
+
             return (
               <div
                 key={level}
@@ -69,23 +106,64 @@ export function CertificatesModal() {
                 <div>
                   <h4 className="font-semibold">{level}</h4>
                   <p className="text-sm text-muted-foreground">
-                    {hasAccess ? 'Disponível' : 'Bloqueado'}
+                    {!hasAccess
+                      ? 'Bloqueado'
+                      : !hasTemplate
+                        ? 'Template indisponível'
+                        : 'Disponível'}
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={!hasAccess || loadingPdf === level}
-                    onClick={() => handleDownload(level)}
-                    title="Baixar Certificado"
-                  >
-                    {loadingPdf === level ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Download className="w-4 h-4" />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={!isAvailable || loadingPdf === level}
+                          onClick={() => handleDownload(level)}
+                          className="mr-2"
+                        >
+                          {loadingPdf === level ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <Download className="w-4 h-4 mr-2" />
+                          )}
+                          Baixar PDF
+                        </Button>
+                      </div>
+                    </TooltipTrigger>
+                    {!hasTemplate && hasAccess && (
+                      <TooltipContent>
+                        O administrador ainda não configurou o template para este nível.
+                      </TooltipContent>
                     )}
-                  </Button>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={!isAvailable || loadingEmail === level}
+                          onClick={() => handleEmail(level)}
+                        >
+                          {loadingEmail === level ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <Mail className="w-4 h-4 mr-2" />
+                          )}
+                          Enviar por E-mail
+                        </Button>
+                      </div>
+                    </TooltipTrigger>
+                    {!hasTemplate && hasAccess && (
+                      <TooltipContent>
+                        O administrador ainda não configurou o template para este nível.
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
                 </div>
               </div>
             )
