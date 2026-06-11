@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-20T15:36:10.816Z",
+  "generatedAt": "2026-06-11T12:33:41.590Z",
   "collections": [
     {
       "name": "users",
@@ -146,6 +146,36 @@
           "type": "bool",
           "required": false,
           "system": false
+        },
+        {
+          "name": "international_document",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "instagram_url",
+          "type": "url",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "linkedin_url",
+          "type": "url",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "other_social_url",
+          "type": "url",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "privacy_policy_accepted",
+          "type": "bool",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [
@@ -243,6 +273,13 @@
           "type": "text",
           "required": false,
           "system": false
+        },
+        {
+          "name": "activity_id",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "activities_metadata"
         }
       ],
       "indexes": [
@@ -453,10 +490,42 @@
           "type": "number",
           "required": false,
           "system": false
+        },
+        {
+          "name": "category",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "is_unique",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "group_id",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "points_type",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["fixed", "level_based"]
+        },
+        {
+          "name": "max_occurrences",
+          "type": "number",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [
-        "CREATE UNIQUE INDEX `idx_activities_metadata_title` ON `activities_metadata` (title)"
+        "CREATE UNIQUE INDEX `idx_activities_metadata_title` ON `activities_metadata` (title)",
+        "CREATE INDEX `idx_activities_metadata_axis_category` ON `activities_metadata` (axis, category)"
       ]
     },
     {

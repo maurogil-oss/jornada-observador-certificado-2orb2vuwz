@@ -58,11 +58,11 @@ function StatusBadge({ status }: { status: string }) {
         }
       : status === 'Ajuste Necessário'
         ? {
-            color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-500',
+            color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500',
             icon: AlertTriangle,
           }
         : {
-            color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500',
+            color: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-500',
             icon: Clock,
           }
 
@@ -105,6 +105,18 @@ export default function AdminSubmissions() {
       return new Date(b.created).getTime() - new Date(a.created).getTime() // Newest first for others
     })
   }, [submissions, filterStatus])
+
+  const summary = useMemo(() => {
+    let pending = 0
+    let approved = 0
+    let review = 0
+    filteredSubmissions.forEach((s) => {
+      if (s.status === 'Em Análise') pending++
+      else if (s.status === 'Aprovado') approved++
+      else if (s.status === 'Ajuste Necessário') review++
+    })
+    return { total: filteredSubmissions.length, pending, approved, review }
+  }, [filteredSubmissions])
 
   const handleOpenReview = (sub: Submission) => {
     setSelectedSub(sub)
@@ -198,6 +210,37 @@ export default function AdminSubmissions() {
               <SelectItem value="Ajuste Necessário">Ajuste Necessário</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="rounded-xl border bg-card text-card-foreground shadow-sm p-6 flex flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Total</span>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <span className="text-2xl font-bold">{summary.total}</span>
+        </div>
+        <div className="rounded-xl border bg-card text-card-foreground shadow-sm p-6 flex flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Em Análise</span>
+            <Clock className="h-4 w-4 text-amber-500" />
+          </div>
+          <span className="text-2xl font-bold">{summary.pending}</span>
+        </div>
+        <div className="rounded-xl border bg-card text-card-foreground shadow-sm p-6 flex flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Aprovado</span>
+            <CheckCircle2 className="h-4 w-4 text-green-500" />
+          </div>
+          <span className="text-2xl font-bold">{summary.approved}</span>
+        </div>
+        <div className="rounded-xl border bg-card text-card-foreground shadow-sm p-6 flex flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Ajuste Necessário</span>
+            <AlertTriangle className="h-4 w-4 text-red-500" />
+          </div>
+          <span className="text-2xl font-bold">{summary.review}</span>
         </div>
       </div>
 
