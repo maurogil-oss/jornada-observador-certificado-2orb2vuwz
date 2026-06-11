@@ -9,7 +9,6 @@ export const generateCertificateDataUrl = async (level: string): Promise<string>
     throw new Error('Modelo de certificado não encontrado para o seu nível.')
   }
 
-  const template = template
   const user = pb.authStore.record
   if (!user) throw new Error('Usuário não autenticado')
 
