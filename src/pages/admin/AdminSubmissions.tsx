@@ -86,10 +86,23 @@ export default function AdminSubmissions() {
   const [selectedSub, setSelectedSub] = useState<Submission | null>(null)
 
   const [newStatus, setNewStatus] = useState<string>('')
-  const [newScore, setNewScore] = useState<string>('')
   const [newFeedback, setNewFeedback] = useState<string>('')
   const [newNivel, setNewNivel] = useState<string>('')
   const [isUpdating, setIsUpdating] = useState(false)
+
+  const calculatedScore = useMemo(() => {
+    if (!selectedSub?.activity) return null
+    const act = selectedSub.activity
+    if (act.points_type === 'fixed') return act.points || 0
+    if (act.points_type === 'level_based') {
+      if (newNivel === 'Nível I') return act.points_level_1 || 0
+      if (newNivel === 'Nível II') return act.points_level_2 || 0
+      if (newNivel === 'Nível III') return act.points_level_3 || 0
+    }
+    // Fallback if not specified but points exist
+    if (act.points !== undefined && act.points !== null) return act.points
+    return null
+  }, [selectedSub, newNivel])
 
   const filteredSubmissions = useMemo(() => {
     let filtered = submissions
@@ -121,8 +134,6 @@ export default function AdminSubmissions() {
   const handleOpenReview = (sub: Submission) => {
     setSelectedSub(sub)
     setNewStatus(sub.status)
-    // Map existing points to the input or default to 0
-    setNewScore(sub.points !== undefined && sub.points !== '-' ? String(sub.points) : '0')
     setNewFeedback(sub.feedback || '')
     setNewNivel(sub.nivel || '')
   }
@@ -141,8 +152,8 @@ export default function AdminSubmissions() {
 
   const handleSave = async () => {
     if (!selectedSub) return
-    if (newStatus === 'Aprovado' && (!newScore || isNaN(Number(newScore)))) {
-      toast.error('Insira uma pontuação válida para aprovar a submissão.')
+    if (newStatus === 'Aprovado' && calculatedScore === null) {
+      toast.error('Não é possível aprovar: atividade não vinculada ou sem regras de pontuação.')
       return
     }
 
@@ -155,7 +166,7 @@ export default function AdminSubmissions() {
         nivel: newNivel,
       }
       if (newStatus === 'Aprovado') {
-        dataToUpdate.score = Number(newScore)
+        dataToUpdate.score = calculatedScore || 0
       } else {
         dataToUpdate.score = 0 // Reset score if not approved
       }
@@ -166,7 +177,7 @@ export default function AdminSubmissions() {
       await updateSubmissionStatus(
         selectedSub.id,
         newStatus,
-        newStatus === 'Aprovado' ? Number(newScore) : undefined,
+        newStatus === 'Aprovado' ? calculatedScore || 0 : undefined,
         newFeedback,
         newNivel,
       )
@@ -184,6 +195,8 @@ export default function AdminSubmissions() {
       setIsUpdating(false)
     }
   }
+
+  const isApproveDisabled = newStatus === 'Aprovado' && calculatedScore === null
 
   return (
     <div className="p-6 max-w-7xl mx-auto flex flex-col gap-6 animate-fade-in">
@@ -435,21 +448,30 @@ export default function AdminSubmissions() {
                   </div>
 
                   <div className="space-y-3 animate-fade-in-up">
-                    <Label htmlFor="score" className="text-sm">
-                      Pontos Concedidos
-                    </Label>
-                    <Input
-                      id="score"
-                      type="number"
-                      min="0"
-                      placeholder="Ex: 50"
-                      value={newScore}
-                      onChange={(e) => setNewScore(e.target.value)}
-                      className="bg-background"
-                    />
+                    <Label className="text-sm">Pontuação Calculada</Label>
+                    {calculatedScore !== null ? (
+                      <div className="bg-muted p-3 rounded-md border text-lg font-semibold flex items-center">
+                        {calculatedScore} pontos
+                        {selectedSub.activity?.points_type === 'level_based' && (
+                          <span className="text-xs font-normal text-muted-foreground ml-2">
+                            (Baseado no nível)
+                          </span>
+                        )}
+                        {selectedSub.activity?.points_type === 'fixed' && (
+                          <span className="text-xs font-normal text-muted-foreground ml-2">
+                            (Pontuação fixa)
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 p-3 rounded-md border border-red-200 dark:border-red-800 text-sm">
+                        <AlertTriangle className="w-4 h-4 inline-block mr-1 mb-0.5" />
+                        Atividade não vinculada ou sem regras de pontuação definidas.
+                      </div>
+                    )}
                     <p className="text-xs text-muted-foreground">
-                      Informe a pontuação exata de acordo com a regra de negócio para este
-                      documento.
+                      A pontuação é calculada automaticamente com base nas regras da atividade e no
+                      nível validado.
                     </p>
                   </div>
 
@@ -470,12 +492,17 @@ export default function AdminSubmissions() {
             </ScrollArea>
           )}
 
-          <div className="p-6 border-t mt-auto bg-background">
+          <div className="p-6 border-t mt-auto bg-background flex flex-col gap-2">
+            {isApproveDisabled && (
+              <span className="text-xs text-red-500 text-center font-medium">
+                Não é possível aprovar sem uma regra de pontuação.
+              </span>
+            )}
             <Button
               className="w-full bg-[#37823b] hover:bg-[#2e6b31] text-white transition-colors"
               size="lg"
               onClick={handleSave}
-              disabled={isUpdating}
+              disabled={isUpdating || isApproveDisabled}
             >
               {isUpdating ? 'Processando...' : 'Confirmar Avaliação'}
             </Button>

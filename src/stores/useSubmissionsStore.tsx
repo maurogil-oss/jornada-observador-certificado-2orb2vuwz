@@ -31,6 +31,13 @@ export interface Submission {
   feedback?: string
   turma?: number
   userPoints?: number
+  activity?: {
+    points_type?: string
+    points?: number
+    points_level_1?: number
+    points_level_2?: number
+    points_level_3?: number
+  }
 }
 
 interface SubmissionsState {
@@ -84,7 +91,7 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
       const res = await pb.collection('submissions').getFullList({
         filter,
         sort: '-created',
-        expand: 'user_id',
+        expand: 'user_id,activity_id',
       })
       setSubmissions(
         res.map((r) => ({
@@ -108,6 +115,15 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
           userPoints: r.expand?.user_id?.points || 0,
           fileUrl: r.file
             ? `${pb.baseURL}/api/files/${r.collectionId}/${r.id}/${r.file}`
+            : undefined,
+          activity: r.expand?.activity_id
+            ? {
+                points_type: r.expand.activity_id.points_type,
+                points: r.expand.activity_id.points,
+                points_level_1: r.expand.activity_id.points_level_1,
+                points_level_2: r.expand.activity_id.points_level_2,
+                points_level_3: r.expand.activity_id.points_level_3,
+              }
             : undefined,
         })),
       )
