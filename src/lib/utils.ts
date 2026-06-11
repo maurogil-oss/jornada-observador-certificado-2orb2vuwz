@@ -11,6 +11,40 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Normalizes a string by removing diacritics and converting to lowercase
+ */
+export function normalizeString(str: string): string {
+  if (!str) return ''
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+}
+
+/**
+ * Determines the certificate level index for a user
+ * Returns -1 if not eligible, 0 for Nível I, 1 for Nível II, 2 for Nível III
+ */
+export function getUserLevelIndex(user: any): number {
+  if (!user) return -1
+  const lvl = user.level || ''
+  const normLvl = normalizeString(lvl)
+
+  let index = -1
+  if (normLvl.includes('nivel iii') || normLvl.includes('mobilizador')) index = 2
+  else if (normLvl.includes('nivel ii') || normLvl.includes('multiplicador')) index = 1
+  else if (normLvl.includes('nivel i') || normLvl.includes('local')) index = 0
+
+  // Turma 15 default to at least Nível I
+  if (user.turma === 15 || user.turma === '15') {
+    index = Math.max(index, 0)
+  }
+
+  return index
+}
+
+/**
  * Converts a string to Title Case (e.g., "PEDRO SILVA" -> "Pedro Silva")
  * Handles extra spaces and lowercase prepositions.
  */

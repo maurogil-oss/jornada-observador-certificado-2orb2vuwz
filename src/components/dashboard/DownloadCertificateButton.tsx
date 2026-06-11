@@ -5,15 +5,9 @@ import useAuthStore from '@/stores/useAuthStore'
 import { downloadCertificate, getCertificateTemplates } from '@/services/certificates'
 import { useToast } from '@/hooks/use-toast'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { getUserLevelIndex, normalizeString } from '@/lib/utils'
 
 const LEVELS = ['Nível I', 'Nível II', 'Nível III']
-
-const getUserLevelIndex = (lvl?: string) => {
-  if (lvl?.includes('Nível III') || lvl?.includes('Mobilizador')) return 2
-  if (lvl?.includes('Nível II') || lvl?.includes('Multiplicador')) return 1
-  if (lvl?.includes('Nível I') || lvl?.includes('Local')) return 0
-  return -1
-}
 
 export function DownloadCertificateButton() {
   const { user } = useAuthStore()
@@ -27,13 +21,14 @@ export function DownloadCertificateButton() {
       .catch(() => {})
   }, [])
 
-  const userIndex = getUserLevelIndex(user?.level)
-  const effectiveUserIndex = user?.turma === 15 ? Math.max(userIndex, 0) : userIndex
+  const effectiveUserIndex = getUserLevelIndex(user)
 
   if (effectiveUserIndex < 0) return null
 
   const targetLevel = LEVELS[effectiveUserIndex]
-  const hasTemplate = templates.some((t) => t.level === targetLevel)
+  const hasTemplate = templates.some(
+    (t) => normalizeString(t.level) === normalizeString(targetLevel),
+  )
 
   const handleDownload = async () => {
     if (!hasTemplate) return

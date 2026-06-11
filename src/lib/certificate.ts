@@ -1,15 +1,15 @@
 import pb from '@/lib/pocketbase/client'
+import { normalizeString } from '@/lib/utils'
 
 export const generateCertificateDataUrl = async (level: string): Promise<string> => {
-  const templates = await pb.collection('certificate_templates').getFullList({
-    filter: `level = "${level}"`,
-  })
+  const templates = await pb.collection('certificate_templates').getFullList()
+  const template = templates.find((t) => normalizeString(t.level) === normalizeString(level))
 
-  if (!templates.length) {
+  if (!template) {
     throw new Error('Modelo de certificado não encontrado para o seu nível.')
   }
 
-  const template = templates[0]
+  const template = template
   const user = pb.authStore.record
   if (!user) throw new Error('Usuário não autenticado')
 

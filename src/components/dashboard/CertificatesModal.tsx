@@ -18,15 +18,9 @@ import {
 } from '@/services/certificates'
 import { useToast } from '@/hooks/use-toast'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { getUserLevelIndex, normalizeString } from '@/lib/utils'
 
 const LEVELS = ['Nível I', 'Nível II', 'Nível III']
-
-const getUserLevelIndex = (lvl?: string) => {
-  if (lvl?.includes('Nível III') || lvl?.includes('Mobilizador')) return 2
-  if (lvl?.includes('Nível II') || lvl?.includes('Multiplicador')) return 1
-  if (lvl?.includes('Nível I') || lvl?.includes('Local')) return 0
-  return -1
-}
 
 export function CertificatesModal() {
   const { user } = useAuthStore()
@@ -41,8 +35,7 @@ export function CertificatesModal() {
       .catch(() => {})
   }, [])
 
-  const userIndex = getUserLevelIndex(user?.level)
-
+  const userIndex = getUserLevelIndex(user)
   const handleDownload = async (level: string) => {
     setLoadingPdf(level)
     try {
@@ -95,7 +88,9 @@ export function CertificatesModal() {
         <div className="space-y-4 mt-4">
           {LEVELS.map((level, idx) => {
             const hasAccess = userIndex >= idx
-            const hasTemplate = templates.some((t) => t.level === level)
+            const hasTemplate = templates.some(
+              (t) => normalizeString(t.level) === normalizeString(level),
+            )
             const isAvailable = hasAccess && hasTemplate
 
             return (

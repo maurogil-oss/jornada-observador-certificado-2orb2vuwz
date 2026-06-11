@@ -17,8 +17,11 @@ import {
   deleteCertificateTemplate,
 } from '@/services/certificates'
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, Trash2, Image as ImageIcon, Eye, Edit } from 'lucide-react'
+import { Loader2, Trash2, Image as ImageIcon, Eye, Edit, AlertCircle } from 'lucide-react'
 import pb from '@/lib/pocketbase/client'
+import { normalizeString } from '@/lib/utils'
+
+const EXPECTED_LEVELS = ['Nível I', 'Nível II', 'Nível III']
 
 export default function AdminCertificates() {
   const { toast } = useToast()
@@ -183,6 +186,10 @@ export default function AdminCertificates() {
     }, 100)
   }
 
+  const missingLevels = EXPECTED_LEVELS.filter(
+    (l) => !templates.some((t) => normalizeString(t.level) === normalizeString(l)),
+  )
+
   const handleLevelChange = (newLevel: string) => {
     setLevel(newLevel)
     const existing = templates.find((t) => t.level === newLevel)
@@ -211,6 +218,20 @@ export default function AdminCertificates() {
           Gerencie as imagens de fundo e posicionamento do nome para cada nível.
         </p>
       </div>
+
+      {!isLoading && missingLevels.length > 0 && (
+        <div className="bg-destructive/15 text-destructive border-destructive/20 border p-4 rounded-lg flex items-start gap-3 animate-fade-in">
+          <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+          <div>
+            <h4 className="font-semibold mb-1">Templates Ausentes</h4>
+            <p className="text-sm">
+              Os seguintes níveis ainda não possuem templates configurados:{' '}
+              <strong>{missingLevels.join(', ')}</strong>. Os usuários desses níveis não conseguirão
+              gerar seus certificados.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-6">
