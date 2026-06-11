@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { getUsers } from '@/services/users'
+import { getCountries } from '@/services/geography'
 import { exportToCSV } from '@/lib/utils'
 import { LocationSelector } from '@/components/LocationSelector'
 import {
@@ -25,18 +26,29 @@ export default function AdminStatistics() {
   useEffect(() => {
     async function loadStats() {
       try {
-        const users = await getUsers()
+        const [users, dbCountries] = await Promise.all([getUsers(), getCountries()])
+        const countryNames = dbCountries.map((c) => c.name)
         const invalidNames = ['balantinis', 'sssv', 'ssv', 'waltdisney']
 
         const activeObservers = users.filter(
           (u: any) =>
             u.is_active !== false &&
-            u.role === 'observer' &&
+            (u.role === 'observer' || u.email === 'chispudosnavial@gmail.com') &&
             !invalidNames.includes((u.name || '').toLowerCase()) &&
             !invalidNames.includes((u.full_name || '').toLowerCase()),
         )
 
-        setAllUsers(activeObservers)
+        const normalizedUsers = activeObservers.map((u: any) => {
+          let country = u.country
+          if (country) {
+            const match = countryNames.find((c) => c.toLowerCase() === country.toLowerCase().trim())
+            // Verify against existing geographical data
+            country = match || country
+          }
+          return { ...u, country }
+        })
+
+        setAllUsers(normalizedUsers)
       } catch (err) {
         console.error('Failed to load stats', err)
       } finally {
