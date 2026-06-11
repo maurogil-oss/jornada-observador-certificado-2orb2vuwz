@@ -316,109 +316,81 @@ export default function AdminSubmissions() {
 
           {selectedSub && (
             <ScrollArea className="flex-1 px-6">
-              <div className="space-y-6 pb-6">
-                <div className="space-y-3">
-                  <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                    <User className="w-4 h-4" /> Dados do Observador
-                  </h4>
-                  <div className="bg-muted/40 p-4 rounded-lg space-y-2 text-sm border border-border/50">
-                    <div className="grid grid-cols-[100px_1fr] gap-2">
-                      <span className="text-muted-foreground font-medium">Nome:</span>
-                      <span className="font-semibold">
-                        {selectedSub.fullName || selectedSub.user || 'Usuário não identificado'}
+              <div className="space-y-8 pb-6 pt-2">
+                <div className="bg-card p-5 rounded-lg space-y-5 text-sm border border-border shadow-sm">
+                  <div>
+                    <span className="block text-[11px] text-muted-foreground font-semibold uppercase mb-1">
+                      Título
+                    </span>
+                    <p className="font-semibold text-base leading-snug">{selectedSub.title}</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="block text-[11px] text-muted-foreground font-semibold uppercase mb-1">
+                        Nível / Eixo
                       </span>
-
-                      {selectedSub.nickname && (
-                        <>
-                          <span className="text-muted-foreground font-medium">Apelido:</span>
-                          <span>{selectedSub.nickname}</span>
-                        </>
-                      )}
-
-                      {selectedSub.turma !== undefined && (
-                        <>
-                          <span className="text-muted-foreground font-medium">Turma:</span>
-                          <span>Turma {selectedSub.turma}</span>
-                        </>
-                      )}
+                      <p className="font-medium">{selectedSub.nivel}</p>
+                    </div>
+                    <div>
+                      <span className="block text-[11px] text-muted-foreground font-semibold uppercase mb-1">
+                        Data de Envio
+                      </span>
+                      <p className="font-medium">
+                        {format(new Date(selectedSub.created), 'dd/MM/yyyy HH:mm')}
+                      </p>
                     </div>
                   </div>
-                </div>
 
-                <div className="space-y-3">
-                  <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                    <FileText className="w-4 h-4" /> Detalhes do Envio
-                  </h4>
-                  <div className="bg-card p-4 rounded-lg space-y-4 text-sm border border-border shadow-sm">
+                  {selectedSub.description && (
                     <div>
-                      <span className="block text-xs text-muted-foreground font-medium mb-1">
-                        Título
+                      <span className="block text-[11px] text-muted-foreground font-semibold uppercase mb-1">
+                        Descrição
                       </span>
-                      <p className="font-semibold text-base">{selectedSub.title}</p>
+                      <p className="text-muted-foreground whitespace-pre-wrap">
+                        {selectedSub.description}
+                      </p>
                     </div>
+                  )}
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <span className="block text-xs text-muted-foreground font-medium mb-1">
-                          Nível / Eixo
-                        </span>
-                        <p className="font-medium">{selectedSub.nivel}</p>
-                      </div>
-                      <div>
-                        <span className="block text-xs text-muted-foreground font-medium mb-1">
-                          Data de Envio
-                        </span>
-                        <p className="font-medium">
-                          {format(new Date(selectedSub.created), 'dd/MM/yyyy HH:mm')}
-                        </p>
-                      </div>
-                    </div>
-
-                    {selectedSub.description && (
-                      <div>
-                        <span className="block text-xs text-muted-foreground font-medium mb-1">
-                          Descrição
-                        </span>
-                        <p className="text-muted-foreground whitespace-pre-wrap">
-                          {selectedSub.description}
-                        </p>
-                      </div>
+                  <div className="pt-1 flex flex-col gap-2">
+                    {selectedSub.fileUrl ? (
+                      <Button
+                        className="w-full justify-start bg-slate-900 hover:bg-slate-800 text-white"
+                        asChild
+                      >
+                        <a href={selectedSub.fileUrl} target="_blank" rel="noopener noreferrer">
+                          <FileText className="w-4 h-4 mr-2" />
+                          Visualizar Documento Anexo
+                        </a>
+                      </Button>
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">
+                        Nenhum arquivo anexado.
+                      </p>
                     )}
 
-                    <div className="pt-2 border-t flex flex-col gap-2">
-                      {selectedSub.fileUrl ? (
-                        <Button variant="secondary" className="w-full justify-start" asChild>
-                          <a href={selectedSub.fileUrl} target="_blank" rel="noopener noreferrer">
-                            <FileText className="w-4 h-4 mr-2" />
-                            Visualizar Documento Anexo
-                          </a>
-                        </Button>
-                      ) : (
-                        <p className="text-sm text-muted-foreground italic">
-                          Nenhum arquivo anexado.
-                        </p>
-                      )}
-
-                      {selectedSub.link && (
-                        <Button variant="outline" className="w-full justify-start" asChild>
-                          <a href={selectedSub.link} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="w-4 h-4 mr-2" />
-                            Acessar Link Externo
-                          </a>
-                        </Button>
-                      )}
-                    </div>
+                    {selectedSub.link && (
+                      <Button variant="outline" className="w-full justify-start" asChild>
+                        <a href={selectedSub.link} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          Acessar Link Externo
+                        </a>
+                      </Button>
+                    )}
                   </div>
                 </div>
 
-                <div className="space-y-4 pt-4 border-t border-border">
-                  <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                <div className="space-y-5">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b pb-2">
                     Decisão de Avaliação
                   </h4>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                      <Label htmlFor="nivel">Nível Validado</Label>
+                      <Label htmlFor="nivel" className="text-sm">
+                        Nível Validado
+                      </Label>
                       <Select value={newNivel} onValueChange={setNewNivel}>
                         <SelectTrigger id="nivel" className="bg-background">
                           <SelectValue placeholder="Selecione o nível" />
@@ -446,7 +418,9 @@ export default function AdminSubmissions() {
                     </div>
 
                     <div className="space-y-3">
-                      <Label htmlFor="status">Status da Submissão</Label>
+                      <Label htmlFor="status" className="text-sm">
+                        Status da Submissão
+                      </Label>
                       <Select value={newStatus} onValueChange={setNewStatus}>
                         <SelectTrigger id="status" className="bg-background">
                           <SelectValue placeholder="Selecione um status" />
@@ -460,27 +434,29 @@ export default function AdminSubmissions() {
                     </div>
                   </div>
 
-                  {newStatus === 'Aprovado' && (
-                    <div className="space-y-3 animate-fade-in-up">
-                      <Label htmlFor="score">Pontos Concedidos</Label>
-                      <Input
-                        id="score"
-                        type="number"
-                        min="0"
-                        placeholder="Ex: 50"
-                        value={newScore}
-                        onChange={(e) => setNewScore(e.target.value)}
-                        className="bg-background"
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        Informe a pontuação exata de acordo com a regra de negócio para este
-                        documento.
-                      </p>
-                    </div>
-                  )}
+                  <div className="space-y-3 animate-fade-in-up">
+                    <Label htmlFor="score" className="text-sm">
+                      Pontos Concedidos
+                    </Label>
+                    <Input
+                      id="score"
+                      type="number"
+                      min="0"
+                      placeholder="Ex: 50"
+                      value={newScore}
+                      onChange={(e) => setNewScore(e.target.value)}
+                      className="bg-background"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Informe a pontuação exata de acordo com a regra de negócio para este
+                      documento.
+                    </p>
+                  </div>
 
                   <div className="space-y-3 pt-2">
-                    <Label htmlFor="feedback">Observações / Ajustes Necessários</Label>
+                    <Label htmlFor="feedback" className="text-sm">
+                      Observações / Ajustes Necessários
+                    </Label>
                     <Textarea
                       id="feedback"
                       placeholder="Forneça um feedback detalhado para o observador..."
@@ -494,8 +470,13 @@ export default function AdminSubmissions() {
             </ScrollArea>
           )}
 
-          <div className="p-6 border-t bg-muted/20 mt-auto">
-            <Button className="w-full" size="lg" onClick={handleSave} disabled={isUpdating}>
+          <div className="p-6 border-t mt-auto bg-background">
+            <Button
+              className="w-full bg-[#37823b] hover:bg-[#2e6b31] text-white transition-colors"
+              size="lg"
+              onClick={handleSave}
+              disabled={isUpdating}
+            >
               {isUpdating ? 'Processando...' : 'Confirmar Avaliação'}
             </Button>
           </div>
