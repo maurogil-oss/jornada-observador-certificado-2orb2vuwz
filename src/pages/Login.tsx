@@ -143,6 +143,9 @@ export default function Login() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [showTurmaModal, setShowTurmaModal] = useState(false)
+  const [turmaPassword, setTurmaPassword] = useState('')
+  const [turmaError, setTurmaError] = useState('')
   const {
     login,
     register,
@@ -282,6 +285,18 @@ export default function Login() {
 
   const handlePrevStep = () => {
     setStep((s) => s - 1)
+  }
+
+  const handleTurmaAccess = () => {
+    if (turmaPassword.trim().toLowerCase() === 'turma15') {
+      setShowTurmaModal(false)
+      setTurmaPassword('')
+      setTurmaError('')
+      setActiveTab('register')
+      registerForm.setValue('turma', 15)
+    } else {
+      setTurmaError('Senha incorreta. Verifique e tente novamente.')
+    }
   }
 
   const onRegister = async (data: RegisterForm) => {
@@ -451,6 +466,26 @@ export default function Login() {
                       ) : (
                         'Acessar'
                       )}
+                    </Button>
+
+                    <div className="relative my-6">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-border/60" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-background px-2 text-muted-foreground font-semibold">
+                          Primeiro Acesso
+                        </span>
+                      </div>
+                    </div>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full h-11 font-bold border-primary/20 hover:bg-primary/5 text-primary"
+                      onClick={() => setShowTurmaModal(true)}
+                    >
+                      Acesso Turma 15
                     </Button>
                   </form>
                 </Form>
@@ -920,6 +955,52 @@ export default function Login() {
       </div>
 
       <AppFooter />
+
+      {showTurmaModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-fade-in backdrop-blur-sm">
+          <Card className="w-full max-w-sm shadow-xl border-border/60">
+            <CardHeader>
+              <CardTitle>Acesso Turma 15</CardTitle>
+              <CardDescription>
+                Insira a senha exclusiva fornecida para a Turma 15 para iniciar seu cadastro na
+                plataforma.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <FormLabel>Senha de Acesso</FormLabel>
+                <Input
+                  type="password"
+                  placeholder="Digite a senha"
+                  value={turmaPassword}
+                  onChange={(e) => {
+                    setTurmaPassword(e.target.value)
+                    setTurmaError('')
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleTurmaAccess()
+                  }}
+                  autoFocus
+                />
+                {turmaError && <p className="text-sm font-medium text-destructive">{turmaError}</p>}
+              </div>
+              <div className="flex justify-end gap-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowTurmaModal(false)
+                    setTurmaError('')
+                    setTurmaPassword('')
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button onClick={handleTurmaAccess}>Acessar Cadastro</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }
