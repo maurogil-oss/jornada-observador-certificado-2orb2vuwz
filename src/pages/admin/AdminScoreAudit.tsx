@@ -164,7 +164,15 @@ function EvolutionLevelsLegend() {
   )
 }
 
-function UserSubmissionsAudit({ userId, userPoints }: { userId: string; userPoints: number }) {
+function UserSubmissionsAudit({
+  userId,
+  userPoints,
+  userLevel,
+}: {
+  userId: string
+  userPoints: number
+  userLevel?: string
+}) {
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [loading, setLoading] = useState(true)
   const { user } = useAuthStore()
@@ -180,10 +188,13 @@ function UserSubmissionsAudit({ userId, userPoints }: { userId: string; userPoin
           : `user_id = "${userId}" && status = "Aprovado"`
         const records = await pb.collection('submissions').getFullList({
           filter,
-          sort: '-created',
+          sort: 'created',
+          expand: 'activity_id',
         })
         if (isMounted) {
-          setSubmissions(records as unknown as Submission[])
+          // Re-sort desc to display latest first in table, while calculateUserPoints sorts asc internally
+          const descRecords = [...records].reverse()
+          setSubmissions(descRecords as unknown as Submission[])
         }
       } catch (error) {
         console.error('Error fetching submissions:', error)
@@ -200,9 +211,12 @@ function UserSubmissionsAudit({ userId, userPoints }: { userId: string; userPoin
   }, [userId, isAdmin])
 
   const { calculatedPoints, ignoredSubmissionIds } = useMemo(() => {
-    const { totalPoints, ignoredSubmissionIds: ignoredIds } = calculateUserPoints(submissions)
+    const { totalPoints, ignoredSubmissionIds: ignoredIds } = calculateUserPoints(
+      submissions,
+      userLevel,
+    )
     return { calculatedPoints: totalPoints, ignoredSubmissionIds: ignoredIds }
-  }, [submissions])
+  }, [submissions, userLevel])
 
   const isMatch = calculatedPoints === userPoints
 
@@ -446,7 +460,11 @@ export default function AdminScoreAudit() {
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="pb-4">
-                        <UserSubmissionsAudit userId={user.id} userPoints={user.points || 0} />
+                        <UserSubmissionsAudit
+                          userId={user.id}
+                          userPoints={user.points || 0}
+                          userLevel={user.level}
+                        />
                       </AccordionContent>
                     </AccordionItem>
                   ))}

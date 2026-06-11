@@ -56,7 +56,7 @@ export const EIXO3_TITLES = new Set([
   'Representante de Conselhos',
 ])
 
-export function calculateUserPoints(submissions: any[]) {
+export function calculateUserPoints(submissions: any[], userLevel?: string) {
   let totalPoints = 0
   let eixo1Points = 0
   let eixo2Points = 0
@@ -75,15 +75,40 @@ export function calculateUserPoints(submissions: any[]) {
     }
   })
 
-  let projectLocalCount = 0
-  let projectNacCount = 0
   const itemCounts: Record<string, number> = {}
   const ignoredSubmissionIds = new Set<string>()
 
-  submissions.forEach((sub) => {
+  // Sort submissions by created ascending to apply caps on the newest items
+  const sortedSubmissions = [...submissions].sort((a, b) => {
+    return new Date(a.created).getTime() - new Date(b.created).getTime()
+  })
+
+  sortedSubmissions.forEach((sub) => {
     if (sub.status !== 'Aprovado') return
-    const score = typeof sub.score === 'number' ? sub.score : Number(sub.score) || 0
+    let score = typeof sub.score === 'number' ? sub.score : Number(sub.score) || 0
     const title = sub.title
+
+    let act = sub.expand?.activity_id
+
+    if (act?.points_type === 'level_based' && userLevel) {
+      if (
+        userLevel.includes('Nível III') ||
+        userLevel.includes('3') ||
+        userLevel.includes('Mobilizador')
+      ) {
+        score = act.points_level_3 || 0
+      } else if (
+        userLevel.includes('Nível II') ||
+        userLevel.includes('2') ||
+        userLevel.includes('Pleno')
+      ) {
+        score = act.points_level_2 || 0
+      } else {
+        score = act.points_level_1 || 0
+      }
+    } else if (act?.points_type === 'fixed') {
+      score = act.points || score
+    }
 
     let isCounted = false
 
@@ -91,34 +116,40 @@ export function calculateUserPoints(submissions: any[]) {
       if (sub.id === maxTitulationId) {
         isCounted = true
       }
-    } else if (title === 'Projeto Local (Municipal)' || title === 'Projeto Estadual') {
-      if (projectLocalCount < 3) {
-        isCounted = true
-        projectLocalCount++
-      }
-    } else if (title === 'Projeto Nacional' || title === 'Projeto Internacional') {
-      if (projectNacCount < 2) {
-        isCounted = true
-        projectNacCount++
-      }
-    } else if (ITEM_CAPS[title]) {
-      itemCounts[title] = (itemCounts[title] || 0) + 1
-      if (itemCounts[title] <= ITEM_CAPS[title]) {
-        isCounted = true
-      }
     } else {
-      isCounted = true
+      let maxOccurrences = act ? act.max_occurrences || 0 : 0
+      if (!act) {
+        if (title === 'Projeto Local (Municipal)' || title === 'Projeto Estadual')
+          maxOccurrences = 3
+        else if (title === 'Projeto Nacional' || title === 'Projeto Internacional')
+          maxOccurrences = 2
+        else maxOccurrences = ITEM_CAPS[title] || 999
+      }
+
+      const key = act ? act.id : title
+      itemCounts[key] = (itemCounts[key] || 0) + 1
+      if (maxOccurrences > 0) {
+        if (itemCounts[key] <= maxOccurrences) {
+          isCounted = true
+        }
+      } else {
+        isCounted = true
+      }
     }
 
     if (isCounted) {
       totalPoints += score
-      if (EIXO1_TITLES.has(title)) eixo1Points += score
-      else if (EIXO3_TITLES.has(title)) eixo3Points += score
+      const axis = act ? act.axis : null
+      if (axis === 'Eixo 1' || EIXO1_TITLES.has(title)) eixo1Points += score
+      else if (axis === 'Eixo 3' || EIXO3_TITLES.has(title)) eixo3Points += score
       else eixo2Points += score
     } else {
       ignoredSubmissionIds.add(sub.id)
     }
   })
+
+  // Avoid floating point precision issues
+  totalPoints = Math.round(totalPoints * 100) / 100
 
   return {
     totalPoints,

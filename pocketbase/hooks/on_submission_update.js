@@ -27,6 +27,12 @@ onRecordAfterUpdateSuccess((e) => {
         { userId: userId },
       )
 
+      const activities = $app.findRecordsByFilter('activities_metadata', '1=1', '', 1000, 0)
+      const actMap = {}
+      for (let i = 0; i < activities.length; i++) {
+        actMap[activities[i].id] = activities[i]
+      }
+
       const eixo1Titles = [
         'Graduação (Reconhecida MEC)',
         'Pós-graduação Lato Sensu',
@@ -91,46 +97,74 @@ onRecordAfterUpdateSuccess((e) => {
 
       for (let i = 0; i < submissions.length; i++) {
         const sub = submissions[i]
-        const score = sub.getFloat('score') || 0
         const type = sub.getString('type')
         if (type === 'titulation') {
+          const score = sub.getFloat('score') || 0
           if (score > maxTitulationScore) {
             maxTitulationScore = score
           }
         }
       }
 
-      let projectLocalCount = 0
-      let projectNacCount = 0
-      let itemCounts = {}
-
       totalPoints += maxTitulationScore
+
+      submissions.sort((a, b) => a.getString('created').localeCompare(b.getString('created')))
+
+      let itemCounts = {}
 
       for (let i = 0; i < submissions.length; i++) {
         const sub = submissions[i]
-        const score = sub.getFloat('score') || 0
-        const title = sub.getString('title')
         const type = sub.getString('type')
+        const title = sub.getString('title')
+        const actId = sub.getString('activity_id')
+        const act = actId ? actMap[actId] : null
 
-        if (eixo1Titles.indexOf(title) !== -1) axes['E1'] = true
-        else if (eixo3Titles.indexOf(title) !== -1) axes['E3'] = true
-        else axes['E2'] = true
+        let score = sub.getFloat('score') || 0
+
+        if (act && act.getString('points_type') === 'level_based') {
+          const userLevel = user.getString('level') || ''
+          if (
+            userLevel.includes('Nível III') ||
+            userLevel.includes('3') ||
+            userLevel.includes('Mobilizador')
+          ) {
+            score = act.getFloat('points_level_3') || 0
+          } else if (
+            userLevel.includes('Nível II') ||
+            userLevel.includes('2') ||
+            userLevel.includes('Pleno')
+          ) {
+            score = act.getFloat('points_level_2') || 0
+          } else {
+            score = act.getFloat('points_level_1') || 0
+          }
+        } else if (act && act.getString('points_type') === 'fixed') {
+          score = act.getFloat('points') || score
+        }
+
+        if (act) {
+          const axis = act.getString('axis')
+          if (axis) axes[axis] = true
+        } else {
+          if (eixo1Titles.indexOf(title) !== -1) axes['E1'] = true
+          else if (eixo3Titles.indexOf(title) !== -1) axes['E3'] = true
+          else axes['E2'] = true
+        }
 
         if (type === 'titulation') continue
 
-        if (title === 'Projeto Local (Municipal)' || title === 'Projeto Estadual') {
-          if (projectLocalCount < 3) {
-            totalPoints += score
-            projectLocalCount++
-          }
-        } else if (title === 'Projeto Nacional' || title === 'Projeto Internacional') {
-          if (projectNacCount < 2) {
-            totalPoints += score
-            projectNacCount++
-          }
-        } else if (ITEM_CAPS[title]) {
-          itemCounts[title] = (itemCounts[title] || 0) + 1
-          if (itemCounts[title] <= ITEM_CAPS[title]) {
+        let maxOcc = act ? act.getInt('max_occurrences') || 0 : 0
+        if (!act) {
+          if (title === 'Projeto Local (Municipal)' || title === 'Projeto Estadual') maxOcc = 3
+          else if (title === 'Projeto Nacional' || title === 'Projeto Internacional') maxOcc = 2
+          else maxOcc = ITEM_CAPS[title] || 999
+        }
+
+        const key = actId || title
+        itemCounts[key] = (itemCounts[key] || 0) + 1
+
+        if (maxOcc > 0) {
+          if (itemCounts[key] <= maxOcc) {
             totalPoints += score
           }
         } else {
@@ -170,7 +204,7 @@ onRecordAfterUpdateSuccess((e) => {
         }
       }
 
-      const originalUserPoints = user.getFloat('points')
+      const originalUserPoints = user.getFloat('points') || 0
       const originalUserLevel = user.getString('level')
 
       user.set('points', totalPoints)
