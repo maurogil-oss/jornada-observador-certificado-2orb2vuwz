@@ -15,11 +15,14 @@ routerAdd(
 
     const submissions = $app.findRecordsByFilter(
       'submissions',
-      `user_id = '${userId}' && status = 'Aprovado'`,
-      'created ASC',
+      `user_id = {:userId} && status = 'Aprovado'`,
+      'created',
+      1000,
+      0,
+      { userId: userId },
     )
 
-    const metadatas = $app.findRecordsByFilter('activities_metadata', '1=1', '')
+    const metadatas = $app.findRecordsByFilter('activities_metadata', '1=1', '', 1000, 0)
     const metaMap = {}
     for (const m of metadatas) {
       metaMap[m.id] = m
@@ -241,7 +244,7 @@ routerAdd(
     }
 
     if (oldPoints === calculatedPoints && oldLevel === calculatedLevel) {
-      return e.json(200, { message: 'Score already synchronized' })
+      return e.json(200, { message: 'Score already synchronized', points: calculatedPoints })
     }
 
     user.set('points', calculatedPoints)
