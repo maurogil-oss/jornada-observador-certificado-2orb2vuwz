@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect } from 'react'
 import { format } from 'date-fns'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { ITEM_CAPS } from '@/lib/scoring'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import pb from '@/lib/pocketbase/client'
 import { ptBR } from 'date-fns/locale'
 import useSubmissionsStore, { type Submission } from '@/stores/useSubmissionsStore'
@@ -80,6 +82,60 @@ function StatusBadge({ status }: { status: string }) {
 export default function AdminSubmissions() {
   const { submissions, updateSubmissionStatus } = useSubmissionsStore()
   const location = useLocation()
+
+  const getSubmissionLimitInfo = (sub: Submission) => {
+    if (sub.status !== 'Em Análise') return null
+
+    const userApproved = submissions.filter(
+      (s) => s.user_id === sub.user_id && s.status === 'Aprovado',
+    )
+    const act = sub.activity
+
+    const isTitulation = sub.type === 'titulation' || act?.category === 'Titulação'
+    if (isTitulation) {
+      const hasApproved = userApproved.filter(
+        (s) => s.type === 'titulation' || s.activity?.category === 'Titulação',
+      ).length
+      if (hasApproved >= 1) {
+        return {
+          exceeded: true,
+          current: hasApproved,
+          limit: 1,
+          message: `Atenção: Esta submissão excede o limite permitido para esta atividade/titulação. O usuário já possui ${hasApproved} titulação(ões) aprovada(s).`,
+        }
+      }
+    } else {
+      let maxOccurrences = act ? (act.is_unique ? 1 : act.max_occurrences || 0) : 0
+
+      if (!act) {
+        if (sub.title === 'Projeto Local (Municipal)' || sub.title === 'Projeto Estadual')
+          maxOccurrences = 3
+        else if (sub.title === 'Projeto Nacional' || sub.title === 'Projeto Internacional')
+          maxOccurrences = 2
+        else maxOccurrences = ITEM_CAPS[sub.title] || 999
+      }
+
+      if (maxOccurrences > 0 && maxOccurrences !== 999) {
+        let hasApproved = 0
+        if (act) {
+          hasApproved = userApproved.filter((s) => s.activity_id === act.id).length
+        } else {
+          hasApproved = userApproved.filter((s) => s.title === sub.title).length
+        }
+
+        if (hasApproved >= maxOccurrences) {
+          return {
+            exceeded: true,
+            current: hasApproved,
+            limit: maxOccurrences,
+            message: `Atenção: Esta submissão excede o limite permitido para esta atividade/titulação. O usuário já possui ${hasApproved}/${maxOccurrences} submissões aprovadas para esta categoria.`,
+          }
+        }
+      }
+    }
+
+    return null
+  }
   const navigate = useNavigate()
 
   const [filterStatus, setFilterStatus] = useState<string>('Todos')
@@ -292,7 +348,24 @@ export default function AdminSubmissions() {
                       <span className="font-semibold truncate" title={sub.title}>
                         {sub.title}
                       </span>
-                      <span className="text-xs text-muted-foreground truncate">{sub.nivel}</span>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-muted-foreground truncate">{sub.nivel}</span>
+                        {(() => {
+                          const limitInfo = getSubmissionLimitInfo(sub)
+                          if (limitInfo?.exceeded) {
+                            return (
+                              <span
+                                className="inline-flex items-center gap-1 text-[10px] font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-1.5 py-0.5 rounded"
+                                title={limitInfo.message}
+                              >
+                                <AlertTriangle className="w-3 h-3" />
+                                Limite Excedido
+                              </span>
+                            )
+                          }
+                          return null
+                        })()}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -330,6 +403,25 @@ export default function AdminSubmissions() {
           {selectedSub && (
             <ScrollArea className="flex-1 px-6">
               <div className="space-y-8 pb-6 pt-2">
+                {(() => {
+                  const limitInfo = getSubmissionLimitInfo(selectedSub)
+                  if (limitInfo?.exceeded) {
+                    return (
+                      <Alert
+                        variant="destructive"
+                        className="bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800"
+                      >
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>Atenção: Limite Excedido</AlertTitle>
+                        <AlertDescription className="text-sm mt-1">
+                          {limitInfo.message}
+                        </AlertDescription>
+                      </Alert>
+                    )
+                  }
+                  return null
+                })()}
+
                 <div className="bg-card p-5 rounded-lg space-y-5 text-sm border border-border shadow-sm">
                   <div>
                     <span className="block text-[11px] text-muted-foreground font-semibold uppercase mb-1">
