@@ -66,7 +66,9 @@ export function calculateUserPoints(submissions: any[], userLevel?: string) {
   let maxTitulationId = ''
 
   submissions.forEach((sub) => {
-    if (sub.status === 'Aprovado' && sub.type === 'titulation') {
+    const isTitulation =
+      sub.type === 'titulation' || sub.expand?.activity_id?.category === 'Titulação'
+    if (sub.status === 'Aprovado' && isTitulation) {
       const score = typeof sub.score === 'number' ? sub.score : Number(sub.score) || 0
       if (score > maxTitulationScore) {
         maxTitulationScore = score
@@ -112,12 +114,13 @@ export function calculateUserPoints(submissions: any[], userLevel?: string) {
 
     let isCounted = false
 
-    if (sub.type === 'titulation') {
+    const isTitulation = sub.type === 'titulation' || act?.category === 'Titulação'
+    if (isTitulation) {
       if (sub.id === maxTitulationId) {
         isCounted = true
       }
     } else {
-      let maxOccurrences = act ? act.max_occurrences || 0 : 0
+      let maxOccurrences = act ? (act.is_unique ? 1 : act.max_occurrences || 0) : 0
       if (!act) {
         if (title === 'Projeto Local (Municipal)' || title === 'Projeto Estadual')
           maxOccurrences = 3

@@ -16,7 +16,17 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Search, Loader2, ShieldCheck, AlertTriangle, CheckCircle2, Info } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/hooks/use-toast'
+import {
+  Search,
+  Loader2,
+  ShieldCheck,
+  AlertTriangle,
+  CheckCircle2,
+  Info,
+  RefreshCw,
+} from 'lucide-react'
 import pb from '@/lib/pocketbase/client'
 import useAuthStore from '@/stores/useAuthStore'
 import { cn } from '@/lib/utils'
@@ -175,7 +185,9 @@ function UserSubmissionsAudit({
 }) {
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [loading, setLoading] = useState(true)
+  const [syncing, setSyncing] = useState(false)
   const { user } = useAuthStore()
+  const { toast } = useToast()
   const isAdmin = user?.role === 'admin'
 
   useEffect(() => {
@@ -210,15 +222,64 @@ function UserSubmissionsAudit({
     }
   }, [userId, isAdmin])
 
-  const { calculatedPoints, ignoredSubmissionIds } = useMemo(() => {
-    const { totalPoints, ignoredSubmissionIds: ignoredIds } = calculateUserPoints(
-      submissions,
-      userLevel,
-    )
-    return { calculatedPoints: totalPoints, ignoredSubmissionIds: ignoredIds }
+  const { calculatedPoints, calculatedEixos, ignoredSubmissionIds } = useMemo(() => {
+    const {
+      totalPoints,
+      eixo1Points,
+      eixo2Points,
+      eixo3Points,
+      ignoredSubmissionIds: ignoredIds,
+    } = calculateUserPoints(submissions, userLevel)
+    return {
+      calculatedPoints: totalPoints,
+      calculatedEixos: { eixo1: eixo1Points, eixo2: eixo2Points, eixo3: eixo3Points },
+      ignoredSubmissionIds: ignoredIds,
+    }
   }, [submissions, userLevel])
 
   const isMatch = calculatedPoints === userPoints
+
+  const handleSyncScore = async () => {
+    if (!isAdmin) return
+    setSyncing(true)
+    try {
+      const activeEixos = [
+        calculatedEixos.eixo1 > 0,
+        calculatedEixos.eixo2 > 0,
+        calculatedEixos.eixo3 > 0,
+      ].filter(Boolean).length
+      let newLevel = 'Nível I'
+      if (calculatedPoints >= 1000 && activeEixos >= 3) {
+        newLevel = 'Nível III'
+      } else if (calculatedPoints >= 500 && activeEixos >= 2) {
+        newLevel = 'Nível II'
+      }
+
+      await pb.send('/backend/v1/audit/sync-user-score', {
+        method: 'POST',
+        body: JSON.stringify({
+          user_id: userId,
+          calculated_points: calculatedPoints,
+          calculated_level: newLevel,
+        }),
+      })
+
+      toast({
+        title: 'Pontuação sincronizada',
+        description: `A pontuação do usuário foi atualizada para ${calculatedPoints} pts.`,
+      })
+
+      setTimeout(() => window.location.reload(), 1500)
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao sincronizar',
+        description: error.message || 'Ocorreu um erro ao atualizar a pontuação.',
+      })
+    } finally {
+      setSyncing(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -244,22 +305,35 @@ function UserSubmissionsAudit({
           </div>
         </div>
 
-        <Badge
-          variant={isMatch ? 'default' : 'destructive'}
-          className="flex items-center gap-1.5 px-3 py-1"
-        >
-          {isMatch ? (
-            <>
-              <CheckCircle2 className="w-4 h-4" />
-              Pontuação Sincronizada
-            </>
-          ) : (
-            <>
-              <AlertTriangle className="w-4 h-4" />
-              Divergência Encontrada
-            </>
+        <div className="flex items-center gap-3">
+          <Badge
+            variant={isMatch ? 'default' : 'destructive'}
+            className="flex items-center gap-1.5 px-3 py-1"
+          >
+            {isMatch ? (
+              <>
+                <CheckCircle2 className="w-4 h-4" />
+                Pontuação Sincronizada
+              </>
+            ) : (
+              <>
+                <AlertTriangle className="w-4 h-4" />
+                Divergência Encontrada
+              </>
+            )}
+          </Badge>
+
+          {!isMatch && isAdmin && (
+            <Button size="sm" variant="outline" onClick={handleSyncScore} disabled={syncing}>
+              {syncing ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4 mr-2" />
+              )}
+              Sincronizar
+            </Button>
           )}
-        </Badge>
+        </div>
       </div>
 
       {submissions.length === 0 ? (
