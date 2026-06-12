@@ -47,6 +47,16 @@ export const EIXO1_TITLES = new Set([
   'Papers publicados em revistas/anais',
 ])
 
+export const ACADEMIC_DEGREES = new Set([
+  'Graduação (Reconhecida MEC)',
+  'Pós-graduação Lato Sensu',
+  'Mestrado',
+  'Doutorado',
+  'Pós-Doutorado (Estágio concluído)',
+  'Graduação',
+  'Pós-graduação',
+])
+
 export const EIXO3_TITLES = new Set([
   'Mentoria: Atuação formal como mentor no programa (Validado pela coordenação)',
   'Representante de Comitês estratégicos',
@@ -62,17 +72,24 @@ export function calculateUserPoints(submissions: any[], userLevel?: string) {
   let eixo2Points = 0
   let eixo3Points = 0
 
-  let maxTitulationScore = 0
-  let maxTitulationId = ''
+  let maxAcademicScore = 0
+  let maxAcademicId = ''
 
   submissions.forEach((sub) => {
-    const isTitulation =
-      sub.type === 'titulation' || sub.expand?.activity_id?.category === 'Titulação'
-    if (sub.status === 'Aprovado' && isTitulation) {
+    const act = sub.expand?.activity_id
+    const isAcademic =
+      ACADEMIC_DEGREES.has(sub.title) ||
+      (act &&
+        (act.group_id === 'academic' ||
+          act.title?.includes('Graduação') ||
+          act.title?.includes('Mestrado') ||
+          act.title?.includes('Doutorado')))
+
+    if (sub.status === 'Aprovado' && isAcademic) {
       const score = typeof sub.score === 'number' ? sub.score : Number(sub.score) || 0
-      if (score > maxTitulationScore) {
-        maxTitulationScore = score
-        maxTitulationId = sub.id
+      if (score > maxAcademicScore) {
+        maxAcademicScore = score
+        maxAcademicId = sub.id
       }
     }
   })
@@ -114,17 +131,24 @@ export function calculateUserPoints(submissions: any[], userLevel?: string) {
 
     let isCounted = false
 
-    const isTitulation = sub.type === 'titulation' || act?.category === 'Titulação'
-    if (isTitulation) {
-      if (sub.id === maxTitulationId) {
+    const isAcademic =
+      ACADEMIC_DEGREES.has(title) ||
+      (act &&
+        (act.group_id === 'academic' ||
+          act.title?.includes('Graduação') ||
+          act.title?.includes('Mestrado') ||
+          act.title?.includes('Doutorado')))
+
+    if (isAcademic) {
+      if (sub.id === maxAcademicId) {
         isCounted = true
       }
     } else {
       let maxOccurrences = act ? (act.is_unique ? 1 : act.max_occurrences || 0) : 0
       if (!act) {
-        if (title === 'Projeto Local (Municipal)' || title === 'Projeto Estadual')
+        if (title.includes('Projeto Local') || title.includes('Projeto Estadual'))
           maxOccurrences = 3
-        else if (title === 'Projeto Nacional' || title === 'Projeto Internacional')
+        else if (title.includes('Projeto Nacional') || title.includes('Projeto Internacional'))
           maxOccurrences = 2
         else maxOccurrences = ITEM_CAPS[title] || 999
       }
@@ -154,11 +178,34 @@ export function calculateUserPoints(submissions: any[], userLevel?: string) {
   // Avoid floating point precision issues
   totalPoints = Math.round(totalPoints * 100) / 100
 
+  const rejectionReasons: Record<string, string> = {}
+
+  ignoredSubmissionIds.forEach((id) => {
+    const sub = submissions.find((s) => s.id === id)
+    if (!sub) return
+    const act = sub.expand?.activity_id
+    const isAcademic =
+      ACADEMIC_DEGREES.has(sub.title) ||
+      (act &&
+        (act.group_id === 'academic' ||
+          act.title?.includes('Graduação') ||
+          act.title?.includes('Mestrado') ||
+          act.title?.includes('Doutorado')))
+    if (isAcademic) {
+      rejectionReasons[id] =
+        'Hierarquia de Titulação: Somente a maior titulação acadêmica é pontuada.'
+    } else {
+      rejectionReasons[id] =
+        'Limite Atingido: O número máximo de ocorrências (CAP) para esta atividade já foi alcançado.'
+    }
+  })
+
   return {
     totalPoints,
     eixo1Points,
     eixo2Points,
     eixo3Points,
     ignoredSubmissionIds,
+    rejectionReasons,
   }
 }

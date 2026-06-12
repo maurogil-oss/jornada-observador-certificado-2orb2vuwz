@@ -222,20 +222,23 @@ function UserSubmissionsAudit({
     }
   }, [userId, isAdmin])
 
-  const { calculatedPoints, calculatedEixos, ignoredSubmissionIds } = useMemo(() => {
-    const {
-      totalPoints,
-      eixo1Points,
-      eixo2Points,
-      eixo3Points,
-      ignoredSubmissionIds: ignoredIds,
-    } = calculateUserPoints(submissions, userLevel)
-    return {
-      calculatedPoints: totalPoints,
-      calculatedEixos: { eixo1: eixo1Points, eixo2: eixo2Points, eixo3: eixo3Points },
-      ignoredSubmissionIds: ignoredIds,
-    }
-  }, [submissions, userLevel])
+  const { calculatedPoints, calculatedEixos, ignoredSubmissionIds, rejectionReasons } =
+    useMemo(() => {
+      const {
+        totalPoints,
+        eixo1Points,
+        eixo2Points,
+        eixo3Points,
+        ignoredSubmissionIds: ignoredIds,
+        rejectionReasons: reasons,
+      } = calculateUserPoints(submissions, userLevel)
+      return {
+        calculatedPoints: totalPoints,
+        calculatedEixos: { eixo1: eixo1Points, eixo2: eixo2Points, eixo3: eixo3Points },
+        ignoredSubmissionIds: ignoredIds,
+        rejectionReasons: reasons,
+      }
+    }, [submissions, userLevel])
 
   const isMatch = calculatedPoints === userPoints
 
@@ -397,8 +400,11 @@ function UserSubmissionsAudit({
                     {sub.status === 'Aprovado' ? (
                       ignoredSubmissionIds.has(sub.id) ? (
                         <span
-                          className="text-muted-foreground line-through opacity-60"
-                          title="Pontuação não contabilizada (regra de limite ou hierarquia atingida)"
+                          className="text-muted-foreground line-through opacity-60 cursor-help border-b border-dashed border-muted-foreground"
+                          title={
+                            rejectionReasons[sub.id] ||
+                            'Pontuação não contabilizada (regra de limite ou hierarquia atingida)'
+                          }
                         >
                           +{sub.score || 0}
                         </span>
