@@ -13,11 +13,10 @@ routerAdd(
     const oldPoints = user.getInt('points') || 0
     const oldLevel = user.getString('level') || ''
 
-    // Calculate score directly in the backend
     const submissions = $app.findRecordsByFilter(
       'submissions',
       `user_id = '${userId}' && status = 'Aprovado'`,
-      'created',
+      'created ASC',
     )
 
     const metadatas = $app.findRecordsByFilter('activities_metadata', '1=1', '')
@@ -42,12 +41,18 @@ routerAdd(
       'Artigos publicados': 5,
       'Estudos publicados': 5,
       'Papers publicados em revistas/anais': 5,
+      'Trabalhar com trânsito/mobilidade (Validação anual)': 1,
       'Trabalhar em estandes/feiras relacionadas (Até 5x)': 5,
       'Organização de banco de dados local de sinistros (Até 2x)': 2,
       'Aplicação de pesquisa com usuários de trânsito (Até 5x)': 5,
       'Desenvolver projetos viários (traffic calming, ruas completas) (Até 5x)': 5,
       'Inovação técnica inédita e estruturada (Até 2x)': 2,
       'Inovação aplicada (implementada com impacto) (Única)': 1,
+      'Implementação de projeto escolar contínuo': 3,
+      'Projeto Local (Municipal)': 3,
+      'Projeto Estadual': 3,
+      'Projeto Nacional': 2,
+      'Projeto Internacional': 2,
       'Livro publicado com ISBN (Até 2x)': 2,
       'EBook publicado na Plataforma Digital (Até 2x)': 2,
       'Produção de material educativo (Até 3x)': 3,
@@ -67,9 +72,17 @@ routerAdd(
       'Participação e contribuição técnica em Consulta Pública': 5,
       'Proposição formal de melhoria viária protocolada (Até 3x)': 3,
       'Apresentar o Cadastro Positivo de Condutores (RNPC) (Até 5x)': 5,
+      'Destaque anual do programa (Reconhecimento ONSV interno, 1x/ano)': 1,
+      'Destaque anual do programa (Reconhecimento ONSV interno)': 1,
+      'Atualização anual de cadastro técnico (Obrigatório, 1x/ano)': 1,
       'Representação formal do ONSV em eventos técnicos (Até 5x)': 5,
       'Atuar como voluntário formal em ONG de trânsito (Até 5x)': 5,
       'Mentoria: Atuação formal como mentor no programa (Validado pela coordenação)': 3,
+      'Representante de Comitês estratégicos': 1,
+      'Representante da campanha Maio Amarelo': 1,
+      'Representante de JARI (Junta Administrativa de Recursos de Infrações)': 1,
+      'Representante de Câmaras Técnicas': 1,
+      'Representante de Conselhos': 1,
     }
 
     const EIXO1_TITLES = [
@@ -110,7 +123,10 @@ routerAdd(
             act.getString('title').includes('Doutorado')))
 
       if (isAcademic) {
-        const score = sub.getFloat('score') || 0
+        let score = sub.getFloat('score') || 0
+        if (act && act.getString('points_type') === 'fixed') {
+          score = act.getFloat('points') || score
+        }
         if (score > maxAcademicScore) {
           maxAcademicScore = score
           maxAcademicId = sub.id
@@ -195,33 +211,44 @@ routerAdd(
     if (eixo2Points > 0) activeEixos++
     if (eixo3Points > 0) activeEixos++
 
-    let calculatedLevelBase = 'Nível I'
-    if (calculatedPoints >= 1000 && activeEixos >= 3) {
-      calculatedLevelBase = 'Nível III'
-    } else if (calculatedPoints >= 500 && activeEixos >= 2) {
-      calculatedLevelBase = 'Nível II'
+    const turma = user.getInt('turma') || 15
+    const createdDateStr = user.getString('created')
+    let isProbationary = false
+    if (turma >= 15 && createdDateStr) {
+      const createdDate = new Date(createdDateStr.replace(' ', 'T'))
+      const oneYearAgo = new Date()
+      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
+      if (createdDate > oneYearAgo) {
+        isProbationary = true
+      }
     }
 
-    let calculatedLevel = calculatedLevelBase
-    if (calculatedLevelBase === 'Nível III') {
-      calculatedLevel = 'Nível III - Observador Certificado Mobilizador'
-    } else if (calculatedLevelBase === 'Nível II') {
-      calculatedLevel = 'Nível II - Observador Certificado Pleno'
-    } else if (calculatedLevelBase === 'Nível I') {
-      calculatedLevel = 'Nível I - Observador Certificado'
+    let calculatedLevel =
+      turma <= 14
+        ? 'Nível II - Observador Certificado Pleno'
+        : 'Nível I - Observador Certificado (Iniciante)'
+
+    if (isProbationary) {
+      calculatedLevel = 'Nível I - Observador Certificado (Iniciante)'
+    } else {
+      if (calculatedPoints >= 1000 && activeEixos >= 3) {
+        calculatedLevel = 'Nível III - Mobilizador'
+      } else if (calculatedPoints >= 500 && activeEixos >= 2) {
+        calculatedLevel = 'Nível II - Observador Certificado Pleno'
+      } else if (activeEixos >= 1) {
+        calculatedLevel = 'Nível I - Observador Certificado (Iniciante)'
+      }
     }
 
     if (oldPoints === calculatedPoints && oldLevel === calculatedLevel) {
       return e.json(200, { message: 'Score already synchronized' })
     }
 
-    // Update user
     user.set('points', calculatedPoints)
     user.set('level', calculatedLevel)
 
     $app.save(user)
 
-    // Log in activity_logs
     try {
       const logCollection = $app.findCollectionByNameOrId('activity_logs')
       const logRecord = new Record(logCollection)
@@ -234,10 +261,7 @@ routerAdd(
         `Score adjusted: Titration limit exceeded / Points audit. Changed points from ${oldPoints} to ${calculatedPoints}`,
       )
       $app.save(logRecord)
-    } catch (err) {
-      // Graceful fallback if activity_logs is not available
-      console.error('Failed to create activity log for score sync:', err)
-    }
+    } catch (err) {}
 
     return e.json(200, { message: 'Score synchronized successfully', points: calculatedPoints })
   },
