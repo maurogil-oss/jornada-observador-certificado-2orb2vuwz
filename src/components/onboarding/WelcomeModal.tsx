@@ -12,11 +12,14 @@ import useAuthStore from '@/stores/useAuthStore'
 import { updateUser } from '@/services/users'
 import pb from '@/lib/pocketbase/client'
 import { Rocket, Target, TrendingUp, HelpCircle } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 
 export function WelcomeModal() {
   const { user } = useAuthStore()
+  const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [step, setStep] = useState(1)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (user && !user.onboarding_completed && user.role !== 'admin') {
@@ -28,14 +31,22 @@ export function WelcomeModal() {
   const handlePrev = () => setStep((s) => s - 1)
 
   const handleFinish = async () => {
-    setOpen(false)
-    if (user) {
-      try {
-        await updateUser(user.id, { onboarding_completed: true })
-        await pb.collection('users').authRefresh()
-      } catch (err) {
-        console.error('Failed to update onboarding status', err)
-      }
+    if (!user) return
+
+    setLoading(true)
+    try {
+      await updateUser(user.id, { onboarding_completed: true })
+      await pb.collection('users').authRefresh()
+      setOpen(false)
+    } catch (err) {
+      console.error('Failed to update onboarding status', err)
+      toast({
+        title: 'Erro ao concluir',
+        description: 'Ocorreu um problema ao salvar seu progresso. Tente novamente.',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -70,7 +81,7 @@ export function WelcomeModal() {
                 <Rocket className="w-8 h-8 text-primary" />
               </div>
               <p className="text-muted-foreground px-4">
-                A <strong>Jornada do Observador Certificado</strong> foi criada para reconhecer seu
+                A <strong>Jornada do Observador Certificado</strong> foi criada para considerar seu
                 impacto e engajamento. Aqui você registrará suas ações em prol da segurança viária e
                 avançará de nível.
               </p>
@@ -127,14 +138,16 @@ export function WelcomeModal() {
           </div>
           <div className="flex gap-2">
             {step > 1 && (
-              <Button variant="outline" onClick={handlePrev}>
+              <Button variant="outline" onClick={handlePrev} disabled={loading}>
                 Voltar
               </Button>
             )}
             {step < 4 ? (
               <Button onClick={handleNext}>Próximo</Button>
             ) : (
-              <Button onClick={handleFinish}>Começar</Button>
+              <Button onClick={handleFinish} disabled={loading}>
+                {loading ? 'Salvando...' : 'Começar'}
+              </Button>
             )}
           </div>
         </DialogFooter>
