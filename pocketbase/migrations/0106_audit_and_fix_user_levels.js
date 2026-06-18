@@ -94,7 +94,7 @@ migrate(
       const submissions = app.findRecordsByFilter(
         'submissions',
         "user_id = {:userId} && status = 'Aprovado'",
-        'created ASC',
+        'created',
         10000,
         0,
         { userId: userId },

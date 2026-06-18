@@ -338,7 +338,7 @@ migrate(
         submissions = app.findRecordsByFilter(
           'submissions',
           `user_id = '${userId}' && status = 'Aprovado'`,
-          'created ASC',
+          'created',
         )
       } catch (_) {
         submissions = []
