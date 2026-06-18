@@ -179,9 +179,12 @@ export function calculateUserPoints(submissions: any[], userLevel?: string) {
 
     if (isCounted) {
       totalPoints += score
-      const axis = act ? act.axis : null
-      if (axis === 'Eixo 1' || EIXO1_TITLES.has(title)) eixo1Points += score
-      else if (axis === 'Eixo 3' || EIXO3_TITLES.has(title)) eixo3Points += score
+      const axis = act ? String(act.axis).trim() : null
+      const isEixo1 = axis === 'Eixo 1' || axis === '1' || EIXO1_TITLES.has(title)
+      const isEixo3 = axis === 'Eixo 3' || axis === '3' || EIXO3_TITLES.has(title)
+
+      if (isEixo1) eixo1Points += score
+      else if (isEixo3) eixo3Points += score
       else eixo2Points += score
     } else {
       ignoredSubmissionIds.add(sub.id)
