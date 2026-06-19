@@ -26,6 +26,7 @@ import {
   CheckCircle2,
   Info,
   RefreshCw,
+  Download,
 } from 'lucide-react'
 import pb from '@/lib/pocketbase/client'
 import useAuthStore from '@/stores/useAuthStore'
@@ -457,14 +458,39 @@ export default function AdminScoreAudit() {
 
   return (
     <div className="container mx-auto p-4 md:p-6 max-w-5xl space-y-6 animate-fade-in">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-          <ShieldCheck className="h-8 w-8 text-primary" />
-          Auditoria de Pontuação
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          Verifique o detalhamento dos pontos dos usuários gerados por submissões aprovadas.
-        </p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
+            <ShieldCheck className="h-8 w-8 text-primary" />
+            Auditoria de Pontuação
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Verifique o detalhamento dos pontos dos usuários gerados por submissões aprovadas.
+          </p>
+        </div>
+        <Button
+          onClick={() => {
+            const headers = ['Nome', 'Nível', 'Pontuação']
+            const rows = users.map((u) => [
+              `"${(u.full_name || u.name || '').replace(/"/g, '""')}"`,
+              `"${(u.level || '').replace(/"/g, '""')}"`,
+              u.points || 0,
+            ])
+            const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n')
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' })
+            const link = document.createElement('a')
+            link.href = URL.createObjectURL(blob)
+            link.download = `relatorio_auditoria_${new Date().toISOString().split('T')[0]}.csv`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+          }}
+          variant="outline"
+          className="gap-2 shrink-0"
+        >
+          <Download className="w-4 h-4" />
+          Exportar
+        </Button>
       </div>
 
       <EvolutionLevelsLegend />
