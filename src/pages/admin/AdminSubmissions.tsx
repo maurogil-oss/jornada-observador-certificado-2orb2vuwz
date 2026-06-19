@@ -91,49 +91,21 @@ export default function AdminSubmissions() {
     )
     const act = sub.activity
 
-    const isTitulation = sub.type === 'titulation' || act?.category === 'Titulação'
-    if (isTitulation) {
-      const hasApproved = userApproved.filter(
-        (s) => s.type === 'titulation' || s.activity?.category === 'Titulação',
-      ).length
-      if (hasApproved >= 1) {
-        return {
-          exceeded: true,
-          current: hasApproved,
-          limit: 1,
-          message: `Atenção: Esta submissão excede o limite permitido para esta atividade/titulação. O usuário já possui ${hasApproved} titulação(ões) aprovada(s).`,
-        }
-      }
+    // Audit & Fix: The logic responsible for counting occurrences must strictly
+    // filter by user_id, activity_id, and status = 'Aprovado'. We no longer
+    // incorrectly group all titulations or other submissions.
+    let maxOccurrences = act ? (act.is_unique ? 1 : act.max_occurrences || 0) : 0
+
+    let hasApproved = 0
+    if (act) {
+      hasApproved = userApproved.filter((s) => s.activity_id === act.id).length
     } else {
-      let maxOccurrences = act ? (act.is_unique ? 1 : act.max_occurrences || 0) : 0
-
-      if (!act) {
-        if (sub.title === 'Projeto Local (Municipal)' || sub.title === 'Projeto Estadual')
-          maxOccurrences = 3
-        else if (sub.title === 'Projeto Nacional' || sub.title === 'Projeto Internacional')
-          maxOccurrences = 2
-        else maxOccurrences = ITEM_CAPS[sub.title] || 999
-      }
-
-      if (maxOccurrences > 0 && maxOccurrences !== 999) {
-        let hasApproved = 0
-        if (act) {
-          hasApproved = userApproved.filter((s) => s.activity_id === act.id).length
-        } else {
-          hasApproved = userApproved.filter((s) => s.title === sub.title).length
-        }
-
-        if (hasApproved >= maxOccurrences) {
-          return {
-            exceeded: true,
-            current: hasApproved,
-            limit: maxOccurrences,
-            message: `Atenção: Esta submissão excede o limite permitido para esta atividade/titulação. O usuário já possui ${hasApproved}/${maxOccurrences} submissões aprovadas para esta categoria.`,
-          }
-        }
-      }
+      hasApproved = userApproved.filter((s) => s.title === sub.title).length
     }
 
+    // AC: Remove the 'Limit Exceeded' alert from the evaluation interface to
+    // prevent confusion and allow the administrator to proceed with the assessment
+    // (Administrative Override). Returning null removes the warning from the UI.
     return null
   }
   const navigate = useNavigate()
