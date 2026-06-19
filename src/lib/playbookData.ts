@@ -20,7 +20,7 @@ export const eixo1Sections = [
   },
   {
     title: 'Produção Acadêmica',
-    desc: '(Até 5x, Análise Técnica):',
+    desc: '(Até 5x total, Análise Técnica):',
     items: [
       { points: 50, text: 'Artigos publicados' },
       { points: 50, text: 'Estudos publicados' },

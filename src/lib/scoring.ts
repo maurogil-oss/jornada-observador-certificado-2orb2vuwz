@@ -152,8 +152,18 @@ export function calculateUserPoints(submissions: any[], userLevel?: string) {
           act.title?.includes('Mestrado') ||
           act.title?.includes('Doutorado')))
 
+    const isProducaoAcademica =
+      title === 'Artigos publicados' ||
+      title === 'Estudos publicados' ||
+      title === 'Papers publicados em revistas/anais'
+
     if (isAcademic) {
       if (sub.id === maxAcademicId) {
+        isCounted = true
+      }
+    } else if (isProducaoAcademica) {
+      itemCounts['PRODUCAO_ACADEMICA'] = (itemCounts['PRODUCAO_ACADEMICA'] || 0) + 1
+      if (itemCounts['PRODUCAO_ACADEMICA'] <= 5) {
         isCounted = true
       }
     } else {

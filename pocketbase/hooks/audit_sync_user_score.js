@@ -171,8 +171,18 @@ routerAdd(
             act.getString('title').includes('Mestrado') ||
             act.getString('title').includes('Doutorado')))
 
+      const isProducaoAcademica =
+        title === 'Artigos publicados' ||
+        title === 'Estudos publicados' ||
+        title === 'Papers publicados em revistas/anais'
+
       if (isAcademic) {
         if (sub.id === maxAcademicId) {
+          isCounted = true
+        }
+      } else if (isProducaoAcademica) {
+        itemCounts['PRODUCAO_ACADEMICA'] = (itemCounts['PRODUCAO_ACADEMICA'] || 0) + 1
+        if (itemCounts['PRODUCAO_ACADEMICA'] <= 5) {
           isCounted = true
         }
       } else {
@@ -200,22 +210,10 @@ routerAdd(
 
       if (isCounted) {
         calculatedPoints += score
-        const axis = act ? act.getString('axis') : null
-        const axisStr = (axis || '').toString().trim()
-        if (axisStr === 'Eixo 1' || axisStr === '1' || EIXO1_TITLES.includes(title))
-          eixo1Points += score
-        else if (axisStr === 'Eixo 3' || axisStr === '3' || EIXO3_TITLES.includes(title))
-          eixo3Points += score
-        else eixo2Points += score
       }
     }
 
     calculatedPoints = Math.round(calculatedPoints * 100) / 100
-
-    let activeEixos = 0
-    if (eixo1Points > 0) activeEixos++
-    if (eixo2Points > 0) activeEixos++
-    if (eixo3Points > 0) activeEixos++
 
     const turma = user.getInt('turma') || 0
     const createdDateStr = user.getString('created')
@@ -234,9 +232,9 @@ routerAdd(
     if (isProbationary) {
       calculatedLevel = 'Nível I - Observador Certificado (Iniciante)'
     } else {
-      if (calculatedPoints >= 1000 && activeEixos >= 3) {
+      if (calculatedPoints >= 1000) {
         calculatedLevel = 'Nível III - Mobilizador'
-      } else if (calculatedPoints >= 500 && activeEixos >= 2) {
+      } else if (calculatedPoints >= 500) {
         calculatedLevel = 'Nível II - Observador Certificado Pleno'
       } else {
         calculatedLevel = 'Nível I - Observador Certificado (Iniciante)'
