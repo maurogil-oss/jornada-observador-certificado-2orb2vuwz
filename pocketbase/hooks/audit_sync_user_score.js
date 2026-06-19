@@ -210,6 +210,14 @@ routerAdd(
 
       if (isCounted) {
         calculatedPoints += score
+
+        const axis = act ? (act.getString('axis') || '').trim() : null
+        const isEixo1 = axis === 'Eixo 1' || axis === '1' || EIXO1_TITLES.includes(title)
+        const isEixo3 = axis === 'Eixo 3' || axis === '3' || EIXO3_TITLES.includes(title)
+
+        if (isEixo1) eixo1Points += score
+        else if (isEixo3) eixo3Points += score
+        else eixo2Points += score
       }
     }
 
@@ -229,12 +237,14 @@ routerAdd(
 
     let calculatedLevel = 'Nível I - Observador Certificado (Iniciante)'
 
+    const activeEixos = [eixo1Points > 0, eixo2Points > 0, eixo3Points > 0].filter(Boolean).length
+
     if (isProbationary) {
       calculatedLevel = 'Nível I - Observador Certificado (Iniciante)'
     } else {
-      if (calculatedPoints >= 1000) {
+      if (calculatedPoints >= 1000 && activeEixos >= 3) {
         calculatedLevel = 'Nível III - Mobilizador'
-      } else if (calculatedPoints >= 500) {
+      } else if (calculatedPoints >= 500 && activeEixos >= 2) {
         calculatedLevel = 'Nível II - Observador Certificado Pleno'
       } else {
         calculatedLevel = 'Nível I - Observador Certificado (Iniciante)'

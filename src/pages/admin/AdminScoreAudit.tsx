@@ -430,6 +430,31 @@ export default function AdminScoreAudit() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [reconciling, setReconciling] = useState(false)
+  const { toast } = useToast()
+
+  const handleReconcileGlobal = async () => {
+    setReconciling(true)
+    try {
+      const response = await pb.send('/backend/v1/audit/reconcile-levels', {
+        method: 'POST',
+      })
+      const count = response.updated_count || 0
+      toast({
+        title: 'Análise concluída',
+        description: `Análise concluída. ${count} ajustes realizados.`,
+      })
+      setTimeout(() => window.location.reload(), 1500)
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Erro na reconciliação',
+        description: error.message || 'Ocorreu um erro ao processar a auditoria global.',
+      })
+    } finally {
+      setReconciling(false)
+    }
+  }
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -468,29 +493,39 @@ export default function AdminScoreAudit() {
             Verifique o detalhamento dos pontos dos usuários gerados por submissões aprovadas.
           </p>
         </div>
-        <Button
-          onClick={() => {
-            const headers = ['Nome', 'Nível', 'Pontuação']
-            const rows = users.map((u) => [
-              `"${(u.full_name || u.name || '').replace(/"/g, '""')}"`,
-              `"${(u.level || '').replace(/"/g, '""')}"`,
-              u.points || 0,
-            ])
-            const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n')
-            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' })
-            const link = document.createElement('a')
-            link.href = URL.createObjectURL(blob)
-            link.download = `relatorio_auditoria_${new Date().toISOString().split('T')[0]}.csv`
-            document.body.appendChild(link)
-            link.click()
-            document.body.removeChild(link)
-          }}
-          variant="outline"
-          className="gap-2 shrink-0"
-        >
-          <Download className="w-4 h-4" />
-          Exportar
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button onClick={handleReconcileGlobal} disabled={reconciling} className="gap-2 shrink-0">
+            {reconciling ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <ShieldCheck className="w-4 h-4" />
+            )}
+            Confirmar e Ajustar Níveis
+          </Button>
+          <Button
+            onClick={() => {
+              const headers = ['Nome', 'Nível', 'Pontuação']
+              const rows = users.map((u) => [
+                `"${(u.full_name || u.name || '').replace(/"/g, '""')}"`,
+                `"${(u.level || '').replace(/"/g, '""')}"`,
+                u.points || 0,
+              ])
+              const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n')
+              const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' })
+              const link = document.createElement('a')
+              link.href = URL.createObjectURL(blob)
+              link.download = `relatorio_auditoria_${new Date().toISOString().split('T')[0]}.csv`
+              document.body.appendChild(link)
+              link.click()
+              document.body.removeChild(link)
+            }}
+            variant="outline"
+            className="gap-2 shrink-0"
+          >
+            <Download className="w-4 h-4" />
+            Exportar
+          </Button>
+        </div>
       </div>
 
       <EvolutionLevelsLegend />
