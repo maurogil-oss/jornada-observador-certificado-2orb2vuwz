@@ -98,6 +98,15 @@ export function BatchCertificateGenerator() {
     return bytes
   }
 
+  const readFileAsText = (file: File, encoding: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => resolve(e.target?.result as string)
+      reader.onerror = () => reject(new Error('Falha ao ler o arquivo'))
+      reader.readAsText(file, encoding)
+    })
+  }
+
   const processBatch = async () => {
     if (!file) return
     if (file.name.endsWith('.xlsx')) {
@@ -112,10 +121,13 @@ export function BatchCertificateGenerator() {
 
     setIsProcessing(true)
     setProgress(0)
-    const reader = new FileReader()
 
-    reader.onload = async (e) => {
-      const text = e.target?.result as string
+    try {
+      let text = await readFileAsText(file, 'UTF-8')
+      if (text.includes('')) {
+        text = await readFileAsText(file, 'windows-1252')
+      }
+
       const parsed = parseCSV(text)
 
       const nomeKey = Object.keys(parsed[0] || {}).find((k) => k.includes('nome'))
@@ -135,7 +147,16 @@ export function BatchCertificateGenerator() {
 
       const rows: CertificateRow[] = parsed
         .filter((r) => r[nomeKey] && r[nivelKey])
-        .map((r) => ({ nome: r[nomeKey], nivel: r[nivelKey] }))
+        .map((r) => {
+          let standardizedNivel = r[nivelKey]
+          const rawNivel = standardizedNivel.toLowerCase()
+
+          if (rawNivel.includes('iii') || rawNivel.includes('3')) standardizedNivel = 'Nível III'
+          else if (rawNivel.includes('ii') || rawNivel.includes('2')) standardizedNivel = 'Nível II'
+          else if (rawNivel.includes('i') || rawNivel.includes('1')) standardizedNivel = 'Nível I'
+
+          return { nome: r[nomeKey], nivel: standardizedNivel }
+        })
 
       const generatedFiles: { name: string; buffer: Uint8Array }[] = []
       const errors: string[] = []
@@ -162,15 +183,11 @@ export function BatchCertificateGenerator() {
       }
 
       setResults({ success: successCount, errors })
+    } catch (err) {
+      toast({ title: 'Erro', description: 'Falha ao processar o arquivo.', variant: 'destructive' })
+    } finally {
       setIsProcessing(false)
     }
-
-    reader.onerror = () => {
-      toast({ title: 'Erro', description: 'Falha ao ler o arquivo.', variant: 'destructive' })
-      setIsProcessing(false)
-    }
-
-    reader.readAsText(file, 'UTF-8')
   }
 
   const downloadZip = () => {
