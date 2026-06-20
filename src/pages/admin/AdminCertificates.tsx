@@ -20,6 +20,8 @@ import { useToast } from '@/hooks/use-toast'
 import { Loader2, Trash2, Image as ImageIcon, Eye, Edit, AlertCircle } from 'lucide-react'
 import pb from '@/lib/pocketbase/client'
 import { normalizeString } from '@/lib/utils'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { BatchCertificateGenerator } from '@/components/admin/BatchCertificateGenerator'
 
 const EXPECTED_LEVELS = ['Nível I', 'Nível II', 'Nível III']
 
@@ -213,9 +215,9 @@ export default function AdminCertificates() {
   return (
     <div className="space-y-6 animate-fade-in-up">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Templates de Certificado</h2>
+        <h2 className="text-3xl font-bold tracking-tight">Gerenciamento de Certificados</h2>
         <p className="text-muted-foreground">
-          Gerencie as imagens de fundo e posicionamento do nome para cada nível.
+          Configure templates, ou gere certificados em lote para impressão.
         </p>
       </div>
 
@@ -233,231 +235,246 @@ export default function AdminCertificates() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Adicionar / Atualizar Template</CardTitle>
-              <CardDescription>
-                O novo template substituirá o existente para o mesmo nível.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Nível</Label>
-                  <Select value={level} onValueChange={handleLevelChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o nível" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Nível I">Nível I</SelectItem>
-                      <SelectItem value="Nível II">Nível II</SelectItem>
-                      <SelectItem value="Nível III">Nível III</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+      <Tabs defaultValue="templates" className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="templates">Templates</TabsTrigger>
+          <TabsTrigger value="batch">Gerador em Lote</TabsTrigger>
+        </TabsList>
 
-                <div className="space-y-2">
-                  <Label>Imagem de Fundo (JPG/PNG)</Label>
-                  <Input
-                    type="file"
-                    accept="image/jpeg,image/png"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Deixe em branco para manter a imagem atual.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Posição X (px)</Label>
-                    <Input
-                      type="number"
-                      step="any"
-                      value={x}
-                      onChange={(e) => setX(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Posição Y (px, do topo para baixo)</Label>
-                    <Input
-                      type="number"
-                      step="any"
-                      value={y}
-                      onChange={(e) => setY(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label>Tamanho da Fonte (px)</Label>
-                    <Input
-                      type="number"
-                      step="any"
-                      value={fontSize}
-                      onChange={(e) => setFontSize(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Cor do Texto</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        type="color"
-                        value={color}
-                        onChange={(e) => setColor(e.target.value)}
-                        className="w-12 p-1 h-10"
-                      />
-                      <Input
-                        type="text"
-                        value={color}
-                        onChange={(e) => setColor(e.target.value)}
-                        className="flex-1"
-                        pattern="^#[0-9A-Fa-f]{6}$"
-                      />
+        <TabsContent value="templates" className="mt-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Adicionar / Atualizar Template</CardTitle>
+                  <CardDescription>
+                    O novo template substituirá o existente para o mesmo nível.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Nível</Label>
+                      <Select value={level} onValueChange={handleLevelChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o nível" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Nível I">Nível I</SelectItem>
+                          <SelectItem value="Nível II">Nível II</SelectItem>
+                          <SelectItem value="Nível III">Nível III</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Alinhamento</Label>
-                    <Select value={textAlign} onValueChange={setTextAlign}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Alinhamento" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="left">Esquerda</SelectItem>
-                        <SelectItem value="center">Centro</SelectItem>
-                        <SelectItem value="right">Direita</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
 
-                <div className="flex gap-4 pt-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1"
-                    onClick={handlePreview}
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    Pré-visualizar
-                  </Button>
-                  <Button type="submit" className="flex-1" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    ) : (
-                      <ImageIcon className="w-4 h-4 mr-2" />
-                    )}
-                    Salvar Template
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+                    <div className="space-y-2">
+                      <Label>Imagem de Fundo (JPG/PNG)</Label>
+                      <Input
+                        type="file"
+                        accept="image/jpeg,image/png"
+                        onChange={(e) => setFile(e.target.files?.[0] || null)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Deixe em branco para manter a imagem atual.
+                      </p>
+                    </div>
 
-          {previewUrl && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Pré-visualização</CardTitle>
-                <CardDescription>
-                  Assim o certificado será gerado. Ajuste os valores ou clique na imagem para
-                  definir a posição do texto, e clique em "Pré-visualizar" para atualizar.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex justify-center overflow-auto bg-muted/30 p-4 rounded-b-lg">
-                <canvas
-                  ref={canvasRef}
-                  className="max-w-full h-auto border shadow-sm bg-white cursor-crosshair"
-                  onClick={(e) => {
-                    const canvas = canvasRef.current
-                    if (!canvas) return
-                    const rect = canvas.getBoundingClientRect()
-                    const scaleX = canvas.width / rect.width
-                    const scaleY = canvas.height / rect.height
-                    const clickX = (e.clientX - rect.left) * scaleX
-                    const clickY = (e.clientY - rect.top) * scaleY
-                    setX(Math.round(clickX).toString())
-                    setY(Math.round(clickY).toString())
-                    setTimeout(handlePreview, 50)
-                  }}
-                />
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold">Templates Ativos</h3>
-          {isLoading ? (
-            <div className="flex justify-center p-8">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            </div>
-          ) : templates.length === 0 ? (
-            <Card className="bg-muted/50 border-dashed">
-              <CardContent className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground">
-                <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
-                <p>Nenhum template configurado.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            templates.map((tpl) => {
-              const pos = tpl.settings?.name_position || tpl.settings || {}
-              const px = pos.positionX ?? pos.x ?? tpl.settings?.name_x_position ?? tpl.settings?.x
-              const py = pos.positionY ?? pos.y ?? tpl.settings?.name_y_position ?? tpl.settings?.y
-              const fs = pos.fontSize ?? tpl.settings?.font_size ?? tpl.settings?.fontSize
-              const alg =
-                pos.alignment ?? tpl.settings?.text_align ?? tpl.settings?.alignment ?? 'center'
-
-              return (
-                <Card key={tpl.id}>
-                  <CardContent className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-24 h-16 bg-muted rounded overflow-hidden relative border flex-shrink-0">
-                        <img
-                          src={pb.files.getUrl(tpl, tpl.file)}
-                          alt={tpl.level}
-                          className="object-cover w-full h-full"
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Posição X (px)</Label>
+                        <Input
+                          type="number"
+                          step="any"
+                          value={x}
+                          onChange={(e) => setX(e.target.value)}
+                          required
                         />
                       </div>
-                      <div>
-                        <h4 className="font-semibold">{tpl.level}</h4>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          X: {px} | Y: {py} | Fonte: {fs} | Alinhamento: {alg}
-                        </p>
+                      <div className="space-y-2">
+                        <Label>Posição Y (px, do topo para baixo)</Label>
+                        <Input
+                          type="number"
+                          step="any"
+                          value={y}
+                          onChange={(e) => setY(e.target.value)}
+                          required
+                        />
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label>Tamanho da Fonte (px)</Label>
+                        <Input
+                          type="number"
+                          step="any"
+                          value={fontSize}
+                          onChange={(e) => setFontSize(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Cor do Texto</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            type="color"
+                            value={color}
+                            onChange={(e) => setColor(e.target.value)}
+                            className="w-12 p-1 h-10"
+                          />
+                          <Input
+                            type="text"
+                            value={color}
+                            onChange={(e) => setColor(e.target.value)}
+                            className="flex-1"
+                            pattern="^#[0-9A-Fa-f]{6}$"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Alinhamento</Label>
+                        <Select value={textAlign} onValueChange={setTextAlign}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Alinhamento" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="left">Esquerda</SelectItem>
+                            <SelectItem value="center">Centro</SelectItem>
+                            <SelectItem value="right">Direita</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4 pt-2">
                       <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEdit(tpl)}
-                        className="text-primary hover:bg-primary/10"
-                        title="Editar Template"
+                        type="button"
+                        variant="outline"
+                        className="flex-1"
+                        onClick={handlePreview}
                       >
-                        <Edit className="w-4 h-4" />
+                        <Eye className="w-4 h-4 mr-2" />
+                        Pré-visualizar
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(tpl.id)}
-                        className="text-destructive hover:bg-destructive/10"
-                        title="Excluir Template"
-                      >
-                        <Trash2 className="w-4 h-4" />
+                      <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <ImageIcon className="w-4 h-4 mr-2" />
+                        )}
+                        Salvar Template
                       </Button>
                     </div>
+                  </form>
+                </CardContent>
+              </Card>
+
+              {previewUrl && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Pré-visualização</CardTitle>
+                    <CardDescription>
+                      Assim o certificado será gerado. Ajuste os valores ou clique na imagem para
+                      definir a posição do texto, e clique em "Pré-visualizar" para atualizar.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex justify-center overflow-auto bg-muted/30 p-4 rounded-b-lg">
+                    <canvas
+                      ref={canvasRef}
+                      className="max-w-full h-auto border shadow-sm bg-white cursor-crosshair"
+                      onClick={(e) => {
+                        const canvas = canvasRef.current
+                        if (!canvas) return
+                        const rect = canvas.getBoundingClientRect()
+                        const scaleX = canvas.width / rect.width
+                        const scaleY = canvas.height / rect.height
+                        const clickX = (e.clientX - rect.left) * scaleX
+                        const clickY = (e.clientY - rect.top) * scaleY
+                        setX(Math.round(clickX).toString())
+                        setY(Math.round(clickY).toString())
+                        setTimeout(handlePreview, 50)
+                      }}
+                    />
                   </CardContent>
                 </Card>
-              )
-            })
-          )}
-        </div>
-      </div>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold">Templates Ativos</h3>
+              {isLoading ? (
+                <div className="flex justify-center p-8">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                </div>
+              ) : templates.length === 0 ? (
+                <Card className="bg-muted/50 border-dashed">
+                  <CardContent className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground">
+                    <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
+                    <p>Nenhum template configurado.</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                templates.map((tpl) => {
+                  const pos = tpl.settings?.name_position || tpl.settings || {}
+                  const px =
+                    pos.positionX ?? pos.x ?? tpl.settings?.name_x_position ?? tpl.settings?.x
+                  const py =
+                    pos.positionY ?? pos.y ?? tpl.settings?.name_y_position ?? tpl.settings?.y
+                  const fs = pos.fontSize ?? tpl.settings?.font_size ?? tpl.settings?.fontSize
+                  const alg =
+                    pos.alignment ?? tpl.settings?.text_align ?? tpl.settings?.alignment ?? 'center'
+
+                  return (
+                    <Card key={tpl.id}>
+                      <CardContent className="p-4 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="w-24 h-16 bg-muted rounded overflow-hidden relative border flex-shrink-0">
+                            <img
+                              src={pb.files.getUrl(tpl, tpl.file)}
+                              alt={tpl.level}
+                              className="object-cover w-full h-full"
+                            />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold">{tpl.level}</h4>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              X: {px} | Y: {py} | Fonte: {fs} | Alinhamento: {alg}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEdit(tpl)}
+                            className="text-primary hover:bg-primary/10"
+                            title="Editar Template"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(tpl.id)}
+                            className="text-destructive hover:bg-destructive/10"
+                            title="Excluir Template"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })
+              )}
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="batch" className="mt-0">
+          <BatchCertificateGenerator />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

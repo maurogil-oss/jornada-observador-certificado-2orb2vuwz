@@ -1,18 +1,24 @@
 import pb from '@/lib/pocketbase/client'
 import { normalizeString } from '@/lib/utils'
 
-export const generateCertificateDataUrl = async (level: string): Promise<string> => {
+export const generateCertificateDataUrl = async (
+  level: string,
+  customName?: string,
+  customFontSize?: number,
+): Promise<string> => {
   const templates = await pb.collection('certificate_templates').getFullList()
   const template = templates.find((t) => normalizeString(t.level) === normalizeString(level))
 
   if (!template) {
-    throw new Error('Modelo de certificado não encontrado para o seu nível.')
+    throw new Error(`Modelo de certificado não encontrado para o nível: ${level}`)
   }
 
-  const user = pb.authStore.record
-  if (!user) throw new Error('Usuário não autenticado')
-
-  const name = user.full_name || user.name || 'Observador'
+  let name = customName
+  if (!name) {
+    const user = pb.authStore.record
+    if (!user) throw new Error('Usuário não autenticado')
+    name = user.full_name || user.name || 'Observador'
+  }
   const url = pb.files.getUrl(template, template.file)
 
   return new Promise<string>((resolve, reject) => {
@@ -40,7 +46,8 @@ export const generateCertificateDataUrl = async (level: string): Promise<string>
         Number(pos.positionX ?? pos.x ?? settings.name_x_position ?? settings.x) || img.width / 2
       const y =
         Number(pos.positionY ?? pos.y ?? settings.name_y_position ?? settings.y) || img.height / 2
-      const fontSize = Number(pos.fontSize ?? settings.font_size ?? settings.fontSize) || 30
+      const fontSize =
+        customFontSize ?? Number(pos.fontSize ?? settings.font_size ?? settings.fontSize) ?? 30
       const color = pos.color ?? settings.font_color ?? settings.color ?? '#000000'
       const align = pos.alignment ?? settings.text_align ?? settings.alignment ?? 'center'
 
