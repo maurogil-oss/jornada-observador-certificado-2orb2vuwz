@@ -47,7 +47,7 @@ export const generateCertificateDataUrl = async (
       const y =
         Number(pos.positionY ?? pos.y ?? settings.name_y_position ?? settings.y) || img.height / 2
       const fontSize =
-        customFontSize ?? Number(pos.fontSize ?? settings.font_size ?? settings.fontSize) ?? 30
+        customFontSize ?? (Number(pos.fontSize ?? settings.font_size ?? settings.fontSize) || 30)
       const color = pos.color ?? settings.font_color ?? settings.color ?? '#000000'
       const align = pos.alignment ?? settings.text_align ?? settings.alignment ?? 'center'
 
