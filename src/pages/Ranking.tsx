@@ -336,12 +336,9 @@ export default function Ranking() {
     return [...users].sort((a, b) => {
       const pointsDiff = (b.points || 0) - (a.points || 0)
       if (pointsDiff !== 0) return pointsDiff
-      const aDate = new Date(a.created || 0).getTime()
-      const bDate = new Date(b.created || 0).getTime()
-      if (aDate !== bDate) return aDate - bDate
-      const aNick = (a.nickname || a.name || '').toLowerCase()
-      const bNick = (b.nickname || b.name || '').toLowerCase()
-      return aNick.localeCompare(bNick)
+      const aName = (a.full_name || a.nickname || a.name || '').toLowerCase()
+      const bName = (b.full_name || b.nickname || b.name || '').toLowerCase()
+      return aName.localeCompare(bName)
     })
   }, [users])
 
@@ -484,10 +481,10 @@ export default function Ranking() {
               const heightClass = position === 1 ? 'h-56' : position === 2 ? 'h-44' : 'h-36'
               const colorClass =
                 position === 1
-                  ? 'bg-amber-500 text-amber-950 shadow-amber-500/20'
+                  ? 'bg-[#F59E0B] text-amber-950'
                   : position === 2
-                    ? 'bg-zinc-300 text-zinc-800 shadow-zinc-400/20'
-                    : 'bg-orange-300/90 text-orange-900 shadow-orange-500/20'
+                    ? 'bg-[#E5E7EB] text-zinc-800'
+                    : 'bg-[#FDBA74] text-orange-950'
 
               return (
                 <div
@@ -498,16 +495,18 @@ export default function Ranking() {
                 >
                   <Avatar
                     className={cn(
-                      'border-4 shadow-xl mb-3 sm:mb-5 z-10 bg-background',
+                      'border-4 shadow-sm mb-3 sm:mb-5 z-10 bg-background',
                       position === 1
-                        ? 'w-20 h-20 sm:w-28 sm:h-28 border-amber-500'
-                        : 'w-16 h-16 sm:w-24 sm:h-24 border-background',
+                        ? 'w-20 h-20 sm:w-28 sm:h-28 border-[#F59E0B]'
+                        : position === 2
+                          ? 'w-16 h-16 sm:w-24 sm:h-24 border-[#E5E7EB]'
+                          : 'w-16 h-16 sm:w-24 sm:h-24 border-[#FDBA74]/30',
                     )}
                   >
                     <AvatarImage
                       src={user.avatar ? pb.files.getUrl(user, user.avatar) : undefined}
                     />
-                    <AvatarFallback className="font-bold text-lg sm:text-2xl text-muted-foreground">
+                    <AvatarFallback className="font-bold text-lg sm:text-2xl text-muted-foreground bg-muted">
                       {(user.full_name || user.name)?.charAt(0) || '?'}
                     </AvatarFallback>
                   </Avatar>
@@ -518,7 +517,7 @@ export default function Ranking() {
                     >
                       {(user.level || 'Nível I').split(' - ')[0]}
                     </p>
-                    <p className="font-bold text-xs sm:text-base leading-tight truncate w-full max-w-[100px] sm:max-w-[140px] mt-0.5">
+                    <p className="font-bold text-xs sm:text-base leading-tight truncate w-full max-w-[100px] sm:max-w-[140px] mt-0.5 text-foreground">
                       {user.full_name || user.name}
                     </p>
                     <p className="text-[10px] sm:text-sm font-semibold text-muted-foreground">
@@ -527,16 +526,15 @@ export default function Ranking() {
                   </div>
                   <div
                     className={cn(
-                      'w-full rounded-t-xl flex flex-col items-center justify-start pt-4 sm:pt-6 shadow-lg relative overflow-hidden',
+                      'w-full rounded-t-xl flex flex-col items-center justify-start pt-4 sm:pt-6 shadow-sm relative overflow-hidden transition-transform',
                       heightClass,
                       colorClass,
                     )}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent"></div>
-                    <span className="text-3xl sm:text-4xl font-black relative z-10 opacity-80 group-hover:scale-110 transition-transform">
+                    <span className="text-3xl sm:text-5xl font-black relative z-10 opacity-80 group-hover:scale-110 transition-transform">
                       {position}
                     </span>
-                    <div className="absolute bottom-2 text-primary-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-[10px] bg-black/20 px-2 py-0.5 rounded-full backdrop-blur-sm">
+                    <div className="absolute bottom-2 text-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-[10px] bg-black/10 px-2 py-0.5 rounded-full backdrop-blur-sm font-medium">
                       {expandedUser === user.id ? (
                         <ChevronUp className="w-3 h-3" />
                       ) : (
