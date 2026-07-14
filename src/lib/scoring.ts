@@ -79,6 +79,17 @@ export const EIXO3_TITLES = new Set([
   'Representante de Conselhos',
 ])
 
+function getActivity(sub: any) {
+  return sub?.expand?.activity_id ?? sub?.activity ?? null
+}
+
+function getScore(sub: any): number {
+  if (typeof sub.score === 'number') return sub.score
+  if (typeof sub.points === 'number') return sub.points
+  const s = Number(sub.score)
+  return Number.isFinite(s) && s > 0 ? s : 0
+}
+
 export function calculateUserPoints(submissions: any[], userLevel?: string) {
   let totalPoints = 0
   let eixo1Points = 0
@@ -89,7 +100,7 @@ export function calculateUserPoints(submissions: any[], userLevel?: string) {
   let maxAcademicId = ''
 
   submissions.forEach((sub) => {
-    const act = sub.expand?.activity_id
+    const act = getActivity(sub)
     const isAcademic =
       ACADEMIC_DEGREES.has(sub.title) ||
       (act &&
@@ -99,7 +110,7 @@ export function calculateUserPoints(submissions: any[], userLevel?: string) {
           act.title?.includes('Doutorado')))
 
     if (sub.status === 'Aprovado' && isAcademic) {
-      const score = typeof sub.score === 'number' ? sub.score : Number(sub.score) || 0
+      const score = getScore(sub)
       if (score > maxAcademicScore) {
         maxAcademicScore = score
         maxAcademicId = sub.id
@@ -110,17 +121,16 @@ export function calculateUserPoints(submissions: any[], userLevel?: string) {
   const itemCounts: Record<string, number> = {}
   const ignoredSubmissionIds = new Set<string>()
 
-  // Sort submissions by created ascending to apply caps on the newest items
   const sortedSubmissions = [...submissions].sort((a, b) => {
     return new Date(a.created).getTime() - new Date(b.created).getTime()
   })
 
   sortedSubmissions.forEach((sub) => {
     if (sub.status !== 'Aprovado') return
-    let score = typeof sub.score === 'number' ? sub.score : Number(sub.score) || 0
+    let score = getScore(sub)
     const title = sub.title
 
-    let act = sub.expand?.activity_id
+    let act = getActivity(sub)
 
     if (act?.points_type === 'level_based' && userLevel) {
       if (
@@ -201,15 +211,17 @@ export function calculateUserPoints(submissions: any[], userLevel?: string) {
     }
   })
 
-  // Avoid floating point precision issues
   totalPoints = Math.round(totalPoints * 100) / 100
+  eixo1Points = Math.round(eixo1Points * 100) / 100
+  eixo2Points = Math.round(eixo2Points * 100) / 100
+  eixo3Points = Math.round(eixo3Points * 100) / 100
 
   const rejectionReasons: Record<string, string> = {}
 
   ignoredSubmissionIds.forEach((id) => {
     const sub = submissions.find((s) => s.id === id)
     if (!sub) return
-    const act = sub.expand?.activity_id
+    const act = getActivity(sub)
     const isAcademic =
       ACADEMIC_DEGREES.has(sub.title) ||
       (act &&

@@ -1,12 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import useSubmissionsStore from '@/stores/useSubmissionsStore'
+import useAuthStore from '@/stores/useAuthStore'
 import { calculateUserPoints } from '@/lib/scoring'
 
 export function AxesBadges() {
   const { submissions } = useSubmissionsStore()
+  const { user } = useAuthStore()
 
-  const { eixo1Points, eixo2Points, eixo3Points } = calculateUserPoints(submissions)
+  const { eixo1Points, eixo2Points, eixo3Points } = calculateUserPoints(submissions, user?.level)
 
   return (
     <Card className="shadow-subtle border-border/60">

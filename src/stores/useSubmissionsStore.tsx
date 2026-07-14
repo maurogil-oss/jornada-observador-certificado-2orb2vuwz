@@ -31,7 +31,13 @@ export interface Submission {
   feedback?: string
   turma?: number
   userPoints?: number
+  score?: number
   activity?: {
+    id?: string
+    axis?: string
+    group_id?: string
+    is_unique?: boolean
+    max_occurrences?: number
     points_type?: string
     points?: number
     points_level_1?: number
@@ -113,11 +119,17 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
           link: r.link,
           feedback: r.feedback,
           userPoints: r.expand?.user_id?.points || 0,
+          score: r.score || 0,
           fileUrl: r.file
             ? `${pb.baseURL}/api/files/${r.collectionId}/${r.id}/${r.file}`
             : undefined,
           activity: r.expand?.activity_id
             ? {
+                id: r.expand.activity_id.id,
+                axis: r.expand.activity_id.axis,
+                group_id: r.expand.activity_id.group_id,
+                is_unique: r.expand.activity_id.is_unique,
+                max_occurrences: r.expand.activity_id.max_occurrences,
                 points_type: r.expand.activity_id.points_type,
                 points: r.expand.activity_id.points,
                 points_level_1: r.expand.activity_id.points_level_1,
