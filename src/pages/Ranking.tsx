@@ -383,7 +383,7 @@ export default function Ranking() {
     <div className="max-w-5xl mx-auto space-y-12 animate-fade-in-up pb-10 relative">
       <div className="flex flex-col gap-6 text-center">
         <div className="flex flex-col items-center justify-center space-y-3 relative z-10">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Quadro de Honra</h1>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Ranking</h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto px-4 mt-1">
             O princípio da Meritocracia em ação. Acompanhe os líderes da Jornada de Evolução.
           </p>
