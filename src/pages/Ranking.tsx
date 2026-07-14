@@ -23,6 +23,7 @@ import {
   ChevronDown,
   ChevronUp,
   HelpCircle,
+  Trophy,
 } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
@@ -331,10 +332,29 @@ export default function Ranking() {
     return Array.from({ length: 15 }, (_, i) => i + 1)
   }, [])
 
+  const sortedUsers = useMemo(() => {
+    return [...users].sort((a, b) => {
+      const pointsDiff = (b.points || 0) - (a.points || 0)
+      if (pointsDiff !== 0) return pointsDiff
+      const aDate = new Date(a.created || 0).getTime()
+      const bDate = new Date(b.created || 0).getTime()
+      if (aDate !== bDate) return aDate - bDate
+      const aNick = (a.nickname || a.name || '').toLowerCase()
+      const bNick = (b.nickname || b.name || '').toLowerCase()
+      return aNick.localeCompare(bNick)
+    })
+  }, [users])
+
   const filteredUsers = useMemo(() => {
-    if (filterTurma === 'all') return users
-    return users.filter((u) => u.turma === Number(filterTurma))
-  }, [users, filterTurma])
+    if (filterTurma === 'all') return sortedUsers
+    return sortedUsers.filter((u) => u.turma === Number(filterTurma))
+  }, [sortedUsers, filterTurma])
+
+  const myPosition = useMemo(() => {
+    if (!currentUser) return null
+    const idx = sortedUsers.findIndex((u) => u.id === currentUser.id)
+    return idx >= 0 ? idx + 1 : null
+  }, [sortedUsers, currentUser])
 
   const top3 = filteredUsers.slice(0, 3)
   const rest = filteredUsers.slice(3)
@@ -412,6 +432,39 @@ export default function Ranking() {
           </div>
         )}
       </div>
+
+      {!isAdmin && myPosition !== null && currentUser && (
+        <div className="flex justify-center px-4 animate-fade-in-up">
+          <Card className="w-full max-w-md border-primary/20 bg-primary/5 shadow-md">
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="flex flex-col items-center justify-center min-w-[64px]">
+                <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+                  Minha Posição
+                </span>
+                <span className="text-3xl font-black text-primary leading-tight">
+                  {myPosition}º
+                </span>
+              </div>
+              <div className="h-12 w-px bg-border shrink-0" />
+              <Avatar className="w-12 h-12 border-2 border-primary/30 shrink-0">
+                <AvatarImage src={currentUser.avatar || undefined} />
+                <AvatarFallback className="font-bold text-muted-foreground">
+                  {(currentUser.full_name || currentUser.name)?.charAt(0) || '?'}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-sm truncate text-foreground">
+                  {currentUser.full_name || currentUser.name}
+                </p>
+                <p className="text-xs text-muted-foreground font-medium">
+                  {currentUser.points || 0} pontos
+                </p>
+              </div>
+              <Trophy className="w-6 h-6 text-primary/60 shrink-0" />
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {loading ? (
         <div className="text-center py-20 text-muted-foreground animate-pulse">
