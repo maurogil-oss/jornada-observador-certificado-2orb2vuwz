@@ -8,7 +8,11 @@ export function AxesBadges() {
   const { submissions } = useSubmissionsStore()
   const { user } = useAuthStore()
 
-  const { eixo1Points, eixo2Points, eixo3Points } = calculateUserPoints(submissions, user?.level)
+  const userSubmissions = submissions.filter((s) => s.userId === user?.id)
+  const { eixo1Points, eixo2Points, eixo3Points } = calculateUserPoints(
+    userSubmissions,
+    user?.level,
+  )
 
   return (
     <Card className="shadow-subtle border-border/60">

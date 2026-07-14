@@ -232,8 +232,18 @@ routerAdd(
             calculatedPoints += score
 
             const axis = act ? (act.getString('axis') || '').trim() : null
-            const isEixo1 = axis === 'Eixo 1' || axis === '1' || EIXO1_TITLES.includes(title)
-            const isEixo3 = axis === 'Eixo 3' || axis === '3' || EIXO3_TITLES.includes(title)
+            const isEixo1 =
+              axis === 'Eixo 1' ||
+              axis === '1' ||
+              axis === 'E1' ||
+              axis === 'Titulação e Formação' ||
+              EIXO1_TITLES.includes(title)
+            const isEixo3 =
+              axis === 'Eixo 3' ||
+              axis === '3' ||
+              axis === 'E3' ||
+              axis === 'Atuação Externa e Impacto' ||
+              EIXO3_TITLES.includes(title)
 
             if (isEixo1) eixo1Points += score
             else if (isEixo3) eixo3Points += score

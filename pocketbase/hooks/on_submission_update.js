@@ -176,8 +176,18 @@ onRecordAfterUpdateSuccess((e) => {
               act.getString('title').includes('Mestrado') ||
               act.getString('title').includes('Doutorado')))
 
+        const isProducaoAcademica =
+          title === 'Artigos publicados' ||
+          title === 'Estudos publicados' ||
+          title === 'Papers publicados em revistas/anais'
+
         if (isAcademic) {
           if (sub.id === maxAcademicId) {
+            isCounted = true
+          }
+        } else if (isProducaoAcademica) {
+          itemCounts['PRODUCAO_ACADEMICA'] = (itemCounts['PRODUCAO_ACADEMICA'] || 0) + 1
+          if (itemCounts['PRODUCAO_ACADEMICA'] <= 5) {
             isCounted = true
           }
         } else {
@@ -205,9 +215,21 @@ onRecordAfterUpdateSuccess((e) => {
 
         if (isCounted) {
           calculatedPoints += score
-          const axis = act ? act.getString('axis') : null
-          if (axis === 'Eixo 1' || EIXO1_TITLES.includes(title)) eixo1Points += score
-          else if (axis === 'Eixo 3' || EIXO3_TITLES.includes(title)) eixo3Points += score
+          const axis = act ? (act.getString('axis') || '').trim() : null
+          const isEixo1 =
+            axis === 'Eixo 1' ||
+            axis === '1' ||
+            axis === 'E1' ||
+            axis === 'Titulação e Formação' ||
+            EIXO1_TITLES.includes(title)
+          const isEixo3 =
+            axis === 'Eixo 3' ||
+            axis === '3' ||
+            axis === 'E3' ||
+            axis === 'Atuação Externa e Impacto' ||
+            EIXO3_TITLES.includes(title)
+          if (isEixo1) eixo1Points += score
+          else if (isEixo3) eixo3Points += score
           else eixo2Points += score
         }
       }
