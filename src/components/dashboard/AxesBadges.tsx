@@ -34,7 +34,7 @@ export function AxesBadges() {
           </div>
           <Progress
             value={Math.min((eixo2Points / 1000) * 100, 100)}
-            className="h-2 [&>div]:bg-secondary"
+            className="h-2 [&>div]:bg-blue-600"
           />
         </div>
         <div className="space-y-2">
