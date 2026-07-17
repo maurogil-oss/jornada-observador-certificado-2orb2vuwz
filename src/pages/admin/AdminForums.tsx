@@ -26,8 +26,15 @@ import { getUsers } from '@/services/users'
 import { useRealtime } from '@/hooks/use-realtime'
 import { useToast } from '@/hooks/use-toast'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+
+const formatDateBR = (d: string) => {
+  if (!d) return '-'
+  const datePart = d.substring(0, 10)
+  if (!datePart) return '-'
+  const [year, month, day] = datePart.split('-')
+  if (!year || !month || !day) return '-'
+  return `${day}/${month}/${year}`
+}
 
 const getStatusVariant = (status: string) => {
   if (status === 'Aberto') return 'bg-green-500/10 text-green-700 border-green-500/30'
@@ -160,14 +167,10 @@ export default function AdminForums() {
                     </span>
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {forum.opening_date
-                      ? format(new Date(forum.opening_date), 'dd/MM/yyyy', { locale: ptBR })
-                      : '-'}
+                    {formatDateBR(forum.opening_date)}
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {forum.closing_date
-                      ? format(new Date(forum.closing_date), 'dd/MM/yyyy', { locale: ptBR })
-                      : '-'}
+                    {formatDateBR(forum.closing_date)}
                   </TableCell>
                   <TableCell>
                     <Badge

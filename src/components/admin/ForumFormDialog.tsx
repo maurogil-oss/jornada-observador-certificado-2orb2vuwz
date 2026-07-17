@@ -110,8 +110,8 @@ export function ForumFormDialog({
         title: title.trim(),
         objective: objective.trim(),
         relator_id: relatorId,
-        opening_date: openingDate ? new Date(openingDate + 'T00:00:00.000Z').toISOString() : null,
-        closing_date: closingDate ? new Date(closingDate + 'T00:00:00.000Z').toISOString() : null,
+        opening_date: openingDate || null,
+        closing_date: closingDate || null,
         status,
       }
       if (editingForum) {

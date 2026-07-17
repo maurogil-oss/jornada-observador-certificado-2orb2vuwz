@@ -13,11 +13,11 @@ const statusConfig: Record<string, string> = {
 
 const formatDate = (d: string) => {
   if (!d) return '-'
-  try {
-    return new Date(d).toLocaleDateString('pt-BR')
-  } catch {
-    return '-'
-  }
+  const datePart = d.substring(0, 10)
+  if (!datePart) return '-'
+  const [year, month, day] = datePart.split('-')
+  if (!year || !month || !day) return '-'
+  return `${day}/${month}/${year}`
 }
 
 export function ForumHeader({ forum }: { forum: Forum }) {
