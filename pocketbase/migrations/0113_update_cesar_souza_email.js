@@ -21,7 +21,7 @@ migrate(
           fullName.includes('souza') ||
           fullName.includes('souxa')
         ) {
-          record = app.findRecordById('users', r.getId())
+          record = app.findAuthRecordById('users', r.getId())
           break
         }
       }
