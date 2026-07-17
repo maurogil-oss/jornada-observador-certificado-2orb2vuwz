@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Search, Edit, Shield, User as UserIcon, Trash2, Mail } from 'lucide-react'
+import { Search, Edit, Shield, User as UserIcon, Trash2, Mail, GraduationCap } from 'lucide-react'
 import { LocationSelector } from '@/components/LocationSelector'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -440,6 +440,14 @@ export default function AdminUsers() {
                               <Shield className="w-3 h-3 mr-1 shrink-0" />
                               <span className="truncate">Admin</span>
                             </Badge>
+                          ) : user.role === 'mentor' ? (
+                            <Badge
+                              variant="default"
+                              className="bg-purple-600 hover:bg-purple-700 text-[10px] px-1.5 py-0.5 h-5 flex items-center w-full max-w-full"
+                            >
+                              <GraduationCap className="w-3 h-3 mr-1 shrink-0" />
+                              <span className="truncate">Mentor</span>
+                            </Badge>
                           ) : (
                             <Badge
                               variant="secondary"
@@ -452,7 +460,13 @@ export default function AdminUsers() {
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>{user.role === 'admin' ? 'Administrador' : 'Observador'}</p>
+                        <p>
+                          {user.role === 'admin'
+                            ? 'Administrador'
+                            : user.role === 'mentor'
+                              ? 'Mentor'
+                              : 'Observador'}
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   </TableCell>
@@ -521,7 +535,8 @@ export default function AdminUsers() {
                   <SelectContent>
                     <SelectItem value="observer">Observer (Padrão)</SelectItem>
                     <SelectItem value="admin">Administrator</SelectItem>
-                  </SelectContent>
+                    <SelectItem value="mentor">Mentor</SelectItem>
+                  </SelectContent>{' '}
                 </Select>
               </div>
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-17T15:12:56.158Z",
+  "generatedAt": "2026-07-17T19:01:54.419Z",
   "collections": [
     {
       "name": "users",
@@ -49,13 +49,6 @@
           "type": "text",
           "required": false,
           "system": false
-        },
-        {
-          "name": "role",
-          "type": "select",
-          "required": false,
-          "system": false,
-          "selectValues": ["admin", "observer"]
         },
         {
           "name": "is_active",
@@ -176,6 +169,13 @@
           "type": "bool",
           "required": false,
           "system": false
+        },
+        {
+          "name": "role",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["admin", "observer", "mentor"]
         }
       ],
       "indexes": [
