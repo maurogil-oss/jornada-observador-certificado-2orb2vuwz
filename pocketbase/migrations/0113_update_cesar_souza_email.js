@@ -38,19 +38,19 @@ migrate(
       return
     }
 
-    const currentEmail = record.getEmail()
+    const currentEmail = record.get('email')
     if (currentEmail === 'cesar.souza@cajamar.sp.gov.br') {
       return
     }
 
-    record.setEmail('cesar.souza@cajamar.sp.gov.br')
-    record.setVerified(true)
+    record.set('email', 'cesar.souza@cajamar.sp.gov.br')
+    record.set('verified', true)
     app.save(record)
   },
   (app) => {
     try {
       const record = app.findAuthRecordByEmail('users', 'cesar.souza@cajamar.sp.gov.br')
-      record.setEmail('cesar.souza@jornada.com')
+      record.set('email', 'cesar.souza@jornada.com')
       app.save(record)
     } catch (_) {}
   },
