@@ -6,7 +6,7 @@ migrate(
       record = app.findAuthRecordByEmail('users', 'cesar.souza@jornada.com')
     } catch (_) {
       const records = app.findRecordsByFilter(
-        '_pb_users_auth_',
+        'users',
         "name ~ 'César' || full_name ~ 'César' || name ~ 'cesar' || full_name ~ 'cesar'",
         '',
         50,
@@ -21,7 +21,7 @@ migrate(
           fullName.includes('souza') ||
           fullName.includes('souxa')
         ) {
-          record = r
+          record = app.findRecordById('users', r.getId())
           break
         }
       }
