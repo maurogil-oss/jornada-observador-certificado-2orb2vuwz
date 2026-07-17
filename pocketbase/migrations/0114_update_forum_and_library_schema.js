@@ -1,10 +1,14 @@
 migrate(
   (app) => {
-    const forumsCol = app.findCollectionByNameOrId('forums')
-    const statusField = forumsCol.fields.getByName('status')
-    if (statusField) {
-      forumsCol.fields.remove(statusField)
+    function removeField(col, name) {
+      var f = col.fields.getByName(name)
+      if (!f) return
+      var i = col.fields.indexOf(f)
+      if (i >= 0) col.fields.splice(i, 1)
     }
+
+    var forumsCol = app.findCollectionByNameOrId('forums')
+    removeField(forumsCol, 'status')
     forumsCol.fields.add(
       new SelectField({
         name: 'status',
@@ -15,25 +19,22 @@ migrate(
     )
     app.save(forumsCol)
 
-    const existingStatusMap = {
+    var existingStatusMap = {
       Aberto: 'Abertura',
       'Em Consolidação': 'Consolidação',
       Encerrado: 'Publicação',
     }
-    const forums = app.findRecordsByFilter('forums', '1=1', '', 1000, 0)
-    for (let i = 0; i < forums.length; i++) {
-      const oldStatus = forums[i].getString('status')
+    var forums = app.findRecordsByFilter('forums', '1=1', '', 1000, 0)
+    for (var i = 0; i < forums.length; i++) {
+      var oldStatus = forums[i].getString('status')
       if (existingStatusMap[oldStatus]) {
         forums[i].set('status', existingStatusMap[oldStatus])
         app.save(forums[i])
       }
     }
 
-    const libCol = app.findCollectionByNameOrId('forum_library')
-    const catField = libCol.fields.getByName('category')
-    if (catField) {
-      libCol.fields.remove(catField)
-    }
+    var libCol = app.findCollectionByNameOrId('forum_library')
+    removeField(libCol, 'category')
     libCol.fields.add(
       new SelectField({
         name: 'category',
@@ -47,28 +48,32 @@ migrate(
     libCol.addIndex('idx_forum_library_code', true, 'code', '')
     app.save(libCol)
 
-    const existingCatMap = {
+    var existingCatMap = {
       Legislação: 'Documento Técnico',
       Estudos: 'Nota Técnica',
       'Normas Técnicas': 'Guia Prático',
       Apresentações: 'Documento Técnico',
       Outros: 'Nota Técnica',
     }
-    const libItems = app.findRecordsByFilter('forum_library', '1=1', '', 1000, 0)
-    for (let i = 0; i < libItems.length; i++) {
-      const oldCat = libItems[i].getString('category')
+    var libItems = app.findRecordsByFilter('forum_library', '1=1', '', 1000, 0)
+    for (var j = 0; j < libItems.length; j++) {
+      var oldCat = libItems[j].getString('category')
       if (existingCatMap[oldCat]) {
-        libItems[i].set('category', existingCatMap[oldCat])
-        app.save(libItems[i])
+        libItems[j].set('category', existingCatMap[oldCat])
+        app.save(libItems[j])
       }
     }
   },
   (app) => {
-    const forumsCol = app.findCollectionByNameOrId('forums')
-    const statusField = forumsCol.fields.getByName('status')
-    if (statusField) {
-      forumsCol.fields.remove(statusField)
+    function removeField(col, name) {
+      var f = col.fields.getByName(name)
+      if (!f) return
+      var i = col.fields.indexOf(f)
+      if (i >= 0) col.fields.splice(i, 1)
     }
+
+    var forumsCol = app.findCollectionByNameOrId('forums')
+    removeField(forumsCol, 'status')
     forumsCol.fields.add(
       new SelectField({
         name: 'status',
@@ -79,11 +84,8 @@ migrate(
     )
     app.save(forumsCol)
 
-    const libCol = app.findCollectionByNameOrId('forum_library')
-    const catField = libCol.fields.getByName('category')
-    if (catField) {
-      libCol.fields.remove(catField)
-    }
+    var libCol = app.findCollectionByNameOrId('forum_library')
+    removeField(libCol, 'category')
     libCol.fields.add(
       new SelectField({
         name: 'category',
@@ -91,10 +93,7 @@ migrate(
         maxSelect: 1,
       }),
     )
-    const codeField = libCol.fields.getByName('code')
-    if (codeField) {
-      libCol.fields.remove(codeField)
-    }
+    removeField(libCol, 'code')
     libCol.removeIndex('idx_forum_library_code')
     app.save(libCol)
   },
