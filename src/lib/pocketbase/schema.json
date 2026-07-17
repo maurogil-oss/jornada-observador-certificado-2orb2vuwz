@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-16T18:00:03.972Z",
+  "generatedAt": "2026-07-17T13:41:45.363Z",
   "collections": [
     {
       "name": "users",
@@ -689,6 +689,246 @@
         {
           "name": "settings",
           "type": "json",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "forums",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != \"\"",
+        "view": "@request.auth.id != \"\"",
+        "create": "@request.auth.role = 'admin'",
+        "update": "@request.auth.role = 'admin'",
+        "delete": "@request.auth.role = 'admin'"
+      },
+      "fields": [
+        {
+          "name": "code",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "objective",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "relator_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "opening_date",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "closing_date",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["Aberto", "Em Consolidação", "Encerrado"]
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE UNIQUE INDEX idx_forums_code ON forums (code)"]
+    },
+    {
+      "name": "forum_messages",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != \"\"",
+        "view": "@request.auth.id != \"\"",
+        "create": "@request.auth.id != \"\"",
+        "update": "@request.auth.id = user_id",
+        "delete": "@request.auth.id = user_id"
+      },
+      "fields": [
+        {
+          "name": "forum_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "forums"
+        },
+        {
+          "name": "user_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "content",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "attachments",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "parent_id",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "forum_messages"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "forum_library",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != \"\"",
+        "view": "@request.auth.id != \"\"",
+        "create": "@request.auth.role = 'admin' || @request.auth.id = forum_id.relator_id",
+        "update": "@request.auth.role = 'admin' || @request.auth.id = forum_id.relator_id",
+        "delete": "@request.auth.role = 'admin' || @request.auth.id = forum_id.relator_id"
+      },
+      "fields": [
+        {
+          "name": "forum_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "forums"
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "file",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "category",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["Legislação", "Estudos", "Normas Técnicas", "Apresentações", "Outros"]
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "forum_drafts",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != \"\"",
+        "view": "@request.auth.id != \"\"",
+        "create": "@request.auth.role = 'admin' || @request.auth.id = forum_id.relator_id",
+        "update": "@request.auth.role = 'admin' || @request.auth.id = forum_id.relator_id",
+        "delete": "@request.auth.role = 'admin' || @request.auth.id = forum_id.relator_id"
+      },
+      "fields": [
+        {
+          "name": "forum_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "forums"
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "file",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "is_official",
+          "type": "bool",
           "required": false,
           "system": false
         },

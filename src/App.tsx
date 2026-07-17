@@ -12,6 +12,8 @@ import { Loader2 } from 'lucide-react'
 import Index from './pages/Index'
 import Axes from './pages/Axes'
 import Submissions from './pages/Submissions'
+import Forums from './pages/Forums'
+import ForumDetail from './pages/ForumDetail'
 import Ranking from './pages/Ranking'
 import Login from './pages/Login'
 import ForgotPassword from './pages/ForgotPassword'
@@ -147,6 +149,22 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={['observer', 'admin']}>
               <Ranking />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/foruns"
+          element={
+            <ProtectedRoute allowedRoles={['observer', 'admin']}>
+              <Forums />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/foruns/:id"
+          element={
+            <ProtectedRoute allowedRoles={['observer', 'admin']}>
+              <ForumDetail />
             </ProtectedRoute>
           }
         />

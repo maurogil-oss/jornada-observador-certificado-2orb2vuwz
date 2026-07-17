@@ -28,6 +28,7 @@ import {
   Database,
   BookOpen,
   Award,
+  MessageSquare,
 } from 'lucide-react'
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
@@ -51,6 +52,7 @@ export function AppSidebar() {
     { title: 'Meu Perfil', url: '/perfil', icon: Users },
     { title: 'Níveis de Evolução', url: '/niveis', icon: Compass },
     { title: 'Cofre de Evidências', url: '/submissoes', icon: FileCheck },
+    { title: 'Fóruns Técnicos', url: '/foruns', icon: MessageSquare },
     { title: 'Ranking / Mérito', url: '/ranking', icon: Trophy },
   ]
 
