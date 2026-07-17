@@ -14,6 +14,7 @@ import { getErrorMessage } from '@/lib/pocketbase/errors'
 import { generateCertificate } from '@/lib/certificate'
 import { toTitleCase } from '@/lib/utils'
 import { LocationSelector } from '@/components/LocationSelector'
+import { ChangePasswordForm } from '@/components/ChangePasswordForm'
 
 const formatCPF = (value: string) => {
   return value
@@ -396,6 +397,8 @@ export default function Profile() {
           </Button>
         </div>
       </form>
+
+      <ChangePasswordForm />
     </div>
   )
 }
