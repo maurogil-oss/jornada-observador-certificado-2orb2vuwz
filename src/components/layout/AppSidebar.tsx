@@ -67,6 +67,7 @@ export function AppSidebar() {
     { title: 'Log de Atividades', url: '/admin/logs', icon: History },
     { title: 'Logs de Importação', url: '/admin/import-logs', icon: Database },
     { title: 'Certificados', url: '/admin/certificados', icon: Award },
+    { title: 'Fóruns Técnicos', url: '/admin/forums', icon: MessageSquare },
   ]
 
   const isAdminArea = location.pathname.startsWith('/admin')

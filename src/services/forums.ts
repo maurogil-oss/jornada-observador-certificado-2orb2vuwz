@@ -26,3 +26,19 @@ export const updateForum = (id: string, data: Partial<Forum>) =>
   pb.collection('forums').update(id, data)
 
 export const deleteForum = (id: string) => pb.collection('forums').delete(id)
+
+export const getNextForumCode = async (): Promise<string> => {
+  const forums = await pb.collection('forums').getFullList({ fields: 'code' })
+  const year = new Date().getFullYear()
+  const prefix = `FT-${year}-`
+  const yearForums = forums.filter((f: any) => f.code?.startsWith(prefix))
+  if (yearForums.length === 0) return `${prefix}001`
+  const maxNum = Math.max(
+    ...yearForums.map((f: any) => {
+      const parts = f.code?.split('-') || []
+      const num = parseInt(parts[2] || '0', 10)
+      return isNaN(num) ? 0 : num
+    }),
+  )
+  return `${prefix}${String(maxNum + 1).padStart(3, '0')}`
+}

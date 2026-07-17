@@ -28,6 +28,7 @@ import AdminPerformance from './pages/admin/AdminPerformance'
 import AdminScoreAudit from './pages/admin/AdminScoreAudit'
 import AdminImportLogs from './pages/admin/AdminImportLogs'
 import AdminCertificates from './pages/admin/AdminCertificates'
+import AdminForums from './pages/admin/AdminForums'
 import Profile from './pages/Profile'
 import Manual from './pages/Manual'
 import NotFound from './pages/NotFound'
@@ -253,6 +254,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminCertificates />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/forums"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminForums />
             </ProtectedRoute>
           }
         />
