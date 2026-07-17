@@ -8,7 +8,7 @@ export interface Forum {
   relator_id: string
   opening_date: string
   closing_date: string
-  status: 'Aberto' | 'Em Consolidação' | 'Encerrado'
+  status: 'Abertura' | 'Discussões' | 'Consolidação' | 'Aprovação' | 'Publicação'
   created: string
   updated: string
   expand?: { relator_id?: any }

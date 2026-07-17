@@ -40,7 +40,13 @@ interface ForumFormDialogProps {
   onSuccess: () => void
 }
 
-const STATUS_OPTIONS = ['Aberto', 'Em Consolidação', 'Encerrado'] as const
+const STATUS_OPTIONS = [
+  'Abertura',
+  'Discussões',
+  'Consolidação',
+  'Aprovação',
+  'Publicação',
+] as const
 
 export function ForumFormDialog({
   open,
@@ -69,7 +75,7 @@ export function ForumFormDialog({
         setRelatorId(editingForum.relator_id)
         setOpeningDate(editingForum.opening_date ? editingForum.opening_date.substring(0, 10) : '')
         setClosingDate(editingForum.closing_date ? editingForum.closing_date.substring(0, 10) : '')
-        setStatus(editingForum.status || 'Aberto')
+        setStatus(editingForum.status || 'Abertura')
       } else {
         setCode('')
         setTitle('')
@@ -77,7 +83,7 @@ export function ForumFormDialog({
         setRelatorId('')
         setOpeningDate('')
         setClosingDate('')
-        setStatus('Aberto')
+        setStatus('Abertura')
         getNextForumCode()
           .then(setCode)
           .catch(() => setCode(''))

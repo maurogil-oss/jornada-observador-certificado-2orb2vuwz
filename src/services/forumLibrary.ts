@@ -5,7 +5,8 @@ export interface ForumLibraryItem {
   forum_id: string
   title: string
   file: string
-  category: 'Legislação' | 'Estudos' | 'Normas Técnicas' | 'Apresentações' | 'Outros'
+  category: 'Documento Técnico' | 'Nota Técnica' | 'Guia Prático'
+  code: string
   created: string
   updated: string
 }

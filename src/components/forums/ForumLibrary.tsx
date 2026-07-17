@@ -20,7 +20,13 @@ import {
   type ForumLibraryItem,
 } from '@/services/forumLibrary'
 
-const CATEGORIES = ['Legislação', 'Estudos', 'Normas Técnicas', 'Apresentações', 'Outros']
+const CATEGORY_COLORS: Record<string, string> = {
+  'Documento Técnico': 'text-blue-600',
+  'Nota Técnica': 'text-amber-600',
+  'Guia Prático': 'text-emerald-600',
+}
+
+const CATEGORIES = ['Documento Técnico', 'Nota Técnica', 'Guia Prático']
 
 export function ForumLibrary({
   forumId,
@@ -160,9 +166,17 @@ export function ForumLibrary({
                       href={pb.files.getUrl(item, item.file)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm hover:text-primary"
+                      className="flex items-center gap-2 text-sm hover:text-primary min-w-0"
                     >
-                      <FileText className="w-4 h-4" /> {item.title || 'Documento'}
+                      <FileText className="w-4 h-4 flex-shrink-0" />
+                      {item.code && (
+                        <span
+                          className={`font-mono text-xs font-bold flex-shrink-0 ${CATEGORY_COLORS[item.category] || 'text-muted-foreground'}`}
+                        >
+                          [{item.code}]
+                        </span>
+                      )}
+                      <span className="truncate">{item.title || 'Documento'}</span>
                     </a>
                     {isPrivileged && (
                       <Button
