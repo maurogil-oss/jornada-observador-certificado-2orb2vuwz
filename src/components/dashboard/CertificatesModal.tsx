@@ -89,7 +89,9 @@ export function CertificatesModal() {
           {LEVELS.map((level, idx) => {
             const hasAccess = userIndex >= idx
             const hasTemplate = templates.some(
-              (t) => normalizeString(t.level) === normalizeString(level),
+              (t) =>
+                normalizeString(t.level) === normalizeString(level) &&
+                !t.file.includes('placeholder_template'),
             )
             const isAvailable = hasAccess && hasTemplate
 
@@ -104,7 +106,7 @@ export function CertificatesModal() {
                     {!hasAccess
                       ? 'Bloqueado'
                       : !hasTemplate
-                        ? 'Template indisponível'
+                        ? 'É preciso antes selecionar o Modelo'
                         : 'Disponível'}
                   </p>
                 </div>
@@ -129,9 +131,7 @@ export function CertificatesModal() {
                       </div>
                     </TooltipTrigger>
                     {!hasTemplate && hasAccess && (
-                      <TooltipContent>
-                        O administrador ainda não configurou o template para este nível.
-                      </TooltipContent>
+                      <TooltipContent>É preciso antes selecionar o Modelo</TooltipContent>
                     )}
                   </Tooltip>
 
@@ -154,9 +154,7 @@ export function CertificatesModal() {
                       </div>
                     </TooltipTrigger>
                     {!hasTemplate && hasAccess && (
-                      <TooltipContent>
-                        O administrador ainda não configurou o template para este nível.
-                      </TooltipContent>
+                      <TooltipContent>É preciso antes selecionar o Modelo</TooltipContent>
                     )}
                   </Tooltip>
                 </div>

@@ -9,8 +9,8 @@ export const generateCertificateDataUrl = async (
   const templates = await pb.collection('certificate_templates').getFullList()
   const template = templates.find((t) => normalizeString(t.level) === normalizeString(level))
 
-  if (!template) {
-    throw new Error(`Modelo de certificado não encontrado para o nível: ${level}`)
+  if (!template || template.file.includes('placeholder_template')) {
+    throw new Error('É preciso antes selecionar o Modelo')
   }
 
   let name = customName
@@ -57,6 +57,24 @@ export const generateCertificateDataUrl = async (
       ctx.textBaseline = 'middle'
 
       ctx.fillText(name, x, y)
+
+      const datePos = settings.date || {}
+      if (datePos && datePos.x !== undefined && datePos.y !== undefined) {
+        const dateX = Number(datePos.x)
+        const dateY = Number(datePos.y)
+        const dateFontSize = Number(datePos.size || datePos.fontSize || 16)
+        const dateColor = datePos.color || '#000000'
+        const dateAlign = datePos.align || datePos.alignment || 'center'
+
+        ctx.font = `bold ${dateFontSize}px sans-serif`
+        ctx.fillStyle = dateColor
+        ctx.textAlign = dateAlign as CanvasTextAlign
+        ctx.textBaseline = 'middle'
+
+        const today = new Date()
+        const dateStr = today.toLocaleDateString('pt-BR')
+        ctx.fillText(dateStr, dateX, dateY)
+      }
 
       resolve(canvas.toDataURL('image/png'))
     }

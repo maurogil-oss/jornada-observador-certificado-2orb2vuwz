@@ -27,7 +27,9 @@ export function DownloadCertificateButton() {
 
   const targetLevel = LEVELS[effectiveUserIndex]
   const hasTemplate = templates.some(
-    (t) => normalizeString(t.level) === normalizeString(targetLevel),
+    (t) =>
+      normalizeString(t.level) === normalizeString(targetLevel) &&
+      !t.file.includes('placeholder_template'),
   )
 
   const handleDownload = async () => {
@@ -65,12 +67,7 @@ export function DownloadCertificateButton() {
           </Button>
         </div>
       </TooltipTrigger>
-      {!hasTemplate && (
-        <TooltipContent>
-          O certificado para o seu nível ({targetLevel}) ainda está sendo preparado pela
-          administração.
-        </TooltipContent>
-      )}
+      {!hasTemplate && <TooltipContent>É preciso antes selecionar o Modelo</TooltipContent>}
     </Tooltip>
   )
 }

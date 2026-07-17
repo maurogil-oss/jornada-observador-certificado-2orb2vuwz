@@ -99,11 +99,12 @@ export default function AdminCertificates() {
     e.preventDefault()
 
     const existing = templates.find((t) => t.level === level)
+    const isPlaceholder = existing?.file?.includes('placeholder_template')
 
-    if (!existing && !file) {
+    if ((!existing || isPlaceholder) && !file) {
       toast({
         title: 'Erro',
-        description: 'Selecione uma imagem de fundo para o novo template.',
+        description: 'É preciso antes selecionar o Modelo',
         variant: 'destructive',
       })
       return
@@ -189,13 +190,18 @@ export default function AdminCertificates() {
   }
 
   const missingLevels = EXPECTED_LEVELS.filter(
-    (l) => !templates.some((t) => normalizeString(t.level) === normalizeString(l)),
+    (l) =>
+      !templates.some(
+        (t) =>
+          normalizeString(t.level) === normalizeString(l) &&
+          !t.file.includes('placeholder_template'),
+      ),
   )
 
   const handleLevelChange = (newLevel: string) => {
     setLevel(newLevel)
     const existing = templates.find((t) => t.level === newLevel)
-    if (existing) {
+    if (existing && !existing.file.includes('placeholder_template')) {
       handleEdit(existing)
     } else {
       setX('500')
@@ -406,7 +412,7 @@ export default function AdminCertificates() {
                 <div className="flex justify-center p-8">
                   <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 </div>
-              ) : templates.length === 0 ? (
+              ) : templates.filter((t) => !t.file.includes('placeholder_template')).length === 0 ? (
                 <Card className="bg-muted/50 border-dashed">
                   <CardContent className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground">
                     <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
@@ -414,58 +420,63 @@ export default function AdminCertificates() {
                   </CardContent>
                 </Card>
               ) : (
-                templates.map((tpl) => {
-                  const pos = tpl.settings?.name_position || tpl.settings || {}
-                  const px =
-                    pos.positionX ?? pos.x ?? tpl.settings?.name_x_position ?? tpl.settings?.x
-                  const py =
-                    pos.positionY ?? pos.y ?? tpl.settings?.name_y_position ?? tpl.settings?.y
-                  const fs = pos.fontSize ?? tpl.settings?.font_size ?? tpl.settings?.fontSize
-                  const alg =
-                    pos.alignment ?? tpl.settings?.text_align ?? tpl.settings?.alignment ?? 'center'
+                templates
+                  .filter((t) => !t.file.includes('placeholder_template'))
+                  .map((tpl) => {
+                    const pos = tpl.settings?.name_position || tpl.settings || {}
+                    const px =
+                      pos.positionX ?? pos.x ?? tpl.settings?.name_x_position ?? tpl.settings?.x
+                    const py =
+                      pos.positionY ?? pos.y ?? tpl.settings?.name_y_position ?? tpl.settings?.y
+                    const fs = pos.fontSize ?? tpl.settings?.font_size ?? tpl.settings?.fontSize
+                    const alg =
+                      pos.alignment ??
+                      tpl.settings?.text_align ??
+                      tpl.settings?.alignment ??
+                      'center'
 
-                  return (
-                    <Card key={tpl.id}>
-                      <CardContent className="p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className="w-24 h-16 bg-muted rounded overflow-hidden relative border flex-shrink-0">
-                            <img
-                              src={pb.files.getUrl(tpl, tpl.file)}
-                              alt={tpl.level}
-                              className="object-cover w-full h-full"
-                            />
+                    return (
+                      <Card key={tpl.id}>
+                        <CardContent className="p-4 flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="w-24 h-16 bg-muted rounded overflow-hidden relative border flex-shrink-0">
+                              <img
+                                src={pb.files.getUrl(tpl, tpl.file)}
+                                alt={tpl.level}
+                                className="object-cover w-full h-full"
+                              />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold">{tpl.level}</h4>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                X: {px} | Y: {py} | Fonte: {fs} | Alinhamento: {alg}
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <h4 className="font-semibold">{tpl.level}</h4>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              X: {px} | Y: {py} | Fonte: {fs} | Alinhamento: {alg}
-                            </p>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEdit(tpl)}
+                              className="text-primary hover:bg-primary/10"
+                              title="Editar Template"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(tpl.id)}
+                              className="text-destructive hover:bg-destructive/10"
+                              title="Excluir Template"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEdit(tpl)}
-                            className="text-primary hover:bg-primary/10"
-                            title="Editar Template"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDelete(tpl.id)}
-                            className="text-destructive hover:bg-destructive/10"
-                            title="Excluir Template"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )
-                })
+                        </CardContent>
+                      </Card>
+                    )
+                  })
               )}
             </div>
           </div>
