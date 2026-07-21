@@ -4,7 +4,7 @@ import { HighlightsMural } from '@/components/dashboard/HighlightsMural'
 import { RecentActivity } from '@/components/dashboard/RecentActivity'
 import { HeroProgress } from '@/components/dashboard/HeroProgress'
 import useAuthStore from '@/stores/useAuthStore'
-import { CertificatesModal } from '@/components/dashboard/CertificatesModal'
+
 import { useRealtime } from '@/hooks/use-realtime'
 import pb from '@/lib/pocketbase/client'
 import { useState, useEffect } from 'react'
@@ -61,16 +61,13 @@ export default function Index() {
       <WelcomeModal />
       <OnboardingChecklist />
 
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-        <div className="space-y-2">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-            <span>{`Olá, ${user?.name?.split(' ')[0] || 'Observador'}`}</span>
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            <span>Acompanhe sua jornada de evolução, impacto institucional e suas submissões.</span>
-          </p>
-        </div>
-        <CertificatesModal />
+      <div className="space-y-2">
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+          <span>{`Olá, ${user?.name?.split(' ')[0] || 'Observador'}`}</span>
+        </h1>
+        <p className="text-muted-foreground text-lg">
+          <span>Acompanhe sua jornada de evolução, impacto institucional e suas submissões.</span>
+        </p>
       </div>
 
       <HeroProgress />
