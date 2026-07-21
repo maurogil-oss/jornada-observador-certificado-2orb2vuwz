@@ -63,19 +63,3 @@ export const createForumRelation = (data: Partial<ForumRelation>) =>
 export const updateForumRelation = (id: string, data: Partial<ForumRelation>) =>
   pb.collection('forum_relations').update<ForumRelation>(id, data)
 export const deleteForumRelation = (id: string) => pb.collection('forum_relations').delete(id)
-
-export const getNextForumCode = async (): Promise<string> => {
-  const forums = await pb.collection('forums').getFullList({ fields: 'code' })
-  const year = new Date().getFullYear()
-  const prefix = `FT-${year}-`
-  const yearForums = forums.filter((f: any) => f.code?.startsWith(prefix))
-  if (yearForums.length === 0) return `${prefix}001`
-  const maxNum = Math.max(
-    ...yearForums.map((f: any) => {
-      const parts = f.code?.split('-') || []
-      const num = parseInt(parts[2] || '0', 10)
-      return isNaN(num) ? 0 : num
-    }),
-  )
-  return `${prefix}${String(maxNum + 1).padStart(3, '0')}`
-}

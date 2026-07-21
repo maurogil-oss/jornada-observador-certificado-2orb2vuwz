@@ -31,7 +31,6 @@ import { Check, ChevronsUpDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   type Forum,
-  getNextForumCode,
   createForum,
   updateForum,
   getForumTags,
@@ -126,9 +125,7 @@ export function ForumFormDialog({
         setStatus('Abertura')
         setSelectedTags([])
         setSelectedRelatedForums([])
-        getNextForumCode()
-          .then(setCode)
-          .catch(() => setCode(''))
+        setCode('')
       }
       setErrors({})
     }
@@ -173,7 +170,6 @@ export function ForumFormDialog({
     setIsSaving(true)
     try {
       const data: Record<string, any> = {
-        code,
         title: title.trim(),
         pilar_pnatrans: pilar,
         theme_tags: selectedTags,
@@ -225,7 +221,13 @@ export function ForumFormDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
               <Label htmlFor="code">Código</Label>
-              <Input id="code" value={code} readOnly className="bg-muted/50 font-mono" />
+              <Input
+                id="code"
+                value={code}
+                readOnly
+                placeholder="Será gerado automaticamente"
+                className="bg-muted/50 font-mono"
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="pilar">Pilar do PNATRANS *</Label>
