@@ -21,6 +21,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { ForumFormDialog } from '@/components/admin/ForumFormDialog'
+import { PilarIndicator } from '@/components/forums/PilarIndicator'
 import { getForums, deleteForum, type Forum } from '@/services/forums'
 import { getUsers } from '@/services/users'
 import { useRealtime } from '@/hooks/use-realtime'
@@ -165,30 +166,7 @@ export default function AdminForums() {
                   <TableCell className="font-mono text-sm">{forum.code}</TableCell>
                   <TableCell className="font-medium">{forum.title}</TableCell>
                   <TableCell>
-                    {forum.pilar_pnatrans && forum.pilar_pnatrans !== 'Não Definido' ? (
-                      <Badge
-                        variant="outline"
-                        className={`text-xs ${
-                          forum.pilar_pnatrans.startsWith('Pilar 1')
-                            ? 'bg-pink-100 text-pink-800 border-pink-200'
-                            : forum.pilar_pnatrans.startsWith('Pilar 2')
-                              ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
-                              : forum.pilar_pnatrans.startsWith('Pilar 3')
-                                ? 'bg-amber-100 text-amber-800 border-amber-200'
-                                : forum.pilar_pnatrans.startsWith('Pilar 4')
-                                  ? 'bg-cyan-100 text-cyan-800 border-cyan-200'
-                                  : forum.pilar_pnatrans.startsWith('Pilar 5')
-                                    ? 'bg-red-100 text-red-800 border-red-200'
-                                    : forum.pilar_pnatrans.startsWith('Pilar 6')
-                                      ? 'bg-purple-100 text-purple-800 border-purple-200'
-                                      : ''
-                        }`}
-                      >
-                        {forum.pilar_pnatrans.split(':')[0]}
-                      </Badge>
-                    ) : (
-                      '-'
-                    )}
+                    <PilarIndicator pilar={forum.pilar_pnatrans || 'Não Definido'} />
                   </TableCell>
                   <TableCell>
                     <span className="text-sm text-muted-foreground">
