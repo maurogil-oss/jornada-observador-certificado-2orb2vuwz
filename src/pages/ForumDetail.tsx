@@ -1,13 +1,21 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Loader2, ArrowLeft, MessageCircle, FolderOpen, FileEdit } from 'lucide-react'
+import {
+  Loader2,
+  ArrowLeft,
+  MessageCircle,
+  FolderOpen,
+  FileEdit,
+  Link as LinkIcon,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { getForum, type Forum } from '@/services/forums'
 import { ForumHeader } from '@/components/forums/ForumHeader'
 import { ForumDiscussion } from '@/components/forums/ForumDiscussion'
 import { ForumLibrary } from '@/components/forums/ForumLibrary'
 import { ForumDrafts } from '@/components/forums/ForumDrafts'
+import { ForumRelated } from '@/components/forums/ForumRelated'
 import useAuthStore from '@/stores/useAuthStore'
 
 export default function ForumDetail() {
@@ -55,7 +63,7 @@ export default function ForumDetail() {
       </Link>
       <ForumHeader forum={forum} />
       <Tabs defaultValue="discussion">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="discussion">
             <MessageCircle className="w-4 h-4 mr-2" /> Discussão
           </TabsTrigger>
@@ -64,6 +72,9 @@ export default function ForumDetail() {
           </TabsTrigger>
           <TabsTrigger value="drafts">
             <FileEdit className="w-4 h-4 mr-2" /> Documentos
+          </TabsTrigger>
+          <TabsTrigger value="related">
+            <LinkIcon className="w-4 h-4 mr-2" /> Relacionados
           </TabsTrigger>
         </TabsList>
         <TabsContent value="discussion" className="mt-6">
@@ -74,6 +85,9 @@ export default function ForumDetail() {
         </TabsContent>
         <TabsContent value="drafts" className="mt-6">
           <ForumDrafts forumId={forum.id} isPrivileged={isPrivileged} />
+        </TabsContent>
+        <TabsContent value="related" className="mt-6">
+          <ForumRelated forumId={forum.id} isPrivileged={isPrivileged} />
         </TabsContent>
       </Tabs>
     </div>

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-21T15:08:08.187Z",
+  "generatedAt": "2026-07-21T15:31:27.448Z",
   "collections": [
     {
       "name": "users",
@@ -777,6 +777,28 @@
           "required": true,
           "system": false,
           "selectValues": ["Abertura", "Discussões", "Consolidação", "Aprovação", "Publicação"]
+        },
+        {
+          "name": "pilar_pnatrans",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": [
+            "Pilar 1: Gestão da Segurança no Trânsito",
+            "Pilar 2: Vias Seguras",
+            "Pilar 3: Segurança Veicular",
+            "Pilar 4: Educação para o Trânsito",
+            "Pilar 5: Atendimento às Vítimas",
+            "Pilar 6: Normatização e Fiscalização",
+            "Não Definido"
+          ]
+        },
+        {
+          "name": "theme_tags",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "forum_tags"
         }
       ],
       "indexes": ["CREATE UNIQUE INDEX idx_forums_code ON forums (code)"]
@@ -954,6 +976,91 @@
         }
       ],
       "indexes": []
+    },
+    {
+      "name": "forum_tags",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.role = 'admin'",
+        "delete": "@request.auth.role = 'admin'"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE UNIQUE INDEX idx_forum_tags_name ON forum_tags (name)"]
+    },
+    {
+      "name": "forum_relations",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.role = 'admin' || @request.auth.id = source_forum_id.relator_id || @request.auth.id = target_forum_id.relator_id",
+        "delete": "@request.auth.role = 'admin' || @request.auth.id = source_forum_id.relator_id || @request.auth.id = target_forum_id.relator_id"
+      },
+      "fields": [
+        {
+          "name": "source_forum_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "forums"
+        },
+        {
+          "name": "target_forum_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "forums"
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["Pending", "Approved"]
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_forum_relations_unique ON forum_relations (source_forum_id, target_forum_id)"
+      ]
     }
   ]
 }

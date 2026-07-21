@@ -12,6 +12,16 @@ const statusConfig: Record<string, string> = {
   Publicação: 'bg-gray-100 text-gray-700 border-gray-200',
 }
 
+const pilarConfig: Record<string, string> = {
+  'Pilar 1: Gestão da Segurança no Trânsito': 'bg-pink-100 text-pink-800 border-pink-200',
+  'Pilar 2: Vias Seguras': 'bg-emerald-100 text-emerald-800 border-emerald-200',
+  'Pilar 3: Segurança Veicular': 'bg-amber-100 text-amber-800 border-amber-200',
+  'Pilar 4: Educação para o Trânsito': 'bg-cyan-100 text-cyan-800 border-cyan-200',
+  'Pilar 5: Atendimento às Vítimas': 'bg-red-100 text-red-800 border-red-200',
+  'Pilar 6: Normatização e Fiscalização': 'bg-purple-100 text-purple-800 border-purple-200',
+  'Não Definido': 'bg-gray-100 text-gray-800 border-gray-200',
+}
+
 const formatDate = (d: string) => {
   if (!d) return '-'
   const datePart = d.substring(0, 10)
@@ -36,6 +46,26 @@ export function ForumCard({ forum }: { forum: Forum }) {
             <Badge variant="outline" className={`text-xs ${statusConfig[forum.status] || ''}`}>
               {forum.status}
             </Badge>
+          </div>
+          <div className="flex flex-wrap gap-1 mt-3">
+            {forum.pilar_pnatrans && forum.pilar_pnatrans !== 'Não Definido' && (
+              <Badge
+                variant="outline"
+                className={`text-[10px] ${pilarConfig[forum.pilar_pnatrans] || ''}`}
+              >
+                {forum.pilar_pnatrans.split(':')[0]}
+              </Badge>
+            )}
+            {forum.expand?.theme_tags?.slice(0, 2).map((tag) => (
+              <Badge key={tag.id} variant="secondary" className="text-[10px]">
+                {tag.name}
+              </Badge>
+            ))}
+            {(forum.expand?.theme_tags?.length || 0) > 2 && (
+              <Badge variant="secondary" className="text-[10px]">
+                +{(forum.expand?.theme_tags?.length || 0) - 2}
+              </Badge>
+            )}
           </div>
           <CardTitle className="text-base mt-2 line-clamp-2">{forum.title}</CardTitle>
         </CardHeader>
