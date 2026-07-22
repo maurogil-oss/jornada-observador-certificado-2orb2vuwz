@@ -468,6 +468,15 @@ export default function Login() {
                       )}
                     </Button>
 
+                    <a
+                      href="https://docs.google.com/forms/d/e/1FAIpQLSffEzSZhICYH_naSzULVX2PV5-w74egq_hY4KjH2HtFirakYg/viewform"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-center text-sm text-primary hover:underline font-medium mt-3 transition-colors"
+                    >
+                      Observador Certificado - Recadastramento e Atualização
+                    </a>
+
                     <div className="relative my-6">
                       <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t border-border/60" />
