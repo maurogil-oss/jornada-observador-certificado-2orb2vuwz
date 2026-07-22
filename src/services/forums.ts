@@ -30,6 +30,7 @@ export interface Forum {
   status: 'Abertura' | 'Discussões' | 'Consolidação' | 'Aprovação' | 'Publicação'
   pilar_pnatrans: string
   theme_tags: string[]
+  is_active: boolean
   created: string
   updated: string
   expand?: { relator_id?: any; theme_tags?: ForumTag[] }

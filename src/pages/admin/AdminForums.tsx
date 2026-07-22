@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Plus, Edit, Trash2, MessageSquare } from 'lucide-react'
+import { Plus, Edit, Trash2, MessageSquare, Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { ForumFormDialog } from '@/components/admin/ForumFormDialog'
 import { PilarIndicator } from '@/components/forums/PilarIndicator'
-import { getForums, deleteForum, type Forum } from '@/services/forums'
+import { getForums, deleteForum, updateForum, type Forum } from '@/services/forums'
 import { getUsers } from '@/services/users'
 import { useRealtime } from '@/hooks/use-realtime'
 import { useToast } from '@/hooks/use-toast'
@@ -95,6 +95,26 @@ export default function AdminForums() {
   const handleEdit = (forum: Forum) => {
     setEditingForum(forum)
     setDialogOpen(true)
+  }
+
+  const handleToggleActive = async (forum: Forum) => {
+    const prevForums = [...forums]
+    setForums((prev) =>
+      prev.map((f) => (f.id === forum.id ? { ...f, is_active: !f.is_active } : f)),
+    )
+    try {
+      await updateForum(forum.id, { is_active: !forum.is_active } as any)
+      toast({
+        title: forum.is_active ? 'Fórum desativado com sucesso!' : 'Fórum ativado com sucesso!',
+      })
+    } catch (error) {
+      setForums(prevForums)
+      toast({
+        title: 'Erro ao alterar status do fórum',
+        description: getErrorMessage(error),
+        variant: 'destructive',
+      })
+    }
   }
 
   const handleDelete = async () => {
@@ -189,6 +209,18 @@ export default function AdminForums() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleToggleActive(forum)}
+                        title={forum.is_active === false ? 'Ativar fórum' : 'Desativar fórum'}
+                      >
+                        {forum.is_active === false ? (
+                          <EyeOff className="w-4 h-4 text-muted-foreground" />
+                        ) : (
+                          <Eye className="w-4 h-4 text-green-600" />
+                        )}
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"

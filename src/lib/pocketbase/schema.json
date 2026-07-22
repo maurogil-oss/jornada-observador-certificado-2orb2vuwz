@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T15:10:52.530Z",
+  "generatedAt": "2026-07-22T18:07:48.125Z",
   "collections": [
     {
       "name": "users",
@@ -799,6 +799,12 @@
           "required": false,
           "system": false,
           "collectionRef": "forum_tags"
+        },
+        {
+          "name": "is_active",
+          "type": "bool",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": ["CREATE UNIQUE INDEX idx_forums_code ON forums (code)"]
