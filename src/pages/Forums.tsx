@@ -1,19 +1,32 @@
 import { useState, useEffect } from 'react'
 import { Loader2, MessageSquare } from 'lucide-react'
 import { toast } from 'sonner'
-import { getForums, type Forum } from '@/services/forums'
+import { getActiveForums, type Forum } from '@/services/forums'
+import { useRealtime } from '@/hooks/use-realtime'
 import { ForumCard } from '@/components/forums/ForumCard'
 
 export default function Forums() {
   const [forums, setForums] = useState<Forum[]>([])
   const [loading, setLoading] = useState(true)
 
+  const loadData = async () => {
+    try {
+      const data = await getActiveForums()
+      setForums(data)
+    } catch {
+      toast.error('Erro ao carregar fóruns')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    getForums()
-      .then(setForums)
-      .catch(() => toast.error('Erro ao carregar fóruns'))
-      .finally(() => setLoading(false))
+    loadData()
   }, [])
+
+  useRealtime('forums', () => {
+    loadData()
+  })
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 animate-fade-in-up">

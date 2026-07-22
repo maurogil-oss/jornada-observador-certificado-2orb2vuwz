@@ -39,6 +39,11 @@ export interface Forum {
 export const getForums = (): Promise<Forum[]> =>
   pb.collection('forums').getFullList({ sort: 'code', expand: 'relator_id,theme_tags' })
 
+export const getActiveForums = (): Promise<Forum[]> =>
+  pb
+    .collection('forums')
+    .getFullList({ sort: 'code', expand: 'relator_id,theme_tags', filter: 'is_active = true' })
+
 export const getForum = (id: string): Promise<Forum> =>
   pb.collection('forums').getOne(id, { expand: 'relator_id,theme_tags' })
 
