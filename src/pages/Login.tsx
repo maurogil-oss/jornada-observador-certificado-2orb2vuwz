@@ -472,7 +472,7 @@ export default function Login() {
                       href="https://docs.google.com/forms/d/e/1FAIpQLSffEzSZhICYH_naSzULVX2PV5-w74egq_hY4KjH2HtFirakYg/viewform"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-center text-sm text-primary hover:underline font-medium mt-3 transition-colors"
+                      className="flex items-center justify-center w-full h-11 px-4 sm:px-6 mt-4 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm uppercase tracking-wide shadow-md transition-colors duration-200"
                     >
                       Observador Certificado - Recadastramento e Atualização
                     </a>
