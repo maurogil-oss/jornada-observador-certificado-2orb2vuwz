@@ -2,17 +2,20 @@ import { useState, useEffect } from 'react'
 import { Loader2, MessageSquare } from 'lucide-react'
 import { toast } from 'sonner'
 import { getActiveForums, type Forum } from '@/services/forums'
+import { getForumMessageCounts } from '@/services/forumMessages'
 import { useRealtime } from '@/hooks/use-realtime'
 import { ForumCard } from '@/components/forums/ForumCard'
 
 export default function Forums() {
   const [forums, setForums] = useState<Forum[]>([])
+  const [messageCounts, setMessageCounts] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
 
   const loadData = async () => {
     try {
-      const data = await getActiveForums()
+      const [data, counts] = await Promise.all([getActiveForums(), getForumMessageCounts()])
       setForums(data)
+      setMessageCounts(counts)
     } catch {
       toast.error('Erro ao carregar fóruns')
     } finally {
@@ -50,7 +53,7 @@ export default function Forums() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {forums.map((forum) => (
-            <ForumCard key={forum.id} forum={forum} />
+            <ForumCard key={forum.id} forum={forum} messageCount={messageCounts[forum.id] || 0} />
           ))}
         </div>
       )}

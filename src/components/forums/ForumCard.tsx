@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, User } from 'lucide-react'
+import { Calendar, MessageSquare, User } from 'lucide-react'
 import type { Forum } from '@/services/forums'
 
 const statusConfig: Record<string, string> = {
@@ -31,7 +31,7 @@ const formatDate = (d: string) => {
   return `${day}/${month}/${year}`
 }
 
-export function ForumCard({ forum }: { forum: Forum }) {
+export function ForumCard({ forum, messageCount = 0 }: { forum: Forum; messageCount?: number }) {
   const relator = forum.expand?.relator_id
   const relatorName = relator?.name || relator?.email?.split('@')[0] || 'N/A'
 
@@ -73,6 +73,11 @@ export function ForumCard({ forum }: { forum: Forum }) {
           {forum.objective && (
             <p className="text-xs text-muted-foreground line-clamp-2">{forum.objective}</p>
           )}
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <MessageSquare className="w-3 h-3" /> Discussões: {messageCount}
+            </span>
+          </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <User className="w-3 h-3" /> <span>Relator: {relatorName}</span>
           </div>
