@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T19:42:52.925Z",
+  "generatedAt": "2026-07-27T20:17:24.060Z",
   "collections": [
     {
       "name": "users",
@@ -713,8 +713,8 @@
       "name": "forums",
       "type": "base",
       "apiRules": {
-        "list": "@request.auth.id != \"\"",
-        "view": "@request.auth.id != \"\"",
+        "list": "is_active = true && (@request.auth.role = 'admin' || @request.auth.role = 'observer' || @request.auth.role = 'mentor')",
+        "view": "is_active = true && (@request.auth.role = 'admin' || @request.auth.role = 'observer' || @request.auth.role = 'mentor')",
         "create": "@request.auth.role = 'admin'",
         "update": "@request.auth.role = 'admin'",
         "delete": "@request.auth.role = 'admin'"

@@ -75,7 +75,8 @@ export function ForumCard({ forum, messageCount = 0 }: { forum: Forum; messageCo
           )}
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <MessageSquare className="w-3 h-3" /> Discussões: {messageCount}
+              <MessageSquare className="w-3 h-3" /> Discussões:{' '}
+              <span className="font-bold text-primary">{messageCount}</span>
             </span>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">

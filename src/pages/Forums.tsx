@@ -31,6 +31,20 @@ export default function Forums() {
     loadData()
   })
 
+  useRealtime('forum_messages', (e) => {
+    if (e.action === 'create') {
+      const fid = e.record.forum_id as string
+      if (fid) {
+        setMessageCounts((prev) => ({ ...prev, [fid]: (prev[fid] || 0) + 1 }))
+      }
+    } else if (e.action === 'delete') {
+      const fid = e.record.forum_id as string
+      if (fid) {
+        setMessageCounts((prev) => ({ ...prev, [fid]: Math.max((prev[fid] || 0) - 1, 0) }))
+      }
+    }
+  })
+
   return (
     <div className="max-w-6xl mx-auto space-y-6 animate-fade-in-up">
       <div>
