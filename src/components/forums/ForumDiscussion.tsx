@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { Send, Paperclip, Loader2, MessageCircle } from 'lucide-react'
+import { Send, Paperclip, Loader2, MessageCircle, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import useAuthStore from '@/stores/useAuthStore'
 import { useRealtime } from '@/hooks/use-realtime'
+import { useForumDraft } from '@/hooks/use-forum-draft'
 import { getForumMessages, createForumMessage, type ForumMessage } from '@/services/forumMessages'
 import { ForumMessageItem } from './ForumMessageItem'
 
@@ -12,7 +13,8 @@ export function ForumDiscussion({ forumId }: { forumId: string }) {
   const { user } = useAuthStore()
   const [messages, setMessages] = useState<ForumMessage[]>([])
   const [loading, setLoading] = useState(true)
-  const [content, setContent] = useState('')
+  const draftKey = `forumDraft_${forumId}_${user?.id ?? 'anon'}`
+  const { content, updateContent, clearDraft, showSaved } = useForumDraft(draftKey)
   const [files, setFiles] = useState<File[]>([])
   const [submitting, setSubmitting] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -55,7 +57,7 @@ export function ForumDiscussion({ forumId }: { forumId: string }) {
       fd.append('content', content)
       files.forEach((f) => fd.append('attachments', f))
       await createForumMessage(fd)
-      setContent('')
+      clearDraft()
       setFiles([])
       if (fileRef.current) fileRef.current.value = ''
     } catch {
@@ -72,10 +74,15 @@ export function ForumDiscussion({ forumId }: { forumId: string }) {
       <div className="bg-muted/30 rounded-lg p-4 space-y-3 border">
         <Textarea
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => updateContent(e.target.value)}
           placeholder="Participe da discussão..."
           className="bg-background min-h-[80px]"
         />
+        {showSaved && (
+          <p className="flex items-center gap-1 text-xs text-muted-foreground animate-fade-in">
+            <Check className="w-3 h-3" /> Rascunho salvo
+          </p>
+        )}
         <div className="flex items-center gap-2">
           <input
             ref={fileRef}

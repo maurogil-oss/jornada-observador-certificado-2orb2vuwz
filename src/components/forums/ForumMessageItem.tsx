@@ -2,9 +2,10 @@ import { useState, useRef } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { Reply, Trash2, Send, Paperclip, Loader2 } from 'lucide-react'
+import { Reply, Trash2, Send, Paperclip, Loader2, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import pb from '@/lib/pocketbase/client'
+import { useForumDraft } from '@/hooks/use-forum-draft'
 import { createForumMessage, deleteForumMessage, type ForumMessage } from '@/services/forumMessages'
 import { cn } from '@/lib/utils'
 
@@ -18,7 +19,13 @@ interface Props {
 
 export function ForumMessageItem({ message, tree, currentUserId, forumId, depth }: Props) {
   const [isReplying, setIsReplying] = useState(false)
-  const [replyContent, setReplyContent] = useState('')
+  const replyDraftKey = `forumDraft_${forumId}_${currentUserId}_${message.id}`
+  const {
+    content: replyContent,
+    updateContent: updateReplyContent,
+    clearDraft: clearReplyDraft,
+    showSaved: showReplySaved,
+  } = useForumDraft(replyDraftKey)
   const [replyFiles, setReplyFiles] = useState<File[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -55,7 +62,7 @@ export function ForumMessageItem({ message, tree, currentUserId, forumId, depth 
       fd.append('content', replyContent)
       replyFiles.forEach((f) => fd.append('attachments', f))
       await createForumMessage(fd)
-      setReplyContent('')
+      clearReplyDraft()
       setReplyFiles([])
       setIsReplying(false)
       if (fileRef.current) fileRef.current.value = ''
@@ -140,10 +147,15 @@ export function ForumMessageItem({ message, tree, currentUserId, forumId, depth 
             <div className="mt-3 space-y-2">
               <Textarea
                 value={replyContent}
-                onChange={(e) => setReplyContent(e.target.value)}
+                onChange={(e) => updateReplyContent(e.target.value)}
                 placeholder="Escreva sua resposta..."
                 className="text-sm min-h-[60px]"
               />
+              {showReplySaved && (
+                <p className="flex items-center gap-1 text-xs text-muted-foreground animate-fade-in">
+                  <Check className="w-3 h-3" /> Rascunho salvo
+                </p>
+              )}
               <div className="flex items-center gap-2">
                 <input
                   ref={fileRef}
@@ -176,7 +188,7 @@ export function ForumMessageItem({ message, tree, currentUserId, forumId, depth 
                   className="text-xs"
                   onClick={() => {
                     setIsReplying(false)
-                    setReplyContent('')
+                    clearReplyDraft()
                     setReplyFiles([])
                   }}
                 >
