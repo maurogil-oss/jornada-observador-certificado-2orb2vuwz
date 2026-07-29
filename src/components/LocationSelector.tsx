@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -9,6 +11,7 @@ import {
 } from '@/components/ui/select'
 import { getCountries, getStates, getCities, type GeoRecord } from '@/services/geography'
 import { cn } from '@/lib/utils'
+import { Keyboard, ChevronDown } from 'lucide-react'
 
 interface LocationSelectorProps {
   country?: string
@@ -44,6 +47,7 @@ export function LocationSelector({
   const [countries, setCountries] = useState<GeoRecord[]>([])
   const [states, setStates] = useState<GeoRecord[]>([])
   const [cities, setCities] = useState<GeoRecord[]>([])
+  const [manualCity, setManualCity] = useState(false)
 
   useEffect(() => {
     getCountries().then(setCountries).catch(console.error)
@@ -70,6 +74,12 @@ export function LocationSelector({
       setCities([])
     }
   }, [state, states])
+
+  useEffect(() => {
+    if (cities.length === 0 && !showAllOption && state) {
+      setManualCity(true)
+    }
+  }, [cities.length, state, showAllOption])
 
   const containerClass =
     layout === 'horizontal'
@@ -136,26 +146,76 @@ export function LocationSelector({
       </div>
 
       <div className="space-y-2 flex-1">
-        <Label className={cityError ? 'text-destructive' : ''}>
-          Cidade {showAllOption ? '' : '*'}
-        </Label>
-        <Select
-          disabled={disabled || (!showAllOption && !state) || cities.length === 0}
-          value={city === 'all' ? 'all' : city || undefined}
-          onValueChange={onCityChange}
-        >
-          <SelectTrigger className="h-11 bg-background">
-            <SelectValue placeholder="Selecione a cidade" />
-          </SelectTrigger>
-          <SelectContent>
-            {showAllOption && <SelectItem value="all">Todas as Cidades</SelectItem>}
-            {cities.map((c) => (
-              <SelectItem key={c.id} value={c.name}>
-                {c.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex items-center justify-between">
+          <Label className={cityError ? 'text-destructive' : ''}>
+            Cidade {showAllOption ? '' : '*'}
+          </Label>
+          {cities.length > 0 && !showAllOption && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+              onClick={() => setManualCity(!manualCity)}
+            >
+              {manualCity ? (
+                <>
+                  <ChevronDown className="w-3 h-3 mr-1" />
+                  Ver lista
+                </>
+              ) : (
+                <>
+                  <Keyboard className="w-3 h-3 mr-1" />
+                  Digitar manualmente
+                </>
+              )}
+            </Button>
+          )}
+        </div>
+        {manualCity && !showAllOption ? (
+          <Input
+            disabled={disabled}
+            value={city === 'all' ? '' : city || ''}
+            onChange={(e) => onCityChange(e.target.value)}
+            placeholder="Digite o nome da sua cidade"
+            className="h-11 bg-background"
+          />
+        ) : (
+          <Select
+            disabled={disabled || (!showAllOption && !state) || cities.length === 0}
+            value={city === 'all' ? 'all' : city || undefined}
+            onValueChange={onCityChange}
+          >
+            <SelectTrigger className="h-11 bg-background">
+              <SelectValue placeholder="Selecione a cidade" />
+            </SelectTrigger>
+            <SelectContent>
+              {showAllOption && <SelectItem value="all">Todas as Cidades</SelectItem>}
+              {cities.map((c) => (
+                <SelectItem key={c.id} value={c.name}>
+                  {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        {cities.length === 0 && !showAllOption && !manualCity && (
+          <p className="text-xs text-muted-foreground">
+            Cidade não encontrada?{' '}
+            <button
+              type="button"
+              className="text-primary hover:underline font-medium"
+              onClick={() => setManualCity(true)}
+            >
+              Digite manualmente
+            </button>
+          </p>
+        )}
+        {manualCity && !showAllOption && (
+          <p className="text-xs text-muted-foreground">
+            Digite o nome completo da sua cidade. Ela será registrada automaticamente.
+          </p>
+        )}
         {cityError && <p className="text-[0.8rem] font-medium text-destructive">{cityError}</p>}
       </div>
     </div>
