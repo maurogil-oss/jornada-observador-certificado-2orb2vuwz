@@ -12,7 +12,7 @@ import {
   TableRow,
   TableFooter,
 } from '@/components/ui/table'
-import { cn } from '@/lib/utils'
+import { cn, getUserLevelIndex } from '@/lib/utils'
 import {
   Download,
   FileSpreadsheet,
@@ -301,6 +301,12 @@ export default function Ranking() {
   const { toast } = useToast()
 
   const [expandedUser, setExpandedUser] = useState<string | null>(null)
+  const userLevelIndex = useMemo(() => getUserLevelIndex(currentUser), [currentUser])
+  const [selectedLevel, setSelectedLevel] = useState<number>(0)
+
+  useEffect(() => {
+    if (userLevelIndex >= 0) setSelectedLevel(userLevelIndex)
+  }, [userLevelIndex])
 
   const handleToggleExpand = (userId: string) => {
     setExpandedUser((prev) => (prev === userId ? null : userId))
@@ -343,15 +349,18 @@ export default function Ranking() {
   }, [users])
 
   const filteredUsers = useMemo(() => {
-    if (filterTurma === 'all') return sortedUsers
-    return sortedUsers.filter((u) => u.turma === Number(filterTurma))
-  }, [sortedUsers, filterTurma])
+    let result = sortedUsers.filter((u) => getUserLevelIndex(u) === selectedLevel)
+    if (filterTurma !== 'all') {
+      result = result.filter((u) => u.turma === Number(filterTurma))
+    }
+    return result
+  }, [sortedUsers, filterTurma, selectedLevel])
 
   const myPosition = useMemo(() => {
     if (!currentUser) return null
-    const idx = sortedUsers.findIndex((u) => u.id === currentUser.id)
+    const idx = filteredUsers.findIndex((u) => u.id === currentUser.id)
     return idx >= 0 ? idx + 1 : null
-  }, [sortedUsers, currentUser])
+  }, [filteredUsers, currentUser])
 
   const top3 = filteredUsers.slice(0, 3)
   const rest = filteredUsers.slice(3)
@@ -387,6 +396,29 @@ export default function Ranking() {
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto px-4 mt-1">
             O princípio da Meritocracia em ação. Acompanhe os líderes da Jornada de Evolução.
           </p>
+        </div>
+
+        <div className="flex justify-center gap-2 flex-wrap">
+          {[
+            { index: 0, label: 'Nível I' },
+            { index: 1, label: 'Nível II' },
+            { index: 2, label: 'Nível III' },
+          ].map((lvl) => (
+            <Button
+              key={lvl.index}
+              variant={selectedLevel === lvl.index ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setSelectedLevel(lvl.index)}
+              className={cn(
+                'shadow-sm transition-all',
+                selectedLevel === lvl.index
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-background border-border/60 hover:bg-muted',
+              )}
+            >
+              {lvl.label}
+            </Button>
+          ))}
         </div>
 
         {isAdmin && (
@@ -431,7 +463,10 @@ export default function Ranking() {
       </div>
 
       {!isAdmin && myPosition !== null && currentUser && (
-        <div className="flex justify-center px-4 animate-fade-in-up">
+        <div className="flex flex-col items-center gap-2 px-4 animate-fade-in-up">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Classificação no {['Nível I', 'Nível II', 'Nível III'][selectedLevel]}
+          </span>
           <Card className="w-full max-w-md border-primary/20 bg-primary/5 shadow-md">
             <CardContent className="p-4 flex items-center gap-4">
               <div className="flex flex-col items-center justify-center min-w-[64px]">
