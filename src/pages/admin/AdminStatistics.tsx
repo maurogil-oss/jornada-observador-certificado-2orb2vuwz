@@ -14,10 +14,12 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Loader2, MapPin, Globe, Building2, FileSpreadsheet, FileText } from 'lucide-react'
+import { UserSearch } from '@/components/admin/UserSearch'
 
 export default function AdminStatistics() {
   const [loading, setLoading] = useState(true)
   const [allUsers, setAllUsers] = useState<any[]>([])
+  const [searchableUsers, setSearchableUsers] = useState<any[]>([])
 
   const [filterCountry, setFilterCountry] = useState<string>('all')
   const [filterState, setFilterState] = useState<string>('all')
@@ -27,6 +29,7 @@ export default function AdminStatistics() {
     async function loadStats() {
       try {
         const [users, dbCountries] = await Promise.all([getUsers(), getCountries()])
+        setSearchableUsers(users)
         const countryNames = dbCountries.map((c) => c.name)
         const invalidNames = ['balantinis', 'sssv', 'ssv', 'waltdisney']
 
@@ -255,6 +258,16 @@ export default function AdminStatistics() {
           </Button>
         </div>
       </div>
+
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Busca Rápida de Usuários</CardTitle>
+          <CardDescription>Encontre usuários por nome ou apelido</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <UserSearch users={searchableUsers} />
+        </CardContent>
+      </Card>
 
       <div className="bg-card border rounded-lg p-4 mb-8">
         <LocationSelector
