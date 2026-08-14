@@ -160,7 +160,7 @@ export function AppSidebar() {
             <div className="relative group/avatar flex-shrink-0">
               <Avatar className="h-10 w-10 border border-border/50">
                 <AvatarImage
-                  src={user.avatar ? pb.files.getUrl(user as any, user.avatar) : undefined}
+                  src={user.avatar || undefined}
                   alt={user.name}
                   className="object-cover"
                 />

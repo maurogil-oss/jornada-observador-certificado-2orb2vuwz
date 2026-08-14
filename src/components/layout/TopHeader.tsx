@@ -71,9 +71,7 @@ export function TopHeader() {
               </p>
             </div>
             <Avatar className="h-9 w-9 border-2 border-primary/20 shadow-sm">
-              <AvatarImage
-                src={user.avatar ? pb.files.getUrl(user as any, user.avatar) : undefined}
-              />
+              <AvatarImage src={user.avatar || undefined} />
               <AvatarFallback className="bg-primary/10 text-primary font-bold">
                 {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </AvatarFallback>
