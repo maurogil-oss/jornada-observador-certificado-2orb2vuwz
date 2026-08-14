@@ -358,8 +358,13 @@ export default function Ranking() {
 
   const myPosition = useMemo(() => {
     if (!currentUser) return null
+    const currentUserInList = filteredUsers.find((u) => u.id === currentUser.id)
+    if (!currentUserInList) return null
     const idx = filteredUsers.findIndex((u) => u.id === currentUser.id)
-    return idx >= 0 ? idx + 1 : null
+    return {
+      position: idx >= 0 ? idx + 1 : null,
+      user: currentUserInList,
+    }
   }, [filteredUsers, currentUser])
 
   const top3 = filteredUsers.slice(0, 3)
@@ -462,7 +467,7 @@ export default function Ranking() {
         )}
       </div>
 
-      {!isAdmin && myPosition !== null && currentUser && (
+      {!isAdmin && myPosition && myPosition.position !== null && currentUser && (
         <div className="flex flex-col items-center gap-2 px-4 animate-fade-in-up">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Classificação no {['Nível I', 'Nível II', 'Nível III'][selectedLevel]}
@@ -474,22 +479,36 @@ export default function Ranking() {
                   Minha Posição
                 </span>
                 <span className="text-3xl font-black text-primary leading-tight">
-                  {myPosition}º
+                  {myPosition.position}º
                 </span>
               </div>
               <div className="h-12 w-px bg-border shrink-0" />
               <Avatar className="w-12 h-12 border-2 border-primary/30 shrink-0">
-                <AvatarImage src={currentUser.avatar || undefined} />
+                <AvatarImage
+                  src={
+                    myPosition.user.avatar
+                      ? pb.files.getUrl(myPosition.user, myPosition.user.avatar)
+                      : currentUser.avatar || undefined
+                  }
+                />
                 <AvatarFallback className="font-bold text-muted-foreground">
-                  {(currentUser.full_name || currentUser.name)?.charAt(0) || '?'}
+                  {(
+                    myPosition.user.full_name ||
+                    myPosition.user.name ||
+                    currentUser.full_name ||
+                    currentUser.name
+                  )?.charAt(0) || '?'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-sm truncate text-foreground">
-                  {currentUser.full_name || currentUser.name}
+                  {myPosition.user.full_name ||
+                    myPosition.user.name ||
+                    currentUser.full_name ||
+                    currentUser.name}
                 </p>
                 <p className="text-xs text-muted-foreground font-medium">
-                  {currentUser.points || 0} pontos
+                  {myPosition.user.points ?? currentUser.points ?? 0} pontos
                 </p>
               </div>
               <Trophy className="w-6 h-6 text-primary/60 shrink-0" />
@@ -510,9 +529,11 @@ export default function Ranking() {
         <>
           {/* Podium */}
           <div className="flex justify-center items-end gap-2 md:gap-6 pt-10 pb-6 px-2 sm:px-4">
-            {[top3[1], top3[0], top3[2]].filter(Boolean).map((user, idx) => {
-              const isFirst = idx === 1
-              const position = isFirst ? 1 : idx === 0 ? 2 : 3
+            {top3.map((user, actualIdx) => {
+              const position = actualIdx + 1 // 1, 2, 3
+              // Visual arrangement order: 2nd place on left, 1st place in center, 3rd place on right
+              // Using flex order: 2nd place order-1, 1st place order-2, 3rd place order-3
+              const orderClass = position === 1 ? 'order-2' : position === 2 ? 'order-1' : 'order-3'
               const heightClass = position === 1 ? 'h-56' : position === 2 ? 'h-44' : 'h-36'
               const colorClass =
                 position === 1
@@ -524,7 +545,10 @@ export default function Ranking() {
               return (
                 <div
                   key={user.id}
-                  className="flex flex-col items-center relative animate-slide-up flex-1 max-w-[160px] cursor-pointer group"
+                  className={cn(
+                    'flex flex-col items-center relative animate-slide-up flex-1 max-w-[160px] cursor-pointer group',
+                    orderClass,
+                  )}
                   style={{ animationDelay: `${(3 - position) * 150}ms` }}
                   onClick={() => handleToggleExpand(user.id)}
                 >
