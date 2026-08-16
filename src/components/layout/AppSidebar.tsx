@@ -53,6 +53,7 @@ export function AppSidebar() {
     { title: 'Níveis de Evolução', url: '/niveis', icon: Compass },
     { title: 'Cofre de Evidências', url: '/submissoes', icon: FileCheck },
     { title: 'Fóruns Técnicos', url: '/foruns', icon: MessageSquare },
+    { title: 'Representações ONSV', url: '/representacoes', icon: ShieldCheck },
     { title: 'Ranking / Mérito', url: '/ranking', icon: Trophy },
   ]
 
@@ -68,6 +69,7 @@ export function AppSidebar() {
     { title: 'Logs de Importação', url: '/admin/import-logs', icon: Database },
     { title: 'Certificados', url: '/admin/certificados', icon: Award },
     { title: 'Fóruns Técnicos', url: '/admin/forums', icon: MessageSquare },
+    { title: 'Representações ONSV', url: '/admin/representacoes', icon: ShieldCheck },
   ]
 
   const isAdminArea = location.pathname.startsWith('/admin')

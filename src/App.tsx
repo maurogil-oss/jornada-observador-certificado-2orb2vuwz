@@ -29,6 +29,9 @@ import AdminScoreAudit from './pages/admin/AdminScoreAudit'
 import AdminImportLogs from './pages/admin/AdminImportLogs'
 import AdminCertificates from './pages/admin/AdminCertificates'
 import AdminForums from './pages/admin/AdminForums'
+import AdminRepresentations from './pages/admin/AdminRepresentations'
+import Representations from './pages/Representations'
+import RepresentationDetail from './pages/RepresentationDetail'
 import Profile from './pages/Profile'
 import Manual from './pages/Manual'
 import NotFound from './pages/NotFound'
@@ -170,6 +173,22 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="/representacoes"
+          element={
+            <ProtectedRoute allowedRoles={['observer', 'admin']}>
+              <Representations />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/representacoes/:id"
+          element={
+            <ProtectedRoute allowedRoles={['observer', 'admin']}>
+              <RepresentationDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/perfil"
           element={
             <ProtectedRoute allowedRoles={['observer', 'admin']}>
@@ -262,6 +281,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminForums />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/representacoes"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminRepresentations />
             </ProtectedRoute>
           }
         />
