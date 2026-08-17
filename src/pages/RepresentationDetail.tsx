@@ -15,11 +15,12 @@ import {
   ExternalLink,
   Download,
   AlertTriangle,
-  UserCheck,
-  FileCheck,
   Send,
-  Sparkles,
-  Info,
+  Link2,
+  Gavel,
+  ScrollText,
+  FileUp,
+  Network,
 } from 'lucide-react'
 import {
   Card,
@@ -57,6 +58,8 @@ import {
   createMeeting,
   createMember,
   getFileUrl,
+  linkTopicToForum,
+  getLinkableForums,
   RepresentationInstitution,
   RepresentationMember,
   RepresentationDocument,
@@ -65,6 +68,8 @@ import {
 } from '@/services/representations'
 import useAuthStore from '@/stores/useAuthStore'
 import { toast } from 'sonner'
+
+type ForumOption = { id: string; code: string; title: string; status?: string }
 
 export default function RepresentationDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -86,6 +91,7 @@ export default function RepresentationDetailPage() {
     title: '',
     description: '',
     attention_flag: false,
+    next_discussion_date: '',
   })
 
   const [docForm, setDocForm] = useState({
@@ -105,16 +111,28 @@ export default function RepresentationDetailPage() {
     minutes_summary: '',
     decisions: '',
     attendees_count: 0,
+    convocacao_file: null as File | null,
+    ata_file: null as File | null,
+    report_file: null as File | null,
   })
 
   const [memberForm, setMemberForm] = useState({
     name: '',
     email: '',
     role_type: 'Titular' as RepresentationMember['role_type'],
+    term_start: '',
+    term_end: '',
     appointment_act: '',
     commitment_term_signed: true,
     status: 'Ativo' as RepresentationMember['status'],
   })
+
+  // Forum linking modal state (Ajuste 3)
+  const [isForumModalOpen, setIsForumModalOpen] = useState(false)
+  const [forumOptions, setForumOptions] = useState<ForumOption[]>([])
+  const [forumTargetTopic, setForumTargetTopic] = useState<RepresentationTopic | null>(null)
+  const [selectedForumId, setSelectedForumId] = useState<string>('')
+  const [linkingForum, setLinkingForum] = useState(false)
 
   const currentTab = searchParams.get('tab') || 'identificacao'
 
@@ -149,6 +167,7 @@ export default function RepresentationDetailPage() {
         status: topicForm.attention_flag ? 'Sinalizado ONSV' : 'Em Discussão',
         attention_flag: topicForm.attention_flag,
         author_id: user?.id,
+        next_discussion_date: topicForm.next_discussion_date || null,
       })
       toast.success(
         topicForm.attention_flag
@@ -156,7 +175,7 @@ export default function RepresentationDetailPage() {
           : 'Tema registrado para discussão.',
       )
       setIsTopicModalOpen(false)
-      setTopicForm({ title: '', description: '', attention_flag: false })
+      setTopicForm({ title: '', description: '', attention_flag: false, next_discussion_date: '' })
       loadDetail()
     } catch (err) {
       toast.error('Erro ao registrar assunto em discussão.')
@@ -207,6 +226,10 @@ export default function RepresentationDetailPage() {
       if (meetingForm.decisions) formData.append('decisions', meetingForm.decisions)
       if (meetingForm.attendees_count)
         formData.append('attendees_count', String(meetingForm.attendees_count))
+      if (meetingForm.convocacao_file)
+        formData.append('convocacao_file', meetingForm.convocacao_file)
+      if (meetingForm.ata_file) formData.append('ata_file', meetingForm.ata_file)
+      if (meetingForm.report_file) formData.append('report_file', meetingForm.report_file)
       if (user?.id) formData.append('created_by', user.id)
 
       await createMeeting(formData)
@@ -221,6 +244,9 @@ export default function RepresentationDetailPage() {
         minutes_summary: '',
         decisions: '',
         attendees_count: 0,
+        convocacao_file: null,
+        ata_file: null,
+        report_file: null,
       })
       loadDetail()
     } catch (err) {
@@ -239,6 +265,8 @@ export default function RepresentationDetailPage() {
         name: memberForm.name,
         email: memberForm.email,
         role_type: memberForm.role_type,
+        term_start: memberForm.term_start || null,
+        term_end: memberForm.term_end || null,
         appointment_act: memberForm.appointment_act,
         commitment_term_signed: memberForm.commitment_term_signed,
         status: memberForm.status,
@@ -249,6 +277,8 @@ export default function RepresentationDetailPage() {
         name: '',
         email: '',
         role_type: 'Titular',
+        term_start: '',
+        term_end: '',
         appointment_act: '',
         commitment_term_signed: true,
         status: 'Ativo',
@@ -256,6 +286,37 @@ export default function RepresentationDetailPage() {
       loadDetail()
     } catch (err) {
       toast.error('Erro ao vincular representante.')
+    }
+  }
+
+  // Handle linking a topic to a Technical Forum (Ajuste 3)
+  const handleOpenForumModal = async (topic: RepresentationTopic) => {
+    setForumTargetTopic(topic)
+    setSelectedForumId(topic.forum_id || '')
+    setIsForumModalOpen(true)
+    if (forumOptions.length === 0) {
+      const list = await getLinkableForums()
+      setForumOptions(list)
+    }
+  }
+
+  const handleLinkForum = async () => {
+    if (!forumTargetTopic) return
+    setLinkingForum(true)
+    try {
+      await linkTopicToForum(forumTargetTopic.id, selectedForumId || null)
+      toast.success(
+        selectedForumId
+          ? 'Tópico vinculado ao Fórum Técnico.'
+          : 'Vínculo com Fórum Técnico removido.',
+      )
+      setIsForumModalOpen(false)
+      setForumTargetTopic(null)
+      loadDetail()
+    } catch (err) {
+      toast.error('Erro ao vincular tópico ao fórum.')
+    } finally {
+      setLinkingForum(false)
     }
   }
 
@@ -390,6 +451,18 @@ export default function RepresentationDetailPage() {
                       />
                     </div>
 
+                    <div className="space-y-2">
+                      <Label htmlFor="top-next">Próxima Discussão/Reunião (data prevista)</Label>
+                      <Input
+                        id="top-next"
+                        type="date"
+                        value={topicForm.next_discussion_date}
+                        onChange={(e) =>
+                          setTopicForm({ ...topicForm, next_discussion_date: e.target.value })
+                        }
+                      />
+                    </div>
+
                     <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-300 rounded-lg">
                       <input
                         type="checkbox"
@@ -456,6 +529,10 @@ export default function RepresentationDetailPage() {
           <TabsTrigger value="discussoes" className="text-xs font-semibold gap-1.5 py-2">
             <MessageSquare className="w-3.5 h-3.5" />
             <span>Assuntos em Discussão ({topics.length})</span>
+          </TabsTrigger>
+          <TabsTrigger value="decisoes" className="text-xs font-semibold gap-1.5 py-2">
+            <Gavel className="w-3.5 h-3.5" />
+            <span>Decisões e Encaminhamentos</span>
           </TabsTrigger>
           <TabsTrigger
             value="posicionamentos"
@@ -809,6 +886,29 @@ export default function RepresentationDetailPage() {
                     </div>
                   </div>
 
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="mem-term-start">Início do Mandato</Label>
+                      <Input
+                        id="mem-term-start"
+                        type="date"
+                        value={memberForm.term_start}
+                        onChange={(e) =>
+                          setMemberForm({ ...memberForm, term_start: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="mem-term-end">Término do Mandato</Label>
+                      <Input
+                        id="mem-term-end"
+                        type="date"
+                        value={memberForm.term_end}
+                        onChange={(e) => setMemberForm({ ...memberForm, term_end: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="mem-act">Ato de Nomeação / Portaria</Label>
                     <Input
@@ -899,6 +999,15 @@ export default function RepresentationDetailPage() {
                         <span className="text-muted-foreground">Ato de Nomeação:</span>
                         <span className="font-medium text-foreground">
                           {mem.appointment_act || 'Pendente'}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">Período da Representação:</span>
+                        <span className="font-medium text-foreground flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5 text-amber-600" />
+                          {mem.term_start || mem.term_end
+                            ? `${mem.term_start ? new Date(mem.term_start).toLocaleDateString('pt-BR') : '—'} até ${mem.term_end ? new Date(mem.term_end).toLocaleDateString('pt-BR') : 'Indeterminado'}`
+                            : 'Não informado'}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
@@ -1016,6 +1125,67 @@ export default function RepresentationDetailPage() {
                     />
                   </div>
 
+                  {/* Uploads de arquivos: Convocação, Ata, Relatório/registro (Ajuste 1) */}
+                  <div className="space-y-3 p-3 bg-muted/30 rounded-lg border">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-foreground uppercase">
+                      <FileUp className="w-3.5 h-3.5 text-primary" />
+                      <span>Documentos da Reunião (PDF / DOC)</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-3">
+                      <div className="space-y-1.5">
+                        <Label htmlFor="meet-convocacao" className="text-xs font-semibold">
+                          Convocação
+                        </Label>
+                        <Input
+                          id="meet-convocacao"
+                          type="file"
+                          accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                          onChange={(e) =>
+                            setMeetingForm({
+                              ...meetingForm,
+                              convocacao_file: e.target.files?.[0] || null,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <Label htmlFor="meet-ata" className="text-xs font-semibold">
+                          Ata
+                        </Label>
+                        <Input
+                          id="meet-ata"
+                          type="file"
+                          accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                          onChange={(e) =>
+                            setMeetingForm({
+                              ...meetingForm,
+                              ata_file: e.target.files?.[0] || null,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <Label htmlFor="meet-report" className="text-xs font-semibold">
+                          Relatório / Registro da Reunião
+                        </Label>
+                        <Input
+                          id="meet-report"
+                          type="file"
+                          accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                          onChange={(e) =>
+                            setMeetingForm({
+                              ...meetingForm,
+                              report_file: e.target.files?.[0] || null,
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   <DialogFooter className="pt-2">
                     <Button
                       type="button"
@@ -1081,6 +1251,48 @@ export default function RepresentationDetailPage() {
                           Decisões / Deliberações
                         </span>
                         <p className="text-foreground whitespace-pre-wrap">{meet.decisions}</p>
+                      </div>
+                    )}
+
+                    {/* Downloads: Convocação, Ata, Relatório (Ajuste 1) */}
+                    {(meet.convocacao_file || meet.ata_file || meet.report_file) && (
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {meet.convocacao_file && (
+                          <a
+                            href={getFileUrl(meet, meet.convocacao_file)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 rounded-md transition-colors text-[11px] font-semibold"
+                            title="Baixar Convocação"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                            <span>Convocação</span>
+                          </a>
+                        )}
+                        {meet.ata_file && (
+                          <a
+                            href={getFileUrl(meet, meet.ata_file)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 rounded-md transition-colors text-[11px] font-semibold"
+                            title="Baixar Ata"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                            <span>Ata</span>
+                          </a>
+                        )}
+                        {meet.report_file && (
+                          <a
+                            href={getFileUrl(meet, meet.report_file)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 rounded-md transition-colors text-[11px] font-semibold"
+                            title="Baixar Relatório/Registro"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                            <span>Relatório / Registro</span>
+                          </a>
+                        )}
                       </div>
                     )}
                   </CardContent>
@@ -1157,6 +1369,19 @@ export default function RepresentationDetailPage() {
                       <p className="text-muted-foreground leading-relaxed">{top.description}</p>
                     )}
 
+                    {/* Próxima discussão/reunião (Ajuste 2) */}
+                    {top.next_discussion_date && (
+                      <div className="flex items-center gap-1.5 text-muted-foreground">
+                        <Calendar className="w-3.5 h-3.5 text-primary" />
+                        <span>
+                          Próxima discussão/reunião:{' '}
+                          <strong className="text-foreground">
+                            {new Date(top.next_discussion_date).toLocaleDateString('pt-BR')}
+                          </strong>
+                        </span>
+                      </div>
+                    )}
+
                     {/* POSICIONAMENTO / ORIENTAÇÃO DO ONSV (6.7) */}
                     {top.onsv_guidance && (
                       <div className="p-3.5 bg-primary/5 border border-primary/20 rounded-lg space-y-1">
@@ -1178,11 +1403,136 @@ export default function RepresentationDetailPage() {
                         <p className="text-muted-foreground">{top.decisions_forwarded}</p>
                       </div>
                     )}
+
+                    {/* Integração com Fórum Técnico (Ajuste 3) */}
+                    <div className="flex flex-wrap items-center gap-2 pt-1 border-t">
+                      {top.forum_id && top.expand?.forum_id ? (
+                        <a
+                          href={`/forums/${top.expand.forum_id.id}`}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-500/20 rounded-md transition-colors text-[11px] font-semibold"
+                          title="Abrir Fórum Técnico vinculado"
+                        >
+                          <Link2 className="w-3.5 h-3.5" />
+                          <span>
+                            Fórum Técnico: {top.expand.forum_id.code} – {top.expand.forum_id.title}
+                          </span>
+                        </a>
+                      ) : (
+                        <span className="text-[11px] text-muted-foreground">
+                          Sem vínculo com Fórum Técnico.
+                        </span>
+                      )}
+
+                      {top.attention_flag && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-[11px] gap-1.5 ml-auto"
+                          onClick={() => handleOpenForumModal(top)}
+                        >
+                          <Network className="w-3.5 h-3.5" />
+                          <span>
+                            {top.forum_id ? 'Alterar Fórum' : 'Encaminhar ao Fórum Técnico'}
+                          </span>
+                        </Button>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
           )}
+        </TabsContent>
+
+        {/* 5.5 DECISÕES E ENCAMINHAMENTOS — VISÃO CONSOLIDADA (Ajuste 4) */}
+        <TabsContent value="decisoes" className="space-y-4">
+          <Card className="border-l-4 border-l-primary">
+            <CardHeader>
+              <CardTitle className="text-lg font-bold flex items-center gap-2">
+                <Gavel className="w-5 h-5 text-primary" />
+                <span>Decisões e Encaminhamentos</span>
+              </CardTitle>
+              <CardDescription>
+                Visão consolidada das decisões registradas em reuniões e dos encaminhamentos dos
+                temas em discussão deste colegiado, ordenados do mais recente ao mais antigo.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {(() => {
+                // Decisões vindas de reuniões
+                const fromMeetings = meetings
+                  .filter((m) => m.decisions && m.decisions.trim().length > 0)
+                  .map((m) => ({
+                    id: `meet-${m.id}`,
+                    date: m.meeting_date,
+                    dateLabel: new Date(m.meeting_date).toLocaleDateString('pt-BR'),
+                    source: 'Reunião',
+                    sourceTitle: m.title,
+                    content: m.decisions || '',
+                  }))
+
+                // Encaminhamentos vindos de tópicos com resolution/decisions_forwarded preenchido
+                const fromTopics = topics
+                  .filter((t) => t.decisions_forwarded && t.decisions_forwarded.trim().length > 0)
+                  .map((t) => ({
+                    id: `topic-${t.id}`,
+                    date: t.onsv_guidance_date || t.updated || t.created,
+                    dateLabel: new Date(
+                      t.onsv_guidance_date || t.updated || t.created,
+                    ).toLocaleDateString('pt-BR'),
+                    source: 'Tópico',
+                    sourceTitle: t.title,
+                    content: t.decisions_forwarded || '',
+                  }))
+
+                const consolidated = [...fromMeetings, ...fromTopics].sort(
+                  (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+                )
+
+                if (consolidated.length === 0) {
+                  return (
+                    <div className="text-center p-6 text-muted-foreground text-sm flex flex-col items-center gap-2">
+                      <ScrollText className="w-8 h-8 opacity-40" />
+                      <span>Nenhuma decisão ou encaminhamento registrado neste colegiado.</span>
+                    </div>
+                  )
+                }
+
+                return consolidated.map((item) => (
+                  <div key={item.id} className="p-4 bg-muted/20 rounded-lg border space-y-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          className={
+                            item.source === 'Reunião'
+                              ? 'bg-blue-600 text-white text-[10px]'
+                              : 'bg-purple-600 text-white text-[10px]'
+                          }
+                        >
+                          {item.source === 'Reunião' ? (
+                            <Calendar className="w-3 h-3 mr-1" />
+                          ) : (
+                            <MessageSquare className="w-3 h-3 mr-1" />
+                          )}
+                          {item.source}
+                        </Badge>
+                        <span className="font-bold text-foreground text-sm">
+                          {item.sourceTitle}
+                        </span>
+                      </div>
+                      <span className="text-xs text-muted-foreground font-semibold flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" />
+                        {item.dateLabel}
+                      </span>
+                    </div>
+                    <p className="text-xs text-foreground whitespace-pre-wrap leading-relaxed">
+                      {item.content}
+                    </p>
+                  </div>
+                ))
+              })()}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* 6. POSICIONAMENTOS E ORIENTAÇÕES DO ONSV (6.7 & 6.10) */}
@@ -1226,6 +1576,65 @@ export default function RepresentationDetailPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* MODAL: Vincular tópico a Fórum Técnico (Ajuste 3) */}
+      <Dialog open={isForumModalOpen} onOpenChange={setIsForumModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Network className="w-5 h-5 text-primary" />
+              <span>Encaminhar ao Fórum Técnico</span>
+            </DialogTitle>
+          </DialogHeader>
+
+          {forumTargetTopic && (
+            <div className="text-xs text-muted-foreground bg-muted/30 p-2.5 rounded border">
+              <span className="font-semibold text-foreground">Tópico:</span>{' '}
+              {forumTargetTopic.title}
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="forum-select">Selecione o Fórum Técnico</Label>
+            <Select value={selectedForumId} onValueChange={setSelectedForumId}>
+              <SelectTrigger id="forum-select">
+                <SelectValue placeholder="— Nenhum (desvincular) —" />
+              </SelectTrigger>
+              <SelectContent>
+                {forumOptions.map((f) => (
+                  <SelectItem key={f.id} value={f.id}>
+                    {f.code} – {f.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-[11px] text-muted-foreground">
+              Ao vincular, o posicionamento registrado no fórum poderá ser refletido como orientação
+              nesta representação. Deixe em branco para remover o vínculo.
+            </p>
+          </div>
+
+          <DialogFooter className="pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsForumModalOpen(false)}
+              disabled={linkingForum}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="button"
+              onClick={handleLinkForum}
+              disabled={linkingForum}
+              className="gap-2"
+            >
+              <Link2 className="w-4 h-4" />
+              {linkingForum ? 'Vinculando...' : 'Confirmar Vínculo'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -78,6 +78,8 @@ export interface RepresentationMeeting {
   agenda?: string
   minutes_summary?: string
   report_file?: string
+  convocacao_file?: string
+  ata_file?: string
   decisions?: string
   attendees_count?: number
   created_by?: string
@@ -96,8 +98,19 @@ export interface RepresentationTopic {
   onsv_guidance_date?: string
   author_id?: string
   decisions_forwarded?: string
+  next_discussion_date?: string
+  forum_id?: string
   created: string
   updated: string
+  expand?: {
+    forum_id?: {
+      id: string
+      code: string
+      title: string
+      status?: string
+      is_active?: boolean
+    }
+  }
 }
 
 export async function getRepresentationInstitutions(): Promise<RepresentationInstitution[]> {
@@ -141,7 +154,7 @@ export async function getRepresentationDetail(
       .collection('representation_institutions')
       .getOne<RepresentationInstitution>(id, {
         expand:
-          'representation_members_via_institution_id.user_id,representation_documents_via_institution_id,representation_meetings_via_institution_id,representation_topics_via_institution_id',
+          'representation_members_via_institution_id.user_id,representation_documents_via_institution_id,representation_meetings_via_institution_id,representation_topics_via_institution_id.forum_id',
       })
     return record
   } catch (error) {
@@ -272,4 +285,24 @@ export function getFileUrl(
   if (!filename) return '#'
   const collection = record.collectionId || 'representation_documents'
   return `${import.meta.env.VITE_POCKETBASE_URL || ''}/api/files/${collection}/${record.id}/${filename}`
+}
+
+// Link/unlink a discussion topic to a Technical Forum (Ajuste 3)
+export async function linkTopicToForum(topicId: string, forumId: string | null) {
+  return await pb.collection('representation_topics').update(topicId, { forum_id: forumId })
+}
+
+// Fetch active forums available for linking (delegates to forums service)
+export async function getLinkableForums(): Promise<
+  { id: string; code: string; title: string; status?: string }[]
+> {
+  try {
+    return await pb.collection('forums').getFullList({
+      sort: 'code',
+      filter: 'is_active = true',
+    })
+  } catch (error) {
+    console.error('Error fetching linkable forums:', error)
+    return []
+  }
 }
