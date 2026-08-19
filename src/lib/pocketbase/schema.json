@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-17T13:59:15.243Z",
+  "generatedAt": "2026-08-19T16:05:50.042Z",
   "collections": [
     {
       "name": "users",
@@ -1404,18 +1404,6 @@
         },
         {
           "name": "report_file",
-          "type": "file",
-          "required": false,
-          "system": false
-        },
-        {
-          "name": "convocacao_file",
-          "type": "file",
-          "required": false,
-          "system": false
-        },
-        {
-          "name": "ata_file",
           "type": "file",
           "required": false,
           "system": false
