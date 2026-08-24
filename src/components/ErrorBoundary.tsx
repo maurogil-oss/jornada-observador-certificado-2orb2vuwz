@@ -28,11 +28,14 @@ export class ErrorBoundary extends Component<Props, State> {
     if (
       error.message.includes('removeChild') ||
       error.message.includes('Node') ||
+      error.message.includes('insertBefore') ||
       error.message.includes('is not a valid')
     ) {
-      const hasReloaded = sessionStorage.getItem('error_reloaded')
-      if (!hasReloaded) {
-        sessionStorage.setItem('error_reloaded', 'true')
+      const lastReloadTime = Number(sessionStorage.getItem('last_dom_reload') || '0')
+      const now = Date.now()
+      // Allow automatic recovery if last reload was more than 10 seconds ago
+      if (now - lastReloadTime > 10000) {
+        sessionStorage.setItem('last_dom_reload', String(now))
         window.location.reload()
       }
     }
@@ -59,7 +62,8 @@ export class ErrorBoundary extends Component<Props, State> {
   private handleClearAndReload = () => {
     try {
       localStorage.removeItem('pocketbase_auth')
-      sessionStorage.removeItem('error_reloaded')
+      sessionStorage.removeItem('last_dom_reload')
+      sessionStorage.clear()
     } catch (err) {
       console.warn('Failed to clear storage:', err)
     }

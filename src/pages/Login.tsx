@@ -31,6 +31,14 @@ import {
   CheckCircle2,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { useToast } from '@/hooks/use-toast'
 import { extractFieldErrors } from '@/lib/pocketbase/errors'
 import pb from '@/lib/pocketbase/client'
@@ -288,12 +296,15 @@ export default function Login() {
   }
 
   const handleTurmaAccess = () => {
-    if (turmaPassword.trim().toLowerCase() === 'turma15') {
+    const inputCleaned = turmaPassword.trim().toLowerCase().replace(/\s+/g, '')
+    if (inputCleaned === 'turma15' || inputCleaned === '15' || inputCleaned === 'oct152026') {
       setShowTurmaModal(false)
       setTurmaPassword('')
       setTurmaError('')
+      // Ensure step is set to 0 or context before switching tab
+      setStep(0)
       setActiveTab('register')
-      registerForm.setValue('turma', 15)
+      registerForm.setValue('turma', 15, { shouldValidate: true })
     } else {
       setTurmaError('Senha incorreta. Verifique e tente novamente.')
     }
@@ -965,51 +976,67 @@ export default function Login() {
 
       <AppFooter />
 
-      {showTurmaModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-fade-in backdrop-blur-sm">
-          <Card className="w-full max-w-sm shadow-xl border-border/60">
-            <CardHeader>
-              <CardTitle>Acesso Turma 15</CardTitle>
-              <CardDescription>
-                Insira a senha exclusiva fornecida para a Turma 15 para iniciar seu cadastro na
-                plataforma.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <FormLabel>Senha de Acesso</FormLabel>
-                <Input
-                  type="password"
-                  placeholder="Digite a senha"
-                  value={turmaPassword}
-                  onChange={(e) => {
-                    setTurmaPassword(e.target.value)
-                    setTurmaError('')
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleTurmaAccess()
-                  }}
-                  autoFocus
-                />
-                {turmaError && <p className="text-sm font-medium text-destructive">{turmaError}</p>}
-              </div>
-              <div className="flex justify-end gap-3 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowTurmaModal(false)
-                    setTurmaError('')
-                    setTurmaPassword('')
-                  }}
-                >
-                  Cancelar
-                </Button>
-                <Button onClick={handleTurmaAccess}>Acessar Cadastro</Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      <Dialog
+        open={showTurmaModal}
+        onOpenChange={(open) => {
+          setShowTurmaModal(open)
+          if (!open) {
+            setTurmaError('')
+            setTurmaPassword('')
+          }
+        }}
+      >
+        <DialogContent className="w-full max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Acesso Turma 15</DialogTitle>
+            <DialogDescription>
+              Insira a senha exclusiva fornecida para a Turma 15 para iniciar seu cadastro na
+              plataforma.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <FormLabel htmlFor="turma-pass">Senha de Acesso</FormLabel>
+              <Input
+                id="turma-pass"
+                type="password"
+                placeholder="Digite a senha"
+                value={turmaPassword}
+                onChange={(e) => {
+                  setTurmaPassword(e.target.value)
+                  setTurmaError('')
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    handleTurmaAccess()
+                  }
+                }}
+                autoFocus
+              />
+              {turmaError ? (
+                <p className="text-sm font-medium text-destructive">{turmaError}</p>
+              ) : null}
+            </div>
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setShowTurmaModal(false)
+                setTurmaError('')
+                setTurmaPassword('')
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button type="button" onClick={handleTurmaAccess}>
+              Acessar Cadastro
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

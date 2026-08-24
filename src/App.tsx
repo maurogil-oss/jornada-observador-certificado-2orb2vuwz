@@ -112,7 +112,14 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route
+        path="/login"
+        element={
+          <ErrorBoundary>
+            <Login />
+          </ErrorBoundary>
+        }
+      />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/perfil/:id" element={<PublicProfile />} />
