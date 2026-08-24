@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -154,6 +154,7 @@ export default function Login() {
   const [showTurmaModal, setShowTurmaModal] = useState(false)
   const [turmaPassword, setTurmaPassword] = useState('')
   const [turmaError, setTurmaError] = useState('')
+  const shouldActivateRegisterRef = useRef(false)
   const {
     login,
     register,
@@ -298,14 +299,12 @@ export default function Login() {
   const handleTurmaAccess = () => {
     const inputCleaned = turmaPassword.trim().toLowerCase().replace(/\s+/g, '')
     if (inputCleaned === 'turma15' || inputCleaned === '15' || inputCleaned === 'oct152026') {
+      shouldActivateRegisterRef.current = true
       setShowTurmaModal(false)
       setTurmaPassword('')
       setTurmaError('')
-      // Ensure step is set to 0 or context before switching tab
-      setStep(0)
-      setActiveTab('register')
-      registerForm.setValue('turma', 15, { shouldValidate: true })
     } else {
+      shouldActivateRegisterRef.current = false
       setTurmaError('Senha incorreta. Verifique e tente novamente.')
     }
   }
@@ -983,6 +982,12 @@ export default function Login() {
           if (!open) {
             setTurmaError('')
             setTurmaPassword('')
+            if (shouldActivateRegisterRef.current) {
+              shouldActivateRegisterRef.current = false
+              setStep(0)
+              setActiveTab('register')
+              registerForm.setValue('turma', 15, { shouldValidate: true })
+            }
           }
         }}
       >

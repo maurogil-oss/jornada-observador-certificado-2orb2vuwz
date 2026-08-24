@@ -20,7 +20,11 @@ if (typeof Node === 'function' && Node.prototype) {
       if (child.parentNode) {
         return child.parentNode.removeChild(child) as T
       }
-      return child
+      try {
+        return originalRemoveChild.apply(this, [child]) as T
+      } catch {
+        return child
+      }
     }
     return originalRemoveChild.apply(this, [child]) as T
   }
