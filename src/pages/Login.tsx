@@ -984,9 +984,11 @@ export default function Login() {
             setTurmaPassword('')
             if (shouldActivateRegisterRef.current) {
               shouldActivateRegisterRef.current = false
-              setStep(0)
-              setActiveTab('register')
-              registerForm.setValue('turma', 15, { shouldValidate: true })
+              requestAnimationFrame(() => {
+                setStep(0)
+                setActiveTab('register')
+                registerForm.setValue('turma', 15, { shouldValidate: true })
+              })
             }
           }
         }}
