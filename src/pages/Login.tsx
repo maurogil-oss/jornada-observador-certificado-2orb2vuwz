@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -31,14 +31,7 @@ import {
   CheckCircle2,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+
 import { useToast } from '@/hooks/use-toast'
 import { extractFieldErrors } from '@/lib/pocketbase/errors'
 import pb from '@/lib/pocketbase/client'
@@ -151,10 +144,9 @@ export default function Login() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
-  const [showTurmaModal, setShowTurmaModal] = useState(false)
+  const [showTurma15Form, setShowTurma15Form] = useState(false)
   const [turmaPassword, setTurmaPassword] = useState('')
   const [turmaError, setTurmaError] = useState('')
-  const shouldActivateRegisterRef = useRef(false)
   const {
     login,
     register,
@@ -299,12 +291,13 @@ export default function Login() {
   const handleTurmaAccess = () => {
     const inputCleaned = turmaPassword.trim().toLowerCase().replace(/\s+/g, '')
     if (inputCleaned === 'turma15' || inputCleaned === '15' || inputCleaned === 'oct152026') {
-      shouldActivateRegisterRef.current = true
-      setShowTurmaModal(false)
+      setShowTurma15Form(false)
       setTurmaPassword('')
       setTurmaError('')
+      setStep(0)
+      setActiveTab('register')
+      registerForm.setValue('turma', 15, { shouldValidate: true })
     } else {
-      shouldActivateRegisterRef.current = false
       setTurmaError('Senha incorreta. Verifique e tente novamente.')
     }
   }
@@ -399,115 +392,187 @@ export default function Login() {
               </TabsList>
 
               <TabsContent value="login" className="animate-fade-in-up">
-                <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
-                    <FormField
-                      control={loginForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>E-mail Institucional</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                              <Input
-                                placeholder="seu.nome@onsv.org"
-                                className="pl-10 h-11"
-                                {...field}
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={loginForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <div className="flex items-center justify-between">
-                            <FormLabel>Senha</FormLabel>
-                          </div>
-                          <FormControl>
-                            <div className="relative">
-                              <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                              <Input
-                                type={showPassword ? 'text' : 'password'}
-                                placeholder="••••••••"
-                                className="pl-10 pr-10 h-11"
-                                {...field}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground flex items-center justify-center h-full min-w-[30px] -translate-y-2.5"
-                              >
-                                {showPassword ? (
-                                  <EyeOff className="h-5 w-5" />
-                                ) : (
-                                  <Eye className="h-5 w-5" />
-                                )}
-                              </button>
-                            </div>
-                          </FormControl>
-                          <div className="flex justify-end mt-1">
-                            <Link
-                              to="/forgot-password"
-                              className="text-xs text-primary hover:underline font-medium"
-                            >
-                              Esqueci minha senha
-                            </Link>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button
-                      type="submit"
-                      className="w-full h-11 font-bold mt-2"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Autenticando...
-                        </>
-                      ) : (
-                        'Acessar'
-                      )}
-                    </Button>
-
-                    <a
-                      href="https://docs.google.com/forms/d/e/1FAIpQLSffEzSZhICYH_naSzULVX2PV5-w74egq_hY4KjH2HtFirakYg/viewform"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center w-full h-11 px-4 sm:px-6 mt-4 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm uppercase tracking-wide shadow-md transition-colors duration-200"
-                    >
-                      Observador Certificado - Recadastramento e Atualização
-                    </a>
-
-                    <div className="relative my-6">
-                      <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t border-border/60" />
-                      </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-background px-2 text-muted-foreground font-semibold">
-                          Primeiro Acesso
-                        </span>
-                      </div>
+                {showTurma15Form ? (
+                  <div className="space-y-4">
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-semibold tracking-tight">Acesso Turma 15</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Insira a senha exclusiva fornecida para a Turma 15 para iniciar seu cadastro
+                        na plataforma.
+                      </p>
                     </div>
 
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full h-11 font-bold border-primary/20 hover:bg-primary/5 text-primary"
-                      onClick={() => setShowTurmaModal(true)}
-                    >
-                      Acesso Turma 15
-                    </Button>
-                  </form>
-                </Form>
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="turma-pass"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Senha de Acesso
+                      </label>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                        <Input
+                          id="turma-pass"
+                          type="password"
+                          placeholder="Digite a senha"
+                          className="pl-10 h-11"
+                          value={turmaPassword}
+                          onChange={(e) => {
+                            setTurmaPassword(e.target.value)
+                            setTurmaError('')
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              handleTurmaAccess()
+                            }
+                          }}
+                          autoFocus
+                        />
+                      </div>
+                      {turmaError ? (
+                        <p className="text-sm font-medium text-destructive">{turmaError}</p>
+                      ) : null}
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="flex-1 h-11"
+                        onClick={() => {
+                          setShowTurma15Form(false)
+                          setTurmaPassword('')
+                          setTurmaError('')
+                        }}
+                      >
+                        <ChevronLeft className="w-4 h-4 mr-2" />
+                        Voltar
+                      </Button>
+                      <Button
+                        type="button"
+                        className="flex-1 h-11 font-bold"
+                        onClick={handleTurmaAccess}
+                      >
+                        Acessar Cadastro
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Form {...loginForm}>
+                    <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
+                      <FormField
+                        control={loginForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>E-mail Institucional</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                <Input
+                                  placeholder="seu.nome@onsv.org"
+                                  className="pl-10 h-11"
+                                  {...field}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={loginForm.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <div className="flex items-center justify-between">
+                              <FormLabel>Senha</FormLabel>
+                            </div>
+                            <FormControl>
+                              <div className="relative">
+                                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                <Input
+                                  type={showPassword ? 'text' : 'password'}
+                                  placeholder="••••••••"
+                                  className="pl-10 pr-10 h-11"
+                                  {...field}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => setShowPassword(!showPassword)}
+                                  className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground flex items-center justify-center h-full min-w-[30px] -translate-y-2.5"
+                                >
+                                  {showPassword ? (
+                                    <EyeOff className="h-5 w-5" />
+                                  ) : (
+                                    <Eye className="h-5 w-5" />
+                                  )}
+                                </button>
+                              </div>
+                            </FormControl>
+                            <div className="flex justify-end mt-1">
+                              <Link
+                                to="/forgot-password"
+                                className="text-xs text-primary hover:underline font-medium"
+                              >
+                                Esqueci minha senha
+                              </Link>
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button
+                        type="submit"
+                        className="w-full h-11 font-bold mt-2"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Autenticando...
+                          </>
+                        ) : (
+                          'Acessar'
+                        )}
+                      </Button>
+
+                      <a
+                        href="https://docs.google.com/forms/d/e/1FAIpQLSffEzSZhICYH_naSzULVX2PV5-w74egq_hY4KjH2HtFirakYg/viewform"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-full h-11 px-4 sm:px-6 mt-4 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm uppercase tracking-wide shadow-md transition-colors duration-200"
+                      >
+                        Observador Certificado - Recadastramento e Atualização
+                      </a>
+
+                      <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t border-border/60" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-background px-2 text-muted-foreground font-semibold">
+                            Primeiro Acesso
+                          </span>
+                        </div>
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full h-11 font-bold border-primary/20 hover:bg-primary/5 text-primary"
+                        onClick={() => {
+                          setShowTurma15Form(true)
+                          setTurmaPassword('')
+                          setTurmaError('')
+                        }}
+                      >
+                        Acesso Turma 15
+                      </Button>
+                    </form>
+                  </Form>
+                )}
               </TabsContent>
 
               <TabsContent value="register" className="animate-fade-in-up">
@@ -974,76 +1039,6 @@ export default function Login() {
       </div>
 
       <AppFooter />
-
-      <Dialog
-        open={showTurmaModal}
-        onOpenChange={(open) => {
-          setShowTurmaModal(open)
-          if (!open) {
-            setTurmaError('')
-            setTurmaPassword('')
-            if (shouldActivateRegisterRef.current) {
-              shouldActivateRegisterRef.current = false
-              requestAnimationFrame(() => {
-                setStep(0)
-                setActiveTab('register')
-                registerForm.setValue('turma', 15, { shouldValidate: true })
-              })
-            }
-          }
-        }}
-      >
-        <DialogContent className="w-full max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Acesso Turma 15</DialogTitle>
-            <DialogDescription>
-              Insira a senha exclusiva fornecida para a Turma 15 para iniciar seu cadastro na
-              plataforma.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="space-y-2">
-              <FormLabel htmlFor="turma-pass">Senha de Acesso</FormLabel>
-              <Input
-                id="turma-pass"
-                type="password"
-                placeholder="Digite a senha"
-                value={turmaPassword}
-                onChange={(e) => {
-                  setTurmaPassword(e.target.value)
-                  setTurmaError('')
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault()
-                    handleTurmaAccess()
-                  }
-                }}
-                autoFocus
-              />
-              {turmaError ? (
-                <p className="text-sm font-medium text-destructive">{turmaError}</p>
-              ) : null}
-            </div>
-          </div>
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setShowTurmaModal(false)
-                setTurmaError('')
-                setTurmaPassword('')
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button type="button" onClick={handleTurmaAccess}>
-              Acessar Cadastro
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
