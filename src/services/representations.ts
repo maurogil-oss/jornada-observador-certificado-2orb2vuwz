@@ -138,6 +138,8 @@ export async function getAllRepresentationInstitutionsAdmin(): Promise<
       .collection('representation_institutions')
       .getFullList<RepresentationInstitution>({
         sort: 'name',
+        expand:
+          'representation_members_via_institution_id.user_id,representation_documents_via_institution_id,representation_meetings_via_institution_id,representation_topics_via_institution_id',
       })
     return records
   } catch (error) {
