@@ -138,7 +138,15 @@ export default function AdminUsers() {
           u.email?.toLowerCase().includes(lowerSearch),
       )
     }
-    result.sort((a, b) => (b.points || 0) - (a.points || 0))
+    result.sort((a, b) => {
+      const isPendingA = a.is_active === false || a.verified === false
+      const isPendingB = b.is_active === false || b.verified === false
+
+      if (isPendingA && !isPendingB) return -1
+      if (!isPendingA && isPendingB) return 1
+
+      return (b.points || 0) - (a.points || 0)
+    })
     return result
   }, [users, search, filterTurma])
 

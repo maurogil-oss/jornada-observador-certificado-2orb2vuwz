@@ -9,6 +9,7 @@ import {
   SidebarMenuItem,
   SidebarHeader,
   SidebarFooter,
+  SidebarMenuBadge,
 } from '@/components/ui/sidebar'
 import {
   Home,
@@ -33,9 +34,10 @@ import {
 import useAuthStore from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { updateUser } from '@/services/users'
+import { updateUser, getPendingUsersCount } from '@/services/users'
+import { useRealtime } from '@/hooks/use-realtime'
 import { toast } from 'sonner'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect, useCallback } from 'react'
 import pb from '@/lib/pocketbase/client'
 import logoOC from '@/assets/image-29272.png'
 
@@ -45,6 +47,29 @@ export function AppSidebar() {
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [pendingUsersCount, setPendingUsersCount] = useState<number>(0)
+
+  const fetchPendingUsers = useCallback(async () => {
+    if (user?.role !== 'admin') return
+    try {
+      const count = await getPendingUsersCount()
+      setPendingUsersCount(count)
+    } catch (error) {
+      console.error('Erro ao carregar contagem de usuários pendentes:', error)
+    }
+  }, [user?.role])
+
+  useEffect(() => {
+    fetchPendingUsers()
+  }, [fetchPendingUsers])
+
+  useRealtime(
+    'users',
+    () => {
+      fetchPendingUsers()
+    },
+    user?.role === 'admin',
+  )
 
   const observerNav = [
     { title: 'Dashboard', url: '/', icon: Home },
@@ -137,21 +162,43 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="gap-2 px-2 mt-2">
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === item.url}
-                    tooltip={item.title}
-                    className="font-medium h-11"
-                  >
-                    <Link to={item.url}>
-                      <item.icon className="w-4 h-4" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {navItems.map((item) => {
+                const showPendingBadge = item.url === '/admin/users' && pendingUsersCount > 0
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={location.pathname === item.url}
+                      tooltip={
+                        showPendingBadge
+                          ? `${item.title} (${pendingUsersCount} ${
+                              pendingUsersCount === 1 ? 'pendente' : 'pendentes'
+                            })`
+                          : item.title
+                      }
+                      className="font-medium h-11"
+                    >
+                      <Link to={item.url} className="relative flex items-center gap-2 w-full">
+                        <div className="relative flex items-center justify-center">
+                          <item.icon className="w-4 h-4" />
+                          {showPendingBadge && (
+                            <span
+                              className="absolute -top-1 -right-1 flex h-2 w-2 rounded-full bg-red-600 ring-2 ring-background md:hidden group-data-[collapsible=icon]:flex"
+                              title={`${pendingUsersCount} pendentes`}
+                            />
+                          )}
+                        </div>
+                        <span className="flex-1 truncate">{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                    {showPendingBadge && (
+                      <SidebarMenuBadge className="bg-red-500 hover:bg-red-600 text-white font-semibold rounded-full px-1.5 min-w-[1.25rem] h-5 text-[11px] shadow-sm">
+                        {pendingUsersCount > 99 ? '99+' : pendingUsersCount}
+                      </SidebarMenuBadge>
+                    )}
+                  </SidebarMenuItem>
+                )
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
