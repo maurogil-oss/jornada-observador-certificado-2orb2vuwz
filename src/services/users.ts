@@ -4,7 +4,7 @@ export const getUsers = () => pb.collection('users').getFullList({ sort: '-creat
 
 export const getPendingUsersCount = async () => {
   const result = await pb.collection('users').getList(1, 1, {
-    filter: 'is_active = false || verified = false',
+    filter: 'is_active = false',
   })
   return result.totalItems
 }
