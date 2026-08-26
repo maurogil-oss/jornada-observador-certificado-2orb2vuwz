@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   Building2,
   Users,
@@ -7,35 +7,19 @@ import {
   FileText,
   MessageSquare,
   ShieldCheck,
-  AlertCircle,
   Clock,
-  Plus,
-  ArrowRight,
   Info,
-  CheckCircle2,
-  ExternalLink,
   ChevronRight,
-  Filter,
   Layers,
   Sparkles,
 } from 'lucide-react'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   getRepresentationInstitutions,
   RepresentationInstitution,
-  RepresentationTopic,
 } from '@/services/representations'
-import { Skeleton } from '@/components/ui/skeleton'
 
 export default function RepresentationsPage() {
   const [institutions, setInstitutions] = useState<RepresentationInstitution[]>([])

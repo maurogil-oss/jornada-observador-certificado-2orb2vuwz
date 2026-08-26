@@ -7,7 +7,6 @@ import {
   FileText,
   MessageSquare,
   ShieldCheck,
-  AlertCircle,
   Clock,
   Plus,
   ArrowLeft,
@@ -21,6 +20,7 @@ import {
   ScrollText,
   FileUp,
   Network,
+  FileCheck,
 } from 'lucide-react'
 import {
   Card,
