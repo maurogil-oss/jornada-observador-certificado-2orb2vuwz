@@ -35,7 +35,7 @@ import {
   RepresentationInstitution,
   RepresentationTopic,
 } from '@/services/representations'
-import { Skeleton } from '@/components/ui/badge' // or custom skeleton
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function RepresentationsPage() {
   const [institutions, setInstitutions] = useState<RepresentationInstitution[]>([])
