@@ -225,6 +225,10 @@ export async function createDocument(data: FormData | Partial<RepresentationDocu
   return await pb.collection('representation_documents').create(data)
 }
 
+export async function updateDocument(id: string, data: FormData | Partial<RepresentationDocument>) {
+  return await pb.collection('representation_documents').update(id, data)
+}
+
 export async function deleteDocument(id: string) {
   return await pb.collection('representation_documents').delete(id)
 }
@@ -246,6 +250,10 @@ export async function getMeetingsByInstitution(
 
 export async function createMeeting(data: FormData | Partial<RepresentationMeeting>) {
   return await pb.collection('representation_meetings').create(data)
+}
+
+export async function updateMeeting(id: string, data: FormData | Partial<RepresentationMeeting>) {
+  return await pb.collection('representation_meetings').update(id, data)
 }
 
 export async function deleteMeeting(id: string) {

@@ -21,6 +21,8 @@ import {
   FileUp,
   Network,
   FileCheck,
+  Pencil,
+  Trash2,
 } from 'lucide-react'
 import {
   Card,
@@ -41,6 +43,16 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
@@ -54,9 +66,17 @@ import {
 import {
   getRepresentationDetail,
   createTopic,
+  updateTopic,
+  deleteTopic,
   createDocument,
+  updateDocument,
+  deleteDocument,
   createMeeting,
+  updateMeeting,
+  deleteMeeting,
   createMember,
+  updateMember,
+  deleteMember,
   getFileUrl,
   linkTopicToForum,
   getLinkableForums,
@@ -82,9 +102,30 @@ export default function RepresentationDetailPage() {
 
   // Modals state
   const [isTopicModalOpen, setIsTopicModalOpen] = useState(false)
+  const [editingTopic, setEditingTopic] = useState<RepresentationTopic | null>(null)
+
   const [isDocModalOpen, setIsDocModalOpen] = useState(false)
+  const [editingDoc, setEditingDoc] = useState<RepresentationDocument | null>(null)
+
   const [isMeetingModalOpen, setIsMeetingModalOpen] = useState(false)
+  const [editingMeeting, setEditingMeeting] = useState<RepresentationMeeting | null>(null)
+
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false)
+  const [editingMember, setEditingMember] = useState<RepresentationMember | null>(null)
+
+  // Delete Confirmation Dialog state
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    open: boolean
+    type: 'member' | 'doc' | 'meeting' | 'topic' | null
+    id: string
+    title: string
+  }>({
+    open: false,
+    type: null,
+    id: '',
+    title: '',
+  })
+  const [isDeleting, setIsDeleting] = useState(false)
 
   // Forms
   const [topicForm, setTopicForm] = useState({
@@ -92,6 +133,9 @@ export default function RepresentationDetailPage() {
     description: '',
     attention_flag: false,
     next_discussion_date: '',
+    status: 'Em Discussão' as RepresentationTopic['status'],
+    onsv_guidance: '',
+    decisions_forwarded: '',
   })
 
   const [docForm, setDocForm] = useState({
@@ -154,113 +198,249 @@ export default function RepresentationDetailPage() {
     setSearchParams({ tab: val })
   }
 
-  // Handle New Topic / Discussion Submit (6.6 & 6.10)
-  const handleCreateTopic = async (e: React.FormEvent) => {
+  // Open modal handlers (Create or Edit)
+  const handleOpenCreateMember = () => {
+    setEditingMember(null)
+    setMemberForm({
+      name: '',
+      email: '',
+      role_type: 'Titular',
+      term_start: '',
+      term_end: '',
+      appointment_act: '',
+      commitment_term_signed: true,
+      status: 'Ativo',
+    })
+    setIsMemberModalOpen(true)
+  }
+
+  const handleOpenEditMember = (mem: RepresentationMember) => {
+    setEditingMember(mem)
+    setMemberForm({
+      name: mem.name || '',
+      email: mem.email || '',
+      role_type: mem.role_type || 'Titular',
+      term_start: mem.term_start ? mem.term_start.split('T')[0] : '',
+      term_end: mem.term_end ? mem.term_end.split('T')[0] : '',
+      appointment_act: mem.appointment_act || '',
+      commitment_term_signed: mem.commitment_term_signed ?? true,
+      status: mem.status || 'Ativo',
+    })
+    setIsMemberModalOpen(true)
+  }
+
+  const handleOpenCreateDoc = () => {
+    setEditingDoc(null)
+    setDocForm({
+      title: '',
+      category: 'Outros',
+      description: '',
+      url: '',
+      file: null,
+    })
+    setIsDocModalOpen(true)
+  }
+
+  const handleOpenEditDoc = (doc: RepresentationDocument) => {
+    setEditingDoc(doc)
+    setDocForm({
+      title: doc.title || '',
+      category: doc.category || 'Outros',
+      description: doc.description || '',
+      url: doc.url || '',
+      file: null,
+    })
+    setIsDocModalOpen(true)
+  }
+
+  const handleOpenCreateMeeting = () => {
+    setEditingMeeting(null)
+    setMeetingForm({
+      title: '',
+      meeting_type: 'Ordinária',
+      meeting_date: new Date().toISOString().split('T')[0],
+      location_or_link: '',
+      agenda: '',
+      minutes_summary: '',
+      decisions: '',
+      attendees_count: 0,
+      convocacao_file: null,
+      ata_file: null,
+      report_file: null,
+    })
+    setIsMeetingModalOpen(true)
+  }
+
+  const handleOpenEditMeeting = (meet: RepresentationMeeting) => {
+    setEditingMeeting(meet)
+    setMeetingForm({
+      title: meet.title || '',
+      meeting_type: meet.meeting_type || 'Ordinária',
+      meeting_date: meet.meeting_date
+        ? meet.meeting_date.split('T')[0]
+        : new Date().toISOString().split('T')[0],
+      location_or_link: meet.location_or_link || '',
+      agenda: meet.agenda || '',
+      minutes_summary: meet.minutes_summary || '',
+      decisions: meet.decisions || '',
+      attendees_count: meet.attendees_count || 0,
+      convocacao_file: null,
+      ata_file: null,
+      report_file: null,
+    })
+    setIsMeetingModalOpen(true)
+  }
+
+  const handleOpenCreateTopic = () => {
+    setEditingTopic(null)
+    setTopicForm({
+      title: '',
+      description: '',
+      attention_flag: false,
+      next_discussion_date: '',
+      status: 'Em Discussão',
+      onsv_guidance: '',
+      decisions_forwarded: '',
+    })
+    setIsTopicModalOpen(true)
+  }
+
+  const handleOpenEditTopic = (top: RepresentationTopic) => {
+    setEditingTopic(top)
+    setTopicForm({
+      title: top.title || '',
+      description: top.description || '',
+      attention_flag: !!top.attention_flag,
+      next_discussion_date: top.next_discussion_date ? top.next_discussion_date.split('T')[0] : '',
+      status: top.status || 'Em Discussão',
+      onsv_guidance: top.onsv_guidance || '',
+      decisions_forwarded: top.decisions_forwarded || '',
+    })
+    setIsTopicModalOpen(true)
+  }
+
+  // Handle Save Topic / Discussion (Create or Edit)
+  const handleSaveTopic = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!id || !topicForm.title) return
 
     try {
-      await createTopic({
-        institution_id: id,
-        title: topicForm.title,
-        description: topicForm.description,
-        status: topicForm.attention_flag ? 'Sinalizado ONSV' : 'Em Discussão',
-        attention_flag: topicForm.attention_flag,
-        author_id: user?.id,
-        next_discussion_date: topicForm.next_discussion_date || null,
-      })
-      toast.success(
-        topicForm.attention_flag
-          ? 'Tema registrado e SINALIZADO PARA O ONSV com sucesso!'
-          : 'Tema registrado para discussão.',
-      )
+      if (editingTopic) {
+        await updateTopic(editingTopic.id, {
+          title: topicForm.title,
+          description: topicForm.description,
+          status: topicForm.status,
+          attention_flag: topicForm.attention_flag,
+          next_discussion_date: topicForm.next_discussion_date || null,
+          onsv_guidance: topicForm.onsv_guidance || undefined,
+          decisions_forwarded: topicForm.decisions_forwarded || undefined,
+        })
+        toast.success('Assunto em discussão atualizado com sucesso!')
+      } else {
+        await createTopic({
+          institution_id: id,
+          title: topicForm.title,
+          description: topicForm.description,
+          status: topicForm.attention_flag ? 'Sinalizado ONSV' : 'Em Discussão',
+          attention_flag: topicForm.attention_flag,
+          author_id: user?.id,
+          next_discussion_date: topicForm.next_discussion_date || null,
+          onsv_guidance: topicForm.onsv_guidance || undefined,
+          decisions_forwarded: topicForm.decisions_forwarded || undefined,
+        })
+        toast.success(
+          topicForm.attention_flag
+            ? 'Tema registrado e SINALIZADO PARA O ONSV com sucesso!'
+            : 'Tema registrado para discussão.',
+        )
+      }
       setIsTopicModalOpen(false)
-      setTopicForm({ title: '', description: '', attention_flag: false, next_discussion_date: '' })
+      setEditingTopic(null)
       loadDetail()
     } catch (err) {
-      toast.error('Erro ao registrar assunto em discussão.')
+      toast.error('Erro ao salvar assunto em discussão.')
     }
   }
 
-  // Handle New Document Submit (6.4)
-  const handleCreateDoc = async (e: React.FormEvent) => {
+  // Handle Save Document (Create or Edit)
+  const handleSaveDoc = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!id || !docForm.title) return
 
     try {
       const formData = new FormData()
-      formData.append('institution_id', id)
+      if (!editingDoc) {
+        formData.append('institution_id', id)
+      }
       formData.append('title', docForm.title)
       formData.append('category', docForm.category)
-      if (docForm.description) formData.append('description', docForm.description)
-      if (docForm.url) formData.append('url', docForm.url)
+      formData.append('description', docForm.description || '')
+      formData.append('url', docForm.url || '')
       if (docForm.file) formData.append('file', docForm.file)
-      if (user?.id) formData.append('uploaded_by', user.id)
+      if (user?.id && !editingDoc) formData.append('uploaded_by', user.id)
 
-      await createDocument(formData)
-      toast.success('Documento adicionado ao repositório!')
+      if (editingDoc) {
+        await updateDocument(editingDoc.id, formData)
+        toast.success('Documento atualizado com sucesso!')
+      } else {
+        await createDocument(formData)
+        toast.success('Documento adicionado ao repositório!')
+      }
       setIsDocModalOpen(false)
+      setEditingDoc(null)
       setDocForm({ title: '', category: 'Outros', description: '', url: '', file: null })
       loadDetail()
     } catch (err) {
-      toast.error('Erro ao enviar documento.')
+      toast.error('Erro ao salvar documento.')
     }
   }
 
-  // Handle New Meeting Submit (6.5)
-  const handleCreateMeeting = async (e: React.FormEvent) => {
+  // Handle Save Meeting (Create or Edit)
+  const handleSaveMeeting = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!id || !meetingForm.title) return
 
     try {
       const formData = new FormData()
-      formData.append('institution_id', id)
+      if (!editingMeeting) {
+        formData.append('institution_id', id)
+      }
       formData.append('title', meetingForm.title)
       formData.append('meeting_type', meetingForm.meeting_type)
       formData.append('meeting_date', meetingForm.meeting_date)
-      if (meetingForm.location_or_link)
-        formData.append('location_or_link', meetingForm.location_or_link)
-      if (meetingForm.agenda) formData.append('agenda', meetingForm.agenda)
-      if (meetingForm.minutes_summary)
-        formData.append('minutes_summary', meetingForm.minutes_summary)
-      if (meetingForm.decisions) formData.append('decisions', meetingForm.decisions)
-      if (meetingForm.attendees_count)
-        formData.append('attendees_count', String(meetingForm.attendees_count))
+      formData.append('location_or_link', meetingForm.location_or_link || '')
+      formData.append('agenda', meetingForm.agenda || '')
+      formData.append('minutes_summary', meetingForm.minutes_summary || '')
+      formData.append('decisions', meetingForm.decisions || '')
+      formData.append('attendees_count', String(meetingForm.attendees_count || 0))
       if (meetingForm.convocacao_file)
         formData.append('convocacao_file', meetingForm.convocacao_file)
       if (meetingForm.ata_file) formData.append('ata_file', meetingForm.ata_file)
       if (meetingForm.report_file) formData.append('report_file', meetingForm.report_file)
-      if (user?.id) formData.append('created_by', user.id)
+      if (user?.id && !editingMeeting) formData.append('created_by', user.id)
 
-      await createMeeting(formData)
-      toast.success('Reunião e ata registradas com sucesso!')
+      if (editingMeeting) {
+        await updateMeeting(editingMeeting.id, formData)
+        toast.success('Reunião atualizada com sucesso!')
+      } else {
+        await createMeeting(formData)
+        toast.success('Reunião e ata registradas com sucesso!')
+      }
       setIsMeetingModalOpen(false)
-      setMeetingForm({
-        title: '',
-        meeting_type: 'Ordinária',
-        meeting_date: new Date().toISOString().split('T')[0],
-        location_or_link: '',
-        agenda: '',
-        minutes_summary: '',
-        decisions: '',
-        attendees_count: 0,
-        convocacao_file: null,
-        ata_file: null,
-        report_file: null,
-      })
+      setEditingMeeting(null)
       loadDetail()
     } catch (err) {
       toast.error('Erro ao salvar reunião.')
     }
   }
 
-  // Handle Add Member Submit (6.3)
-  const handleCreateMember = async (e: React.FormEvent) => {
+  // Handle Save Member (Create or Edit)
+  const handleSaveMember = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!id || !memberForm.name) return
 
     try {
-      await createMember({
+      const memberPayload = {
         institution_id: id,
         name: memberForm.name,
         email: memberForm.email,
@@ -270,22 +450,60 @@ export default function RepresentationDetailPage() {
         appointment_act: memberForm.appointment_act,
         commitment_term_signed: memberForm.commitment_term_signed,
         status: memberForm.status,
-      })
-      toast.success('Representante vinculado com sucesso!')
+      }
+
+      if (editingMember) {
+        await updateMember(editingMember.id, memberPayload)
+        toast.success('Representante atualizado com sucesso!')
+      } else {
+        await createMember(memberPayload)
+        toast.success('Representante vinculado com sucesso!')
+      }
       setIsMemberModalOpen(false)
-      setMemberForm({
-        name: '',
-        email: '',
-        role_type: 'Titular',
-        term_start: '',
-        term_end: '',
-        appointment_act: '',
-        commitment_term_signed: true,
-        status: 'Ativo',
-      })
+      setEditingMember(null)
       loadDetail()
     } catch (err) {
-      toast.error('Erro ao vincular representante.')
+      toast.error('Erro ao salvar representante.')
+    }
+  }
+
+  // Delete Handlers
+  const handleOpenDelete = (
+    type: 'member' | 'doc' | 'meeting' | 'topic',
+    id: string,
+    title: string,
+  ) => {
+    setDeleteConfirm({
+      open: true,
+      type,
+      id,
+      title,
+    })
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!deleteConfirm.type || !deleteConfirm.id) return
+    setIsDeleting(true)
+    try {
+      if (deleteConfirm.type === 'member') {
+        await deleteMember(deleteConfirm.id)
+        toast.success('Representante excluído com sucesso!')
+      } else if (deleteConfirm.type === 'doc') {
+        await deleteDocument(deleteConfirm.id)
+        toast.success('Documento excluído com sucesso!')
+      } else if (deleteConfirm.type === 'meeting') {
+        await deleteMeeting(deleteConfirm.id)
+        toast.success('Reunião excluída com sucesso!')
+      } else if (deleteConfirm.type === 'topic') {
+        await deleteTopic(deleteConfirm.id)
+        toast.success('Assunto em discussão excluído com sucesso!')
+      }
+      setDeleteConfirm({ open: false, type: null, id: '', title: '' })
+      loadDetail()
+    } catch (err) {
+      toast.error('Erro ao excluir item.')
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -411,95 +629,13 @@ export default function RepresentationDetailPage() {
 
             {/* BOTÃO RÁPIDO SINALIZAR / AÇÃO */}
             <div className="flex flex-wrap items-center gap-2 shrink-0">
-              <Dialog open={isTopicModalOpen} onOpenChange={setIsTopicModalOpen}>
-                <DialogTrigger asChild>
-                  <Button className="gap-2 font-semibold bg-amber-600 hover:bg-amber-700 text-white shadow-xs">
-                    <AlertTriangle className="w-4 h-4" />
-                    <span>Sinalizar p/ ONSV</span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-lg">
-                  <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-amber-600">
-                      <AlertTriangle className="w-5 h-5" />
-                      <span>Sinalizar Assunto para o ONSV (6.10)</span>
-                    </DialogTitle>
-                  </DialogHeader>
-
-                  <form onSubmit={handleCreateTopic} className="space-y-4 pt-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="top-title">Título da Pauta / Assunto *</Label>
-                      <Input
-                        id="top-title"
-                        required
-                        placeholder="Ex: Proposta de alteração da Resolução de Vias Urbanas..."
-                        value={topicForm.title}
-                        onChange={(e) => setTopicForm({ ...topicForm, title: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="top-desc">Detalhamento / Contexto da Discussão</Label>
-                      <Textarea
-                        id="top-desc"
-                        rows={3}
-                        placeholder="Descreva o que está em pauta no colegiado e por que necessita da atenção do ONSV..."
-                        value={topicForm.description}
-                        onChange={(e) =>
-                          setTopicForm({ ...topicForm, description: e.target.value })
-                        }
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="top-next">Próxima Discussão/Reunião (data prevista)</Label>
-                      <Input
-                        id="top-next"
-                        type="date"
-                        value={topicForm.next_discussion_date}
-                        onChange={(e) =>
-                          setTopicForm({ ...topicForm, next_discussion_date: e.target.value })
-                        }
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-300 rounded-lg">
-                      <input
-                        type="checkbox"
-                        id="flag-onsv"
-                        checked={topicForm.attention_flag}
-                        onChange={(e) =>
-                          setTopicForm({ ...topicForm, attention_flag: e.target.checked })
-                        }
-                        className="rounded border-amber-400 text-amber-600 focus:ring-amber-500 h-4 w-4"
-                      />
-                      <label
-                        htmlFor="flag-onsv"
-                        className="text-xs font-semibold text-amber-900 dark:text-amber-200 cursor-pointer"
-                      >
-                        Marcar como PRIORITÁRIO (Requer Posicionamento/Orientação Técnica do ONSV)
-                      </label>
-                    </div>
-
-                    <DialogFooter className="pt-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setIsTopicModalOpen(false)}
-                      >
-                        Cancelar
-                      </Button>
-                      <Button
-                        type="submit"
-                        className="gap-2 bg-amber-600 hover:bg-amber-700 text-white"
-                      >
-                        <Send className="w-4 h-4" />
-                        <span>Enviar Sinalização</span>
-                      </Button>
-                    </DialogFooter>
-                  </form>
-                </DialogContent>
-              </Dialog>
+              <Button
+                className="gap-2 font-semibold bg-amber-600 hover:bg-amber-700 text-white shadow-xs"
+                onClick={handleOpenCreateTopic}
+              >
+                <AlertTriangle className="w-4 h-4" />
+                <span>Sinalizar p/ ONSV</span>
+              </Button>{' '}
             </div>
           </div>
         </CardContent>
@@ -645,95 +781,10 @@ export default function RepresentationDetailPage() {
               <span>Biblioteca de Documentos (6.4)</span>
             </h3>
 
-            <Dialog open={isDocModalOpen} onOpenChange={setIsDocModalOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" className="gap-2">
-                  <Plus className="w-4 h-4" />
-                  <span>Adicionar Documento</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Anexar Documento ao Repositório</DialogTitle>
-                </DialogHeader>
-
-                <form onSubmit={handleCreateDoc} className="space-y-4 pt-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="doc-title">Título do Documento *</Label>
-                    <Input
-                      id="doc-title"
-                      required
-                      placeholder="Ex: Regimento Interno 2024 / Portaria de Nomeação"
-                      value={docForm.title}
-                      onChange={(e) => setDocForm({ ...docForm, title: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="doc-cat">Categoria do Documento</Label>
-                    <Select
-                      value={docForm.category}
-                      onValueChange={(val: any) => setDocForm({ ...docForm, category: val })}
-                    >
-                      <SelectTrigger id="doc-cat">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Legislação">Legislação</SelectItem>
-                        <SelectItem value="Regimento Interno">Regimento Interno</SelectItem>
-                        <SelectItem value="Edital">Edital</SelectItem>
-                        <SelectItem value="Ato de Nomeação">Ato de Nomeação</SelectItem>
-                        <SelectItem value="Nota Técnica">Nota Técnica</SelectItem>
-                        <SelectItem value="Outros">Outros</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="doc-desc">Descrição Breve</Label>
-                    <Input
-                      id="doc-desc"
-                      placeholder="Resumo das disposições principais..."
-                      value={docForm.description}
-                      onChange={(e) => setDocForm({ ...docForm, description: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="doc-file">Arquivo (PDF, DOCX, Imagem)</Label>
-                    <Input
-                      id="doc-file"
-                      type="file"
-                      onChange={(e) =>
-                        setDocForm({ ...docForm, file: e.target.files?.[0] || null })
-                      }
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="doc-url">Ou Link Externo (URL)</Label>
-                    <Input
-                      id="doc-url"
-                      type="url"
-                      placeholder="https://..."
-                      value={docForm.url}
-                      onChange={(e) => setDocForm({ ...docForm, url: e.target.value })}
-                    />
-                  </div>
-
-                  <DialogFooter className="pt-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setIsDocModalOpen(false)}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button type="submit">Salvar Documento</Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <Button size="sm" className="gap-2" onClick={handleOpenCreateDoc}>
+              <Plus className="w-4 h-4" />
+              <span>Adicionar Documento</span>
+            </Button>
           </div>
 
           {docs.length === 0 ? (
@@ -760,28 +811,48 @@ export default function RepresentationDetailPage() {
                         </h4>
                       </div>
 
-                      {doc.file && (
-                        <a
-                          href={getFileUrl(doc, doc.file)}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="p-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-md transition-colors shrink-0"
-                          title="Baixar arquivo"
+                      <div className="flex items-center gap-1 shrink-0">
+                        {doc.file && (
+                          <a
+                            href={getFileUrl(doc, doc.file)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="p-1.5 bg-primary/10 text-primary hover:bg-primary/20 rounded-md transition-colors"
+                            title="Baixar arquivo"
+                          >
+                            <Download className="w-4 h-4" />
+                          </a>
+                        )}
+                        {!doc.file && doc.url && (
+                          <a
+                            href={doc.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="p-1.5 bg-primary/10 text-primary hover:bg-primary/20 rounded-md transition-colors"
+                            title="Acessar link público"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                          onClick={() => handleOpenEditDoc(doc)}
+                          title="Editar documento"
                         >
-                          <Download className="w-4 h-4" />
-                        </a>
-                      )}
-                      {!doc.file && doc.url && (
-                        <a
-                          href={doc.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="p-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-md transition-colors shrink-0"
-                          title="Acessar link público"
+                          <Pencil className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive/80 hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => handleOpenDelete('doc', doc.id, doc.title)}
+                          title="Excluir documento"
                         >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      )}
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
                     </div>
 
                     {doc.description && (
@@ -814,141 +885,10 @@ export default function RepresentationDetailPage() {
               </p>
             </div>
 
-            <Dialog open={isMemberModalOpen} onOpenChange={setIsMemberModalOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" className="gap-2">
-                  <Plus className="w-4 h-4" />
-                  <span>Vincular Representante</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Cadastrar / Vincular Observador Representante</DialogTitle>
-                </DialogHeader>
-
-                <form onSubmit={handleCreateMember} className="space-y-4 pt-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="mem-name">Nome Completo *</Label>
-                    <Input
-                      id="mem-name"
-                      required
-                      placeholder="Ex: Dr. Roberto Alves"
-                      value={memberForm.name}
-                      onChange={(e) => setMemberForm({ ...memberForm, name: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="mem-email">E-mail de Contato</Label>
-                    <Input
-                      id="mem-email"
-                      type="email"
-                      placeholder="roberto@onsv.org.br"
-                      value={memberForm.email}
-                      onChange={(e) => setMemberForm({ ...memberForm, email: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="mem-role">Função / Condição</Label>
-                      <Select
-                        value={memberForm.role_type}
-                        onValueChange={(val: any) =>
-                          setMemberForm({ ...memberForm, role_type: val })
-                        }
-                      >
-                        <SelectTrigger id="mem-role">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Titular">Titular</SelectItem>
-                          <SelectItem value="Suplente">Suplente</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="mem-status">Status</Label>
-                      <Select
-                        value={memberForm.status}
-                        onValueChange={(val: any) => setMemberForm({ ...memberForm, status: val })}
-                      >
-                        <SelectTrigger id="mem-status">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Ativo">Ativo</SelectItem>
-                          <SelectItem value="Pendente">Pendente</SelectItem>
-                          <SelectItem value="Encerrado">Encerrado</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="mem-term-start">Início do Mandato</Label>
-                      <Input
-                        id="mem-term-start"
-                        type="date"
-                        value={memberForm.term_start}
-                        onChange={(e) =>
-                          setMemberForm({ ...memberForm, term_start: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="mem-term-end">Término do Mandato</Label>
-                      <Input
-                        id="mem-term-end"
-                        type="date"
-                        value={memberForm.term_end}
-                        onChange={(e) => setMemberForm({ ...memberForm, term_end: e.target.value })}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="mem-act">Ato de Nomeação / Portaria</Label>
-                    <Input
-                      id="mem-act"
-                      placeholder="Ex: Portaria Senatran nº 88/2024"
-                      value={memberForm.appointment_act}
-                      onChange={(e) =>
-                        setMemberForm({ ...memberForm, appointment_act: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-1">
-                    <input
-                      type="checkbox"
-                      id="term-signed"
-                      checked={memberForm.commitment_term_signed}
-                      onChange={(e) =>
-                        setMemberForm({ ...memberForm, commitment_term_signed: e.target.checked })
-                      }
-                      className="rounded border-gray-300 text-primary h-4 w-4"
-                    />
-                    <label htmlFor="term-signed" className="text-xs font-semibold cursor-pointer">
-                      Termo de Compromisso de Representação Assinado
-                    </label>
-                  </div>
-
-                  <DialogFooter className="pt-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setIsMemberModalOpen(false)}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button type="submit">Salvar Representante</Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <Button size="sm" className="gap-2" onClick={handleOpenCreateMember}>
+              <Plus className="w-4 h-4" />
+              <span>Vincular Representante</span>
+            </Button>
           </div>
 
           {members.length === 0 ? (
@@ -982,16 +922,36 @@ export default function RepresentationDetailPage() {
                         )}
                       </div>
 
-                      <Badge
-                        variant="outline"
-                        className={
-                          mem.status === 'Ativo'
-                            ? 'bg-emerald-500/10 text-emerald-700 border-emerald-300 text-xs'
-                            : 'text-muted-foreground text-xs'
-                        }
-                      >
-                        {mem.status}
-                      </Badge>
+                      <div className="flex items-center gap-1.5">
+                        <Badge
+                          variant="outline"
+                          className={
+                            mem.status === 'Ativo'
+                              ? 'bg-emerald-500/10 text-emerald-700 border-emerald-300 text-xs'
+                              : 'text-muted-foreground text-xs'
+                          }
+                        >
+                          {mem.status}
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                          onClick={() => handleOpenEditMember(mem)}
+                          title="Editar representante"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive/80 hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => handleOpenDelete('member', mem.id, mem.name)}
+                          title="Excluir representante"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
                     </div>
 
                     <div className="text-xs space-y-1 bg-muted/30 p-2.5 rounded border">
@@ -1042,163 +1002,10 @@ export default function RepresentationDetailPage() {
               </p>
             </div>
 
-            <Dialog open={isMeetingModalOpen} onOpenChange={setIsMeetingModalOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" className="gap-2">
-                  <Plus className="w-4 h-4" />
-                  <span>Registrar Reunião</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-lg">
-                <DialogHeader>
-                  <DialogTitle>Registrar Nova Reunião do Colegiado</DialogTitle>
-                </DialogHeader>
-
-                <form onSubmit={handleCreateMeeting} className="space-y-4 pt-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="meet-title">Título / Edição da Reunião *</Label>
-                    <Input
-                      id="meet-title"
-                      required
-                      placeholder="Ex: 129ª Reunião Ordinária da Plenária"
-                      value={meetingForm.title}
-                      onChange={(e) => setMeetingForm({ ...meetingForm, title: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="meet-type">Tipo</Label>
-                      <Select
-                        value={meetingForm.meeting_type}
-                        onValueChange={(val: any) =>
-                          setMeetingForm({ ...meetingForm, meeting_type: val })
-                        }
-                      >
-                        <SelectTrigger id="meet-type">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Ordinária">Ordinária</SelectItem>
-                          <SelectItem value="Extraordinária">Extraordinária</SelectItem>
-                          <SelectItem value="Câmara Temática">Câmara Temática</SelectItem>
-                          <SelectItem value="Grupo de Trabalho">Grupo de Trabalho</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="meet-date">Data da Reunião *</Label>
-                      <Input
-                        id="meet-date"
-                        type="date"
-                        required
-                        value={meetingForm.meeting_date}
-                        onChange={(e) =>
-                          setMeetingForm({ ...meetingForm, meeting_date: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="meet-agenda">Pauta Principal</Label>
-                    <Textarea
-                      id="meet-agenda"
-                      rows={2}
-                      placeholder="Tópicos discutidos na ordem do dia..."
-                      value={meetingForm.agenda}
-                      onChange={(e) => setMeetingForm({ ...meetingForm, agenda: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="meet-decisions">Decisões e Deliberações</Label>
-                    <Textarea
-                      id="meet-decisions"
-                      rows={2}
-                      placeholder="Principais deliberações e votações do colegiado..."
-                      value={meetingForm.decisions}
-                      onChange={(e) =>
-                        setMeetingForm({ ...meetingForm, decisions: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  {/* Uploads de arquivos: Convocação, Ata, Relatório/registro (Ajuste 1) */}
-                  <div className="space-y-3 p-3 bg-muted/30 rounded-lg border">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-foreground uppercase">
-                      <FileUp className="w-3.5 h-3.5 text-primary" />
-                      <span>Documentos da Reunião (PDF / DOC)</span>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-3">
-                      <div className="space-y-1.5">
-                        <Label htmlFor="meet-convocacao" className="text-xs font-semibold">
-                          Convocação
-                        </Label>
-                        <Input
-                          id="meet-convocacao"
-                          type="file"
-                          accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                          onChange={(e) =>
-                            setMeetingForm({
-                              ...meetingForm,
-                              convocacao_file: e.target.files?.[0] || null,
-                            })
-                          }
-                        />
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <Label htmlFor="meet-ata" className="text-xs font-semibold">
-                          Ata
-                        </Label>
-                        <Input
-                          id="meet-ata"
-                          type="file"
-                          accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                          onChange={(e) =>
-                            setMeetingForm({
-                              ...meetingForm,
-                              ata_file: e.target.files?.[0] || null,
-                            })
-                          }
-                        />
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <Label htmlFor="meet-report" className="text-xs font-semibold">
-                          Relatório / Registro da Reunião
-                        </Label>
-                        <Input
-                          id="meet-report"
-                          type="file"
-                          accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                          onChange={(e) =>
-                            setMeetingForm({
-                              ...meetingForm,
-                              report_file: e.target.files?.[0] || null,
-                            })
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <DialogFooter className="pt-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setIsMeetingModalOpen(false)}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button type="submit">Salvar Reunião</Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <Button size="sm" className="gap-2" onClick={handleOpenCreateMeeting}>
+              <Plus className="w-4 h-4" />
+              <span>Registrar Reunião</span>
+            </Button>
           </div>
 
           {meetings.length === 0 ? (
@@ -1228,9 +1035,31 @@ export default function RepresentationDetailPage() {
                         </CardTitle>
                       </div>
 
-                      <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-                        <Clock className="w-3.5 h-3.5" />
-                        <span>Data: {new Date(meet.meeting_date).toLocaleDateString('pt-BR')}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>
+                            Data: {new Date(meet.meeting_date).toLocaleDateString('pt-BR')}
+                          </span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                          onClick={() => handleOpenEditMeeting(meet)}
+                          title="Editar reunião"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive/80 hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => handleOpenDelete('meeting', meet.id, meet.title)}
+                          title="Excluir reunião"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
                       </div>
                     </div>
                   </CardHeader>
@@ -1315,7 +1144,7 @@ export default function RepresentationDetailPage() {
               </p>
             </div>
 
-            <Button size="sm" onClick={() => setIsTopicModalOpen(true)} className="gap-2">
+            <Button size="sm" onClick={handleOpenCreateTopic} className="gap-2">
               <Plus className="w-4 h-4" />
               <span>Novo Tema em Pauta</span>
             </Button>
@@ -1349,18 +1178,38 @@ export default function RepresentationDetailPage() {
                         </div>
                       </div>
 
-                      <Badge
-                        variant="outline"
-                        className={
-                          top.status === 'Orientado ONSV'
-                            ? 'bg-emerald-500/10 text-emerald-700 border-emerald-300'
-                            : top.status === 'Sinalizado ONSV'
-                              ? 'bg-amber-500/10 text-amber-700 border-amber-300'
-                              : 'bg-muted text-muted-foreground'
-                        }
-                      >
-                        {top.status}
-                      </Badge>
+                      <div className="flex items-center gap-1.5">
+                        <Badge
+                          variant="outline"
+                          className={
+                            top.status === 'Orientado ONSV'
+                              ? 'bg-emerald-500/10 text-emerald-700 border-emerald-300'
+                              : top.status === 'Sinalizado ONSV'
+                                ? 'bg-amber-500/10 text-amber-700 border-amber-300'
+                                : 'bg-muted text-muted-foreground'
+                          }
+                        >
+                          {top.status}
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                          onClick={() => handleOpenEditTopic(top)}
+                          title="Editar tema"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive/80 hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => handleOpenDelete('topic', top.id, top.title)}
+                          title="Excluir tema"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
                     </div>
                   </CardHeader>
 
@@ -1576,6 +1425,566 @@ export default function RepresentationDetailPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* MODAL DE REPRESENTANTE (CRIAR / EDITAR) */}
+      <Dialog open={isMemberModalOpen} onOpenChange={setIsMemberModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {editingMember
+                ? 'Editar Representante'
+                : 'Cadastrar / Vincular Observador Representante'}
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleSaveMember} className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label htmlFor="mem-name">Nome Completo *</Label>
+              <Input
+                id="mem-name"
+                required
+                placeholder="Ex: Dr. Roberto Alves"
+                value={memberForm.name}
+                onChange={(e) => setMemberForm({ ...memberForm, name: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="mem-email">E-mail de Contato</Label>
+              <Input
+                id="mem-email"
+                type="email"
+                placeholder="roberto@onsv.org.br"
+                value={memberForm.email}
+                onChange={(e) => setMemberForm({ ...memberForm, email: e.target.value })}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="mem-role">Função / Condição</Label>
+                <Select
+                  value={memberForm.role_type}
+                  onValueChange={(val: any) => setMemberForm({ ...memberForm, role_type: val })}
+                >
+                  <SelectTrigger id="mem-role">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Titular">Titular</SelectItem>
+                    <SelectItem value="Suplente">Suplente</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="mem-status">Status</Label>
+                <Select
+                  value={memberForm.status}
+                  onValueChange={(val: any) => setMemberForm({ ...memberForm, status: val })}
+                >
+                  <SelectTrigger id="mem-status">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Ativo">Ativo</SelectItem>
+                    <SelectItem value="Pendente">Pendente</SelectItem>
+                    <SelectItem value="Encerrado">Encerrado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="mem-term-start">Início do Mandato</Label>
+                <Input
+                  id="mem-term-start"
+                  type="date"
+                  value={memberForm.term_start}
+                  onChange={(e) => setMemberForm({ ...memberForm, term_start: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="mem-term-end">Término do Mandato</Label>
+                <Input
+                  id="mem-term-end"
+                  type="date"
+                  value={memberForm.term_end}
+                  onChange={(e) => setMemberForm({ ...memberForm, term_end: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="mem-act">Ato de Nomeação / Portaria</Label>
+              <Input
+                id="mem-act"
+                placeholder="Ex: Portaria Senatran nº 88/2024"
+                value={memberForm.appointment_act}
+                onChange={(e) => setMemberForm({ ...memberForm, appointment_act: e.target.value })}
+              />
+            </div>
+
+            <div className="flex items-center gap-2 pt-1">
+              <input
+                type="checkbox"
+                id="term-signed"
+                checked={memberForm.commitment_term_signed}
+                onChange={(e) =>
+                  setMemberForm({ ...memberForm, commitment_term_signed: e.target.checked })
+                }
+                className="rounded border-gray-300 text-primary h-4 w-4"
+              />
+              <label htmlFor="term-signed" className="text-xs font-semibold cursor-pointer">
+                Termo de Compromisso de Representação Assinado
+              </label>
+            </div>
+
+            <DialogFooter className="pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsMemberModalOpen(false)
+                  setEditingMember(null)
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit">
+                {editingMember ? 'Atualizar Representante' : 'Salvar Representante'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* MODAL DE DOCUMENTO (CRIAR / EDITAR) */}
+      <Dialog open={isDocModalOpen} onOpenChange={setIsDocModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {editingDoc ? 'Editar Documento' : 'Anexar Documento ao Repositório'}
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleSaveDoc} className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label htmlFor="doc-title">Título do Documento *</Label>
+              <Input
+                id="doc-title"
+                required
+                placeholder="Ex: Regimento Interno 2024 / Portaria de Nomeação"
+                value={docForm.title}
+                onChange={(e) => setDocForm({ ...docForm, title: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="doc-cat">Categoria do Documento</Label>
+              <Select
+                value={docForm.category}
+                onValueChange={(val: any) => setDocForm({ ...docForm, category: val })}
+              >
+                <SelectTrigger id="doc-cat">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Legislação">Legislação</SelectItem>
+                  <SelectItem value="Regimento Interno">Regimento Interno</SelectItem>
+                  <SelectItem value="Edital">Edital</SelectItem>
+                  <SelectItem value="Ato de Nomeação">Ato de Nomeação</SelectItem>
+                  <SelectItem value="Nota Técnica">Nota Técnica</SelectItem>
+                  <SelectItem value="Outros">Outros</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="doc-desc">Descrição Breve</Label>
+              <Input
+                id="doc-desc"
+                placeholder="Resumo das disposições principais..."
+                value={docForm.description}
+                onChange={(e) => setDocForm({ ...docForm, description: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="doc-file">
+                Arquivo (PDF, DOCX, Imagem){' '}
+                {editingDoc && (
+                  <span className="text-muted-foreground font-normal">
+                    (deixe em branco para manter o atual)
+                  </span>
+                )}
+              </Label>
+              <Input
+                id="doc-file"
+                type="file"
+                onChange={(e) => setDocForm({ ...docForm, file: e.target.files?.[0] || null })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="doc-url">Ou Link Externo (URL)</Label>
+              <Input
+                id="doc-url"
+                type="url"
+                placeholder="https://..."
+                value={docForm.url}
+                onChange={(e) => setDocForm({ ...docForm, url: e.target.value })}
+              />
+            </div>
+
+            <DialogFooter className="pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsDocModalOpen(false)
+                  setEditingDoc(null)
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit">
+                {editingDoc ? 'Atualizar Documento' : 'Salvar Documento'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* MODAL DE REUNIÃO (CRIAR / EDITAR) */}
+      <Dialog open={isMeetingModalOpen} onOpenChange={setIsMeetingModalOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              {editingMeeting
+                ? 'Editar Reunião do Colegiado'
+                : 'Registrar Nova Reunião do Colegiado'}
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleSaveMeeting} className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label htmlFor="meet-title">Título / Edição da Reunião *</Label>
+              <Input
+                id="meet-title"
+                required
+                placeholder="Ex: 129ª Reunião Ordinária da Plenária"
+                value={meetingForm.title}
+                onChange={(e) => setMeetingForm({ ...meetingForm, title: e.target.value })}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="meet-type">Tipo</Label>
+                <Select
+                  value={meetingForm.meeting_type}
+                  onValueChange={(val: any) =>
+                    setMeetingForm({ ...meetingForm, meeting_type: val })
+                  }
+                >
+                  <SelectTrigger id="meet-type">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Ordinária">Ordinária</SelectItem>
+                    <SelectItem value="Extraordinária">Extraordinária</SelectItem>
+                    <SelectItem value="Câmara Temática">Câmara Temática</SelectItem>
+                    <SelectItem value="Grupo de Trabalho">Grupo de Trabalho</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="meet-date">Data da Reunião *</Label>
+                <Input
+                  id="meet-date"
+                  type="date"
+                  required
+                  value={meetingForm.meeting_date}
+                  onChange={(e) => setMeetingForm({ ...meetingForm, meeting_date: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="meet-agenda">Pauta Principal</Label>
+              <Textarea
+                id="meet-agenda"
+                rows={2}
+                placeholder="Tópicos discutidos na ordem do dia..."
+                value={meetingForm.agenda}
+                onChange={(e) => setMeetingForm({ ...meetingForm, agenda: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="meet-decisions">Decisões e Deliberações</Label>
+              <Textarea
+                id="meet-decisions"
+                rows={2}
+                placeholder="Principais deliberações e votações do colegiado..."
+                value={meetingForm.decisions}
+                onChange={(e) => setMeetingForm({ ...meetingForm, decisions: e.target.value })}
+              />
+            </div>
+
+            {/* Uploads de arquivos: Convocação, Ata, Relatório/registro */}
+            <div className="space-y-3 p-3 bg-muted/30 rounded-lg border">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-foreground uppercase">
+                <FileUp className="w-3.5 h-3.5 text-primary" />
+                <span>
+                  Documentos da Reunião (PDF / DOC){' '}
+                  {editingMeeting && (
+                    <span className="text-muted-foreground font-normal lowercase">
+                      (anexe novo se desejar substituir)
+                    </span>
+                  )}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="meet-convocacao" className="text-xs font-semibold">
+                    Convocação
+                  </Label>
+                  <Input
+                    id="meet-convocacao"
+                    type="file"
+                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={(e) =>
+                      setMeetingForm({
+                        ...meetingForm,
+                        convocacao_file: e.target.files?.[0] || null,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="meet-ata" className="text-xs font-semibold">
+                    Ata
+                  </Label>
+                  <Input
+                    id="meet-ata"
+                    type="file"
+                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={(e) =>
+                      setMeetingForm({
+                        ...meetingForm,
+                        ata_file: e.target.files?.[0] || null,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="meet-report" className="text-xs font-semibold">
+                    Relatório / Registro da Reunião
+                  </Label>
+                  <Input
+                    id="meet-report"
+                    type="file"
+                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={(e) =>
+                      setMeetingForm({
+                        ...meetingForm,
+                        report_file: e.target.files?.[0] || null,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+
+            <DialogFooter className="pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsMeetingModalOpen(false)
+                  setEditingMeeting(null)
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit">
+                {editingMeeting ? 'Atualizar Reunião' : 'Salvar Reunião'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* MODAL DE TEMA / ASSUNTO EM DISCUSSÃO (CRIAR / EDITAR) */}
+      <Dialog open={isTopicModalOpen} onOpenChange={setIsTopicModalOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-primary">
+              <MessageSquare className="w-5 h-5" />
+              <span>
+                {editingTopic
+                  ? 'Editar Assunto em Discussão'
+                  : 'Novo Assunto em Discussão (6.6 / 6.10)'}
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleSaveTopic} className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label htmlFor="top-title">Título da Pauta / Assunto *</Label>
+              <Input
+                id="top-title"
+                required
+                placeholder="Ex: Proposta de alteração da Resolução de Vias Urbanas..."
+                value={topicForm.title}
+                onChange={(e) => setTopicForm({ ...topicForm, title: e.target.value })}
+              />
+            </div>
+
+            {editingTopic && (
+              <div className="space-y-2">
+                <Label htmlFor="top-status">Status do Tópico</Label>
+                <Select
+                  value={topicForm.status}
+                  onValueChange={(val: any) => setTopicForm({ ...topicForm, status: val })}
+                >
+                  <SelectTrigger id="top-status">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Em Discussão">Em Discussão</SelectItem>
+                    <SelectItem value="Sinalizado ONSV">Sinalizado ONSV</SelectItem>
+                    <SelectItem value="Orientado ONSV">Orientado ONSV</SelectItem>
+                    <SelectItem value="Concluído">Concluído</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="top-desc">Detalhamento / Contexto da Discussão</Label>
+              <Textarea
+                id="top-desc"
+                rows={3}
+                placeholder="Descreva o que está em pauta no colegiado e por que necessita da atenção do ONSV..."
+                value={topicForm.description}
+                onChange={(e) => setTopicForm({ ...topicForm, description: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="top-next">Próxima Discussão/Reunião (data prevista)</Label>
+              <Input
+                id="top-next"
+                type="date"
+                value={topicForm.next_discussion_date}
+                onChange={(e) =>
+                  setTopicForm({ ...topicForm, next_discussion_date: e.target.value })
+                }
+              />
+            </div>
+
+            {editingTopic && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="top-guidance">Orientação / Posicionamento do ONSV</Label>
+                  <Textarea
+                    id="top-guidance"
+                    rows={2}
+                    placeholder="Direcionamento ou posicionamento técnico oficial emitido..."
+                    value={topicForm.onsv_guidance}
+                    onChange={(e) => setTopicForm({ ...topicForm, onsv_guidance: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="top-decisions-forwarded">Encaminhamentos / Deliberações</Label>
+                  <Textarea
+                    id="top-decisions-forwarded"
+                    rows={2}
+                    placeholder="Encaminhamentos definidos para este assunto..."
+                    value={topicForm.decisions_forwarded}
+                    onChange={(e) =>
+                      setTopicForm({ ...topicForm, decisions_forwarded: e.target.value })
+                    }
+                  />
+                </div>
+              </>
+            )}
+
+            <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-300 rounded-lg">
+              <input
+                type="checkbox"
+                id="flag-onsv"
+                checked={topicForm.attention_flag}
+                onChange={(e) => setTopicForm({ ...topicForm, attention_flag: e.target.checked })}
+                className="rounded border-amber-400 text-amber-600 focus:ring-amber-500 h-4 w-4"
+              />
+              <label
+                htmlFor="flag-onsv"
+                className="text-xs font-semibold text-amber-900 dark:text-amber-200 cursor-pointer"
+              >
+                Marcar como PRIORITÁRIO (Requer Posicionamento/Orientação Técnica do ONSV)
+              </label>
+            </div>
+
+            <DialogFooter className="pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsTopicModalOpen(false)
+                  setEditingTopic(null)
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
+                <Send className="w-4 h-4" />
+                <span>{editingTopic ? 'Atualizar Assunto' : 'Salvar Assunto'}</span>
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* CONFIRMAÇÃO DE EXCLUSÃO (ALERT DIALOG) */}
+      <AlertDialog
+        open={deleteConfirm.open}
+        onOpenChange={(open) => {
+          if (!open) setDeleteConfirm({ open: false, type: null, id: '', title: '' })
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir &ldquo;<strong>{deleteConfirm.title}</strong>&rdquo;?
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? 'Excluindo...' : 'Excluir'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* MODAL: Vincular tópico a Fórum Técnico (Ajuste 3) */}
       <Dialog open={isForumModalOpen} onOpenChange={setIsForumModalOpen}>
