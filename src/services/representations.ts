@@ -87,6 +87,26 @@ export interface RepresentationMeeting {
   updated: string
 }
 
+export interface RepresentationTopicReply {
+  id: string
+  topic_id: string
+  user_id: string
+  content: string
+  created: string
+  updated: string
+  expand?: {
+    user_id?: {
+      id: string
+      name?: string
+      full_name?: string
+      nickname?: string
+      email?: string
+      avatar?: string
+      role?: string
+    }
+  }
+}
+
 export interface RepresentationTopic {
   id: string
   institution_id: string
@@ -110,6 +130,15 @@ export interface RepresentationTopic {
       status?: string
       is_active?: boolean
     }
+    author_id?: {
+      id: string
+      name?: string
+      full_name?: string
+      nickname?: string
+      avatar?: string
+      role?: string
+    }
+    representation_topic_replies_via_topic_id?: RepresentationTopicReply[]
   }
 }
 
@@ -156,7 +185,7 @@ export async function getRepresentationDetail(
       .collection('representation_institutions')
       .getOne<RepresentationInstitution>(id, {
         expand:
-          'representation_members_via_institution_id.user_id,representation_documents_via_institution_id,representation_meetings_via_institution_id,representation_topics_via_institution_id.forum_id',
+          'representation_members_via_institution_id.user_id,representation_documents_via_institution_id,representation_meetings_via_institution_id,representation_topics_via_institution_id.forum_id,representation_topics_via_institution_id.author_id',
       })
     return record
   } catch (error) {
@@ -268,6 +297,7 @@ export async function getTopicsByInstitution(
     return await pb.collection('representation_topics').getFullList<RepresentationTopic>({
       filter: `institution_id = "${institutionId}"`,
       sort: '-updated',
+      expand: 'forum_id,author_id',
     })
   } catch (error) {
     console.error('Error fetching topics:', error)
@@ -285,6 +315,38 @@ export async function updateTopic(id: string, data: Partial<RepresentationTopic>
 
 export async function deleteTopic(id: string) {
   return await pb.collection('representation_topics').delete(id)
+}
+
+// Topic Replies / Thread
+export async function getTopicReplies(topicId: string): Promise<RepresentationTopicReply[]> {
+  try {
+    return await pb
+      .collection('representation_topic_replies')
+      .getFullList<RepresentationTopicReply>({
+        filter: `topic_id = "${topicId}"`,
+        sort: 'created',
+        expand: 'user_id',
+      })
+  } catch (error) {
+    console.error(`Error fetching replies for topic ${topicId}:`, error)
+    return []
+  }
+}
+
+export async function createTopicReply(data: {
+  topic_id: string
+  user_id: string
+  content: string
+}): Promise<RepresentationTopicReply> {
+  return await pb
+    .collection('representation_topic_replies')
+    .create<RepresentationTopicReply>(data, {
+      expand: 'user_id',
+    })
+}
+
+export async function deleteTopicReply(replyId: string) {
+  return await pb.collection('representation_topic_replies').delete(replyId)
 }
 
 // Utility helper for file URL

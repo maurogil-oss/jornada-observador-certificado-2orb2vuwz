@@ -86,6 +86,7 @@ import {
   RepresentationMeeting,
   RepresentationTopic,
 } from '@/services/representations'
+import { TopicDiscussionReplies } from '@/components/representations/TopicDiscussionReplies'
 import useAuthStore from '@/stores/useAuthStore'
 import { toast } from 'sonner'
 
@@ -1286,6 +1287,9 @@ export default function RepresentationDetailPage() {
                         </Button>
                       )}
                     </div>
+
+                    {/* Espaço para Respostas / Thread de Discussão do Tema */}
+                    <TopicDiscussionReplies topicId={top.id} topicTitle={top.title} />
                   </CardContent>
                 </Card>
               ))}

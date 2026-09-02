@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-26T15:59:15.300Z",
+  "generatedAt": "2026-09-02T16:36:34.901Z",
   "collections": [
     {
       "name": "users",
@@ -1553,6 +1553,57 @@
         }
       ],
       "indexes": ["CREATE INDEX idx_rep_top_inst ON representation_topics (institution_id)"]
+    },
+    {
+      "name": "representation_topic_replies",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != '' && (user_id = @request.auth.id || @request.auth.role = 'admin')",
+        "delete": "@request.auth.id != '' && (user_id = @request.auth.id || @request.auth.role = 'admin')"
+      },
+      "fields": [
+        {
+          "name": "topic_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "representation_topics"
+        },
+        {
+          "name": "user_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "content",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_rep_topic_replies_topic ON representation_topic_replies (topic_id)",
+        "CREATE INDEX idx_rep_topic_replies_user ON representation_topic_replies (user_id)"
+      ]
     }
   ]
 }
