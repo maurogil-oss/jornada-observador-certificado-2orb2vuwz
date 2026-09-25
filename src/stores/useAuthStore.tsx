@@ -69,7 +69,7 @@ const AuthContext = createContext<AuthState | undefined>(undefined)
 const APP_VERSION = '1.0.3'
 
 const extractUserFromRecord = (record: any): User | null => {
-  if (!record || typeof record !== 'object' || !record.id || record.role === undefined) {
+  if (!record || typeof record !== 'object' || !record.id) {
     return null
   }
   return {
@@ -79,10 +79,12 @@ const extractUserFromRecord = (record: any): User | null => {
     nickname: record.nickname || '',
     email: record.email || '',
     role: record.role || 'observer',
-    points: record.points || 0,
+    points: typeof record.points === 'number' ? record.points : 0,
     level: record.level || 'Nível I - Observador Certificado (Iniciante)',
     avatar: record.avatar ? pb.files.getUrl(record, record.avatar) : '',
-    is_active: record.is_active !== false,
+    // Defensive normalization: guarantee boolean is_active even with stale localStorage residues
+    is_active:
+      typeof record.is_active === 'boolean' ? record.is_active : record.is_active !== false,
     onboarding_completed: record.onboarding_completed === true,
     birth_date: record.birth_date || '',
     city: record.city || '',

@@ -52,9 +52,13 @@ const ProtectedRoute = ({
   useEffect(() => {
     // Session Integrity Guard
     if (isAuthenticated && !isLoading) {
-      if (!user || typeof user !== 'object' || !user.id || typeof user.is_active !== 'boolean') {
+      if (!user || typeof user !== 'object' || !user.id) {
         console.warn('Session integrity failed. Corrupted user data.')
         logout()
+      } else if (typeof user.is_active !== 'boolean') {
+        // Defensively normalize session residue where is_active might be missing/undefined
+        console.warn('Session user missing boolean is_active; defaulting to true.')
+        user.is_active = true
       }
     }
   }, [isAuthenticated, user, logout, isLoading])

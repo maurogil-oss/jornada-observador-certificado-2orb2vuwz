@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -29,6 +29,7 @@ import {
   ChevronRight,
   ChevronLeft,
   CheckCircle2,
+  AlertCircle,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -41,6 +42,7 @@ import logoMaioAmarelo from '@/assets/image-cb3e5.png'
 import logoOC from '@/assets/image-29272.png'
 import { AppFooter } from '@/components/layout/AppFooter'
 import { LocationSelector } from '@/components/LocationSelector'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido.'),
@@ -139,7 +141,15 @@ const STEPS = [
 
 export default function Login() {
   const [activeTab, setActiveTab] = useState('login')
-  const [step, setStep] = useState(0)
+  const [rawStep, setRawStep] = useState(0)
+  const safeStep = Math.min(Math.max(rawStep, 0), STEPS.length - 1)
+  const setStep = (updater: number | ((prev: number) => number)) => {
+    setRawStep((prev) => {
+      const next = typeof updater === 'function' ? updater(prev) : updater
+      return Math.min(Math.max(next, 0), STEPS.length - 1)
+    })
+  }
+
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -147,6 +157,18 @@ export default function Login() {
   const [showTurma15Form, setShowTurma15Form] = useState(false)
   const [turmaPassword, setTurmaPassword] = useState('')
   const [turmaError, setTurmaError] = useState('')
+  const turmaPassInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (showTurma15Form) {
+      const timer = setTimeout(() => {
+        if (turmaPassInputRef.current) {
+          turmaPassInputRef.current.focus()
+        }
+      }, 50)
+      return () => clearTimeout(timer)
+    }
+  }, [showTurma15Form])
   const {
     login,
     register,
@@ -277,15 +299,16 @@ export default function Login() {
   }
 
   const handleNextStep = async () => {
-    const fields = STEPS[step].fields as any[]
+    const currentStepConfig = STEPS[safeStep]
+    const fields = (currentStepConfig?.fields ?? []) as any[]
     const isValid = await registerForm.trigger(fields)
     if (isValid) {
-      setStep((s) => s + 1)
+      setStep((s) => Math.min(s + 1, STEPS.length - 1))
     }
   }
 
   const handlePrevStep = () => {
-    setStep((s) => s - 1)
+    setStep((s) => Math.max(s - 1, 0))
   }
 
   const handleTurmaAccess = () => {
@@ -393,71 +416,98 @@ export default function Login() {
 
               <TabsContent value="login" className="animate-fade-in-up">
                 {showTurma15Form ? (
-                  <div className="space-y-4">
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-semibold tracking-tight">Acesso Turma 15</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Insira a senha exclusiva fornecida para a Turma 15 para iniciar seu cadastro
-                        na plataforma.
-                      </p>
-                    </div>
+                  <ErrorBoundary
+                    fallback={(_err, reset) => (
+                      <div className="space-y-4 p-4 border border-destructive/20 rounded-lg bg-destructive/5 text-center">
+                        <AlertCircle className="w-8 h-8 text-destructive mx-auto" />
+                        <p className="text-sm text-muted-foreground">
+                          Ocorreu um erro no formulário da Turma 15.
+                        </p>
+                        <div className="flex gap-2 justify-center">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              reset()
+                              setShowTurma15Form(false)
+                            }}
+                          >
+                            Voltar ao Login
+                          </Button>
+                          <Button type="button" size="sm" onClick={() => reset()}>
+                            Tentar Novamente
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  >
+                    <div className="space-y-4">
+                      <div className="space-y-1">
+                        <h3 className="text-lg font-semibold tracking-tight">Acesso Turma 15</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Insira a senha exclusiva fornecida para a Turma 15 para iniciar seu
+                          cadastro na plataforma.
+                        </p>
+                      </div>
 
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="turma-pass"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        Senha de Acesso
-                      </label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                        <Input
-                          id="turma-pass"
-                          type="password"
-                          placeholder="Digite a senha"
-                          className="pl-10 h-11"
-                          value={turmaPassword}
-                          onChange={(e) => {
-                            setTurmaPassword(e.target.value)
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="turma-pass"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Senha de Acesso
+                        </label>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                          <Input
+                            id="turma-pass"
+                            ref={turmaPassInputRef}
+                            type="password"
+                            placeholder="Digite a senha"
+                            className="pl-10 h-11"
+                            value={turmaPassword}
+                            onChange={(e) => {
+                              setTurmaPassword(e.target.value)
+                              setTurmaError('')
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault()
+                                handleTurmaAccess()
+                              }
+                            }}
+                          />
+                        </div>
+                        {turmaError ? (
+                          <p className="text-sm font-medium text-destructive">{turmaError}</p>
+                        ) : null}
+                      </div>
+
+                      <div className="flex gap-3 pt-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="flex-1 h-11"
+                          onClick={() => {
+                            setShowTurma15Form(false)
+                            setTurmaPassword('')
                             setTurmaError('')
                           }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault()
-                              handleTurmaAccess()
-                            }
-                          }}
-                          autoFocus
-                        />
+                        >
+                          <ChevronLeft className="w-4 h-4 mr-2" />
+                          Voltar
+                        </Button>
+                        <Button
+                          type="button"
+                          className="flex-1 h-11 font-bold"
+                          onClick={handleTurmaAccess}
+                        >
+                          Acessar Cadastro
+                        </Button>
                       </div>
-                      {turmaError ? (
-                        <p className="text-sm font-medium text-destructive">{turmaError}</p>
-                      ) : null}
                     </div>
-
-                    <div className="flex gap-3 pt-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="flex-1 h-11"
-                        onClick={() => {
-                          setShowTurma15Form(false)
-                          setTurmaPassword('')
-                          setTurmaError('')
-                        }}
-                      >
-                        <ChevronLeft className="w-4 h-4 mr-2" />
-                        Voltar
-                      </Button>
-                      <Button
-                        type="button"
-                        className="flex-1 h-11 font-bold"
-                        onClick={handleTurmaAccess}
-                      >
-                        Acessar Cadastro
-                      </Button>
-                    </div>
-                  </div>
+                  </ErrorBoundary>
                 ) : (
                   <Form {...loginForm}>
                     <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
@@ -607,19 +657,19 @@ export default function Login() {
                       className="space-y-4 px-1 pb-2"
                     >
                       <div className="mb-2">
-                        <Progress value={((step + 1) / STEPS.length) * 100} className="h-2" />
+                        <Progress value={((safeStep + 1) / STEPS.length) * 100} className="h-2" />
                       </div>
                       <div className="mb-4 pt-2 flex items-center justify-between border-b pb-2">
                         <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
-                          {STEPS[step].title}
+                          {STEPS[safeStep]?.title ?? ''}
                         </h3>
                         <span className="text-xs font-semibold bg-primary/10 text-primary px-2 py-1 rounded-full">
-                          Passo {step + 1} de {STEPS.length}
+                          Passo {safeStep + 1} de {STEPS.length}
                         </span>
                       </div>
 
                       <div className="space-y-4 min-h-[300px]">
-                        {step === 0 && (
+                        {safeStep === 0 && (
                           <div className="animate-fade-in-right space-y-4">
                             <FormField
                               control={registerForm.control}
@@ -714,7 +764,7 @@ export default function Login() {
                           </div>
                         )}
 
-                        {step === 1 && (
+                        {safeStep === 1 && (
                           <div className="animate-fade-in-right space-y-4">
                             <FormField
                               control={registerForm.control}
@@ -846,7 +896,7 @@ export default function Login() {
                           </div>
                         )}
 
-                        {step === 2 && (
+                        {safeStep === 2 && (
                           <div className="animate-fade-in-right space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <FormField
@@ -995,7 +1045,7 @@ export default function Login() {
                       </div>
 
                       <div className="flex gap-3 pt-4 border-t mt-4">
-                        {step > 0 && (
+                        {safeStep > 0 && (
                           <Button
                             type="button"
                             variant="outline"
@@ -1007,7 +1057,7 @@ export default function Login() {
                           </Button>
                         )}
 
-                        {step < STEPS.length - 1 ? (
+                        {safeStep < STEPS.length - 1 ? (
                           <Button type="button" onClick={handleNextStep} className="flex-1 h-11">
                             Continuar
                             <ChevronRight className="w-4 h-4 ml-2" />

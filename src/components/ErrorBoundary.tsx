@@ -4,6 +4,7 @@ import { AlertCircle, RefreshCw } from 'lucide-react'
 
 interface Props {
   children?: ReactNode
+  fallback?: ReactNode | ((error: Error | null, reset: () => void) => ReactNode)
 }
 
 interface State {
@@ -24,12 +25,13 @@ export class ErrorBoundary extends Component<Props, State> {
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo)
 
-    // Auto-recover from removeChild or other DOM/hydration errors
+    // Auto-recover from removeChild or other DOM/hydration errors only if no custom fallback is provided
     if (
-      error.message.includes('removeChild') ||
-      error.message.includes('Node') ||
-      error.message.includes('insertBefore') ||
-      error.message.includes('is not a valid')
+      !this.props.fallback &&
+      (error.message.includes('removeChild') ||
+        error.message.includes('Node') ||
+        error.message.includes('insertBefore') ||
+        error.message.includes('is not a valid'))
     ) {
       const lastReloadTime = Number(sessionStorage.getItem('last_dom_reload') || '0')
       const now = Date.now()
@@ -72,6 +74,15 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
+      if (this.props.fallback) {
+        if (typeof this.props.fallback === 'function') {
+          return this.props.fallback(this.state.error, () =>
+            this.setState({ hasError: false, error: null }),
+          )
+        }
+        return this.props.fallback
+      }
+
       return (
         <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background text-center">
           <div className="max-w-md space-y-6">
