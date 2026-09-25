@@ -103,10 +103,9 @@ export default function PublicProfile() {
               <div className="text-center sm:text-left flex-1 pb-2">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 justify-center sm:justify-start">
                   <h1 className="text-3xl font-bold text-foreground">{name}</h1>
-                  <BadgeCheck
-                    className="w-7 h-7 text-blue-500 shrink-0 drop-shadow-sm"
-                    title="Perfil Verificado Oficialmente"
-                  />
+                  <span title="Perfil Verificado Oficialmente">
+                    <BadgeCheck className="w-7 h-7 text-blue-500 shrink-0 drop-shadow-sm" />
+                  </span>
                 </div>
                 {user.nickname && (
                   <p className="text-lg text-muted-foreground mt-1">{user.nickname}</p>

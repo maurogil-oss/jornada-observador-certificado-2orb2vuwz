@@ -292,7 +292,7 @@ export default function AdminDashboard() {
                     tick={{ fill: 'hsl(var(--muted-foreground))' }}
                     dx={-10}
                   />
-                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ChartTooltip content={(props: any) => <ChartTooltipContent {...props} />} />
                   <Line
                     type="monotone"
                     dataKey="points"

@@ -204,7 +204,7 @@ export default function Login() {
   })
 
   const registerForm = useForm<RegisterForm>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(registerSchema) as any,
     mode: 'onChange',
     defaultValues: {
       turma: '' as any,

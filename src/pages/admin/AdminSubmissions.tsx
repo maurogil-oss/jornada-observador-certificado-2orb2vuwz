@@ -87,18 +87,18 @@ export default function AdminSubmissions() {
     if (sub.status !== 'Em Análise') return null
 
     const userApproved = submissions.filter(
-      (s) => s.user_id === sub.user_id && s.status === 'Aprovado',
+      (s) => s.userId === sub.userId && s.status === 'Aprovado',
     )
     const act = sub.activity
 
     // Audit & Fix: The logic responsible for counting occurrences must strictly
-    // filter by user_id, activity_id, and status = 'Aprovado'. We no longer
+    // filter by userId, activity id, and status = 'Aprovado'. We no longer
     // incorrectly group all titulations or other submissions.
     let maxOccurrences = act ? (act.is_unique ? 1 : act.max_occurrences || 0) : 0
 
     let hasApproved = 0
     if (act) {
-      hasApproved = userApproved.filter((s) => s.activity_id === act.id).length
+      hasApproved = userApproved.filter((s) => s.activity?.id === act.id).length
     } else {
       hasApproved = userApproved.filter((s) => s.title === sub.title).length
     }

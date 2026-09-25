@@ -24,7 +24,9 @@ interface User {
   avatar: string
   is_active: boolean
   onboarding_completed: boolean
+  created?: string
   birth_date?: string
+  cep?: string
   city?: string
   state?: string
   country?: string
@@ -86,7 +88,9 @@ const extractUserFromRecord = (record: any): User | null => {
     is_active:
       typeof record.is_active === 'boolean' ? record.is_active : record.is_active !== false,
     onboarding_completed: record.onboarding_completed === true,
+    created: record.created || '',
     birth_date: record.birth_date || '',
+    cep: record.cep || '',
     city: record.city || '',
     state: record.state || '',
     country: record.country || '',

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAuth } from '@/hooks/use-auth'
+import useAuthStore from '@/stores/useAuthStore'
 import { Navigate } from 'react-router-dom'
 import pb from '@/lib/pocketbase/client'
 import { useRealtime } from '@/hooks/use-realtime'
@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge'
 import type { RecordModel } from 'pocketbase'
 
 export default function SubmissionsAdmin() {
-  const { user } = useAuth()
+  const { user } = useAuthStore()
   const [submissions, setSubmissions] = useState<RecordModel[]>([])
   const [loading, setLoading] = useState(true)
 

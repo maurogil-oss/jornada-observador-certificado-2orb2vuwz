@@ -26,8 +26,8 @@ export default function Index() {
     'users',
     async (e) => {
       if (e.record.id === user?.id && e.action === 'update') {
-        if (pb.authStore.model) {
-          pb.authStore.save(e.record, pb.authStore.token)
+        if (pb.authStore.record) {
+          pb.authStore.save(pb.authStore.token, e.record)
         }
       }
     },

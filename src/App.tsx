@@ -320,7 +320,7 @@ const AppRoutes = () => {
 
 const App = () => (
   <ErrorBoundary>
-    <BrowserRouter future={{ v7_startTransition: false, v7_relativeSplatPath: false }}>
+    <BrowserRouter>
       <AuthProvider>
         <GameProvider>
           <SubmissionsProvider>

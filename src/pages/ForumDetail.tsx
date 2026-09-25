@@ -37,7 +37,7 @@ export default function ForumDetail() {
   useRealtime('forums', (e) => {
     if (e.record.id === id) {
       if (e.action === 'update') {
-        setForum(e.record as Forum)
+        setForum(e.record as unknown as Forum)
       } else if (e.action === 'delete') {
         setForum(null)
       }

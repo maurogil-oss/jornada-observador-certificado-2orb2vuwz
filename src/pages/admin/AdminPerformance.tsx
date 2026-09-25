@@ -130,7 +130,7 @@ export default function AdminPerformance() {
                     className="text-xs"
                   />
                   <YAxis tickLine={false} axisLine={false} tickMargin={8} className="text-xs" />
-                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ChartTooltip content={(props: any) => <ChartTooltipContent {...props} />} />
                   <Area
                     type="monotone"
                     dataKey="pontosAcumulados"

@@ -81,7 +81,7 @@ export function generateZip(files: { name: string; buffer: Uint8Array }[]): Blob
   eocdView.setUint32(16, offset, true)
   eocdView.setUint16(20, 0, true)
 
-  return new Blob([...localFileHeaders, ...centralDirectoryHeaders, eocd], {
+  return new Blob([...localFileHeaders, ...centralDirectoryHeaders, eocd] as BlobPart[], {
     type: 'application/zip',
   })
 }

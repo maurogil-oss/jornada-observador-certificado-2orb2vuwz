@@ -12,11 +12,11 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
 } from '@/components/ui/sidebar'
-import { useAuth } from '@/hooks/use-auth'
+import useAuthStore from '@/stores/useAuthStore'
 
 export function AppSidebar() {
   const { pathname } = useLocation()
-  const { user, signOut } = useAuth()
+  const { user, logout } = useAuthStore()
   const isAdmin = user?.role === 'admin'
 
   return (
@@ -74,7 +74,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              onClick={signOut}
+              onClick={logout}
               className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50"
             >
               Sair

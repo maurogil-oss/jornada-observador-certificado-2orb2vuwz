@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { useAuth } from './use-auth'
+import useAuthStore from '@/stores/useAuthStore'
 import pb from '@/lib/pocketbase/client'
 import { useRealtime } from './use-realtime'
 
@@ -18,7 +18,7 @@ export const useGame = () => {
 }
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated } = useAuthStore()
   const [points, setPoints] = useState(0)
   const [level, setLevel] = useState('Nível I')
   const [loading, setLoading] = useState(true)

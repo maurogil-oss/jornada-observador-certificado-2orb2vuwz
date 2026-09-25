@@ -58,8 +58,8 @@ export default function Profile() {
     'users',
     async (e) => {
       if (e.record.id === user?.id && e.action === 'update') {
-        if (pb.authStore.model) {
-          pb.authStore.save(e.record, pb.authStore.token)
+        if (pb.authStore.record) {
+          pb.authStore.save(pb.authStore.token, e.record)
         }
       }
     },
@@ -251,7 +251,7 @@ export default function Profile() {
         {user?.level?.includes('Nível III') && (
           <Button
             type="button"
-            onClick={() => generateCertificate(user)}
+            onClick={() => generateCertificate(user.name || user.full_name || '')}
             className="bg-amber-500 hover:bg-amber-600 text-amber-950 font-semibold shadow-sm shrink-0"
           >
             <Award className="w-4 h-4 mr-2" />
