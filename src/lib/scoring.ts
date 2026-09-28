@@ -90,6 +90,21 @@ function getScore(sub: any): number {
   return Number.isFinite(s) && s > 0 ? s : 0
 }
 
+/**
+ * Rótulos canônicos de nível do Observador Certificado baseados na pontuação aprovada.
+ * Nível I: 0–499 pontos
+ * Nível II: 500–999 pontos
+ * Nível III: 1000+ pontos
+ */
+export function getCanonicalLevel(
+  points: number | string | null | undefined,
+): 'Nível I' | 'Nível II' | 'Nível III' {
+  const pts = Number(points) || 0
+  if (pts >= 1000) return 'Nível III'
+  if (pts >= 500) return 'Nível II'
+  return 'Nível I'
+}
+
 export function calculateUserPoints(submissions: any[], userLevel?: string) {
   let totalPoints = 0
   let eixo1Points = 0

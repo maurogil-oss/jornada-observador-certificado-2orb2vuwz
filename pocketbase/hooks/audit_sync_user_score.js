@@ -245,20 +245,13 @@ routerAdd(
       }
     }
 
-    let calculatedLevel = 'Nível I - Observador Certificado (Iniciante)'
-
-    const activeEixos = [eixo1Points > 0, eixo2Points > 0, eixo3Points > 0].filter(Boolean).length
-
-    if (isProbationary) {
-      calculatedLevel = 'Nível I - Observador Certificado (Iniciante)'
+    let calculatedLevel = 'Nível I'
+    if (calculatedPoints >= 1000) {
+      calculatedLevel = 'Nível III'
+    } else if (calculatedPoints >= 500) {
+      calculatedLevel = 'Nível II'
     } else {
-      if (calculatedPoints >= 1000 && activeEixos >= 3) {
-        calculatedLevel = 'Nível III - Mobilizador'
-      } else if (calculatedPoints >= 500 && activeEixos >= 2) {
-        calculatedLevel = 'Nível II - Observador Certificado Pleno'
-      } else {
-        calculatedLevel = 'Nível I - Observador Certificado (Iniciante)'
-      }
+      calculatedLevel = 'Nível I'
     }
 
     if (oldPoints === calculatedPoints && oldLevel === calculatedLevel) {

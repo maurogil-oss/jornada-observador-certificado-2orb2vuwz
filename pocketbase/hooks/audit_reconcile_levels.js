@@ -269,18 +269,13 @@ routerAdd(
           Boolean,
         ).length
 
-        let calculatedLevel = 'Nível I - Observador Certificado (Iniciante)'
-
-        if (isProbationary) {
-          calculatedLevel = 'Nível I - Observador Certificado (Iniciante)'
+        let calculatedLevel = 'Nível I'
+        if (calculatedPoints >= 1000) {
+          calculatedLevel = 'Nível III'
+        } else if (calculatedPoints >= 500) {
+          calculatedLevel = 'Nível II'
         } else {
-          if (calculatedPoints >= 1000 && activeEixos >= 3) {
-            calculatedLevel = 'Nível III - Mobilizador'
-          } else if (calculatedPoints >= 500 && activeEixos >= 2) {
-            calculatedLevel = 'Nível II - Observador Certificado Pleno'
-          } else {
-            calculatedLevel = 'Nível I - Observador Certificado (Iniciante)'
-          }
+          calculatedLevel = 'Nível I'
         }
 
         if (oldPoints !== calculatedPoints || oldLevel !== calculatedLevel) {

@@ -253,29 +253,21 @@ onRecordAfterUpdateSuccess((e) => {
         }
       }
 
-      let newLevel =
-        turma <= 14
-          ? 'Nível II - Observador Certificado Pleno'
-          : 'Nível I - Observador Certificado (Iniciante)'
-
-      if (isProbationary) {
-        newLevel = 'Nível I - Observador Certificado (Iniciante)'
+      let canonicalLevel = 'Nível I'
+      if (calculatedPoints >= 1000) {
+        canonicalLevel = 'Nível III'
+      } else if (calculatedPoints >= 500) {
+        canonicalLevel = 'Nível II'
       } else {
-        if (calculatedPoints >= 1000 && activeEixos >= 3) {
-          newLevel = 'Nível III - Mobilizador'
-        } else if (calculatedPoints >= 500 && activeEixos >= 2) {
-          newLevel = 'Nível II - Observador Certificado Pleno'
-        } else if (activeEixos >= 1) {
-          newLevel = 'Nível I - Observador Certificado (Iniciante)'
-        }
+        canonicalLevel = 'Nível I'
       }
 
       const originalUserPoints = user.getFloat('points') || 0
       const originalUserLevel = user.getString('level')
 
-      if (originalUserPoints !== calculatedPoints || originalUserLevel !== newLevel) {
+      if (originalUserPoints !== calculatedPoints || originalUserLevel !== canonicalLevel) {
         user.set('points', calculatedPoints)
-        user.set('level', newLevel)
+        user.set('level', canonicalLevel)
         $app.save(user)
 
         const logs = $app.findCollectionByNameOrId('activity_logs')
@@ -287,7 +279,8 @@ onRecordAfterUpdateSuccess((e) => {
         let desc = []
         if (originalUserPoints !== calculatedPoints)
           desc.push(`Points: ${originalUserPoints} -> ${calculatedPoints}`)
-        if (originalUserLevel !== newLevel) desc.push(`Level: ${originalUserLevel} -> ${newLevel}`)
+        if (originalUserLevel !== canonicalLevel)
+          desc.push(`Level: ${originalUserLevel} -> ${canonicalLevel}`)
         log.set('description', desc.join(' | '))
 
         $app.save(log)
