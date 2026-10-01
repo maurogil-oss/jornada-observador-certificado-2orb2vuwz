@@ -57,6 +57,7 @@ interface SubmissionsState {
       file?: File
       link?: string
       description?: string
+      activity_id?: string
     },
     onProgress?: (progress: number) => void,
   ) => Promise<void>
@@ -171,10 +172,27 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
       file?: File
       link?: string
       description?: string
+      activity_id?: string
     },
     onProgress?: (progress: number) => void,
   ) => {
     if (!user) return
+
+    let resolvedActivityId = sub.activity_id
+    if (!resolvedActivityId && sub.title) {
+      try {
+        const trimmedTitle = sub.title.trim()
+        const meta = await pb
+          .collection('activities_metadata')
+          .getFirstListItem(`title = "${trimmedTitle}"`)
+        if (meta) {
+          resolvedActivityId = meta.id
+        }
+      } catch (_) {
+        // If exact match not found or fails, backend hook will also resolve
+      }
+    }
+
     const formData = new FormData()
     formData.append('title', sub.title)
     formData.append('nivel', sub.nivel)
@@ -182,6 +200,7 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     formData.append('score', String(sub.points || 0))
     formData.append('user_id', user.id)
     formData.append('type', sub.type || 'competency')
+    if (resolvedActivityId) formData.append('activity_id', resolvedActivityId)
     if (sub.file) formData.append('file', sub.file)
     if (sub.link) formData.append('link', sub.link)
     if (sub.description) formData.append('description', sub.description)

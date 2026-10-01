@@ -1,3 +1,39 @@
+onRecordCreateRequest((e) => {
+  const currentActivityId = e.record.getString('activity_id')
+  if (!currentActivityId) {
+    const rawTitle = e.record.getString('title')
+    if (rawTitle) {
+      const trimmedTitle = rawTitle.trim()
+      try {
+        const matches = $app.findRecordsByFilter(
+          'activities_metadata',
+          'title = {:title}',
+          '',
+          10,
+          0,
+          { title: trimmedTitle },
+        )
+        if (matches.length > 0) {
+          e.record.set('activity_id', matches[0].id)
+        } else {
+          // Fallback insensível a maiúsculas se necessário
+          const allActivities = $app.findRecordsByFilter('activities_metadata', '1=1', '', 1000, 0)
+          const lower = trimmedTitle.toLowerCase()
+          const match = allActivities.find(
+            (act) => act.getString('title').trim().toLowerCase() === lower,
+          )
+          if (match) {
+            e.record.set('activity_id', match.id)
+          }
+        }
+      } catch (err) {
+        console.log('Error resolving activity_id in onRecordCreateRequest: ', err)
+      }
+    }
+  }
+  return e.next()
+}, 'submissions')
+
 onRecordAfterCreateSuccess((e) => {
   if (e.record.getString('status') === 'Aprovado') {
     const userId = e.record.getString('user_id')

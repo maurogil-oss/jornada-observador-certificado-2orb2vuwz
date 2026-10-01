@@ -93,6 +93,9 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
       formData.append('type', type)
       formData.append('description', description)
 
+      if (metadata?.id) {
+        formData.append('activity_id', metadata.id)
+      }
       if (link) formData.append('link', link)
       if (file) formData.append('file', file)
 
