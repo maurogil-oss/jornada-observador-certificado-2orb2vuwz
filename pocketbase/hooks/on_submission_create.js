@@ -1,295 +1,170 @@
-onRecordCreateRequest((e) => {
-  const currentActivityId = e.record.getString('activity_id')
-  if (!currentActivityId) {
-    const rawTitle = e.record.getString('title')
-    if (rawTitle) {
-      const trimmedTitle = rawTitle.trim()
-      try {
-        const matches = $app.findRecordsByFilter(
-          'activities_metadata',
-          'title = {:title}',
-          '',
-          10,
-          0,
-          { title: trimmedTitle },
-        )
-        if (matches.length > 0) {
-          e.record.set('activity_id', matches[0].id)
-        } else {
-          // Fallback insensível a maiúsculas se necessário
-          const allActivities = $app.findRecordsByFilter('activities_metadata', '1=1', '', 1000, 0)
-          const lower = trimmedTitle.toLowerCase()
-          const match = allActivities.find(
-            (act) => act.getString('title').trim().toLowerCase() === lower,
-          )
-          if (match) {
-            e.record.set('activity_id', match.id)
-          }
-        }
-      } catch (err) {
-        console.log('Error resolving activity_id in onRecordCreateRequest: ', err)
-      }
+/**
+ * Hook disparado antes de criar uma submissão.
+ * Implementa o modelo "TUDO AUTOMÁTICO" sem lista branca:
+ * 1. Valida atividade vinculada e regras de pontuação
+ * 2. Valida limite de repetição (ex: max_occurrences / "Até 5x")
+ * 3. Valida se documento anexado está presente e legível (formato aceito)
+ * 4. Valida nível e calcula pontuação canônica
+ *
+ * Se TUDO conforme:
+ *   -> status: "Aprovado", score calculado, auto_evaluated: true
+ * Se DIVERGÊNCIA:
+ *   -> status: "Aguardando Complemento", divergence_reason: motivo detalhado, score: 0, auto_evaluated: true
+ */
+
+onRecordCreate((e) => {
+  const calculateActivityPoints = (act, level) => {
+    const pointsType = act.getString('points_type') || 'fixed'
+    const defaultPoints = act.getFloat('points') || 0
+
+    if (pointsType === 'level_based') {
+      let lvlKey = 'points_level_1'
+      if (level === 'Nível II') lvlKey = 'points_level_2'
+      else if (level === 'Nível III') lvlKey = 'points_level_3'
+      const lvlPts = act.getFloat(lvlKey)
+      return lvlPts > 0 ? lvlPts : defaultPoints
+    }
+
+    return defaultPoints
+  }
+
+  const extractMaxOccurrencesFromTitle = (title) => {
+    if (!title) return 0
+    const match = title.match(/até\s+(\d+)x/i) || title.match(/ate\s+(\d+)x/i)
+    if (match && match[1]) {
+      return parseInt(match[1], 10)
+    }
+    return 0
+  }
+
+  const record = e.record
+  const userId = record.getString('user_id')
+  let activityId = record.getString('activity_id')
+  const title = record.getString('title') || ''
+
+  // Suporte a arquivo tanto em 'file' quanto 'document_file'
+  let docFile = record.getString('document_file')
+  if (!docFile) {
+    docFile = record.getString('file')
+    if (docFile) {
+      record.set('document_file', docFile)
     }
   }
-  return e.next()
-}, 'submissions')
 
-onRecordAfterCreateSuccess((e) => {
-  if (e.record.getString('status') === 'Aprovado') {
-    const userId = e.record.getString('user_id')
-    if (!userId) return e.next()
+  let user = null
+  let userLevel = 'Nível I'
 
+  if (userId) {
     try {
-      const user = $app.findRecordById('users', userId)
-
-      const submissions = $app.findRecordsByFilter(
-        'submissions',
-        "user_id = {:userId} && status = 'Aprovado'",
-        'created',
-        1000,
-        0,
-        { userId: userId },
-      )
-
-      const activities = $app.findRecordsByFilter('activities_metadata', '1=1', '', 1000, 0)
-      const metaMap = {}
-      for (let i = 0; i < activities.length; i++) {
-        metaMap[activities[i].id] = activities[i]
-      }
-
-      const ACADEMIC_DEGREES = [
-        'Graduação (Reconhecida MEC)',
-        'Pós-graduação Lato Sensu',
-        'Mestrado',
-        'Doutorado',
-        'Pós-Doutorado (Estágio concluído)',
-        'Graduação',
-        'Pós-graduação',
-      ]
-
-      const ITEM_CAPS = {
-        'Curso geral na área de trânsito/mobilidade (Mínimo 8h)': 5,
-        'Curso oficial promovido pelo ONSV': 5,
-        'Artigos publicados': 5,
-        'Estudos publicados': 5,
-        'Papers publicados em revistas/anais': 5,
-        'Trabalhar com trânsito/mobilidade (Validação anual)': 1,
-        'Trabalhar em estandes/feiras relacionadas (Até 5x)': 5,
-        'Organização de banco de dados local de sinistros (Até 2x)': 2,
-        'Aplicação de pesquisa com usuários de trânsito (Até 5x)': 5,
-        'Desenvolver projetos viários (traffic calming, ruas completas) (Até 5x)': 5,
-        'Inovação técnica inédita e estruturada (Até 2x)': 2,
-        'Inovação aplicada (implementada com impacto) (Única)': 1,
-        'Implementação de projeto escolar contínuo': 3,
-        'Projeto Local (Municipal)': 3,
-        'Projeto Estadual': 3,
-        'Projeto Nacional': 2,
-        'Projeto Internacional': 2,
-        'Livro publicado com ISBN (Até 2x)': 2,
-        'EBook publicado na Plataforma Digital (Até 2x)': 2,
-        'Produção de material educativo (Até 3x)': 3,
-        'Produção de vídeo técnico educativo (Até 3x)': 3,
-        'Publicar gratuitamente materiais/artigos (Até 5x)': 5,
-        'Criar e coordenar ações educativas (Até 3x)': 3,
-        'Trabalhar como colaborador em ações educativas (Até 5x)': 5,
-        'Ser instrutor/dar aulas de trânsito (Até 5x)': 5,
-        'Ministrar palestras técnicas (Até 5x)': 5,
-        'Participar de eventos/conferências ONSV (Até 3x)': 3,
-        'Organizar eventos técnicos (Até 3x)': 3,
-        'Administrar site ou canal ativo sobre Segurança Viária (Até 3x)': 3,
-        'Compartilhamento: Mín. 15 reposts/mês no Instagram ONSV (Até 6 meses)': 6,
-        'Entrevista TV/Impresso (Até 5x)': 5,
-        'Entrevista Online/Rádio (Até 5x)': 5,
-        'Participação e contribuição em Audiência Pública': 5,
-        'Participação e contribuição técnica em Consulta Pública': 5,
-        'Proposição formal de melhoria viária protocolada (Até 3x)': 3,
-        'Apresentar o Cadastro Positivo de Condutores (RNPC) (Até 5x)': 5,
-        'Destaque anual do programa (Reconhecimento ONSV interno, 1x/ano)': 1,
-        'Destaque anual do programa (Reconhecimento ONSV interno)': 1,
-        'Atualização anual de cadastro técnico (Obrigatório, 1x/ano)': 1,
-        'Representação formal do ONSV em eventos técnicos (Até 5x)': 5,
-        'Atuar como voluntário formal em ONG de trânsito (Até 5x)': 5,
-        'Mentoria: Atuação formal como mentor no programa (Validado pela coordenação)': 3,
-        'Representante de Comitês estratégicos': 1,
-        'Representante da campanha Maio Amarelo': 1,
-        'Representante de JARI (Junta Administrativa de Recursos de Infrações)': 1,
-        'Representante de Câmaras Técnicas': 1,
-        'Representante de Conselhos': 1,
-      }
-
-      const EIXO1_TITLES = [
-        'Graduação (Reconhecida MEC)',
-        'Pós-graduação Lato Sensu',
-        'Mestrado',
-        'Doutorado',
-        'Pós-Doutorado (Estágio concluído)',
-        'Curso geral na área de trânsito/mobilidade (Mínimo 8h)',
-        'Curso oficial promovido pelo ONSV',
-        'Artigos publicados',
-        'Estudos publicados',
-        'Papers publicados em revistas/anais',
-      ]
-
-      const EIXO3_TITLES = [
-        'Mentoria: Atuação formal como mentor no programa (Validado pela coordenação)',
-        'Representante de Comitês estratégicos',
-        'Representante da campanha Maio Amarelo',
-        'Representante de JARI (Junta Administrativa de Recursos de Infrações)',
-        'Representante de Câmaras Técnicas',
-        'Representante de Conselhos',
-      ]
-
-      let maxAcademicScore = 0
-      let maxAcademicId = ''
-
-      for (const sub of submissions) {
-        const actId = sub.getString('activity_id')
-        const act = actId ? metaMap[actId] : null
-        const title = sub.getString('title')
-        const isAcademic =
-          ACADEMIC_DEGREES.includes(title) ||
-          (act &&
-            (act.getString('group_id') === 'academic' ||
-              act.getString('title').includes('Graduação') ||
-              act.getString('title').includes('Mestrado') ||
-              act.getString('title').includes('Doutorado')))
-
-        if (isAcademic) {
-          let score = sub.getFloat('score') || 0
-          if (act && act.getString('points_type') === 'fixed') {
-            score = act.getFloat('points') || score
-          }
-          if (score > maxAcademicScore) {
-            maxAcademicScore = score
-            maxAcademicId = sub.id
-          }
-        }
-      }
-
-      let calculatedPoints = 0
-      let eixo1Points = 0
-      let eixo2Points = 0
-      let eixo3Points = 0
-      const itemCounts = {}
-
-      for (const sub of submissions) {
-        const actId = sub.getString('activity_id')
-        const act = actId ? metaMap[actId] : null
-        const title = sub.getString('title')
-        let score = sub.getFloat('score') || 0
-
-        if (act && act.getString('points_type') === 'level_based') {
-          const ul = (user.getString('level') || '').toLowerCase()
-          if (ul.includes('iii') || ul.includes('3') || ul.includes('mobilizador')) {
-            score = act.getFloat('points_level_3') || 0
-          } else if (ul.includes('ii') || ul.includes('2') || ul.includes('pleno')) {
-            score = act.getFloat('points_level_2') || 0
-          } else {
-            score = act.getFloat('points_level_1') || 0
-          }
-        } else if (act && act.getString('points_type') === 'fixed') {
-          score = act.getFloat('points') || score
-        }
-
-        let isCounted = false
-        const isAcademic =
-          ACADEMIC_DEGREES.includes(title) ||
-          (act &&
-            (act.getString('group_id') === 'academic' ||
-              act.getString('title').includes('Graduação') ||
-              act.getString('title').includes('Mestrado') ||
-              act.getString('title').includes('Doutorado')))
-
-        if (isAcademic) {
-          if (sub.id === maxAcademicId) {
-            isCounted = true
-          }
-        } else {
-          let maxOccurrences = 0
-          if (act) {
-            maxOccurrences = act.getBool('is_unique') ? 1 : act.getInt('max_occurrences') || 0
-          } else {
-            if (title.includes('Projeto Local') || title.includes('Projeto Estadual'))
-              maxOccurrences = 3
-            else if (title.includes('Projeto Nacional') || title.includes('Projeto Internacional'))
-              maxOccurrences = 2
-            else maxOccurrences = ITEM_CAPS[title] || 999
-          }
-
-          const key = actId || title
-          itemCounts[key] = (itemCounts[key] || 0) + 1
-          if (maxOccurrences > 0) {
-            if (itemCounts[key] <= maxOccurrences) {
-              isCounted = true
-            }
-          } else {
-            isCounted = true
-          }
-        }
-
-        if (isCounted) {
-          calculatedPoints += score
-          const axis = act ? act.getString('axis') : null
-          if (axis === 'Eixo 1' || EIXO1_TITLES.includes(title)) eixo1Points += score
-          else if (axis === 'Eixo 3' || EIXO3_TITLES.includes(title)) eixo3Points += score
-          else eixo2Points += score
-        }
-      }
-
-      calculatedPoints = Math.round(calculatedPoints * 100) / 100
-
-      let activeEixos = 0
-      if (eixo1Points > 0) activeEixos++
-      if (eixo2Points > 0) activeEixos++
-      if (eixo3Points > 0) activeEixos++
-
-      const turma = user.getInt('turma') || 15
-      const createdDateStr = user.getString('created')
-      let isProbationary = false
-      if (turma >= 15 && createdDateStr) {
-        const createdDate = new Date(createdDateStr.replace(' ', 'T'))
-        const oneYearAgo = new Date()
-        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
-        if (createdDate > oneYearAgo) {
-          isProbationary = true
-        }
-      }
-
-      let canonicalLevel = 'Nível I'
-      if (calculatedPoints >= 1000) {
-        canonicalLevel = 'Nível III'
-      } else if (calculatedPoints >= 500) {
-        canonicalLevel = 'Nível II'
-      } else {
-        canonicalLevel = 'Nível I'
-      }
-
-      const originalUserPoints = user.getFloat('points') || 0
-      const originalUserLevel = user.getString('level')
-
-      if (originalUserPoints !== calculatedPoints || originalUserLevel !== canonicalLevel) {
-        user.set('points', calculatedPoints)
-        user.set('level', canonicalLevel)
-        $app.save(user)
-
-        const logs = $app.findCollectionByNameOrId('activity_logs')
-        const log = new Record(logs)
-        log.set('entity_type', 'users')
-        log.set('entity_id', user.id)
-        log.set('action', 'Points/Level Recalculated (Submission Created)')
-
-        let desc = []
-        if (originalUserPoints !== calculatedPoints)
-          desc.push(`Points: ${originalUserPoints} -> ${calculatedPoints}`)
-        if (originalUserLevel !== canonicalLevel)
-          desc.push(`Level: ${originalUserLevel} -> ${canonicalLevel}`)
-        log.set('description', desc.join(' | '))
-
-        $app.save(log)
+      user = e.app.findFirstRecordByData('users', 'id', userId)
+      if (user) {
+        userLevel = user.getString('level') || 'Nível I'
       }
     } catch (err) {
-      console.log('Error updating user points after creation: ', err)
+      console.log(`[Submission Auto-Approval] User ${userId} not found: ${err}`)
     }
   }
+
+  const divergences = []
+
+  // Validação (a): Atividade vinculada e presente no catálogo
+  let activity = null
+  if (activityId) {
+    try {
+      activity = e.app.findFirstRecordByData('activities_metadata', 'id', activityId)
+    } catch (_) {}
+  }
+
+  if (!activity && title) {
+    try {
+      activity = e.app.findFirstRecordByData('activities_metadata', 'title', title)
+      if (activity) {
+        activityId = activity.id
+        record.set('activity_id', activity.id)
+      }
+    } catch (_) {}
+  }
+
+  if (!activity) {
+    divergences.push('Atividade não selecionada ou não identificada no catálogo oficial.')
+  }
+
+  // Validação (d): Documento comprovatório anexado e legível/válido
+  if (!docFile || docFile.trim() === '') {
+    divergences.push('Nenhum documento ou evidência comprobatória foi anexado à submissão.')
+  } else {
+    // Validar extensão do arquivo (PDF, imagens, documentos oficiais)
+    const validExts = ['.pdf', '.png', '.jpg', '.jpeg', '.webp', '.doc', '.docx']
+    const lowerDoc = docFile.toLowerCase()
+    const hasValidExt = validExts.some((ext) => lowerDoc.endsWith(ext))
+    if (!hasValidExt) {
+      divergences.push(
+        `O formato do documento anexado (${docFile}) não é suportado. Formatos aceitos: PDF, JPG, PNG, DOC/DOCX.`,
+      )
+    }
+  }
+
+  // Validação (b): Limite de repetição da atividade respeitado
+  if (activity && userId) {
+    const isUnique = activity.getBool('is_unique')
+    let maxOccurrences = activity.getInt('max_occurrences') || 0
+    if (maxOccurrences === 0) {
+      // Tenta inferir do título (ex: "Até 5x")
+      maxOccurrences = extractMaxOccurrencesFromTitle(activity.getString('title'))
+    }
+
+    if (isUnique || maxOccurrences > 0) {
+      try {
+        // Busca submissões aprovadas do mesmo usuário para esta atividade
+        const approvedSubmissions = e.app.findRecordsByFilter(
+          'submissions',
+          `user_id = '${userId}' && (activity_id = '${activity.id}' || title = '${activity.getString('title')}') && status = 'Aprovado'`,
+          '-created',
+          100,
+          0,
+        )
+        const approvedCount = approvedSubmissions ? approvedSubmissions.length : 0
+
+        if (isUnique && approvedCount >= 1) {
+          divergences.push(
+            `Esta atividade (${activity.getString('title')}) é de cumprimento único e você já possui uma submissão aprovada para ela.`,
+          )
+        } else if (maxOccurrences > 0 && approvedCount >= maxOccurrences) {
+          divergences.push(
+            `Limite máximo de repetições atingido (${maxOccurrences}x) para a atividade: "${activity.getString('title')}".`,
+          )
+        }
+      } catch (err) {
+        console.log(`[Submission Auto-Approval] Error checking repetition limit: ${err}`)
+      }
+    }
+  }
+
+  // Validação (e): Pontuação canônica
+  let calculatedScore = 0
+  if (activity) {
+    calculatedScore = calculateActivityPoints(activity, userLevel)
+  }
+
+  // Avaliação do status
+  record.set('auto_evaluated', true)
+
+  if (divergences.length === 0) {
+    // TUDO CONFORME -> APROVAÇÃO AUTOMÁTICA
+    record.set('status', 'Aprovado')
+    record.set('score', calculatedScore)
+    record.set('divergence_reason', '')
+    console.log(
+      `[Submission Auto-Approval] Submission approved automatically. Score: ${calculatedScore} for user ${userId}`,
+    )
+  } else {
+    // DIVERGÊNCIA ENCONTRADA -> Aguardando Complemento
+    const fullReason = divergences.join(' ')
+    record.set('status', 'Aguardando Complemento')
+    record.set('score', 0)
+    record.set('divergence_reason', fullReason)
+    console.log(`[Submission Auto-Approval] Submission has divergences: ${fullReason}`)
+  }
+
   e.next()
 }, 'submissions')

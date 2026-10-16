@@ -25,6 +25,8 @@ import useAuthStore from '@/stores/useAuthStore'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
+import { ShieldAlert } from 'lucide-react'
 
 interface Props {
   isOpen: boolean
@@ -44,6 +46,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
   const [link, setLink] = useState('')
   const [description, setDescription] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  const [rulesAcknowledged, setRulesAcknowledged] = useState(false)
 
   useEffect(() => {
     if (isOpen && item) {
@@ -67,6 +70,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
       setLink('')
       setDescription('')
       setFile(null)
+      setRulesAcknowledged(false)
     }
   }, [isOpen, item])
 
@@ -74,10 +78,19 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
     e.preventDefault()
     if (!item || !user) return
 
+    if (!rulesAcknowledged) {
+      toast({
+        title: 'Aceite obrigatório',
+        description: 'É necessário confirmar a leitura das recomendações e regras antes de enviar.',
+        variant: 'destructive',
+      })
+      return
+    }
+
     if (!file && !link) {
       toast({
         title: 'Evidência necessária',
-        description: 'Forneça um arquivo ou um link como evidência.',
+        description: 'Forneça um arquivo legível como evidência comprovatória.',
         variant: 'destructive',
       })
       return
@@ -92,12 +105,16 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
       formData.append('user_id', user.id)
       formData.append('type', type)
       formData.append('description', description)
+      formData.append('rules_accepted', 'true')
 
       if (metadata?.id) {
         formData.append('activity_id', metadata.id)
       }
       if (link) formData.append('link', link)
-      if (file) formData.append('file', file)
+      if (file) {
+        formData.append('file', file)
+        formData.append('document_file', file.name)
+      }
 
       await pb.collection('submissions').create(formData)
 
@@ -137,6 +154,51 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
 
         <ScrollArea className="px-6 py-4 flex-1">
           <div className="space-y-6">
+            {/* Bloco Obrigatório: Recomendações e Cuidados antes de submeter */}
+            <div className="rounded-lg border border-amber-300 bg-amber-50/80 p-4 space-y-3 dark:border-amber-900/60 dark:bg-amber-950/20 text-xs sm:text-sm">
+              <div className="flex items-center gap-2 text-amber-950 dark:text-amber-200 font-semibold">
+                <ShieldAlert className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                <span>Recomendações e Cuidados Importantes (Leitura e Ciência Obrigatórias)</span>
+              </div>
+              <div className="text-muted-foreground space-y-1.5 pl-4 list-disc list-outside text-xs">
+                <p>
+                  • <strong>Análise Automática de Conformidade:</strong> Toda submissão é avaliada
+                  automaticamente pelo sistema contra o catálogo oficial, regras de limites e o seu
+                  nível atual.
+                </p>
+                <p>
+                  • <strong>Comprovação Legível e Válida:</strong> O documento anexado deve ser
+                  nítido e em formato aceito (PDF, PNG, JPG, DOCX). Arquivos corrompidos ou em
+                  branco geram divergência.
+                </p>
+                <p>
+                  • <strong>Limites da Atividade:</strong> Respeite o limite máximo de ocorrências
+                  (ex.: <em>Até 5x</em> ou Cumprimento Único). O observador escolhe seu documento
+                  prioritário com total autonomia.
+                </p>
+                <p>
+                  • <strong>Tratamento de Divergências:</strong> Caso seja identificada alguma
+                  divergência, a submissão ficará como <em>Aguardando Complemento</em>, permitindo{' '}
+                  <strong>Complementar</strong> ou <strong>Renunciar</strong>.
+                </p>
+              </div>
+              <div className="pt-2 border-t border-amber-200/80 dark:border-amber-900/50 flex items-start space-x-2.5">
+                <Checkbox
+                  id="rules-acknowledged"
+                  checked={rulesAcknowledged}
+                  onCheckedChange={(checked) => setRulesAcknowledged(checked === true)}
+                  className="mt-0.5 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600"
+                />
+                <label
+                  htmlFor="rules-acknowledged"
+                  className="text-xs font-semibold text-amber-950 dark:text-amber-100 cursor-pointer select-none leading-snug"
+                >
+                  Estou ciente e concordo com as regras de pontuação, limites e exigências de
+                  legibilidade descritas acima para esta submissão.
+                </label>
+              </div>
+            </div>
+
             {fetchingMeta ? (
               <div className="flex items-center justify-center p-6 text-muted-foreground">
                 <Loader2 className="h-6 w-6 animate-spin mr-2" />
@@ -287,7 +349,17 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
           <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
             Cancelar
           </Button>
-          <Button type="submit" form="evidence-form" disabled={loading} className="min-w-[150px]">
+          <Button
+            type="submit"
+            form="evidence-form"
+            disabled={loading || !rulesAcknowledged}
+            className="min-w-[150px]"
+            title={
+              !rulesAcknowledged
+                ? 'Confirme o aceite das recomendações acima para prosseguir'
+                : undefined
+            }
+          >
             {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
             {loading ? 'Enviando...' : 'Enviar Evidência'}
           </Button>

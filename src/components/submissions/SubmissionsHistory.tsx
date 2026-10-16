@@ -27,14 +27,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { CheckCircle2, Clock, AlertTriangle, Eye, FileText } from 'lucide-react'
+import {
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  Eye,
+  FileText,
+  UploadCloud,
+  XCircle,
+  Loader2,
+} from 'lucide-react'
 import useSubmissionsStore, { Submission } from '@/stores/useSubmissionsStore'
 import useAuthStore from '@/stores/useAuthStore'
+import { toast } from '@/hooks/use-toast'
 
 export function SubmissionsHistory() {
-  const { submissions } = useSubmissionsStore()
+  const { submissions, updateSubmissionStatus, editSubmission } = useSubmissionsStore()
   const { user: authUser } = useAuthStore()
   const [viewingSub, setViewingSub] = useState<Submission | null>(null)
+  const [complementModalSub, setComplementModalSub] = useState<Submission | null>(null)
+  const [complementFile, setComplementFile] = useState<File | null>(null)
+  const [isSubmittingAction, setIsSubmittingAction] = useState(false)
 
   const uniqueUsers = Array.from(new Set(submissions.map((s) => s.userId).filter(Boolean)))
   const isSingleUser = uniqueUsers.length === 1
@@ -82,12 +95,25 @@ export function SubmissionsHistory() {
           </Badge>
         )
       case 'Ajuste Necessário':
+      case 'Aguardando Complemento':
         return (
           <Badge
             variant="destructive"
-            className="bg-orange-100 text-orange-800 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-500 dark:hover:bg-orange-900/50 border-0 font-medium px-2.5 py-0.5"
+            className="bg-amber-100 text-amber-900 hover:bg-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:hover:bg-amber-900/60 border-amber-300 font-medium px-2.5 py-0.5"
           >
-            <AlertTriangle className="w-3.5 h-3.5 mr-1.5" /> <span>Ajuste Necessário</span>
+            <AlertTriangle className="w-3.5 h-3.5 mr-1.5 text-amber-600 dark:text-amber-400" />{' '}
+            <span>
+              {status === 'Aguardando Complemento' ? 'Aguardando Complemento' : 'Ajuste Necessário'}
+            </span>
+          </Badge>
+        )
+      case 'Renunciada':
+        return (
+          <Badge
+            variant="outline"
+            className="bg-muted text-muted-foreground border-muted-foreground/30 font-medium px-2.5 py-0.5"
+          >
+            <XCircle className="w-3.5 h-3.5 mr-1.5" /> <span>Renunciada</span>
           </Badge>
         )
       default:
@@ -96,6 +122,69 @@ export function SubmissionsHistory() {
             <span>{status}</span>
           </Badge>
         )
+    }
+  }
+
+  const handleRenounce = async (sub: Submission) => {
+    const confirm = window.confirm(
+      `Deseja realmente RENUNCIAR à submissão "${sub.title}"? Ela será encerrada sem atribuição de pontos.`,
+    )
+    if (!confirm) return
+
+    setIsSubmittingAction(true)
+    try {
+      await updateSubmissionStatus(
+        sub.id,
+        'Renunciada',
+        0,
+        'Submissão renunciada pelo próprio observador.',
+      )
+      toast({
+        title: 'Submissão Renunciada',
+        description: 'A submissão foi encerrada sem pontuação conforme solicitado.',
+      })
+    } catch (err: any) {
+      toast({
+        title: 'Erro ao renunciar',
+        description: err.message || 'Não foi possível registrar a renúncia.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsSubmittingAction(false)
+    }
+  }
+
+  const handleComplementSubmit = async () => {
+    if (!complementModalSub || !complementFile) {
+      toast({
+        title: 'Arquivo obrigatório',
+        description: 'Selecione o documento comprobatório para complementar a submissão.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setIsSubmittingAction(true)
+    try {
+      await editSubmission(complementModalSub.id, {
+        file: complementFile,
+      })
+      // Coloca status em reanálise para o hook reprocessar automaticamente
+      await updateSubmissionStatus(complementModalSub.id, 'Em Análise')
+      toast({
+        title: 'Complemento Enviado!',
+        description: 'O novo documento foi submetido e está passando por reanálise automática.',
+      })
+      setComplementModalSub(null)
+      setComplementFile(null)
+    } catch (err: any) {
+      toast({
+        title: 'Erro ao enviar complemento',
+        description: err.message || 'Falha no envio do novo arquivo.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsSubmittingAction(false)
     }
   }
 
@@ -158,13 +247,15 @@ export function SubmissionsHistory() {
                               : 'Outros'}
                         </span>
                       </div>
-                      {sub.feedback && (
+                      {(sub.divergence_reason || sub.feedback) && (
                         <div
-                          className="text-xs text-muted-foreground mt-1 max-w-[250px] line-clamp-2"
-                          title={sub.feedback}
+                          className="text-xs text-amber-800 dark:text-amber-400 mt-1 max-w-[280px] line-clamp-2 bg-amber-50 dark:bg-amber-950/30 p-1 rounded border border-amber-200 dark:border-amber-900/40"
+                          title={sub.divergence_reason || sub.feedback}
                         >
-                          <span className="font-medium text-foreground">Feedback: </span>
-                          <span>{sub.feedback}</span>
+                          <span className="font-semibold text-amber-900 dark:text-amber-200">
+                            Motivo:{' '}
+                          </span>
+                          <span>{sub.divergence_reason || sub.feedback}</span>
                         </div>
                       )}
                     </TableCell>
@@ -182,7 +273,37 @@ export function SubmissionsHistory() {
                       )}
                     </TableCell>
                     <TableCell className="text-right pr-6">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1.5">
+                        {(sub.status === 'Aguardando Complemento' ||
+                          sub.status === 'Ajuste Necessário') && (
+                          <>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-7 text-xs border-amber-400 text-amber-800 hover:bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:hover:bg-amber-950"
+                              onClick={() => {
+                                setComplementModalSub(sub)
+                                setComplementFile(null)
+                              }}
+                              disabled={isSubmittingAction}
+                              title="Enviar novo documento para reanálise"
+                            >
+                              <UploadCloud className="h-3.5 w-3.5 mr-1" />
+                              Complementar
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                              onClick={() => handleRenounce(sub)}
+                              disabled={isSubmittingAction}
+                              title="Encerrar submissão sem pontos"
+                            >
+                              <XCircle className="h-3.5 w-3.5 mr-1" />
+                              Renunciar
+                            </Button>
+                          </>
+                        )}
                         <Button
                           variant="ghost"
                           size="icon"
@@ -335,6 +456,88 @@ export function SubmissionsHistory() {
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setViewingSub(null)}>
               Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Complementação de Evidência */}
+      <Dialog
+        open={!!complementModalSub}
+        onOpenChange={(open) => {
+          if (!open) {
+            setComplementModalSub(null)
+            setComplementFile(null)
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[520px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UploadCloud className="h-5 w-5 text-amber-600" />
+              Complementar Submissão
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="bg-amber-50 dark:bg-amber-950/30 p-3 rounded-lg border border-amber-200 dark:border-amber-900/50 text-xs sm:text-sm">
+              <span className="font-semibold text-amber-900 dark:text-amber-200 block mb-1">
+                Motivo da Divergência:
+              </span>
+              <p className="text-muted-foreground">
+                {complementModalSub?.divergence_reason ||
+                  complementModalSub?.feedback ||
+                  'Documento inconsistente ou ilegível.'}
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="font-semibold text-sm">Atividade:</Label>
+              <p className="text-sm text-foreground bg-muted/40 p-2 rounded">
+                {complementModalSub?.title}
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="complement-file" className="font-semibold text-sm">
+                Novo Arquivo Comprobatório (Legível e Completo) *
+              </Label>
+              <Input
+                id="complement-file"
+                type="file"
+                onChange={(e) => setComplementFile(e.target.files?.[0] || null)}
+                className="cursor-pointer file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+              />
+              <p className="text-xs text-muted-foreground">
+                Formatos aceitos: PDF, PNG, JPG, JPEG, DOCX. O envio passará imediatamente por nova
+                análise automática.
+              </p>
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setComplementModalSub(null)
+                setComplementFile(null)
+              }}
+              disabled={isSubmittingAction}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="button"
+              onClick={handleComplementSubmit}
+              disabled={isSubmittingAction || !complementFile}
+            >
+              {isSubmittingAction ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                'Enviar para Reanálise'
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

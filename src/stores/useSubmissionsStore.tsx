@@ -32,6 +32,9 @@ export interface Submission {
   turma?: number
   userPoints?: number
   score?: number
+  divergence_reason?: string
+  rules_accepted?: boolean
+  auto_evaluated?: boolean
   activity?: {
     id?: string
     axis?: string
@@ -58,6 +61,7 @@ interface SubmissionsState {
       link?: string
       description?: string
       activity_id?: string
+      rules_accepted?: boolean
     },
     onProgress?: (progress: number) => void,
   ) => Promise<void>
@@ -67,6 +71,7 @@ interface SubmissionsState {
     points?: number,
     feedback?: string,
     nivel?: string,
+    divergence_reason?: string,
   ) => Promise<void>
   editSubmission: (
     id: string,
@@ -121,6 +126,9 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
           feedback: r.feedback,
           userPoints: r.expand?.user_id?.points || 0,
           score: r.score || 0,
+          divergence_reason: r.divergence_reason,
+          rules_accepted: r.rules_accepted,
+          auto_evaluated: r.auto_evaluated,
           fileUrl: r.file
             ? `${pb.baseURL}/api/files/${r.collectionId}/${r.id}/${r.file}`
             : undefined,
@@ -173,23 +181,46 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
       link?: string
       description?: string
       activity_id?: string
+      rules_accepted?: boolean
     },
     onProgress?: (progress: number) => void,
   ) => {
     if (!user) return
 
     let resolvedActivityId = sub.activity_id
+    let activityRecord: any = null
     if (!resolvedActivityId && sub.title) {
       try {
         const trimmedTitle = sub.title.trim()
-        const meta = await pb
+        activityRecord = await pb
           .collection('activities_metadata')
           .getFirstListItem(`title = "${trimmedTitle}"`)
-        if (meta) {
-          resolvedActivityId = meta.id
+        if (activityRecord) {
+          resolvedActivityId = activityRecord.id
         }
       } catch (_) {
         // If exact match not found or fails, backend hook will also resolve
+      }
+    } else if (resolvedActivityId) {
+      try {
+        activityRecord = await pb.collection('activities_metadata').getOne(resolvedActivityId)
+      } catch {
+        /* intentionally ignored */
+      }
+    }
+
+    // Calcular pontuação esperada conforme regra canônica e tipo de pontuação
+    let calculatedPoints = sub.points || 0
+    if (activityRecord) {
+      const userLevel = user.level || 'Nível I'
+      if (activityRecord.points_type === 'level_based') {
+        if (userLevel === 'Nível II')
+          calculatedPoints = activityRecord.points_level_2 || activityRecord.points || 0
+        else if (userLevel === 'Nível III')
+          calculatedPoints = activityRecord.points_level_3 || activityRecord.points || 0
+        else calculatedPoints = activityRecord.points_level_1 || activityRecord.points || 0
+      } else {
+        calculatedPoints = activityRecord.points || 0
       }
     }
 
@@ -197,11 +228,16 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     formData.append('title', sub.title)
     formData.append('nivel', sub.nivel)
     formData.append('status', 'Em Análise')
-    formData.append('score', String(sub.points || 0))
+    formData.append('score', String(calculatedPoints))
     formData.append('user_id', user.id)
     formData.append('type', sub.type || 'competency')
+    formData.append('rules_accepted', String(sub.rules_accepted !== false))
     if (resolvedActivityId) formData.append('activity_id', resolvedActivityId)
-    if (sub.file) formData.append('file', sub.file)
+    // Submissão tanto para 'file' (legado) quanto 'document_file' (schema)
+    if (sub.file) {
+      formData.append('file', sub.file)
+      formData.append('document_file', sub.file.name)
+    }
     if (sub.link) formData.append('link', sub.link)
     if (sub.description) formData.append('description', sub.description)
 
@@ -220,12 +256,14 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     points?: number,
     feedback?: string,
     nivel?: string,
+    divergence_reason?: string,
   ) => {
     await pb.collection('submissions').update(id, {
       status,
       ...(points !== undefined && { score: points }),
       ...(feedback !== undefined && { feedback }),
       ...(nivel !== undefined && { nivel }),
+      ...(divergence_reason !== undefined && { divergence_reason }),
     })
   }
 

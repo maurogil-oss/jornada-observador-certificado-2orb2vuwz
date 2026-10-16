@@ -94,12 +94,19 @@ const registerSchema = z
       .min(1, 'Obrigatório')
       .refine(
         (val) => {
-          const date = new Date(val)
+          if (!val) return false
+          const parts = val.split('-')
+          if (parts.length !== 3) return false
+          const year = parseInt(parts[0], 10)
+          const month = parseInt(parts[1], 10) - 1
+          const day = parseInt(parts[2], 10)
+          const date = new Date(year, month, day)
           if (isNaN(date.getTime())) return false
-          const year = date.getFullYear()
           const currentYear = new Date().getFullYear()
           const age = currentYear - year
-          return year > 1900 && age <= 110 && date <= new Date()
+          const today = new Date()
+          today.setHours(23, 59, 59, 999)
+          return year > 1900 && age <= 110 && date <= today
         },
         { message: 'Data inválida ou idade superior a 110 anos.' },
       ),
@@ -139,7 +146,7 @@ const STEPS = [
   },
 ]
 
-export default function Login() {
+export function LoginContent() {
   const [activeTab, setActiveTab] = useState('login')
   const [rawStep, setRawStep] = useState(0)
   const safeStep = Math.min(Math.max(rawStep, 0), STEPS.length - 1)
@@ -169,23 +176,23 @@ export default function Login() {
       return () => clearTimeout(timer)
     }
   }, [showTurma15Form])
-  const {
-    login,
-    register,
-    isAuthenticated,
-    user,
-    logout,
-    isLoading: isAuthLoading,
-  } = useAuthStore()
+  const authStore = useAuthStore()
+  const login = authStore?.login
+  const register = authStore?.register
+  const isAuthenticated = authStore?.isAuthenticated ?? false
+  const user = authStore?.user ?? null
+  const logout = authStore?.logout
+  const isAuthLoading = authStore?.isLoading ?? false
+
   const navigate = useNavigate()
   const { toast } = useToast()
   const location = useLocation()
-  const from = location.state?.from?.pathname || (user?.role === 'admin' ? '/admin' : '/')
+  const from = location?.state?.from?.pathname || (user?.role === 'admin' ? '/admin' : '/')
 
   useEffect(() => {
     if (!isAuthLoading && isAuthenticated && user) {
       if (user.is_active === false) {
-        logout()
+        if (logout) logout()
         toast({
           title: 'Conta em Análise',
           description:
@@ -193,7 +200,7 @@ export default function Login() {
           variant: 'destructive',
         })
       } else {
-        navigate(from, { replace: true })
+        navigate(from || '/', { replace: true })
       }
     }
   }, [isAuthLoading, isAuthenticated, user, navigate, logout, toast, from])
@@ -237,6 +244,14 @@ export default function Login() {
   }
 
   const onLogin = async (data: LoginForm) => {
+    if (!login) {
+      toast({
+        title: 'Serviço indisponível',
+        description: 'Tente novamente em instantes.',
+        variant: 'destructive',
+      })
+      return
+    }
     setIsLoading(true)
     try {
       await login(data.email, data.password)
@@ -326,6 +341,14 @@ export default function Login() {
   }
 
   const onRegister = async (data: RegisterForm) => {
+    if (!register) {
+      toast({
+        title: 'Serviço indisponível',
+        description: 'Tente novamente em instantes.',
+        variant: 'destructive',
+      })
+      return
+    }
     setIsLoading(true)
     toast({
       title: 'Conectando...',
@@ -1090,5 +1113,55 @@ export default function Login() {
 
       <AppFooter />
     </div>
+  )
+}
+
+export default function Login() {
+  return (
+    <ErrorBoundary
+      fallback={(err, reset) => (
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background text-center">
+          <div className="max-w-md space-y-6">
+            <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
+              <AlertCircle className="w-8 h-8 text-destructive" />
+            </div>
+            <div className="space-y-2">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                Portal Estratégico ONSV
+              </h1>
+              <p className="text-muted-foreground text-sm">
+                Ocorreu uma instabilidade momentânea no carregamento da tela de login.
+              </p>
+            </div>
+            {err?.message && (
+              <div className="p-3 bg-muted/50 rounded-lg text-left text-xs font-mono text-muted-foreground break-words max-h-24 overflow-auto border border-border">
+                {err.message}
+              </div>
+            )}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+              <Button onClick={() => reset()} className="gap-2">
+                Recarregar Formulário
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  try {
+                    localStorage.removeItem('pocketbase_auth')
+                    sessionStorage.clear()
+                  } catch {
+                    /* intentionally ignored */
+                  }
+                  window.location.reload()
+                }}
+              >
+                Limpar Cache e Recarregar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    >
+      <LoginContent />
+    </ErrorBoundary>
   )
 }

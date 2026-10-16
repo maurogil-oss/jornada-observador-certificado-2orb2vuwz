@@ -58,15 +58,21 @@ function StatusBadge({ status }: { status: string }) {
           color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500',
           icon: CheckCircle2,
         }
-      : status === 'Ajuste Necessário'
+      : status === 'Ajuste Necessário' || status === 'Aguardando Complemento'
         ? {
-            color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500',
+            color:
+              'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-500 border border-amber-300',
             icon: AlertTriangle,
           }
-        : {
-            color: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-500',
-            icon: Clock,
-          }
+        : status === 'Renunciada'
+          ? {
+              color: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300',
+              icon: AlertTriangle,
+            }
+          : {
+              color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500',
+              icon: Clock,
+            }
 
   const Icon = config.icon
   return (
@@ -110,7 +116,8 @@ export default function AdminSubmissions() {
   }
   const navigate = useNavigate()
 
-  const [filterStatus, setFilterStatus] = useState<string>('Todos')
+  // Por padrão, a fila do administrador foca nas divergências (Aguardando Complemento / Ajuste Necessário)
+  const [filterStatus, setFilterStatus] = useState<string>('Divergências')
   const [selectedSub, setSelectedSub] = useState<Submission | null>(null)
 
   const [newStatus, setNewStatus] = useState<string>('')
@@ -134,30 +141,37 @@ export default function AdminSubmissions() {
 
   const filteredSubmissions = useMemo(() => {
     let filtered = submissions
-    if (filterStatus !== 'Todos') {
+    if (filterStatus === 'Divergências') {
+      filtered = filtered.filter(
+        (s) => s.status === 'Aguardando Complemento' || s.status === 'Ajuste Necessário',
+      )
+    } else if (filterStatus !== 'Todos') {
       filtered = filtered.filter((s) => s.status === filterStatus)
     }
     return filtered.sort((a, b) => {
-      if (a.status === 'Em Análise' && b.status === 'Em Análise') {
-        return new Date(a.created).getTime() - new Date(b.created).getTime() // Oldest first
-      }
-      if (a.status === 'Em Análise') return -1
-      if (b.status === 'Em Análise') return 1
-      return new Date(b.created).getTime() - new Date(a.created).getTime() // Newest first for others
+      // Divergências / pendentes primeiro
+      const isAAction = a.status === 'Aguardando Complemento' || a.status === 'Ajuste Necessário'
+      const isBAction = b.status === 'Aguardando Complemento' || b.status === 'Ajuste Necessário'
+      if (isAAction && !isBAction) return -1
+      if (!isAAction && isBAction) return 1
+      return new Date(b.created).getTime() - new Date(a.created).getTime()
     })
   }, [submissions, filterStatus])
 
   const summary = useMemo(() => {
     let pending = 0
     let approved = 0
-    let review = 0
-    filteredSubmissions.forEach((s) => {
+    let divergences = 0
+    let renounced = 0
+    submissions.forEach((s) => {
       if (s.status === 'Em Análise') pending++
       else if (s.status === 'Aprovado') approved++
-      else if (s.status === 'Ajuste Necessário') review++
+      else if (s.status === 'Aguardando Complemento' || s.status === 'Ajuste Necessário')
+        divergences++
+      else if (s.status === 'Renunciada') renounced++
     })
-    return { total: filteredSubmissions.length, pending, approved, review }
-  }, [filteredSubmissions])
+    return { total: submissions.length, pending, approved, divergences, renounced }
+  }, [submissions])
 
   const handleOpenReview = (sub: Submission) => {
     setSelectedSub(sub)
@@ -241,47 +255,54 @@ export default function AdminSubmissions() {
         <div className="flex items-center gap-3">
           <Label className="whitespace-nowrap font-medium">Filtrar por Status:</Label>
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-[180px] bg-background">
+            <SelectTrigger className="w-[200px] bg-background">
               <SelectValue placeholder="Selecione um status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Todos">Todos</SelectItem>
-              <SelectItem value="Em Análise">Em Análise</SelectItem>
-              <SelectItem value="Aprovado">Aprovado</SelectItem>
+              <SelectItem value="Divergências">Divergências Pendentes</SelectItem>
+              <SelectItem value="Todos">Todos os Registros</SelectItem>
+              <SelectItem value="Aguardando Complemento">Aguardando Complemento</SelectItem>
               <SelectItem value="Ajuste Necessário">Ajuste Necessário</SelectItem>
+              <SelectItem value="Aprovado">Aprovados (Histórico)</SelectItem>
+              <SelectItem value="Em Análise">Em Análise</SelectItem>
+              <SelectItem value="Renunciada">Renunciadas</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="rounded-xl border bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/50 shadow-sm p-6 flex flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+              Divergências Pendentes
+            </span>
+            <AlertTriangle className="h-4 w-4 text-amber-600" />
+          </div>
+          <span className="text-2xl font-bold text-amber-900 dark:text-amber-200">
+            {summary.divergences}
+          </span>
+        </div>
         <div className="rounded-xl border bg-card text-card-foreground shadow-sm p-6 flex flex-col gap-1">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Total</span>
+            <span className="text-sm font-medium">Aprovadas Automaticamente</span>
+            <CheckCircle2 className="h-4 w-4 text-green-500" />
+          </div>
+          <span className="text-2xl font-bold text-green-600">{summary.approved}</span>
+        </div>
+        <div className="rounded-xl border bg-card text-card-foreground shadow-sm p-6 flex flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Renunciadas</span>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <span className="text-2xl font-bold">{summary.renounced}</span>
+        </div>
+        <div className="rounded-xl border bg-card text-card-foreground shadow-sm p-6 flex flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Total de Submissões</span>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </div>
           <span className="text-2xl font-bold">{summary.total}</span>
-        </div>
-        <div className="rounded-xl border bg-card text-card-foreground shadow-sm p-6 flex flex-col gap-1">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Em Análise</span>
-            <Clock className="h-4 w-4 text-amber-500" />
-          </div>
-          <span className="text-2xl font-bold">{summary.pending}</span>
-        </div>
-        <div className="rounded-xl border bg-card text-card-foreground shadow-sm p-6 flex flex-col gap-1">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Aprovado</span>
-            <CheckCircle2 className="h-4 w-4 text-green-500" />
-          </div>
-          <span className="text-2xl font-bold">{summary.approved}</span>
-        </div>
-        <div className="rounded-xl border bg-card text-card-foreground shadow-sm p-6 flex flex-col gap-1">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Ajuste Necessário</span>
-            <AlertTriangle className="h-4 w-4 text-red-500" />
-          </div>
-          <span className="text-2xl font-bold">{summary.review}</span>
         </div>
       </div>
 
@@ -322,21 +343,15 @@ export default function AdminSubmissions() {
                       </span>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-xs text-muted-foreground truncate">{sub.nivel}</span>
-                        {(() => {
-                          const limitInfo = getSubmissionLimitInfo(sub)
-                          if (limitInfo?.exceeded) {
-                            return (
-                              <span
-                                className="inline-flex items-center gap-1 text-[10px] font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-1.5 py-0.5 rounded"
-                                title={limitInfo.message}
-                              >
-                                <AlertTriangle className="w-3 h-3" />
-                                Limite Excedido
-                              </span>
-                            )
-                          }
-                          return null
-                        })()}
+                        {sub.divergence_reason && (
+                          <span
+                            className="inline-flex items-center gap-1 text-[10px] font-medium bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 px-1.5 py-0.5 rounded max-w-[200px] truncate"
+                            title={sub.divergence_reason}
+                          >
+                            <AlertTriangle className="w-3 h-3 shrink-0 text-amber-600" />
+                            {sub.divergence_reason}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </TableCell>
@@ -395,6 +410,18 @@ export default function AdminSubmissions() {
                 })()}
 
                 <div className="bg-card p-5 rounded-lg space-y-5 text-sm border border-border shadow-sm">
+                  {selectedSub.divergence_reason && (
+                    <div className="bg-amber-50 dark:bg-amber-950/40 p-3 rounded-lg border border-amber-300 dark:border-amber-900/60 text-xs sm:text-sm">
+                      <div className="flex items-center gap-1.5 text-amber-900 dark:text-amber-200 font-semibold mb-1">
+                        <AlertTriangle className="h-4 w-4 text-amber-600" />
+                        <span>Carimbo de Divergência Automática</span>
+                      </div>
+                      <p className="text-amber-800 dark:text-amber-300 font-medium">
+                        {selectedSub.divergence_reason}
+                      </p>
+                    </div>
+                  )}
+
                   <div>
                     <span className="block text-[11px] text-muted-foreground font-semibold uppercase mb-1">
                       Título
@@ -503,9 +530,13 @@ export default function AdminSubmissions() {
                           <SelectValue placeholder="Selecione um status" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Em Análise">Em Análise</SelectItem>
                           <SelectItem value="Aprovado">Aprovado</SelectItem>
+                          <SelectItem value="Aguardando Complemento">
+                            Aguardando Complemento
+                          </SelectItem>
                           <SelectItem value="Ajuste Necessário">Ajuste Necessário</SelectItem>
+                          <SelectItem value="Em Análise">Em Análise</SelectItem>
+                          <SelectItem value="Renunciada">Renunciada</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
