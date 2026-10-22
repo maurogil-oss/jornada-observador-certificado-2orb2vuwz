@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-22T14:31:44.169Z",
+  "generatedAt": "2026-10-22T15:32:21.528Z",
   "collections": [
     {
       "name": "users",
@@ -29,14 +29,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "points",
@@ -175,7 +180,11 @@
           "type": "select",
           "required": false,
           "system": false,
-          "selectValues": ["admin", "observer", "mentor"]
+          "selectValues": [
+            "admin",
+            "observer",
+            "mentor"
+          ]
         }
       ],
       "indexes": [
@@ -240,21 +249,30 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["titulation", "competency", "other"]
+          "selectValues": [
+            "titulation",
+            "competency",
+            "other"
+          ]
         },
         {
           "name": "created",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "file",
@@ -339,7 +357,10 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["Success", "Error"]
+          "selectValues": [
+            "Success",
+            "Error"
+          ]
         },
         {
           "name": "details",
@@ -359,14 +380,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": []
@@ -418,14 +444,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": []
@@ -488,14 +519,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "points_level_1",
@@ -538,7 +574,10 @@
           "type": "select",
           "required": false,
           "system": false,
-          "selectValues": ["fixed", "level_based"]
+          "selectValues": [
+            "fixed",
+            "level_based"
+          ]
         },
         {
           "name": "max_occurrences",
@@ -580,17 +619,24 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
-      "indexes": ["CREATE UNIQUE INDEX idx_countries_name ON countries (name)"]
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_countries_name ON countries (name)"
+      ]
     },
     {
       "name": "states",
@@ -627,14 +673,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": [
@@ -671,14 +722,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": [
@@ -702,7 +758,11 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["Nível I", "Nível II", "Nível III"]
+          "selectValues": [
+            "Nível I",
+            "Nível II",
+            "Nível III"
+          ]
         },
         {
           "name": "file",
@@ -721,14 +781,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": []
@@ -786,21 +851,32 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "status",
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["Abertura", "Discussões", "Consolidação", "Aprovação", "Publicação"]
+          "selectValues": [
+            "Abertura",
+            "Discussões",
+            "Consolidação",
+            "Aprovação",
+            "Publicação"
+          ]
         },
         {
           "name": "pilar_pnatrans",
@@ -831,7 +907,9 @@
           "system": false
         }
       ],
-      "indexes": ["CREATE UNIQUE INDEX idx_forums_code ON forums (code)"]
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_forums_code ON forums (code)"
+      ]
     },
     {
       "name": "forum_messages",
@@ -875,14 +953,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "parent_id",
@@ -929,21 +1012,30 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "category",
           "type": "select",
           "required": false,
           "system": false,
-          "selectValues": ["Documento Técnico", "Nota Técnica", "Guia Prático"]
+          "selectValues": [
+            "Documento Técnico",
+            "Nota Técnica",
+            "Guia Prático"
+          ]
         },
         {
           "name": "code",
@@ -952,7 +1044,9 @@
           "system": false
         }
       ],
-      "indexes": ["CREATE UNIQUE INDEX `idx_forum_library_code` ON `forum_library` (code)"]
+      "indexes": [
+        "CREATE UNIQUE INDEX `idx_forum_library_code` ON `forum_library` (code)"
+      ]
     },
     {
       "name": "forum_drafts",
@@ -995,14 +1089,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": []
@@ -1029,17 +1128,24 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
-      "indexes": ["CREATE UNIQUE INDEX idx_forum_tags_name ON forum_tags (name)"]
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_forum_tags_name ON forum_tags (name)"
+      ]
     },
     {
       "name": "forum_relations",
@@ -1071,21 +1177,29 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["Pending", "Approved"]
+          "selectValues": [
+            "Pending",
+            "Approved"
+          ]
         },
         {
           "name": "created",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": [
@@ -1120,7 +1234,11 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["Federal", "Estadual", "Municipal"]
+          "selectValues": [
+            "Federal",
+            "Estadual",
+            "Municipal"
+          ]
         },
         {
           "name": "state",
@@ -1169,14 +1287,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": [
@@ -1226,7 +1349,10 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["Titular", "Suplente"]
+          "selectValues": [
+            "Titular",
+            "Suplente"
+          ]
         },
         {
           "name": "term_start",
@@ -1263,21 +1389,30 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["Ativo", "Encerrado", "Pendente"]
+          "selectValues": [
+            "Ativo",
+            "Encerrado",
+            "Pendente"
+          ]
         },
         {
           "name": "created",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": [
@@ -1359,17 +1494,24 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
-      "indexes": ["CREATE INDEX idx_rep_docs_inst ON representation_documents (institution_id)"]
+      "indexes": [
+        "CREATE INDEX idx_rep_docs_inst ON representation_documents (institution_id)"
+      ]
     },
     {
       "name": "representation_meetings",
@@ -1400,7 +1542,12 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["Ordinária", "Extraordinária", "Câmara Temática", "Grupo de Trabalho"]
+          "selectValues": [
+            "Ordinária",
+            "Extraordinária",
+            "Câmara Temática",
+            "Grupo de Trabalho"
+          ]
         },
         {
           "name": "meeting_date",
@@ -1456,14 +1603,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "convocacao_file",
@@ -1478,7 +1630,9 @@
           "system": false
         }
       ],
-      "indexes": ["CREATE INDEX idx_rep_meet_inst ON representation_meetings (institution_id)"]
+      "indexes": [
+        "CREATE INDEX idx_rep_meet_inst ON representation_meetings (institution_id)"
+      ]
     },
     {
       "name": "representation_topics",
@@ -1515,7 +1669,12 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["Em Discussão", "Sinalizado ONSV", "Orientado ONSV", "Concluído"]
+          "selectValues": [
+            "Em Discussão",
+            "Sinalizado ONSV",
+            "Orientado ONSV",
+            "Concluído"
+          ]
         },
         {
           "name": "attention_flag",
@@ -1553,14 +1712,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "next_discussion_date",
@@ -1576,7 +1740,9 @@
           "collectionRef": "forums"
         }
       ],
-      "indexes": ["CREATE INDEX idx_rep_top_inst ON representation_topics (institution_id)"]
+      "indexes": [
+        "CREATE INDEX idx_rep_top_inst ON representation_topics (institution_id)"
+      ]
     },
     {
       "name": "representation_topic_replies",
@@ -1614,14 +1780,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": [
