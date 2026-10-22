@@ -142,18 +142,48 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
     return cleaned.trim()
   }
 
+  // Helpers to derive helpful display info when metadata fields are empty
+  const maxLimitDisplay = (() => {
+    if (metadata?.max_limit && cleanText(metadata.max_limit)) {
+      return cleanText(metadata.max_limit)
+    }
+    if (metadata?.max_occurrences && metadata.max_occurrences > 0) {
+      return metadata.max_occurrences === 1
+        ? 'Cumprimento único (1x)'
+        : `Até ${metadata.max_occurrences} ocorrências`
+    }
+    if (metadata?.is_unique) {
+      return 'Cumprimento único (1x)'
+    }
+    if (item?.title) {
+      const match = item.title.match(/até\s+(\d+)x/i)
+      if (match) return `Até ${match[1]} ocorrências`
+    }
+    return null
+  })()
+
+  const pointsTypeDisplay = (() => {
+    if (metadata?.points_type === 'level_based') {
+      return 'Pontuação progressiva conforme o nível do Observador'
+    }
+    if (metadata?.points_type === 'fixed') {
+      return 'Pontuação fixa por ocorrência'
+    }
+    return null
+  })()
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden flex flex-col max-h-[90vh]">
-        <div className="px-6 py-4 border-b bg-muted/30">
+      <DialogContent className="sm:max-w-[700px] p-0 flex flex-col h-auto max-h-[90vh] overflow-hidden">
+        <div className="px-6 py-4 border-b bg-muted/30 shrink-0">
           <DialogTitle className="text-xl font-bold leading-tight">Submeter Evidência</DialogTitle>
           <DialogDescription className="mt-1.5 text-base font-medium text-foreground">
             {item?.title}
           </DialogDescription>
         </div>
 
-        <ScrollArea className="px-6 py-4 flex-1">
-          <div className="space-y-6">
+        <ScrollArea className="flex-1 min-h-0 w-full">
+          <div className="px-6 py-4 space-y-6">
             {/* Bloco Obrigatório: Recomendações e Cuidados antes de submeter */}
             <div className="rounded-lg border border-amber-300 bg-amber-50/80 p-4 space-y-3 dark:border-amber-900/60 dark:bg-amber-950/20 text-xs sm:text-sm">
               <div className="flex items-center gap-2 text-amber-950 dark:text-amber-200 font-semibold">
@@ -211,34 +241,61 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                   Requisitos da Atividade
                 </AlertTitle>
                 <AlertDescription className="text-foreground/90 space-y-3 mt-2 text-sm leading-relaxed">
-                  {metadata.definition && cleanText(metadata.definition) && (
+                  {metadata.definition && cleanText(metadata.definition) ? (
                     <div>
                       <strong className="block text-primary/80 mb-0.5">Definição:</strong>
                       {cleanText(metadata.definition)}
                     </div>
+                  ) : (
+                    <div>
+                      <strong className="block text-primary/80 mb-0.5">Definição:</strong>
+                      <span className="text-muted-foreground">
+                        Atividade catalogada no{' '}
+                        {metadata.axis || item?.nivel || 'Guia do Observador'}
+                        {metadata.category ? ` (${metadata.category})` : ''}.
+                      </span>
+                    </div>
                   )}
-                  {metadata.required_evidence && cleanText(metadata.required_evidence) && (
+
+                  {metadata.required_evidence && cleanText(metadata.required_evidence) ? (
                     <div>
                       <strong className="block text-primary/80 mb-0.5">
                         Evidência Necessária:
                       </strong>
                       {cleanText(metadata.required_evidence)}
                     </div>
-                  )}
-                  {metadata.max_limit && cleanText(metadata.max_limit) && (
+                  ) : (
                     <div>
-                      <strong className="block text-primary/80 mb-0.5">Limite Máximo:</strong>
-                      {cleanText(metadata.max_limit)}
+                      <strong className="block text-primary/80 mb-0.5">
+                        Evidência Necessária:
+                      </strong>
+                      <span className="text-muted-foreground">
+                        Documento comprobatório legível (PDF, imagem ou link público) que ateste a
+                        realização da atividade.
+                      </span>
                     </div>
                   )}
+
+                  {maxLimitDisplay && (
+                    <div>
+                      <strong className="block text-primary/80 mb-0.5">Limite Máximo:</strong>
+                      {maxLimitDisplay}
+                    </div>
+                  )}
+
                   <div>
                     <strong className="block text-primary/80 mb-0.5">Pontuação:</strong>
-                    <Badge
-                      variant="secondary"
-                      className="bg-primary/10 text-primary hover:bg-primary/20 font-mono"
-                    >
-                      {metadata.points || item?.points} pts
-                    </Badge>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge
+                        variant="secondary"
+                        className="bg-primary/10 text-primary hover:bg-primary/20 font-mono"
+                      >
+                        {metadata.points || item?.points} pts
+                      </Badge>
+                      {pointsTypeDisplay && (
+                        <span className="text-xs text-muted-foreground">({pointsTypeDisplay})</span>
+                      )}
+                    </div>
                   </div>
                 </AlertDescription>
               </Alert>
@@ -345,7 +402,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
           </div>
         </ScrollArea>
 
-        <div className="px-6 py-4 border-t bg-muted/10 flex justify-end gap-3 mt-auto">
+        <div className="px-6 py-4 border-t bg-muted/10 flex justify-end gap-3 shrink-0">
           <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
             Cancelar
           </Button>
