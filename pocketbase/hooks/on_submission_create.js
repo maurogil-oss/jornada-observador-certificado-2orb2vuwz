@@ -42,14 +42,8 @@ onRecordCreate((e) => {
   let activityId = record.getString('activity_id')
   const title = record.getString('title') || ''
 
-  // Suporte a arquivo tanto em 'file' quanto 'document_file'
-  let docFile = record.getString('document_file')
-  if (!docFile) {
-    docFile = record.getString('file')
-    if (docFile) {
-      record.set('document_file', docFile)
-    }
-  }
+  // Nome do arquivo anexado (campo 'file' da coleção submissions)
+  const docFile = record.getString('file')
 
   let user = null
   let userLevel = 'Nível I'

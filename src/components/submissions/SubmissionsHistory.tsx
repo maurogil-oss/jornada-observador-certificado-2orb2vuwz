@@ -40,6 +40,7 @@ import {
 import useSubmissionsStore, { Submission } from '@/stores/useSubmissionsStore'
 import useAuthStore from '@/stores/useAuthStore'
 import { toast } from '@/hooks/use-toast'
+import { validateEvidenceFile } from '@/lib/evidenceValidation'
 
 export function SubmissionsHistory() {
   const { submissions, updateSubmissionStatus, editSubmission } = useSubmissionsStore()
@@ -255,7 +256,11 @@ export function SubmissionsHistory() {
                           <span className="font-semibold text-amber-900 dark:text-amber-200">
                             Motivo:{' '}
                           </span>
-                          <span>{sub.divergence_reason || sub.feedback}</span>
+                          <span>
+                            {sub.divergence_reason ||
+                              sub.feedback ||
+                              'Não foi possível concluir a aprovação automática. Consulte o motivo exibido ao abrir Complementar.'}
+                          </span>
                         </div>
                       )}
                     </TableCell>
@@ -486,7 +491,7 @@ export function SubmissionsHistory() {
               <p className="text-muted-foreground">
                 {complementModalSub?.divergence_reason ||
                   complementModalSub?.feedback ||
-                  'Documento inconsistente ou ilegível.'}
+                  'Não foi possível concluir a aprovação automática. Consulte o motivo exibido no histórico.'}
               </p>
             </div>
 
@@ -504,12 +509,27 @@ export function SubmissionsHistory() {
               <Input
                 id="complement-file"
                 type="file"
-                onChange={(e) => setComplementFile(e.target.files?.[0] || null)}
+                accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx"
+                onChange={(e) => {
+                  const selected = e.target.files?.[0] || null
+                  const validation = selected ? validateEvidenceFile(selected) : null
+                  if (selected && validation) {
+                    toast({
+                      title: validation.title,
+                      description: validation.message,
+                      variant: 'destructive',
+                    })
+                    e.target.value = ''
+                    setComplementFile(null)
+                    return
+                  }
+                  setComplementFile(selected)
+                }}
                 className="cursor-pointer file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
               />
               <p className="text-xs text-muted-foreground">
-                Formatos aceitos: PDF, PNG, JPG, JPEG, DOCX. O envio passará imediatamente por nova
-                análise automática.
+                Formatos aceitos: PDF, PNG, JPG, JPEG, WEBP, DOC ou DOCX (até 20&nbsp;MB). O envio
+                passará imediatamente por nova análise automática.
               </p>
             </div>
           </div>

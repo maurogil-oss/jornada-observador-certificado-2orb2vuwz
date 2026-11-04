@@ -9,6 +9,7 @@ import React, {
 import pb from '@/lib/pocketbase/client'
 import useAuthStore from '@/stores/useAuthStore'
 import { useRealtime } from '@/hooks/use-realtime'
+import { describeSubmissionError } from '@/lib/evidenceValidation'
 import { toast } from '@/hooks/use-toast'
 
 export interface Submission {
@@ -241,13 +242,18 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     if (sub.link) formData.append('link', sub.link)
     if (sub.description) formData.append('description', sub.description)
 
-    await pb.collection('submissions').create(formData, {
-      onUploadProgress: (e: any) => {
-        if (onProgress && e.total) {
-          onProgress(Math.round((e.loaded / e.total) * 100))
-        }
-      },
-    })
+    await pb
+      .collection('submissions')
+      .create(formData, {
+        onUploadProgress: (e: any) => {
+          if (onProgress && e.total) {
+            onProgress(Math.round((e.loaded / e.total) * 100))
+          }
+        },
+      })
+      .catch((error) => {
+        throw new Error(describeSubmissionError(error))
+      })
   }
 
   const updateSubmissionStatus = async (
@@ -285,7 +291,12 @@ export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
     if (data.description !== undefined) formData.append('description', data.description)
     if (data.nivel !== undefined) formData.append('nivel', data.nivel)
     if (data.file) formData.append('file', data.file)
-    await pb.collection('submissions').update(id, formData)
+    await pb
+      .collection('submissions')
+      .update(id, formData)
+      .catch((error) => {
+        throw new Error(describeSubmissionError(error))
+      })
   }
 
   const deleteSubmission = async (id: string) => {

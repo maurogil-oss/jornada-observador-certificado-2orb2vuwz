@@ -27,8 +27,11 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ShieldAlert } from 'lucide-react'
-
-const ACCEPTED_EXTENSIONS = ['pdf', 'png', 'jpg', 'jpeg', 'webp', 'doc', 'docx']
+import {
+  ACCEPTED_EXTENSIONS_LABEL,
+  describeSubmissionError,
+  validateEvidenceFile,
+} from '@/lib/evidenceValidation'
 
 interface Props {
   isOpen: boolean
@@ -100,19 +103,11 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
     }
 
     if (file) {
-      const ext = file.name.split('.').pop()?.toLowerCase() || ''
-      if (!ACCEPTED_EXTENSIONS.includes(ext)) {
+      const validation = validateEvidenceFile(file)
+      if (validation) {
         toast({
-          title: 'Formato não suportado',
-          description: 'Envie um arquivo PDF, PNG, JPG, WEBP, DOC ou DOCX.',
-          variant: 'destructive',
-        })
-        return
-      }
-      if (file.size === 0) {
-        toast({
-          title: 'Arquivo vazio',
-          description: 'O arquivo selecionado não possui conteúdo. Escolha outro arquivo.',
+          title: validation.title,
+          description: validation.message,
           variant: 'destructive',
         })
         return
@@ -136,7 +131,6 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
       if (link) formData.append('link', link)
       if (file) {
         formData.append('file', file)
-        formData.append('document_file', file.name)
       }
 
       await pb.collection('submissions').create(formData)
@@ -149,7 +143,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
     } catch (error: any) {
       toast({
         title: 'Erro',
-        description: error.message || 'Ocorreu um erro ao enviar.',
+        description: describeSubmissionError(error),
         variant: 'destructive',
       })
     } finally {
@@ -375,9 +369,26 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                     id="file"
                     type="file"
                     accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    onChange={(e) => {
+                      const selected = e.target.files?.[0] || null
+                      const validation = selected ? validateEvidenceFile(selected) : null
+                      if (selected && validation) {
+                        toast({
+                          title: validation.title,
+                          description: validation.message,
+                          variant: 'destructive',
+                        })
+                        e.target.value = ''
+                        setFile(null)
+                        return
+                      }
+                      setFile(selected)
+                    }}
                     className="cursor-pointer file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Formatos aceitos: {ACCEPTED_EXTENSIONS_LABEL} (até 20 MB).
+                  </p>
                   {file && (
                     <p className="text-xs text-muted-foreground break-all">
                       Arquivo selecionado: {file.name}
