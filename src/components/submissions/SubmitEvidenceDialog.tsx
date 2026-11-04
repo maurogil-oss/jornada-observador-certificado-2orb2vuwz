@@ -52,6 +52,8 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
   const [description, setDescription] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [rulesAcknowledged, setRulesAcknowledged] = useState(false)
+  const [rulesError, setRulesError] = useState<string | null>(null)
+  const [formError, setFormError] = useState<string | null>(null)
 
   useEffect(() => {
     if (isOpen && item) {
@@ -76,44 +78,56 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
       setDescription('')
       setFile(null)
       setRulesAcknowledged(false)
+      setRulesError(null)
+      setFormError(null)
     }
   }, [isOpen, item])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!item || !user) return
+    if (loading) return
+
+    // Regra do projeto: TODO bloqueio informa o MOTIVO EXATO na tela —
+    // nunca um botão morto ou erro genérico.
+    const rulesAckMessage =
+      'Aceite pendente: marque a caixa "Estou ciente e concordo" no início do formulário.'
+    const problems: string[] = []
 
     if (!rulesAcknowledged) {
-      toast({
-        title: 'Aceite obrigatório',
-        description: 'É necessário confirmar a leitura das recomendações e regras antes de enviar.',
-        variant: 'destructive',
-      })
-      return
+      problems.push(rulesAckMessage)
     }
 
     if (!file && !link) {
-      toast({
-        title: 'Evidência necessária',
-        description:
-          'Anexe um arquivo (PDF, imagem ou DOC/DOCX) ou informe um link como evidência comprovatória.',
-        variant: 'destructive',
-      })
-      return
+      problems.push(
+        `Evidência ausente: anexe um arquivo (${ACCEPTED_EXTENSIONS_LABEL}) ou informe um link.`,
+      )
     }
 
     if (file) {
       const validation = validateEvidenceFile(file)
       if (validation) {
-        toast({
-          title: validation.title,
-          description: validation.message,
-          variant: 'destructive',
-        })
-        return
+        problems.push(`${validation.title}: ${validation.message}`)
       }
     }
 
+    if (problems.length > 0) {
+      setRulesError(!rulesAcknowledged ? rulesAckMessage : null)
+      setFormError(problems.join(' '))
+      // Leva o usuário até o item que falta (aceite no topo, senão o formulário).
+      document
+        .getElementById(rulesAcknowledged ? 'evidence-form' : 'rules-acknowledged')
+        ?.scrollIntoView({ behavior: 'smooth', block: rulesAcknowledged ? 'start' : 'center' })
+      toast({
+        title: 'Envio bloqueado',
+        description: problems.join(' '),
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setRulesError(null)
+    setFormError(null)
     setLoading(true)
     try {
       const formData = new FormData()
@@ -141,9 +155,11 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
       })
       onClose()
     } catch (error: any) {
+      const backendMessage = describeSubmissionError(error)
+      setFormError(backendMessage)
       toast({
         title: 'Erro',
-        description: describeSubmissionError(error),
+        description: backendMessage,
         variant: 'destructive',
       })
     } finally {
@@ -191,7 +207,7 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[700px] p-0 flex flex-col h-auto max-h-[90vh] overflow-hidden">
+      <DialogContent className="p-0 flex flex-col h-auto max-h-[92dvh] max-w-[calc(100vw-1.5rem)] sm:max-w-[700px] overflow-hidden">
         <div className="px-6 py-4 border-b bg-muted/30 shrink-0">
           <DialogTitle className="text-xl font-bold leading-tight">Submeter Evidência</DialogTitle>
           <DialogDescription className="mt-1.5 text-base font-medium text-foreground">
@@ -233,7 +249,13 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                 <Checkbox
                   id="rules-acknowledged"
                   checked={rulesAcknowledged}
-                  onCheckedChange={(checked) => setRulesAcknowledged(checked === true)}
+                  onCheckedChange={(checked) => {
+                    setRulesAcknowledged(checked === true)
+                    if (checked) {
+                      setFormError(null)
+                      setRulesError(null)
+                    }
+                  }}
                   className="mt-0.5 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600"
                 />
                 <label
@@ -243,6 +265,14 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                   Estou ciente e concordo com as regras de pontuação, limites e exigências de
                   legibilidade descritas acima para esta submissão.
                 </label>
+                {rulesError && (
+                  <p
+                    role="alert"
+                    className="text-xs font-medium text-red-700 dark:text-red-400 pl-6"
+                  >
+                    {rulesError}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -370,28 +400,42 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                     type="file"
                     accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx"
                     onChange={(e) => {
-                      const selected = e.target.files?.[0] || null
-                      const validation = selected ? validateEvidenceFile(selected) : null
-                      if (selected && validation) {
+                      try {
+                        const selected = e.target.files?.[0] || null
+                        const validation = selected ? validateEvidenceFile(selected) : null
+                        if (selected && validation) {
+                          setFormError(`${validation.title}: ${validation.message}`)
+                          toast({
+                            title: validation.title,
+                            description: validation.message,
+                            variant: 'destructive',
+                          })
+                          e.target.value = ''
+                          setFile(null)
+                          return
+                        }
+                        setFormError(null)
+                        setFile(selected)
+                      } catch (err: any) {
+                        // Qualquer falha ao processar o anexo aparece na tela, nunca interrompe em silêncio.
+                        console.error('Erro ao processar arquivo selecionado:', err)
                         toast({
-                          title: validation.title,
-                          description: validation.message,
+                          title: 'Erro ao ler o arquivo',
+                          description:
+                            err?.message ||
+                            'Não foi possível processar o arquivo selecionado. Tente novamente.',
                           variant: 'destructive',
                         })
-                        e.target.value = ''
-                        setFile(null)
-                        return
                       }
-                      setFile(selected)
                     }}
                     className="cursor-pointer file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                   />
                   <p className="text-xs text-muted-foreground">
                     Formatos aceitos: {ACCEPTED_EXTENSIONS_LABEL} (até 20 MB).
                   </p>
-                  {file && (
-                    <p className="text-xs text-muted-foreground break-all">
-                      Arquivo selecionado: {file.name}
+                  {file && !validateEvidenceFile(file) && (
+                    <p className="text-xs font-medium text-green-700 dark:text-green-400 break-all">
+                      ✓ Arquivo aceito: {file.name} ({(file.size / (1024 * 1024)).toFixed(1)} MB)
                     </p>
                   )}
                 </div>
@@ -442,24 +486,29 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
           </div>
         </ScrollArea>
 
-        <div className="px-6 py-4 border-t bg-muted/10 flex justify-end gap-3 shrink-0">
-          <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
-            Cancelar
-          </Button>
-          <Button
-            type="submit"
-            form="evidence-form"
-            disabled={loading || !rulesAcknowledged}
-            className="min-w-[150px]"
-            title={
-              !rulesAcknowledged
-                ? 'Confirme o aceite das recomendações acima para prosseguir'
-                : undefined
-            }
-          >
-            {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-            {loading ? 'Enviando...' : 'Enviar Evidência'}
-          </Button>
+        <div className="px-6 py-4 border-t bg-muted/10 shrink-0 space-y-3">
+          {formError && (
+            <Alert variant="destructive" className="max-h-40 overflow-y-auto">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              <AlertTitle>Não foi possível enviar</AlertTitle>
+              <AlertDescription>{formError}</AlertDescription>
+            </Alert>
+          )}
+          {!rulesAcknowledged && !formError && (
+            <p className="text-xs font-medium text-amber-700 dark:text-amber-400">
+              Pendente: confirme o aceite das regras no início do formulário (caixa "Estou ciente e
+              concordo") para liberar o envio.
+            </p>
+          )}
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
+              Cancelar
+            </Button>
+            <Button type="submit" form="evidence-form" disabled={loading} className="min-w-[150px]">
+              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+              {loading ? 'Enviando...' : 'Enviar Evidência'}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
