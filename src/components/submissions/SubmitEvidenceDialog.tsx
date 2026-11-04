@@ -28,6 +28,8 @@ import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ShieldAlert } from 'lucide-react'
 
+const ACCEPTED_EXTENSIONS = ['pdf', 'png', 'jpg', 'jpeg', 'webp', 'doc', 'docx']
+
 interface Props {
   isOpen: boolean
   onClose: () => void
@@ -90,10 +92,31 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
     if (!file && !link) {
       toast({
         title: 'Evidência necessária',
-        description: 'Forneça um arquivo legível como evidência comprovatória.',
+        description:
+          'Anexe um arquivo (PDF, imagem ou DOC/DOCX) ou informe um link como evidência comprovatória.',
         variant: 'destructive',
       })
       return
+    }
+
+    if (file) {
+      const ext = file.name.split('.').pop()?.toLowerCase() || ''
+      if (!ACCEPTED_EXTENSIONS.includes(ext)) {
+        toast({
+          title: 'Formato não suportado',
+          description: 'Envie um arquivo PDF, PNG, JPG, WEBP, DOC ou DOCX.',
+          variant: 'destructive',
+        })
+        return
+      }
+      if (file.size === 0) {
+        toast({
+          title: 'Arquivo vazio',
+          description: 'O arquivo selecionado não possui conteúdo. Escolha outro arquivo.',
+          variant: 'destructive',
+        })
+        return
+      }
     }
 
     setLoading(true)
@@ -351,9 +374,15 @@ export function SubmitEvidenceDialog({ isOpen, onClose, item }: Props) {
                   <Input
                     id="file"
                     type="file"
+                    accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx"
                     onChange={(e) => setFile(e.target.files?.[0] || null)}
                     className="cursor-pointer file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                   />
+                  {file && (
+                    <p className="text-xs text-muted-foreground break-all">
+                      Arquivo selecionado: {file.name}
+                    </p>
+                  )}
                 </div>
 
                 <div className="relative py-2">
