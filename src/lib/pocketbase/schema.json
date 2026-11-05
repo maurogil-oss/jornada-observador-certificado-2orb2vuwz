@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-04T17:50:34.894Z",
+  "generatedAt": "2026-11-05T19:32:39.425Z",
   "collections": [
     {
       "name": "users",
@@ -1627,6 +1627,90 @@
       "indexes": [
         "CREATE INDEX idx_rep_topic_replies_topic ON representation_topic_replies (topic_id)",
         "CREATE INDEX idx_rep_topic_replies_user ON representation_topic_replies (user_id)"
+      ]
+    },
+    {
+      "name": "duplicate_alerts",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.role = 'admin'",
+        "view": "@request.auth.role = 'admin'",
+        "create": null,
+        "update": "@request.auth.role = 'admin'",
+        "delete": "@request.auth.role = 'admin'"
+      },
+      "fields": [
+        {
+          "name": "kind",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["cpf", "name_birth"]
+        },
+        {
+          "name": "key",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "user_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "related_user_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "snapshot",
+          "type": "json",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["open", "reviewed", "dismissed"]
+        },
+        {
+          "name": "review_note",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "source",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["sweep", "registration"]
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_duplicate_alerts_key_pair ON duplicate_alerts (key, user_id, related_user_id)",
+        "CREATE INDEX idx_duplicate_alerts_status ON duplicate_alerts (status, kind)"
       ]
     }
   ]

@@ -164,6 +164,7 @@ export function LoginContent() {
   const [showTurma15Form, setShowTurma15Form] = useState(false)
   const [turmaPassword, setTurmaPassword] = useState('')
   const [turmaError, setTurmaError] = useState('')
+  const [dupeCheckMessage, setDupeCheckMessage] = useState('')
   const turmaPassInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -313,13 +314,36 @@ export function LoginContent() {
     }
   }
 
+  // Checagem amigável de CPF duplicado ANTES de submeter (a salvaguarda
+  // definitiva é o hook no backend; aqui o usuário só recebe o aviso cedo).
+  const checkCpfDuplicate = async () => {
+    const raw = registerForm.getValues('cpf_document') || ''
+    const clean = raw.replace(/\D/g, '')
+    if (clean.length !== 11) return true
+    try {
+      const found = await pb.collection('users').getList(1, 1, {
+        filter: `cpf_document = "${clean}"`,
+      })
+      if (found.totalItems > 0) {
+        setDupeCheckMessage(
+          'Este CPF já está cadastrado na plataforma. Se a conta for sua, use a opção "Esqueci minha senha" na aba Entrar para recuperar o acesso — ou fale com o administrador (suporte@onsv.org.br).',
+        )
+        return false
+      }
+    } catch {
+      // se a checagem falhar, o hook do backend garante o bloqueio
+    }
+    setDupeCheckMessage('')
+    return true
+  }
+
   const handleNextStep = async () => {
     const currentStepConfig = STEPS[safeStep]
     const fields = (currentStepConfig?.fields ?? []) as any[]
     const isValid = await registerForm.trigger(fields)
-    if (isValid) {
-      setStep((s) => Math.min(s + 1, STEPS.length - 1))
-    }
+    if (!isValid) return
+    if (currentStepConfig?.id === 'identity' && !(await checkCpfDuplicate())) return
+    setStep((s) => Math.min(s + 1, STEPS.length - 1))
   }
 
   const handlePrevStep = () => {
@@ -380,6 +404,22 @@ export function LoginContent() {
         Object.entries(fieldErrors).forEach(([field, message]) => {
           registerForm.setError(field as any, { type: 'manual', message })
         })
+      } else if (err?.response?.message || err?.message) {
+        const msg = String(err.response?.message || err.message)
+        if (msg.toLowerCase().includes('cpf')) {
+          toast({
+            title: 'CPF já cadastrado',
+            description: msg,
+            variant: 'destructive',
+          })
+          registerForm.setError('cpf_document', { type: 'manual', message: msg })
+        } else {
+          toast({
+            title: 'Erro ao registrar',
+            description: msg,
+            variant: 'destructive',
+          })
+        }
       } else {
         toast({
           title: 'Erro ao registrar',
@@ -853,6 +893,12 @@ export function LoginContent() {
                                         />
                                       </div>
                                     </FormControl>
+                                    {dupeCheckMessage ? (
+                                      <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                                        <p className="font-medium">CPF já cadastrado</p>
+                                        <p className="mt-1 leading-snug">{dupeCheckMessage}</p>
+                                      </div>
+                                    ) : null}
                                     <FormMessage />
                                   </FormItem>
                                 )}

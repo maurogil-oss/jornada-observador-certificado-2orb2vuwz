@@ -44,6 +44,20 @@ import pb from '@/lib/pocketbase/client'
 import { Link } from 'react-router-dom'
 import { useRealtime } from '@/hooks/use-realtime'
 
+type DupeAlertRow = {
+  id: string
+  kind: 'cpf' | 'name_birth'
+  source: 'sweep' | 'registration'
+  created: string
+  snapshot: any[]
+  a: string
+  aEmail: string
+  aId: string
+  b: string
+  bEmail: string
+  bId: string
+}
+
 export default function AdminDashboard() {
   const { updateSubmissionStatus } = useSubmissionsStore()
   const { toast } = useToast()
@@ -59,6 +73,28 @@ export default function AdminDashboard() {
   const [importLogs, setImportLogs] = useState<any[]>([])
   const [isImportOpen, setIsImportOpen] = useState(false)
   const [chartData, setChartData] = useState<any[]>([])
+  const [dupeAlerts, setDupeAlerts] = useState<DupeAlertRow[]>([])
+  const [reviewing, setReviewing] = useState<string | null>(null)
+
+  const markReviewed = async (alertId: string) => {
+    setReviewing(alertId)
+    try {
+      await pb.collection('duplicate_alerts').update(alertId, { status: 'reviewed' })
+      setDupeAlerts((prev) => prev.filter((a) => a.id !== alertId))
+      toast({
+        title: 'Alerta revisado',
+        description: 'O alerta saiu da lista de possíveis duplicatas em aberto.',
+      })
+    } catch (err: any) {
+      toast({
+        title: 'Erro ao atualizar alerta',
+        description: err?.message || 'Não foi possível registrar a revisão.',
+        variant: 'destructive',
+      })
+    } finally {
+      setReviewing(null)
+    }
+  }
 
   const loadData = useCallback(async () => {
     try {
@@ -70,6 +106,7 @@ export default function AdminDashboard() {
         pendingListRes,
         logsRes,
         allApprovedRes,
+        dupeAlertsRes,
       ] = await Promise.all([
         pb.collection('users').getList(1, 1, { filter: "role = 'observer'" }),
         pb.collection('submissions').getList(1, 1),
@@ -84,6 +121,11 @@ export default function AdminDashboard() {
         pb.collection('submissions').getFullList({
           filter: "status = 'Aprovado'",
           sort: 'created',
+        }),
+        pb.collection('duplicate_alerts').getFullList({
+          filter: "status = 'open'",
+          expand: 'user_id,related_user_id',
+          sort: '-created',
         }),
       ])
 
@@ -106,6 +148,21 @@ export default function AdminDashboard() {
       )
 
       setImportLogs(logsRes.items)
+      setDupeAlerts(
+        dupeAlertsRes.map((r) => ({
+          id: r.id,
+          kind: r.kind as 'cpf' | 'name_birth',
+          source: r.source as 'sweep' | 'registration',
+          created: r.created,
+          snapshot: Array.isArray(r.snapshot) ? r.snapshot : [],
+          a: r.expand?.user_id?.full_name || r.expand?.user_id?.name || '—',
+          aEmail: r.expand?.user_id?.email || '',
+          aId: r.user_id,
+          b: r.expand?.related_user_id?.full_name || r.expand?.related_user_id?.name || '—',
+          bEmail: r.expand?.related_user_id?.email || '',
+          bId: r.related_user_id,
+        })),
+      )
 
       // Process chart data for Score Evolution
       const monthlyMap: Record<string, number> = {}
@@ -133,6 +190,7 @@ export default function AdminDashboard() {
   useRealtime('users', loadData)
   useRealtime('submissions', loadData)
   useRealtime('import_logs', loadData)
+  useRealtime('duplicate_alerts', loadData)
 
   const handleExport = async (format: 'excel' | 'pdf') => {
     toast({
@@ -304,6 +362,89 @@ export default function AdminDashboard() {
                 </LineChart>
               </ResponsiveContainer>
             </ChartContainer>
+          </CardContent>
+        </Card>
+      )}
+
+      {dupeAlerts.length > 0 && (
+        <Card className="shadow-subtle border-amber-300/60 bg-amber-50/40 dark:bg-amber-950/10">
+          <CardHeader className="bg-amber-100/40 dark:bg-amber-950/20 border-b border-amber-200/60">
+            <CardTitle className="flex items-center gap-2 text-amber-900 dark:text-amber-200">
+              <ShieldAlert className="w-5 h-5" />
+              Possíveis duplicatas ({dupeAlerts.length})
+            </CardTitle>
+            <CardDescription className="text-amber-800/80 dark:text-amber-300/80">
+              Cadastros com o mesmo CPF, ou mesmo nome + data de nascimento, para revisão manual.
+              Nada é fundido ou excluído automaticamente — marque como revisado após verificar.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-muted/10">
+                  <TableRow>
+                    <TableHead className="pl-6 whitespace-nowrap">Tipo</TableHead>
+                    <TableHead>Cadastros envolvidos</TableHead>
+                    <TableHead className="whitespace-nowrap">Origem</TableHead>
+                    <TableHead className="whitespace-nowrap text-right pr-6">Ação</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {dupeAlerts.map((alert) => (
+                    <TableRow key={alert.id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell className="pl-6 align-top">
+                        {alert.kind === 'cpf' ? (
+                          <Badge className="bg-red-600 hover:bg-red-700 text-white shadow-sm">
+                            Mesmo CPF
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-amber-500 hover:bg-amber-600 text-white shadow-sm">
+                            Nome + nascimento
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1 text-sm">
+                          <p>
+                            <span className="font-semibold">{alert.a}</span>{' '}
+                            <span className="text-muted-foreground">({alert.aEmail})</span>
+                          </p>
+                          <p>
+                            <span className="font-semibold">{alert.b}</span>{' '}
+                            <span className="text-muted-foreground">({alert.bEmail})</span>
+                          </p>
+                          {alert.snapshot[0]?.birth_date ? (
+                            <p className="text-xs text-muted-foreground">
+                              Nascimento: {alert.snapshot[0].birth_date}
+                              {alert.snapshot[0]?.city ? ` · ${alert.snapshot[0].city}` : ''}
+                              {alert.snapshot[0]?.state ? `/${alert.snapshot[0].state}` : ''}
+                            </p>
+                          ) : null}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground whitespace-nowrap align-top">
+                        {alert.source === 'sweep' ? 'Varredura da base' : 'Detectado no cadastro'}
+                        <br />
+                        <span className="text-xs">
+                          {new Date(alert.created).toLocaleDateString('pt-BR')}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right pr-6 align-top">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 font-semibold shadow-sm"
+                          disabled={reviewing === alert.id}
+                          onClick={() => markReviewed(alert.id)}
+                        >
+                          {reviewing === alert.id ? 'Salvando...' : 'Marcar revisado'}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       )}
