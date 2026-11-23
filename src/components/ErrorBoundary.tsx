@@ -25,13 +25,16 @@ export class ErrorBoundary extends Component<Props, State> {
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo)
 
-    // Auto-recover from removeChild or other DOM/hydration errors only if no custom fallback is provided
+    // Auto-recover from removeChild/insertBefore/appendChild and other DOM/hydration errors.
+    // Runs EVEN when a custom fallback exists (e.g. the /login boundary): a manual reset
+    // cannot fix a DOM mutation done by browser extensions (Google Translate, password
+    // managers) — only a reload does. The reload keeps the valid session (pocketbase_auth).
     if (
-      !this.props.fallback &&
-      (error.message.includes('removeChild') ||
-        error.message.includes('Node') ||
-        error.message.includes('insertBefore') ||
-        error.message.includes('is not a valid'))
+      error.message.includes('removeChild') ||
+      error.message.includes('insertBefore') ||
+      error.message.includes('appendChild') ||
+      error.message.includes('Node') ||
+      error.message.includes('is not a valid')
     ) {
       const lastReloadTime = Number(sessionStorage.getItem('last_dom_reload') || '0')
       const now = Date.now()
